@@ -78,7 +78,7 @@ export function useLogin() {
         setLoading(false);
       } else {
         toast.error('Incorrect Details');
-        // setLoading(false);
+        setLoading(false);
       }
     } catch (error) {
       setLoading(false);

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useLogin } from "@/hooks/services/auth";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
-import logoFooter from "@/public/appointments/logoFooter.png"
+import logoFooter from "@/public/appointments/logoFooter.png";
 
 const AppointmentLoginForm = () => {
   const router = useRouter();
@@ -24,7 +24,7 @@ const AppointmentLoginForm = () => {
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    await logIn(formData, '/engagements');
+    await logIn(formData, "/engagements");
   }
 
   return (
@@ -91,7 +91,7 @@ const AppointmentLoginForm = () => {
           className="py-4 px-3 text-base w-full rounded-[8px] font-semibold mt-10 mb-6 text-white bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end"
         >
           {loading && <LoaderAlt size={22} className="animate-spin" />}
-          Get Started
+          Login
         </button>
       </form>
 
