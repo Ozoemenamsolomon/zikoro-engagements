@@ -7,8 +7,8 @@ import { ThreeLineCircle, XCircle } from "@/constants/icons";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import logo from "@/public/logo.png";
-import sPreview from "@/public/otherTopPrevS.png";
 import bPreview from "@/public/otherPreviewB.png";
+import sPreview from "@/public/OtherTopPrevS.png";
 
 const Navbar = () => {
   const router = useRouter();
