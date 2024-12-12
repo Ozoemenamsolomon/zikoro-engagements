@@ -33,7 +33,7 @@ export default function Section2() {
             {/* 2nd div */}
             <div className=" bg-[#f7f8ff]  mx-4 lg:mx-[32px] py-[80px] rounded-[10px] col-span-1">
               <div className="flex justify-center">
-                <EngQuiz />
+                <EngPoll />
               </div>
 
               <p className="text-center mt-3 text-2xl font-semibold">Polls</p>
@@ -83,7 +83,7 @@ export default function Section2() {
 
               <p className="text-center mt-3 text-2xl font-semibold">Forms</p>
               <p className="text-[#555555] text-center mt-3 font-medium">
-                Collect data seamlessly with <br /> acustomizable forms.
+                Collect data seamlessly with <br /> customizable forms.
               </p>
             </div>
           </div>

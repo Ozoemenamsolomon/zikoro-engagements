@@ -3,7 +3,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { useContactUs } from "@/hooks/services/contactUs";
-import confirm from "@/public/appointments/bookingsMessage.png"
+import confirm from "@/public/appointments/bookingsMessage.png";
 const AppointmentContactForm = () => {
   const [mailSent, setMailSent] = useState<boolean>(false);
   const root = "engagements";
@@ -14,6 +14,7 @@ const AppointmentContactForm = () => {
     lastName: "",
     email: "",
     comments: "",
+    phoneNumber: "",
     source: root,
   });
 
@@ -33,6 +34,7 @@ const AppointmentContactForm = () => {
       lastName: "",
       email: "",
       comments: "",
+      phoneNumber: "",
       source: "",
     });
     setMailSent(true);
@@ -43,7 +45,7 @@ const AppointmentContactForm = () => {
       {mailSent ? (
         <div className="flex flex-col items-center h-[50vh] justify-center">
           <Image
-            src={confirm  }
+            src={confirm}
             width={82}
             height={82}
             alt=""
@@ -91,6 +93,18 @@ const AppointmentContactForm = () => {
               value={formData.email}
               onChange={handleChange}
               placeholder="Enter Email Address"
+              className="border-[1px] border-gray-200 px-[10px] py-4 w-full text-base rounded-[6px] outline-none"
+            />
+          </div>
+          <div className="flex flex-col gap-y-3 mt-6">
+            <label htmlFor="">Phone Number</label>
+            <input
+              required
+              type="tel"
+              name="phoneNumber"
+              value={formData.phoneNumber}
+              onChange={handleChange}
+              placeholder="Enter Phone Number"
               className="border-[1px] border-gray-200 px-[10px] py-4 w-full text-base rounded-[6px] outline-none"
             />
           </div>

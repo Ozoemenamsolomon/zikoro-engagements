@@ -21,7 +21,7 @@ const Navbar = () => {
 
   return (
     <div className="py-6 px-3 md:px-6 relative ">
-      <div className=" bg-white flex items-center lg:max-w-[970px] xl:max-w-[1165px] py-3 px-3 md:px-6 lg:px-[36px] rounded-[64px] justify-between mx-auto shadow  ">
+      <div className=" bg-white flex items-center lg:max-w-[970px] xl:max-w-[1165px] py-3 px-3 md:px-6 lg:px-[36px] rounded-[64px] justify-between mx-auto ">
         <Image
           src={logo}
           width={115}

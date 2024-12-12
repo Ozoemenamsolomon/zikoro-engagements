@@ -9,7 +9,9 @@ import Section5 from "@/components/home/Section5";
 export default function Home() {
   return (
     <div className="bg-[#f7f7f7]">
-      <Navbar />
+      <div className="sticky top-4 z-10">
+        <Navbar />
+      </div>
       <Section1 />
       <Section2 />
       <Section3 />

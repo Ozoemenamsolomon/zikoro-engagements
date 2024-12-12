@@ -24,7 +24,6 @@ export function useContactUs() {
     async function submitForm(values: UpdateContactRequestBody["formData"]) {
         try {
             setLoading(true);
-
             const { data, error } = await supabase
                 .from("contactForm")
                 .insert({
@@ -38,7 +37,7 @@ export function useContactUs() {
                     industry: values.industry,
                     comments: values.comments,
                 });
-                
+
 
             if (error) {
                 throw error;
