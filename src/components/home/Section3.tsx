@@ -10,7 +10,7 @@ export default function Section2() {
   return (
     <div className="mt-[80px] max-w-full lg:max-w-[1128px] mx-auto">
       <p className="text-center text-2xl lg:text-[32px] font-bold mt-[52px] lg:mt-[80px]">
-        Why Zikoro Engagement Stands Out
+        Why Zikoro Engagements Stands Out
       </p>
 
       {/* section 2 */}
