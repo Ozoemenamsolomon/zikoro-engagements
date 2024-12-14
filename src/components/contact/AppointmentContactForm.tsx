@@ -99,7 +99,6 @@ const AppointmentContactForm = () => {
           <div className="flex flex-col gap-y-3 mt-6">
             <label htmlFor="">Phone Number</label>
             <input
-              required
               type="tel"
               name="phoneNumber"
               value={formData.phoneNumber}
