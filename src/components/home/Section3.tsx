@@ -1,9 +1,12 @@
+"use client";
 import Image from "next/image";
 import section1 from "@/public/section1.png";
 import section2 from "@/public/section2.png";
 import section3 from "@/public/section3.png";
+import { useRouter } from "next/navigation";
 
 export default function Section2() {
+  const router = useRouter();
   return (
     <div className="mt-[80px] max-w-full lg:max-w-[1128px] mx-auto">
       <p className="text-center text-2xl lg:text-[32px] font-bold mt-[52px] lg:mt-[80px]">
@@ -76,7 +79,7 @@ export default function Section2() {
         </div>
 
         <div className="flex justify-center mt-4 lg:mt-8">
-          <button className="mt-8 rounded-[10px] font-semibold py-2 px-4 text-[14px] text-medium text-white bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end">
+          <button className="mt-8 rounded-[10px] font-semibold py-2 px-4 text-[14px] text-medium text-white bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end" onClick={() => router.push('/signup')}>
             Sign Up to Discover All Features
           </button>
         </div>
