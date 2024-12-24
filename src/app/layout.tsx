@@ -8,6 +8,27 @@ export const metadata: Metadata = {
   title: "Zikoro - Engagements",
   description:
     "Engage your Audience with interactive Polls, Quizzes & Q&A. Perfect for meetings, classrooms and events to engage and connect with your audience",
+
+  openGraph: {
+    type: "website",
+    url: "/logo.png",
+    title: "Zikoro - Engagements",
+    description:
+      "Engage your Audience with interactive Polls, Quizzes & Q&A. Perfect for meetings, classrooms and events to engage and connect with your audience",
+    images: [
+      {
+        url: "/logo.png",
+        width: 115,
+        height: 40,
+        alt: "",
+      },
+    ],
+  },
+
+  // Additional SEO fields (optional)
+  keywords:
+    "Interactive app, audience engagement, live quizzes, polls, Q&A, events, meetings, classrooms, real-time collaboration, engagement app, education tools, interactive learning, interactive tools, live polls, audience interaction, event solution",
+  robots: "index, follow",
 };
 
 export default function RootLayout({
