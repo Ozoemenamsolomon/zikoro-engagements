@@ -11,13 +11,13 @@ export const metadata: Metadata = {
 
   openGraph: {
     type: "website",
-    url: "/logo.png",
+    url: "https://engagements.zikoro.com/logo.png",
     title: "Zikoro - Engagements",
     description:
       "Engage your Audience with interactive Polls, Quizzes & Q&A. Perfect for meetings, classrooms and events to engage and connect with your audience",
     images: [
       {
-        url: "/logo.png",
+        url: "https://engagements.zikoro.com/logo.png",
         width: 115,
         height: 40,
         alt: "",
