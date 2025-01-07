@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@hookform/resolvers": "^3.10.0",
     "@iconify/react": "^5.2.0",
     "@radix-ui/react-label": "^2.1.0",
     "@radix-ui/react-slot": "^1.1.0",
@@ -18,12 +19,16 @@
     "axios": "^1.7.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "lodash": "^4.17.21",
     "lucide-react": "^0.468.0",
+    "nanoid": "^5.0.9",
     "next": "14.2.15",
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.54.0",
     "react-hot-toast": "^2.4.1",
+    "react-paystack": "^6.0.0",
+    "react-select": "^5.9.0",
     "react-toastify": "^10.0.6",
     "react-verification-input": "^4.2.0",
     "styled-icons": "^10.47.1",
@@ -35,6 +40,7 @@
     "zustand": "^5.0.2"
   },
   "devDependencies": {
+    "@types/lodash": "^4.17.14",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

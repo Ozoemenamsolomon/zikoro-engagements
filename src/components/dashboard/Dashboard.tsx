@@ -4,12 +4,24 @@ import { ArrowLeftIcon, engagementHomeLinks } from "@/constants";
 import Link from "next/link";
 import { ZikoroImage } from "../custom";
 import useUserStore from "@/store/globalUserStore";
+import { useState } from "react";
+import { CreateEngagement } from "./_components/CreateEngagement";
 
 export default function Dashboard() {
   const { user } = useUserStore();
+  const [isOpen, setOpen] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  function onClose() {
+    setOpen((prev) => !prev);
+  }
+  function showModal(type: number) {
+    setOpen(true);
+    setCurrentIndex(type);
+  }
   return (
-    <div className="w-full space-y-6 mt-8 sm:mt-10 sm:space-y-8">
-      <div className="flex flex-col items-start gap-y-2  justify-start">
+    <div className="w-full mt-8 sm:mt-10 ">
+      <div className="flex flex-col items-start gap-y-2 mb-4 sm:mb-6 justify-start">
         <p className="text-sm sm:text-desktop">
           Hello{" "}
           <span className="font-medium text-base sm:text-xl capitalize">
@@ -18,14 +30,16 @@ export default function Dashboard() {
         </p>
         <p>What engagement feature will you be using today?</p>
       </div>
-      <div className="w-full py-4 overflow-x-auto no-scrollbar">
+      <div className="w-full py-4  mb-4 sm:mb-6 overflow-x-auto no-scrollbar">
         <div className="w-full min-w-max flex items-center gap-3 sm:gap-4">
           {engagementHomeLinks.map((nav, index) => (
             <ActionCard
               key={index}
+              index={index}
               Icon={nav.Icon}
               name={nav.name}
               href={nav.link}
+              showCreate={showModal}
             />
           ))}
         </div>
@@ -39,6 +53,7 @@ export default function Dashboard() {
           ))}
         </div>
       </div>
+      {isOpen && <CreateEngagement close={onClose} type={currentIndex} />}
     </div>
   );
 }
@@ -46,23 +61,26 @@ export default function Dashboard() {
 function ActionCard({
   Icon,
   name,
-  href,
+  index,
+  showCreate,
 }: {
   Icon: React.ElementType;
   name: string;
   href: string;
+  index: number;
+  showCreate: (t: number) => void;
 }) {
   return (
-    <div className="w-[100px] h-[100px] rounded-lg p-4 bg-white sm:w-[200px] relative sm:h-[200px] gap-3 flex flex-col items-center justify-center">
+    <button
+      onClick={() => showCreate(index)}
+      className="w-[100px] h-[100px] rounded-lg p-4 bg-white sm:w-[200px] relative sm:h-[200px] gap-3 flex flex-col items-center justify-center"
+    >
       <Icon />
       <p>{name}</p>
-      <Link
-        href={""}
-        className="w-10 h-10 rounded-full flex absolute items-center border justify-center bottom-3 right-4"
-      >
+      <div className="w-10 h-10 rounded-full flex absolute items-center border justify-center bottom-3 right-4">
         <ArrowLeftIcon />
-      </Link>
-    </div>
+      </div>
+    </button>
   );
 }
 
