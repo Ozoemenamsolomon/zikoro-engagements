@@ -11,6 +11,7 @@
   "dependencies": {
     "@radix-ui/react-label": "^2.1.0",
     "@radix-ui/react-slot": "^1.1.0",
+    "@radix-ui/react-switch": "^1.1.2",
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.47.2",
     "axios": "^1.7.9",
@@ -26,7 +27,7 @@
     "react-verification-input": "^4.2.0",
     "styled-icons": "^10.47.1",
     "swiper": "^11.1.15",
-    "tailwind-merge": "^2.5.5",
+    "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
     "zeptomail": "^6.1.0",
     "zod": "^3.23.8",

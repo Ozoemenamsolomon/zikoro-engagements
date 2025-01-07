@@ -383,7 +383,7 @@ export function OneTwoThree() {
       <path
         d="M4.5 9H6.5V23M6.5 23H4.5M6.5 23H8.5M10.5 9H18.5V16H11.5V23H19.5M21.5 9H28.5V16M28.5 16H22.5M28.5 16V23H21.5"
         stroke="#1F1F1F"
-        stroke-width="1.5"
+        strokeWidth="1.5"
       />
     </svg>
   );
@@ -401,7 +401,7 @@ export function ListView() {
       <path
         d="M3 5L4.5 6.5L7.5 3.5M3 12L4.5 13.5L7.5 10.5M3 19L4.5 20.5L7.5 17.5M11 12H22M11 19H22M11 5H22"
         stroke="#1F1F1F"
-        stroke-width="1.5"
+        strokeWidth="1.5"
         stroke-linecap="round"
         stroke-linejoin="round"
       />
@@ -908,8 +908,8 @@ export function EngQuiz() {
           y2="16.666"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#001FCC" />
-          <stop offset="1" stop-color="#9D00FF" />
+          <stop stopColor="#001FCC" />
+          <stop offset="1" stopColor="#9D00FF" />
         </linearGradient>
         <linearGradient
           id="paint1_linear_665_10354"
@@ -919,8 +919,8 @@ export function EngQuiz() {
           y2="20.0006"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#001FCC" />
-          <stop offset="1" stop-color="#9D00FF" />
+          <stop stopColor="#001FCC" />
+          <stop offset="1" stopColor="#9D00FF" />
         </linearGradient>
       </defs>
     </svg>
@@ -954,8 +954,8 @@ export function EngPoll() {
           y2="20.0007"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#001FCC" />
-          <stop offset="1" stop-color="#9D00FF" />
+          <stop stopColor="#001FCC" />
+          <stop offset="1" stopColor="#9D00FF" />
         </linearGradient>
         <linearGradient
           id="paint1_linear_665_10468"
@@ -965,8 +965,8 @@ export function EngPoll() {
           y2="20"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#001FCC" />
-          <stop offset="1" stop-color="#9D00FF" />
+          <stop stopColor="#001FCC" />
+          <stop offset="1" stopColor="#9D00FF" />
         </linearGradient>
       </defs>
     </svg>
@@ -1000,8 +1000,8 @@ export function EngQMark() {
           y2="20"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#001FCC" />
-          <stop offset="1" stop-color="#9D00FF" />
+          <stop stopColor="#001FCC" />
+          <stop offset="1" stopColor="#9D00FF" />
         </linearGradient>
         <linearGradient
           id="paint1_linear_665_10472"
@@ -1011,8 +1011,8 @@ export function EngQMark() {
           y2="20"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#001FCC" />
-          <stop offset="1" stop-color="#9D00FF" />
+          <stop stopColor="#001FCC" />
+          <stop offset="1" stopColor="#9D00FF" />
         </linearGradient>
       </defs>
     </svg>
@@ -1036,7 +1036,7 @@ export function EngCloud() {
       <path
         d="M4.16602 24.1662C4.16602 25.1511 4.36001 26.1264 4.73692 27.0363C5.11383 27.9463 5.66628 28.7731 6.36272 29.4695C7.76924 30.876 9.67689 31.6662 11.666 31.6662H31.666C33.1426 31.6689 34.5653 31.1114 35.647 30.1064C36.7288 29.1013 37.3892 27.7234 37.4949 26.2506C37.6006 24.7778 37.1439 23.3196 36.2168 22.1704C35.2897 21.0211 33.9612 20.2662 32.4993 20.0579C32.5156 17.2225 31.4987 14.4782 29.6388 12.338C27.7789 10.1979 25.2032 8.80828 22.3932 8.42906C19.5833 8.04984 16.7314 8.70693 14.3706 10.2775C12.0099 11.8481 10.3019 14.2246 9.56602 16.9629C8.0076 17.4174 6.63874 18.3653 5.66502 19.6642C4.6913 20.9631 4.16529 22.5429 4.16602 24.1662Z"
         stroke="url(#paint1_linear_665_10477)"
-        stroke-width="2"
+        strokeWidth="2"
         stroke-linejoin="round"
       />
       <defs>
@@ -1048,8 +1048,8 @@ export function EngCloud() {
           y2="19.9952"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#001FCC" />
-          <stop offset="1" stop-color="#9D00FF" />
+          <stop stopColor="#001FCC" />
+          <stop offset="1" stopColor="#9D00FF" />
         </linearGradient>
         <linearGradient
           id="paint1_linear_665_10477"
@@ -1059,8 +1059,8 @@ export function EngCloud() {
           y2="19.9952"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#001FCC" />
-          <stop offset="1" stop-color="#9D00FF" />
+          <stop stopColor="#001FCC" />
+          <stop offset="1" stopColor="#9D00FF" />
         </linearGradient>
       </defs>
     </svg>
@@ -1111,8 +1111,8 @@ export function EngForms() {
           y2="9.99935"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#001FCC" />
-          <stop offset="1" stop-color="#9D00FF" />
+          <stop stopColor="#001FCC" />
+          <stop offset="1" stopColor="#9D00FF" />
         </linearGradient>
         <linearGradient
           id="paint1_linear_665_10482"
@@ -1122,8 +1122,8 @@ export function EngForms() {
           y2="18.9334"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#001FCC" />
-          <stop offset="1" stop-color="#9D00FF" />
+          <stop stopColor="#001FCC" />
+          <stop offset="1" stopColor="#9D00FF" />
         </linearGradient>
         <linearGradient
           id="paint2_linear_665_10482"
@@ -1133,8 +1133,8 @@ export function EngForms() {
           y2="18.8893"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#001FCC" />
-          <stop offset="1" stop-color="#9D00FF" />
+          <stop stopColor="#001FCC" />
+          <stop offset="1" stopColor="#9D00FF" />
         </linearGradient>
         <linearGradient
           id="paint3_linear_665_10482"
@@ -1144,8 +1144,8 @@ export function EngForms() {
           y2="21.7397"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#001FCC" />
-          <stop offset="1" stop-color="#9D00FF" />
+          <stop stopColor="#001FCC" />
+          <stop offset="1" stopColor="#9D00FF" />
         </linearGradient>
         <linearGradient
           id="paint4_linear_665_10482"
@@ -1155,8 +1155,8 @@ export function EngForms() {
           y2="27.7453"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#001FCC" />
-          <stop offset="1" stop-color="#9D00FF" />
+          <stop stopColor="#001FCC" />
+          <stop offset="1" stopColor="#9D00FF" />
         </linearGradient>
         <linearGradient
           id="paint5_linear_665_10482"
@@ -1166,8 +1166,8 @@ export function EngForms() {
           y2="25.9117"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#001FCC" />
-          <stop offset="1" stop-color="#9D00FF" />
+          <stop stopColor="#001FCC" />
+          <stop offset="1" stopColor="#9D00FF" />
         </linearGradient>
         <clipPath id="clip0_665_10482">
           <rect
