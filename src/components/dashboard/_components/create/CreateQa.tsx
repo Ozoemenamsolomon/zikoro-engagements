@@ -15,10 +15,13 @@ import { useMemo, useState } from "react";
 import { useGetUserOrganizations } from "@/hooks/services/engagement";
 import { PlusCircle } from "styled-icons/bootstrap";
 import { CreateOrganization } from "@/components/createOrganization/CreateOrganization";
+import { usePostRequest } from "@/hooks/services/requests";
+import { LoaderAlt } from "styled-icons/boxicons-regular";
 export function CreateQa() {
   const [isOpen, setOpen] = useState(false);
   const { organizations: organizationList, getOrganizations } =
     useGetUserOrganizations();
+  const { postData, isLoading } = usePostRequest("engagements/qa");
   const form = useForm<z.infer<typeof eventQaSettingSchema>>({
     resolver: zodResolver(eventQaSettingSchema),
   });
@@ -45,6 +48,10 @@ export function CreateQa() {
 
   function onClose() {
     setOpen((prev) => !prev);
+  }
+
+  async function onSubmit(values: z.infer<typeof eventQaSettingSchema>) {
+    await postData({ payload: values });
   }
   return (
     <>
@@ -111,8 +118,12 @@ export function CreateQa() {
             </Button>
           </div>
 
-          <Button className="text-white font-medium bg-basePrimary w-full max-w-xs mt-4">
-            Proceed
+          <Button
+            disabled={isLoading}
+            className="text-white gap-x-2 font-medium bg-basePrimary w-full max-w-xs mt-4"
+          >
+            <LoaderAlt size={20} />
+            <p> Proceed</p>
           </Button>
         </form>
       </Form>
