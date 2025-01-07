@@ -24,7 +24,7 @@ const AppointmentLoginForm = () => {
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    await logIn(formData, "/engagements");
+    await logIn(formData, "/home");
   }
 
   return (
@@ -88,7 +88,7 @@ const AppointmentLoginForm = () => {
         <button
           // disabled={loading}
           type="submit"
-          className="py-4 px-3 text-base w-full rounded-[8px] font-semibold mt-10 mb-6 text-white bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end"
+          className="py-4 px-3 text-base w-full rounded-[8px] font-semibold mt-10 mb-6 text-white bg-basePrimary"
         >
           {loading && <LoaderAlt size={22} className="animate-spin" />}
           Login

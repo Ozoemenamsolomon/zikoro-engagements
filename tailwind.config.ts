@@ -1,5 +1,6 @@
 import type { Config } from "tailwindcss";
 
+
 const config = {
   darkMode: ["class"],
   content: [
@@ -16,8 +17,8 @@ const config = {
       },
     },
     extend: {
-      gradientColorStops:
-        '(theme) => ({\n				"custom-gradient-start": "#001FCC",\n				"custom-gradient-end": "#9D00FF",\n				"custom-bg-gradient-start": "#001FCC19",\n				"custom-bg-gradient-end": "#9D00FF19",\n			})',
+      // gradientColorStops:
+      //   '(theme) => ({\n				"custom-gradient-start": "#001FCC",\n				"custom-gradient-end": "#9D00FF",\n				"custom-bg-gradient-start": "#001FCC19",\n				"custom-bg-gradient-end": "#9D00FF19",\n			})',
       linearGradientDirections: {
         "top-right": "to top right",
       },
@@ -26,6 +27,7 @@ const config = {
       colors: {
         zikoroBlue: "hsl(var(--zblue))",
         basePrimary: "#001FCC",
+        "basePrimary-100":"#F7F8FF",
         basebody: "#f3f3f3",
         baseBg: "#F9FAFF",
         ticketColor: "#CFCFCF",

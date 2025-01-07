@@ -6,9 +6,7 @@ import { ChevronDown } from "styled-icons/bootstrap";
 import { ThreeLineCircle, XCircle } from "@/constants/icons";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import logo from "@/public/logo.png";
-import bPreview from "@/public/otherPreviewB.png";
-import sPreview from "@/public/OtherTopPrevS.png";
+
 
 const Navbar = () => {
   const router = useRouter();
@@ -23,7 +21,7 @@ const Navbar = () => {
     <div className="py-6 px-3 md:px-6 relative ">
       <div className=" bg-white flex items-center lg:max-w-[970px] xl:max-w-[1165px] py-3 px-3 md:px-6 lg:px-[36px] rounded-[64px] justify-between mx-auto ">
         <Image
-          src={logo}
+          src={"/logo.png"}
           width={115}
           height={40}
           alt=""
@@ -63,7 +61,7 @@ const Navbar = () => {
       {isPreviewShowing && (
         <div className="absolute cursor-pointer hidden lg:block left-96 ">
           <Image
-            src={bPreview}
+            src={"/otherPreviewB.png"}
             className="w-[577px] h-[307px]"
             alt=""
             height={307}
@@ -83,7 +81,7 @@ const Navbar = () => {
               Other Products <ChevronDown size={20} />{" "}
               {isPreviewShowing && (
                 <Image
-                  src={sPreview}
+                  src={"/OtherTopPrevS.png"}
                   width={273}
                   height={278}
                   alt=""
@@ -116,7 +114,7 @@ const SignupBtn = () => {
   return (
     <Link
       href={"/signup"}
-      className="text-base px-[20px] py-[10px] text-white bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end rounded-[28px]"
+      className="text-base px-[20px] py-[10px] text-white bg-basePrimary rounded-[28px]"
     >
       Sign Up
     </Link>

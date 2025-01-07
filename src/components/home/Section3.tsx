@@ -1,8 +1,8 @@
 "use client";
 import Image from "next/image";
-import section1 from "@/public/section1.png";
-import section2 from "@/public/section2.png";
-import section3 from "@/public/section3.png";
+
+
+
 import { useRouter } from "next/navigation";
 
 export default function Section2() {
@@ -27,7 +27,7 @@ export default function Section2() {
           <div className="w-full lg:w-[50%]">
             <Image
               alt=""
-              src={section1}
+              src={"/section1.png"}
               width={309}
               height={87}
               className="w-full"
@@ -47,7 +47,7 @@ export default function Section2() {
           <div className="w-full lg:w-[50%]">
             <Image
               alt=""
-              src={section2}
+              src={"/section2.png"}
               width={309}
               height={87}
               className="w-full"
@@ -70,7 +70,7 @@ export default function Section2() {
           <div className="w-full lg:w-[50%]">
             <Image
               alt=""
-              src={section3}
+              src={"/section3.png"}
               width={309}
               height={87}
               className="w-full"

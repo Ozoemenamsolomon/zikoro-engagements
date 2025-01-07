@@ -3,9 +3,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { FooterMail, FooterMenu } from "@/constants/icons";
 import { useRouter } from "next/navigation";
-import logo from "@/public/logo.png";
-import sPreview from "@/public/otherPreviewS.png";
-import bPreview from "@/public/otherPreviewB.png";
+
 
 export default function Footer() {
   const router = useRouter();
@@ -20,7 +18,7 @@ export default function Footer() {
           onClick={() => router.push("https://www.zikoro.com/")}
         >
           <Image
-            src={sPreview}
+            src={"/otherPreviewS.png"}
             width={273}
             height={278}
             alt=""
@@ -36,7 +34,7 @@ export default function Footer() {
           onClick={() => router.push("https://www.zikoro.com")}
         >
           <Image
-            src={bPreview}
+            src={"/otherPreviewB.png"}
             width={557}
             height={307}
             alt=""
@@ -49,7 +47,7 @@ export default function Footer() {
       <div className="py-4 lg:py-[41px] lg:max-w-[970px] xl:max-w-[1200px] mx-auto flex justify-between items-center px-3 lg:px-0 ">
         {/* left */}
         <Image
-          src={logo}
+          src={"/logo.png"}
           width={115}
           height={40}
           alt=""

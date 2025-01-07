@@ -4,10 +4,6 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
-import img1 from "@/public/slider1.png";
-import img2 from "@/public/slider2.png";
-import img3 from "@/public/slider3.png";
-import img4 from "@/public/slider4.png";
 import { Pagination, Navigation, Autoplay } from "swiper/modules";
 import Image from "next/image";
 
@@ -49,7 +45,7 @@ export default function Section2() {
               <div className="w-full lg:w-[50%]">
                 <Image
                   alt=""
-                  src={img4}
+                  src={"/slider4.png"}
                   width={600}
                   height={374}
                   className="w-full lg:w-[600px] h-full"
@@ -72,7 +68,7 @@ export default function Section2() {
               <div className="w-full lg:w-[50%]">
                 <Image
                   alt=""
-                  src={img3}
+                  src={"/slider3.png"}
                   width={600}
                   height={374}
                   className="w-full lg:w-[600px] h-full"
@@ -95,7 +91,7 @@ export default function Section2() {
               <div className="w-full lg:w-[50%]">
                 <Image
                   alt=""
-                  src={img2}
+                  src={"/slider2.png"}
                   width={600}
                   height={374}
                   className="w-full lg:w-[600px] h-full"
@@ -118,7 +114,7 @@ export default function Section2() {
               <div className="w-full lg:w-[50%]">
                 <Image
                   alt=""
-                  src={img1}
+                  src={"/slider1.png"}
                   width={600}
                   height={374}
                   className="w-full lg:w-[600px] h-full"

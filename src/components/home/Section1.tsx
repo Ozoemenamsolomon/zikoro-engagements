@@ -1,5 +1,5 @@
 "use client"
-import HomeImage from "@/public/home1.png";
+
 import { useRouter } from "next/navigation";
 export default function Section1() {
   const router = useRouter()
@@ -9,7 +9,7 @@ export default function Section1() {
       <div
         className="bg-cover bg-no-repeat flex px-3 lg:px-0 justify-center h-[calc(100vh-30px)]  2xl:h-[40vh] [@media(min-width:3000px)]:h-[20vh] w-full max-w-full 2xl:max-w-[1128px] mx-auto "
         style={{
-          backgroundImage: `url(${HomeImage.src})`,
+          backgroundImage: `url(/home1.png)`,
         }}
       >
         {/* header text */}
