@@ -19,7 +19,7 @@ export function SideBarLayout({ children }: { children: React.ReactNode }) {
         isSideNav && "w-[calc(100%-60px)]"
       )}
     >
-      <div className="xl:w-[calc(100%-250px)] max-w-7xl mx-auto  min-[1280px]:float-right w-full">
+      <div className="xl:w-[calc(100%-250px)] max-w-7xl mx-auto px-4  min-[1280px]:float-right w-full">
         {children}
       </div>
 

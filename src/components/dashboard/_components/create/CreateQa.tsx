@@ -10,20 +10,26 @@ import { UploadImage } from "../UploadImage";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import _ from "lodash";
-import { eventQaSettingSchema } from "@/schemas/qa";
+import { eventQaCreationSchema } from "@/schemas/qa";
 import { useMemo, useState } from "react";
 import { useGetUserOrganizations } from "@/hooks/services/engagement";
 import { PlusCircle } from "styled-icons/bootstrap";
 import { CreateOrganization } from "@/components/createOrganization/CreateOrganization";
 import { usePostRequest } from "@/hooks/services/requests";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
+import useUserStore from "@/store/globalUserStore";
+import { TQa } from "@/types/qa";
+import { uploadFile } from "@/utils";
 export function CreateQa() {
   const [isOpen, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const { user } = useUserStore();
   const { organizations: organizationList, getOrganizations } =
     useGetUserOrganizations();
-  const { postData, isLoading } = usePostRequest("engagements/qa");
-  const form = useForm<z.infer<typeof eventQaSettingSchema>>({
-    resolver: zodResolver(eventQaSettingSchema),
+  const { postData, isLoading } =
+    usePostRequest<Partial<TQa>>("engagements/qa");
+  const form = useForm<z.infer<typeof eventQaCreationSchema>>({
+    resolver: zodResolver(eventQaCreationSchema),
   });
 
   const coverImg = form.watch("coverImage");
@@ -50,13 +56,30 @@ export function CreateQa() {
     setOpen((prev) => !prev);
   }
 
-  async function onSubmit(values: z.infer<typeof eventQaSettingSchema>) {
-    await postData({ payload: values });
+  async function onSubmit(values: z.infer<typeof eventQaCreationSchema>) {
+    setLoading(true)
+    const image = await new Promise(async (resolve) => {
+      if (typeof values?.coverImage === "string") {
+        resolve(values?.coverImage);
+      } else if (values?.coverImage && values?.coverImage[0]) {
+        const img = await uploadFile(values?.coverImage[0], "image");
+        resolve(img);
+      } else {
+        resolve(null);
+      }
+    });
+    await postData({
+      payload: { ...values, createdBy: user?.id, coverImage: image as string },
+    });
+    setLoading(false)
   }
   return (
     <>
       <Form {...form}>
-        <form className="flex flex-col items-center gap-4 w-full">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="flex flex-col items-center gap-4 w-full"
+        >
           <div className="flex items-center flex-col justify-center mb-4 gap-y-2">
             <QAIcon />
             <p className="font-semibold">Create Q&A</p>
@@ -94,7 +117,7 @@ export function CreateQa() {
           <div className="w-full flex items-end gap-x-2">
             <FormField
               control={form.control}
-              name="organisationAlias"
+              name="workspaceAlis"
               render={({ field }) => (
                 <InputOffsetLabel label="Organization">
                   <ReactSelect
@@ -109,9 +132,9 @@ export function CreateQa() {
               onClick={(e) => {
                 e.stopPropagation();
                 e.preventDefault();
-                // onClose();
+                onClose();
               }}
-              className="hover:bg-basePrimary  text-basePrimary  rounded-md border border-basePrimary hover:text-gray-50 gap-x-2 h-[3.2rem]  font-medium"
+              className="hover:bg-basePrimary  text-basePrimary  rounded-md border border-basePrimary hover:text-gray-50 gap-x-2 h-11 font-medium"
             >
               <PlusCircle size={22} />
               <p>Workspace</p>
@@ -119,10 +142,10 @@ export function CreateQa() {
           </div>
 
           <Button
-            disabled={isLoading}
+            disabled={loading}
             className="text-white gap-x-2 font-medium bg-basePrimary w-full max-w-xs mt-4"
           >
-            <LoaderAlt size={20} />
+            {loading && <LoaderAlt size={20} className="animate-spin" />}
             <p> Proceed</p>
           </Button>
         </form>

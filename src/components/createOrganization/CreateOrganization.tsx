@@ -266,7 +266,7 @@ export function CreateOrganization({
       <div
         onClick={(e) => e.stopPropagation()}
         role="button"
-        className="w-[95%] max-w-5xl grid grid-cols-1 md:grid-cols-9 box-animation h-fit  bg-white mx-auto my-12  md:my-auto absolute inset-x-0 md:inset-y-0 "
+        className="w-[95%] max-w-5xl grid grid-cols-1 md:grid-cols-9 box-animation h-fit transform transition-all duration-400 animate-float-in  bg-white mx-auto my-12  md:my-auto absolute inset-x-0 md:inset-y-0 "
       >
         <div className="w-full grid grid-cols-1 items-start justify-start bg-[#001fcc]/10 py-8 sm:py-10 px-4 sm:px-8 lg:px-10 md:col-span-4">
           <Button onClick={close} className="w-fit h-fit px-0">
@@ -283,16 +283,16 @@ export function CreateOrganization({
           <div className="flex items-center flex-row gap-x-3 ">
             <p className="text-mobile sm:text-desktop font-medium ">Monthly</p>
             <Switch
-              className="data-[state=unchecked]:bg-gray-400 data-[state=checked]:bg-zikoroBlue"
+              className=""
               checked={!isMonthly}
               onClick={() => setIsMonthly((monthly) => !monthly)}
             />
             <p className="text-mobile sm:text-desktop font-medium">Yearly</p>
 
             {isMonthly && (
-              <div className="relative text-[11px] lg:text-[14px] bg-zikoroBlue py-2 px-2 lg:px-2 text-white ml-2">
+              <div className="relative text-[11px] lg:text-[14px] bg-basePrimary py-2 px-2 lg:px-2 text-white ml-2">
                 save up to 15%
-                <div className="absolute left-0 top-0 bottom-0 w-[16px] bg-zikoroBlue transform -translate-x-full clip-triangle"></div>
+                <div className="absolute left-0 top-0 bottom-0 w-[16px] bg-basePrimary transform -translate-x-full clip-triangle"></div>
               </div>
             )}
           </div>

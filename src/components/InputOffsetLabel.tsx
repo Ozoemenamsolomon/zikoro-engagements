@@ -44,7 +44,7 @@ export default function InputOffsetLabel({
             prepend ? "[&>*]:pr-8" : ""
           }  w-full`}
         >
-          <div className="w-full">
+          <div className="w-full ">
             {children}
           </div>
         </div>

@@ -13,7 +13,7 @@ export function UploadImage({
   image: string | null;
 }) {
   return (
-    <div className="w-full rounded-lg p-4 border bg-basePrimary-100 h-72 flex flex-col items-center justify-center relative">
+    <div className=" rounded-lg p-4 border w-72 bg-basePrimary-100 h-72 flex flex-col items-center justify-center relative">
       <p>Cover Image</p>
       <p className="bg-zinc-700 mt-2 rounded-lg text-white text-mobile sm:text-sm p-2">
         Upload
@@ -32,11 +32,11 @@ export function UploadImage({
         className="w-full h-full absolute inset-0 z-20"
       >
         <input
-          id="eventImageUpload"
+          id="engagementImageUpload"
           type="file"
           {...form.register(name)}
           accept="image/*"
-          className="w-full h-full absolute inset-0 "
+          className="w-full h-full z-30 absolute inset-0 "
           hidden
         />
       </label>

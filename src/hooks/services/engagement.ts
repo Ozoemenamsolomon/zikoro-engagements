@@ -2,8 +2,9 @@
 
 import useUserStore from "@/store/globalUserStore";
 import { TOrganization } from "@/types/home";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useGetData } from "./requests";
+import { TQa } from "@/types/qa";
 
 export function useGetUserOrganizations() {
     // const userData = getCookie("user");
@@ -34,5 +35,28 @@ export function useGetUserOrganizations() {
     return {
       organizations: userOrganizations,
       getOrganizations,
+      loading: orgLoading
     };
+  }
+
+
+  export function useGetUserEngagements() {
+    const [qa, setQa] = useState<TQa[]>([])
+    const {organizations, loading: isLoading} = useGetUserOrganizations()
+    const [loading, setLoading] = useState(false)
+
+
+    useEffect(() => {
+      if (!isLoading) {
+        const organizationAlias = organizations.map(({ organizationAlias }) => organizationAlias);
+
+        // // getting events that matches those organization ids
+        // const matchingEvents = events?.filter((event) => {
+        //   return organizationIds.includes(Number(event?.organisationId));
+        // });
+
+      }
+
+    },[isLoading, organizations])
+
   }

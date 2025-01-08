@@ -77,7 +77,7 @@ function ActionCard({
     >
       <Icon />
       <p>{name}</p>
-      <div className="w-10 h-10 rounded-full flex absolute items-center border justify-center bottom-3 right-4">
+      <div className="w-4 sm:w-10 h-4 sm:h-10 rounded-full flex absolute items-center border justify-center bottom-3 right-4">
         <ArrowLeftIcon />
       </div>
     </button>
@@ -94,11 +94,18 @@ function HomeEngagementCard() {
         width={200}
         height={200}
       />
-      <div className="w-full col-span-5 flex flex-col items-start justify-start gap-3">
-        <p className="font-semibold text-desktop sm:text-lg">Engagement Name</p>
-        <p className="w-full text-gray-500 line-clamp-3 ">description</p>
+      <div className="w-full col-span-5 flex items-start justify-between">
+        <div className="w-full flex flex-col items-start justify-start gap-3">
+          <p className="font-semibold text-desktop sm:text-lg">
+            Engagement Name
+          </p>
+          <p className="w-full text-gray-500 line-clamp-3 ">description</p>
 
-        <p>Questions</p>
+          <p>Questions</p>
+        </div>
+        <p className="border border-basePrimary rounded-3xl h-8 flex items-center justify-center px-3 bg-basePrimary gradient-text">
+          Q&A
+        </p>
       </div>
     </div>
   );
