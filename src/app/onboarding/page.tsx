@@ -1,8 +1,6 @@
 import Onboarding from "@/components/onboarding/Onboarding";
 import Image from "next/image";
 import React from "react";
-import sBanner from "@/public/appointments/signupBannerS.webp";
-import bBanner from "@/public/appointments/signupBanner.png";
 
 type SearchParamsType = {
   email: string;
@@ -18,7 +16,7 @@ const AppointmentSignupPage = ({
     <div className="bg-[#f9faff] min-h-screen">
       {/* banner */}
       <Image
-        src={bBanner}
+        src={"/appointments/signupBanner.png"}
         alt="banner"
         width={1140}
         height={377}
@@ -26,7 +24,7 @@ const AppointmentSignupPage = ({
       />
 
       <Image
-        src={sBanner}
+        src={"/appointments/signupBannerS.webp"}
         alt="banner"
         width={375}
         height={215}
