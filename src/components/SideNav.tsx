@@ -68,7 +68,7 @@ export default function SideNav({
         </div>
         <div className="w-full h-[45vh] overflow-y-auto no-scrollbar">
           <div className="w-full flex  flex-col gap-y-3 items-start justify-start px-3">
-            {navLinks.slice(0, 3).map((nav, index) => (
+            {navLinks.slice(0, 2).map((nav, index) => (
               <Navs
               key={index}
                 actionFn={close}

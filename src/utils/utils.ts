@@ -9,10 +9,17 @@ export async function isImageValid(url: string): Promise<boolean> {
   }
 
   export function generateAlias(): string {
-    const alias = nanoid().replace(/-/g, "").substring(0, 20);
+    const alias = nanoid().replace(/[-_]/g, "").substring(0, 20);
   
     return alias;
   }
+
+  export function generateInteractionAlias(): string {
+    const alias = nanoid().replace(/[-_]/g, "").substring(0, 6).toUpperCase();
+  
+    return alias;
+  }
+  
   
   export async function uploadFile(file: File | string, type: string) {
     const formData = new FormData();
@@ -53,4 +60,17 @@ export async function isImageValid(url: string): Promise<boolean> {
       return null;
     }
   }
+  export const formatReviewNumber = (number: number): string => {
+    if (number === 0) {
+      return "0";
+    }
+    const suffixes = ["", "k", "M", "B", "T"];
+    const suffixNum = Math.floor(Math.log10(number) / 3);
   
+    if (suffixNum === 0) {
+      return number.toString();
+    }
+  
+    const shortValue = (number / Math.pow(1000, suffixNum)).toFixed(1);
+    return shortValue + suffixes[suffixNum];
+  };

@@ -19,7 +19,7 @@ import { usePostRequest } from "@/hooks/services/requests";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
 import useUserStore from "@/store/globalUserStore";
 import { TQa } from "@/types/qa";
-import { uploadFile } from "@/utils";
+import { generateAlias, generateInteractionAlias, uploadFile } from "@/utils";
 export function CreateQa() {
   const [isOpen, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -56,8 +56,12 @@ export function CreateQa() {
     setOpen((prev) => !prev);
   }
 
+  const alias = useMemo(() => {
+    return generateInteractionAlias();
+  }, []);
+
   async function onSubmit(values: z.infer<typeof eventQaCreationSchema>) {
-    setLoading(true)
+    setLoading(true);
     const image = await new Promise(async (resolve) => {
       if (typeof values?.coverImage === "string") {
         resolve(values?.coverImage);
@@ -69,9 +73,17 @@ export function CreateQa() {
       }
     });
     await postData({
-      payload: { ...values, createdBy: user?.id, coverImage: image as string },
+      payload: {
+        ...values,
+        createdBy: user?.id,
+        coverImage: image as string,
+        QandAAlias: alias,
+        lastUpdated_at: new Date().toISOString(),
+      },
     });
-    setLoading(false)
+    setLoading(false);
+
+    window.open(`/e/${values?.workspaceAlis}/qa/o/${alias}`, "_self");
   }
   return (
     <>

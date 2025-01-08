@@ -1,6 +1,4 @@
 import { createClient } from "@/utils/supabase/server";
-
-import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -9,7 +7,7 @@ export async function POST(req: NextRequest) {
     try {
       const params = await req.json();
 
-      const { error } = await supabase.from("QandA").upsert(params);
+      const { error } = await supabase.from("QandAQuestions").upsert(params);
 
       if (error) {
         return NextResponse.json(
@@ -23,7 +21,7 @@ export async function POST(req: NextRequest) {
 
 
       return NextResponse.json(
-        { msg: "Q&A Created Successfully" },
+        { msg: "Q&A Question Created Successfully" },
         {
           status: 200,
         }
@@ -48,7 +46,7 @@ export async function GET(req: NextRequest) {
 
   if (req.method === "GET") {
     try {
-      const { data, error } = await supabase.from("QandA").select("*");
+      const { data, error } = await supabase.from("QandAQuestions").select("*");
 
       if (error) {
         return NextResponse.json(

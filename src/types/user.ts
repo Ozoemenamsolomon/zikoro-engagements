@@ -18,3 +18,11 @@ export interface TAuthUser {
 }
 
 
+
+export interface TUserAccess {
+  userId:string;
+  userNickName?:string;
+  userImage?:string;
+
+  
+}
