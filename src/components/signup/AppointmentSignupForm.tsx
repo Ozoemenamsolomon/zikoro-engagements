@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { useRegistration } from "@/hooks/services/auth";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
-import logoFooter from "@/public/appointments/logoFooter.png";
 
 const AppointmentSignupForm = () => {
   const router = useRouter();
@@ -30,7 +29,7 @@ const AppointmentSignupForm = () => {
     <div className="bg-white py-[16px] lg:py-[37px] px-3 lg:px-[42px]  rounded-[8px] max-w-full lg:max-w-[542px] ">
       <div className="flex justify-center ">
         <Image
-          src={logoFooter}
+          src={"/appointments/logoFooter.png"}
           width={115}
           height={40}
           alt=""

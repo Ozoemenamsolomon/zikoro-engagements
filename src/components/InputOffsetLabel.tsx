@@ -5,7 +5,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import React from "react";
-import {cn} from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 export default function InputOffsetLabel({
   children,
@@ -24,7 +24,7 @@ export default function InputOffsetLabel({
 }) {
   return (
     <FormItem className={cn("relative space-y-4 w-full",className)}>
-      <FormLabel className=" text-gray-600">
+      <FormLabel className="mb-2 text-gray-600">
         {label}
         {isRequired && <sup className="text-red-700">*</sup>}
       </FormLabel>
@@ -42,9 +42,9 @@ export default function InputOffsetLabel({
         <div
           className={`${append ? "[&>*]:pl-8" : ""} ${
             prepend ? "[&>*]:pr-8" : ""
-          }  border border-basePrimary rounded-md p-[0.2rem]`}
+          }  w-full`}
         >
-          <div className="w-full bg-gradient-to-tr rounded-md from-custom-bg-gradient-start to-custom-bg-gradient-end placeholder-gray-500">
+          <div className="w-full ">
             {children}
           </div>
         </div>
