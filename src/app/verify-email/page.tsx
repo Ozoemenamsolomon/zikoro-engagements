@@ -7,7 +7,7 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import VerificationInput from "react-verification-input";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
-import mailImage from "@/public/mail64.png";
+
 
 type SearchParams = {
   email: string;
@@ -47,7 +47,7 @@ export default function Page({
     <div className="w-full h-full inset-0 fixed">
       <div className="w-fit h-fit m-auto inset-0 absolute flex flex-col gap-y-2 items-center justify-center px-4">
         <Image
-          src={mailImage}
+          src={"/mail64.png"}
           alt="mail"
           className="w-20 h-20"
           width={100}

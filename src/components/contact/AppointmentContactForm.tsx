@@ -3,7 +3,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { useContactUs } from "@/hooks/services/contactUs";
-import confirm from "@/public/appointments/bookingsMessage.png";
+
 const AppointmentContactForm = () => {
   const [mailSent, setMailSent] = useState<boolean>(false);
   const root = "engagements";
@@ -45,7 +45,7 @@ const AppointmentContactForm = () => {
       {mailSent ? (
         <div className="flex flex-col items-center h-[50vh] justify-center">
           <Image
-            src={confirm}
+            src={"/appointments/bookingsMessage.png"}
             width={82}
             height={82}
             alt=""

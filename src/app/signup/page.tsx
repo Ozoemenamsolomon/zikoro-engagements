@@ -1,13 +1,12 @@
 import React from "react";
 import AppointmentSignupForm from "@/components/signup/AppointmentSignupForm";
-import bgImg from "@/public/bgImg.webp";
 
 const AppointmentSignupPage = () => {
   return (
     <div
       className="flex items-center lg:items-start w-full h-screen justify-center gap-x-[162px] lg:h-screen xl:h-screen py-1 px-5 lg:py-[50px] lg:px-[50px] xl:px-[91px] xl:py-[50px] max-w-full"
       style={{
-        backgroundImage: `url(${bgImg.src})`,
+        backgroundImage: `url(/bgImg.webp)`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
