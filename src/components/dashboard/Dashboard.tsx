@@ -99,10 +99,12 @@ function ActionCard({
 
 function HomeEngagementCard({qa}:{qa: TQa}) {
   return (
-    <div className="w-full rounded-lg gap-3 text-sm border border-basePrimary-100 p-3 grid grid-cols-7">
+    <div
+    onClick={() => window.open(`/e/${qa?.workspaceAlis}/qa/a/${qa?.QandAAlias}`, "_self")}
+    className="w-full rounded-lg gap-3 text-sm border border-basePrimary-100 p-3 grid grid-cols-7">
       <ZikoroImage
         src={qa?.coverImage}
-        alt="engagement"
+        alt="engagement"F
         className="w-full h-[100px] rounded-lg col-span-2"
         width={200}
         height={200}
