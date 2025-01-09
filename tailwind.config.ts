@@ -17,8 +17,8 @@ const config = {
       },
     },
     extend: {
-      gradientColorStops:
-        '(theme) => ({\n				"custom-gradient-start": "#001FCC",\n				"custom-gradient-end": "#9D00FF",\n				"custom-bg-gradient-start": "#001FCC19",\n				"custom-bg-gradient-end": "#9D00FF19",\n			})',
+      // gradientColorStops:
+      //   '(theme) => ({\n				"custom-gradient-start": "#001FCC",\n				"custom-gradient-end": "#9D00FF",\n				"custom-bg-gradient-start": "#001FCC19",\n				"custom-bg-gradient-end": "#9D00FF19",\n			})',
       linearGradientDirections: {
         "top-right": "to top right",
       },
