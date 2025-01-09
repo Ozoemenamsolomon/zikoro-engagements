@@ -104,7 +104,7 @@ function HomeEngagementCard({qa}:{qa: TQa}) {
     className="w-full rounded-lg gap-3 text-sm border border-basePrimary-100 p-3 grid grid-cols-7">
       <ZikoroImage
         src={qa?.coverImage}
-        alt="engagement"F
+        alt="engagement"
         className="w-full h-[100px] rounded-lg col-span-2"
         width={200}
         height={200}
