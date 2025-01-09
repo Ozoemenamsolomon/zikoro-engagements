@@ -128,8 +128,13 @@ export function QaSetting({
         description: qa?.description,
       });
 
+     if(qa?.branding) {
       setBranding(qa?.branding);
-      setAccessibility(qa?.accessibility);
+     }
+      if (qa?.accessibility) {
+        setAccessibility(qa?.accessibility);
+      }
+    
     }
   }, [qa]);
 
@@ -229,7 +234,7 @@ export function QaSetting({
             <p className="font-semibold">Branding</p>
 
             <div className="flex w-full text-mobile sm:text-sm items-center justify-between">
-              <p>Show Event Name</p>
+              <p>Show QA Name</p>
               <Switch
                 disabled={loading}
                 checked={branding?.eventName}

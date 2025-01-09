@@ -204,7 +204,7 @@ export default function QaOrganizerView({
           )}
         >
           <QaAdvert
-            eventName={organization?.organizationName ?? ""}
+            eventName={qa?.coverTitle ?? ""}
             close={() => {
               setIsRightBox(!isRightBox);
               // setIsLeftBox(true)

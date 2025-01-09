@@ -60,7 +60,7 @@ export const ReactSelect = React.forwardRef<
           {label}
         </label>
       )} */}
-     <div className={cn("w-full h-[48px]", height)}>
+     <div className={cn("w-full")}>
      <Select
         defaultValue={defaultValue}
         placeholder={placeHolder}
@@ -73,8 +73,9 @@ export const ReactSelect = React.forwardRef<
             // "&:hover": {
             //   borderColor: borderColor || "#6b7280",
             // },
+          
             height: "100%",
-            minHeight: "48px",
+            minHeight: "35px",
              backgroundColor: "#F7F8FF",
             boxShadow: "0px",
             borderRadius: "6px",
@@ -117,7 +118,9 @@ export const ReactSelect = React.forwardRef<
           }),
           container: (baseStyle) => ({
             ...baseStyle,
-            height: "48px",
+            height: "35px",
+            border: '1px',
+            borderColor:"#e5e5e5"
           }),
         }}
         options={options}

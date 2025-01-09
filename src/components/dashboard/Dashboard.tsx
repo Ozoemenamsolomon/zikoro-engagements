@@ -3,6 +3,7 @@
 import { ArrowLeftIcon, engagementHomeLinks } from "@/constants";
 import Link from "next/link";
 import { ZikoroImage } from "../custom";
+import { ScrollableCards } from "../custom/ScrollableCards";
 import useUserStore from "@/store/globalUserStore";
 import { useState } from "react";
 import { CreateEngagement } from "./_components/CreateEngagement";
@@ -30,9 +31,10 @@ export default function Dashboard() {
         </p>
         <p>What engagement feature will you be using today?</p>
       </div>
-      <div className="w-full py-4  mb-4 sm:mb-6 overflow-x-auto no-scrollbar">
-        <div className="w-full min-w-max flex items-center gap-3 sm:gap-4">
-          {engagementHomeLinks.map((nav, index) => (
+      <div className="w-full py-4  mb-4 sm:mb-6 ">
+      <ScrollableCards>
+
+      {engagementHomeLinks.map((nav, index) => (
             <ActionCard
               key={index}
               index={index}
@@ -42,8 +44,10 @@ export default function Dashboard() {
               showCreate={showModal}
             />
           ))}
-        </div>
-      </div>
+      </ScrollableCards>
+   </div>
+       
+    
       <div className="w-full bg-white p-4 rounded-lg">
         <h2 className="font-medium mb-3 sm:mb-6">Engagements</h2>
 

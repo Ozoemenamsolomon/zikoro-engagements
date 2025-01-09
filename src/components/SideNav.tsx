@@ -122,7 +122,7 @@ function Navs({
       href={href}
       onClick={actionFn}
       className={cn(
-        "flex items-center w-full gap-x-2 p-2 rounded-lg",
+        "flex items-center justify-center group-hover:justify-center w-full gap-x-2 p-2 rounded-lg",
         isActive && "bg-basePrimary-100"
       )}
     >

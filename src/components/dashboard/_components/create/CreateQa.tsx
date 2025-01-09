@@ -90,7 +90,7 @@ export function CreateQa() {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col items-center gap-4 w-full"
+          className="flex flex-col text-sm items-center gap-4 w-full"
         >
           <div className="flex items-center flex-col justify-center mb-4 gap-y-2">
             <QAIcon />
@@ -146,19 +146,19 @@ export function CreateQa() {
                 e.preventDefault();
                 onClose();
               }}
-              className="hover:bg-basePrimary  text-basePrimary  rounded-md border border-basePrimary hover:text-gray-50 gap-x-2 h-11 font-medium"
+              className="hover:bg-basePrimary text-basePrimary  rounded-md border border-basePrimary hover:text-gray-50 gap-x-2 h-11 font-medium"
             >
-              <PlusCircle size={22} />
-              <p>Workspace</p>
+              <PlusCircle size={20} />
+              <p className="text-sm">Workspace</p>
             </Button>
           </div>
 
           <Button
             disabled={loading}
-            className="text-white gap-x-2 font-medium bg-basePrimary w-full max-w-xs mt-4"
+            className="text-white h-11 gap-x-2 font-medium bg-basePrimary w-full max-w-xs mt-4"
           >
             {loading && <LoaderAlt size={20} className="animate-spin" />}
-            <p> Proceed</p>
+            <p> Create</p>
           </Button>
         </form>
       </Form>
