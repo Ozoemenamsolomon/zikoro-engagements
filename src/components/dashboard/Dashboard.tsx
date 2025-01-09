@@ -100,7 +100,7 @@ function HomeEngagementCard({ qa }: { qa: TQa }) {
   return (
     <div
       onClick={() =>
-        window.open(`/e/${qa?.workspaceAlis}/qa/a/${qa?.QandAAlias}`, "_self")
+        window.open(`/e/${qa?.workspaceAlis}/qa/o/${qa?.QandAAlias}`, "_self")
       }
       className="w-full rounded-lg gap-3 text-sm border border-basePrimary-100 p-3 grid grid-cols-7"
     >
