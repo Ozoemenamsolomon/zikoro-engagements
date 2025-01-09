@@ -67,13 +67,7 @@ export const ReactSelect = React.forwardRef<
         styles={{
           control: (baseStyles, state) => ({
             ...baseStyles,
-            // borderColor: state?.isFocused
-            //   ?"#818cf8"
-            //   :  "#818cf8",
-            // "&:hover": {
-            //   borderColor: borderColor || "#6b7280",
-            // },
-          
+         
             height: "100%",
             minHeight: "35px",
              backgroundColor: "#F7F8FF",

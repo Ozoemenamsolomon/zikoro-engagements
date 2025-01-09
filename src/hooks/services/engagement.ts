@@ -42,20 +42,30 @@ export function useGetUserOrganizations() {
 export function useGetUserEngagements() {
   const [qa, setQa] = useState<TQa[]>([]);
   const { organizations, loading: isLoading } = useGetUserOrganizations();
+  const {data: qas, isLoading: qaLoading} = useGetData<TQa[]>("engagements/qa")
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!isLoading) {
+    if (!isLoading && !qaLoading) {
+      setLoading(true)
       const organizationAlias = organizations.map(
         ({ organizationAlias }) => organizationAlias
       );
 
-      // // getting events that matches those organization ids
-      // const matchingEvents = events?.filter((event) => {
-      //   return organizationIds.includes(Number(event?.organisationId));
-      // });
+     
+      const matchingQas = qas?.filter((qa) => {
+        return organizationAlias.includes(qa?.workspaceAlis);
+      });
+      setQa(matchingQas)
+      setLoading(false)
     }
   }, [isLoading, organizations]);
+
+
+  return {
+    qa,
+    loading
+  }
 }
 
 export function useVerifyUserAccess(workspaceAlias: string) {
