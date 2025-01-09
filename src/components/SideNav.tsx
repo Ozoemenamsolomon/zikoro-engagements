@@ -15,7 +15,7 @@ export function SideBarLayout({ children }: { children: React.ReactNode }) {
   return (
     <div
       className={cn(
-        "w-full sm:w-[calc(100%-60px)]  float-right right-0 z-[48] fixed top-0 flex justify-between items-center ",
+        "w-full sm:w-[calc(100%-60px)]  float-right right-0 z-[48]  top-0 flex justify-between items-center ",
         isSideNav && "w-[calc(100%-60px)]"
       )}
     >

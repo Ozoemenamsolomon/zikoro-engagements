@@ -52,7 +52,7 @@ export default function Dashboard() {
    </div>
        
     
-      <div className="w-full bg-white p-4 rounded-lg">
+      <div className="w-full  bg-white p-4 rounded-lg">
         <h2 className="font-medium mb-3 sm:mb-6">Engagements</h2>
 
         <div className="w-full flex flex-col items-start justify-start gap-4">
@@ -64,6 +64,7 @@ export default function Dashboard() {
             <HomeEngagementCard key={index} qa={singleqa} />
           ))}
         </div>
+
       </div>
       {isOpen && <CreateEngagement close={onClose} type={currentIndex} />}
     </div>
