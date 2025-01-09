@@ -3,7 +3,7 @@
 import { ArrowLeftIcon, engagementHomeLinks } from "@/constants";
 import Link from "next/link";
 import { ZikoroImage } from "../custom";
-import Image from "next/image"
+import Image from "next/image";
 import { ScrollableCards } from "../custom/ScrollableCards";
 import useUserStore from "@/store/globalUserStore";
 import { useState } from "react";
@@ -15,7 +15,7 @@ export default function Dashboard() {
   const { user } = useUserStore();
   const [isOpen, setOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const {qa, loading} = useGetUserEngagements()
+  const { qa, loading } = useGetUserEngagements();
 
   function onClose() {
     setOpen((prev) => !prev);
@@ -36,9 +36,8 @@ export default function Dashboard() {
         <p>What engagement feature will you be using today?</p>
       </div>
       <div className="w-full py-4  mb-4 sm:mb-6 ">
-      <ScrollableCards>
-
-      {engagementHomeLinks.map((nav, index) => (
+        <ScrollableCards>
+          {engagementHomeLinks.map((nav, index) => (
             <ActionCard
               key={index}
               index={index}
@@ -48,23 +47,23 @@ export default function Dashboard() {
               showCreate={showModal}
             />
           ))}
-      </ScrollableCards>
-   </div>
-       
-    
+        </ScrollableCards>
+      </div>
+
       <div className="w-full  bg-white p-4 rounded-lg">
         <h2 className="font-medium mb-3 sm:mb-6">Engagements</h2>
 
         <div className="w-full flex flex-col items-start justify-start gap-4">
-
-          {qa?.length=== 0 && <div className="w-full h-[200px] flex items-center justify-center">
-            <h2 className="font-medium text-lg">No Data</h2>
-            </div>}
-          {Array.isArray(qa) && qa.map((singleqa, index) => (
-            <HomeEngagementCard key={index} qa={singleqa} />
-          ))}
+          {qa?.length === 0 && (
+            <div className="w-full h-[200px] flex items-center justify-center">
+              <h2 className="font-medium text-lg">No Data</h2>
+            </div>
+          )}
+          {Array.isArray(qa) &&
+            qa.map((singleqa, index) => (
+              <HomeEngagementCard key={index} qa={singleqa} />
+            ))}
         </div>
-
       </div>
       {isOpen && <CreateEngagement close={onClose} type={currentIndex} />}
     </div>
@@ -97,26 +96,36 @@ function ActionCard({
   );
 }
 
-function HomeEngagementCard({qa}:{qa: TQa}) {
+function HomeEngagementCard({ qa }: { qa: TQa }) {
   return (
     <div
-    onClick={() => window.open(`/e/${qa?.workspaceAlis}/qa/a/${qa?.QandAAlias}`, "_self")}
-    className="w-full rounded-lg gap-3 text-sm border border-basePrimary-100 p-3 grid grid-cols-7">
-      <ZikoroImage
-        src={qa?.coverImage}
-        alt="engagement"
-        className="w-full h-[100px] rounded-lg col-span-2"
-        width={200}
-        height={200}
-      />
+      onClick={() =>
+        window.open(`/e/${qa?.workspaceAlis}/qa/a/${qa?.QandAAlias}`, "_self")
+      }
+      className="w-full rounded-lg gap-3 text-sm border border-basePrimary-100 p-3 grid grid-cols-7"
+    >
+      {qa?.coverImage ? (
+        <Image
+          src={qa?.coverImage}
+          alt="engagement"
+          className="w-full h-[100px] rounded-lg col-span-2"
+          width={200}
+          height={200}
+        />
+      ) : (
+        <div
+          className="bg-basePrimary-100 w-full h-[100px] rounded-lg col-span-2"
+        
+        ></div>
+      )}
       <div className="w-full col-span-5 flex items-start justify-between">
         <div className="w-full flex flex-col items-start justify-start gap-3">
           <p className="font-semibold text-desktop sm:text-lg">
-            {qa?.coverTitle ?? ''}
+            {qa?.coverTitle ?? ""}
           </p>
-          <p className="w-full text-gray-500 line-clamp-3 ">{qa?.description ?? ''}</p>
-
-          
+          <p className="w-full text-gray-500 line-clamp-3 ">
+            {qa?.description ?? ""}
+          </p>
         </div>
         <p className="border border-basePrimary rounded-3xl h-8 flex items-center justify-center px-3 bg-basePrimary gradient-text">
           Q&A
