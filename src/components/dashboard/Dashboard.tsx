@@ -9,13 +9,16 @@ import useUserStore from "@/store/globalUserStore";
 import { useState } from "react";
 import { CreateEngagement } from "./_components/CreateEngagement";
 import { useGetUserEngagements } from "@/hooks/services/engagement";
-import { TQa } from "@/types/qa";
+import { TOrganizationQa, TQa } from "@/types/qa";
+import { LoaderAlt } from "styled-icons/boxicons-regular";
+import { cn } from "@/lib/utils";
+import { TOrganizationQuiz } from "@/types/quiz";
 
 export default function Dashboard() {
   const { user } = useUserStore();
   const [isOpen, setOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const { qa, loading } = useGetUserEngagements();
+  const { qas, loading, quizzes } = useGetUserEngagements();
 
   function onClose() {
     setOpen((prev) => !prev);
@@ -45,6 +48,7 @@ export default function Dashboard() {
               name={nav.name}
               href={nav.link}
               showCreate={showModal}
+              currentIndex={currentIndex}
             />
           ))}
         </ScrollableCards>
@@ -52,16 +56,24 @@ export default function Dashboard() {
 
       <div className="w-full  bg-white p-4 rounded-lg">
         <h2 className="font-medium mb-3 sm:mb-6">Engagements</h2>
-
+        {loading && (
+          <div className="w-full h-[200px] flex items-center justify-center">
+            <LoaderAlt className="animate-spin" size={30} />
+          </div>
+        )}
+        {qas?.length === 0 && (
+          <div className="w-full h-[200px] flex items-center justify-center">
+            <h2 className="font-medium text-lg">No Data</h2>
+          </div>
+        )}
         <div className="w-full flex flex-col items-start justify-start gap-4">
-          {qa?.length === 0 && (
-            <div className="w-full h-[200px] flex items-center justify-center">
-              <h2 className="font-medium text-lg">No Data</h2>
-            </div>
-          )}
-          {Array.isArray(qa) &&
-            qa.map((singleqa, index) => (
-              <HomeEngagementCard key={index} qa={singleqa} />
+          {Array.isArray(quizzes) &&
+            quizzes.map((quiz, index) => (
+              <HomeEngagementCard key={index} data={quiz} type="quiz" />
+            ))}
+          {Array.isArray(qas) &&
+            qas.map((qa, index) => (
+              <HomeEngagementCard key={index} data={qa} type="qa" />
             ))}
         </div>
       </div>
@@ -75,17 +87,22 @@ function ActionCard({
   name,
   index,
   showCreate,
+  currentIndex,
 }: {
   Icon: React.ElementType;
   name: string;
   href: string;
   index: number;
   showCreate: (t: number) => void;
+  currentIndex: number;
 }) {
   return (
     <button
       onClick={() => showCreate(index)}
-      className="w-[100px] h-[100px] rounded-lg p-4 bg-white sm:w-[200px] relative sm:h-[200px] gap-3 flex flex-col items-center justify-center"
+      className={cn(
+        "w-[100px] h-[100px] rounded-lg p-4 bg-white sm:w-[200px] relative sm:h-[200px] gap-3 flex flex-col items-center justify-center",
+        currentIndex === index && "border border-basePrimary"
+      )}
     >
       <Icon />
       <p>{name}</p>
@@ -96,39 +113,56 @@ function ActionCard({
   );
 }
 
-function HomeEngagementCard({ qa }: { qa: TQa }) {
+function HomeEngagementCard({
+  data,
+  type,
+}: {
+  data: TOrganizationQa | TOrganizationQuiz;
+  type: string;
+}) {
   return (
     <div
-      onClick={() =>
-        window.open(`/e/${qa?.workspaceAlis}/qa/o/${qa?.QandAAlias}`, "_self")
-      }
+      onClick={() => {
+        if (type === "qa") {
+          window.open(
+            `/e/${data?.workspaceAlias}/qa/o/${
+              (data as TOrganizationQa)?.QandAAlias
+            }`,
+            "_self"
+          );
+        } else {
+          window.open(
+            `/e/${data?.workspaceAlias}/q/o/${
+              (data as TOrganizationQuiz)?.quizAlias
+            }`,
+            "_self"
+          );
+        }
+      }}
       className="w-full rounded-lg gap-3 text-sm border border-basePrimary-100 p-3 grid grid-cols-7"
     >
-      {qa?.coverImage ? (
+      {data?.coverImage ? (
         <Image
-          src={qa?.coverImage}
+          src={data?.coverImage}
           alt="engagement"
           className="w-full h-[100px] rounded-lg col-span-2"
           width={200}
           height={200}
         />
       ) : (
-        <div
-          className="bg-basePrimary-100 w-full h-[100px] rounded-lg col-span-2"
-        
-        ></div>
+        <div className="bg-basePrimary-100 w-full h-[100px] rounded-lg col-span-2"></div>
       )}
       <div className="w-full col-span-5 flex items-start justify-between">
         <div className="w-full flex flex-col items-start justify-start gap-3">
           <p className="font-semibold text-desktop sm:text-lg">
-            {qa?.coverTitle ?? ""}
+            {data?.coverTitle ?? ""}
           </p>
           <p className="w-full text-gray-500 line-clamp-3 ">
-            {qa?.description ?? ""}
+            {data?.description ?? ""}
           </p>
         </div>
         <p className="border border-basePrimary rounded-3xl h-8 flex items-center justify-center px-3 bg-basePrimary gradient-text">
-          Q&A
+          {type === "qa" ? "Q&A" : "Quiz"}
         </p>
       </div>
     </div>

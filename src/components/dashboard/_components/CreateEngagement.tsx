@@ -2,6 +2,7 @@ import { Button } from "@/components/custom";
 import { InlineIcon } from "@iconify/react/dist/iconify.js";
 import { CreateQa } from "./create/CreateQa";
 import { CreateType } from "@/types/home";
+import { CreateQuiz } from "./create/CreateQuiz";
 
 
 export function CreateEngagement({
@@ -35,6 +36,8 @@ function RenderCreateEngagement({ type }: { type: number }) {
   switch (type) {
     case CreateType.qa:
       return <CreateQa/>;
+      case CreateType.quiz:
+        return <CreateQuiz/>;  
     default:
       return <></>;
   }

@@ -34,7 +34,7 @@ export default function JoinQA() {
     const response = await getData(value.code);
 
     window.open(
-      `/e/${response?.workspaceAlis}/qa/a/${response?.QandAAlias}`,
+      `/e/${response?.workspaceAlias}/qa/a/${response?.QandAAlias}`,
       "_self"
     );
   }

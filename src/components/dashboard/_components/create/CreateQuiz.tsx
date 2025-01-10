@@ -4,13 +4,13 @@ import InputOffsetLabel from "@/components/InputOffsetLabel";
 import { useForm } from "react-hook-form";
 import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { QAIcon } from "@/constants";
+import { QuizIcon } from "@/constants";
 import { Button, ReactSelect } from "@/components/custom";
 import { UploadImage } from "../UploadImage";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import _ from "lodash";
-import { eventQaCreationSchema } from "@/schemas/qa";
+import { quizCreationSchema } from "@/schemas/quiz";
 import { useMemo, useState } from "react";
 import { useGetUserOrganizations } from "@/hooks/services/engagement";
 import { PlusCircle } from "styled-icons/bootstrap";
@@ -18,18 +18,19 @@ import { CreateOrganization } from "@/components/createOrganization/CreateOrgani
 import { usePostRequest } from "@/hooks/services/requests";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
 import useUserStore from "@/store/globalUserStore";
-import { TQa } from "@/types/qa";
-import { generateAlias, generateInteractionAlias, uploadFile } from "@/utils";
-export function CreateQa() {
+import { generateInteractionAlias, uploadFile } from "@/utils";
+import { TQuestion, TQuiz } from "@/types/quiz";
+
+export function CreateQuiz() {
   const [isOpen, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const { user } = useUserStore();
   const { organizations: organizationList, getOrganizations } =
     useGetUserOrganizations();
   const { postData, isLoading } =
-    usePostRequest<Partial<TQa>>("engagements/qa");
-  const form = useForm<z.infer<typeof eventQaCreationSchema>>({
-    resolver: zodResolver(eventQaCreationSchema),
+    usePostRequest<Partial<TQuiz<TQuestion>>>("engagements/quiz");
+  const form = useForm<z.infer<typeof quizCreationSchema>>({
+    resolver: zodResolver(quizCreationSchema),
   });
 
   const coverImg = form.watch("coverImage");
@@ -60,7 +61,7 @@ export function CreateQa() {
     return generateInteractionAlias();
   }, []);
 
-  async function onSubmit(values: z.infer<typeof eventQaCreationSchema>) {
+  async function onSubmit(values: z.infer<typeof quizCreationSchema>) {
     setLoading(true);
     const image = await new Promise(async (resolve) => {
       if (typeof values?.coverImage === "string") {
@@ -77,7 +78,7 @@ export function CreateQa() {
         ...values,
         createdBy: user?.id,
         coverImage: image as string,
-        QandAAlias: alias,
+        quizAlias: alias,
         lastUpdated_at: new Date().toISOString(),
       },
     });
@@ -93,8 +94,8 @@ export function CreateQa() {
           className="flex flex-col text-sm items-center gap-4 w-full"
         >
           <div className="flex items-center flex-col justify-center mb-4 gap-y-2">
-            <QAIcon />
-            <p className="font-semibold">Create Q&A</p>
+            <QuizIcon />
+            <p className="font-semibold">Create Quiz</p>
           </div>
 
           <UploadImage image={addedImage} name="coverImage" form={form} />

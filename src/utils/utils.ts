@@ -74,3 +74,5 @@ export async function isImageValid(url: string): Promise<boolean> {
     const shortValue = (number / Math.pow(1000, suffixNum)).toFixed(1);
     return shortValue + suffixes[suffixNum];
   };
+
+  export const deploymentUrl = "https://enagagement.zikoro.com"

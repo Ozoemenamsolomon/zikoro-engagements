@@ -1,6 +1,5 @@
-import { createClient } from "@/utils/supabase/server";
 
-import { cookies } from "next/headers";
+import { createClient } from "@/utils/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -9,29 +8,30 @@ export async function POST(req: NextRequest) {
     try {
       const params = await req.json();
 
-      const { error } = await supabase.from("QandA").upsert(params);
+      const { error } = await supabase.from("quizAnswer").upsert(params);
 
       if (error) {
         return NextResponse.json(
-          { error: error?.message },
+          { error: error.message },
           {
             status: 400,
           }
         );
       }
+
       if (error) throw error;
 
-
       return NextResponse.json(
-        { msg: "Q&A Created Successfully" },
+        { msg: "Answer created successfully" },
         {
-          status: 200,
+          status: 201,
         }
       );
     } catch (error) {
+      console.error(error);
       return NextResponse.json(
         {
-          error: "An error occurred while making the request.",
+          error: error,
         },
         {
           status: 500,
@@ -42,14 +42,21 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Method not allowed" });
   }
 }
-export async function GET(req: NextRequest) {
-  const supabase = createClient()
 
-  if (req.method === "GET") {
+export async function PATCH(req: NextRequest) {
+    const supabase = createClient()
+  if (req.method === "PATCH") {
     try {
-      const { data, error } = await supabase
-        .from("QandA")
-        .select("*, organization(*)");
+      const params = await req.json();
+
+      const { error } = await supabase
+        .from("quizAnswer")
+        .update([
+          {
+            ...params,
+          },
+        ])
+        .eq("id", params?.id);
 
       if (error) {
         return NextResponse.json(
@@ -64,15 +71,13 @@ export async function GET(req: NextRequest) {
       if (error) throw error;
 
       return NextResponse.json(
-        {
-          data,
-        },
+        { msg: "Answer updated successfully" },
         {
           status: 200,
         }
       );
     } catch (error) {
-      console.error(error);
+      console.error(error, "patch");
       return NextResponse.json(
         {
           error: "An error occurred while making the request.",
@@ -86,5 +91,4 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Method not allowed" });
   }
 }
-
 export const dynamic = "force-dynamic";

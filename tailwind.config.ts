@@ -1,6 +1,5 @@
 import type { Config } from "tailwindcss";
 
-
 const config = {
   darkMode: ["class"],
   content: [
@@ -27,7 +26,7 @@ const config = {
       colors: {
         zikoroBlue: "hsl(var(--zblue))",
         basePrimary: "#001FCC",
-        "basePrimary-100":"#F7F8FF",
+        "basePrimary-100": "#F7F8FF",
         basebody: "#f3f3f3",
         baseBg: "#F9FAFF",
         ticketColor: "#CFCFCF",
@@ -81,6 +80,8 @@ const config = {
       backgroundImage: {
         basePrimary: "linear-gradient(to right, #001FCC 0%, #9D00FF 100%)",
         baseLight: "linear-gradient(to right, #E2E8F0 0%, #D8B4FE 100%)",
+        "basePrimary-100":
+          "linear-gradient(to right, #001FCC19 0%, #9D00FF19 100%)",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -93,22 +94,34 @@ const config = {
         desktop: "15px",
       },
       keyframes: {
-        'float-in': {
-          '0%': { transform: 'translateY(-20px)', opacity: '0', visibility: 'hidden' },
-          '100%': { transform: 'translateY(0)', opacity: '1', visibility: 'visible' },
+        "float-in": {
+          "0%": {
+            transform: "translateY(-20px)",
+            opacity: "0",
+            visibility: "hidden",
+          },
+          "100%": {
+            transform: "translateY(0)",
+            opacity: "1",
+            visibility: "visible",
+          },
         },
-        'float-out': {
-          '0%': { transform: 'translateY(0)', opacity: '1' },
-          '100%': { transform: 'translateY(-10px)', opacity: '0', visibility: 'hidden' },
+        "float-out": {
+          "0%": { transform: "translateY(0)", opacity: "1" },
+          "100%": {
+            transform: "translateY(-10px)",
+            opacity: "0",
+            visibility: "hidden",
+          },
         },
       },
       animation: {
-        'float-in': 'float-in 0.3s ease-out forwards',
-        'float-out': 'float-out 0.3s ease-out forwards',
+        "float-in": "float-in 0.3s ease-out forwards",
+        "float-out": "float-out 0.3s ease-out forwards",
         "caret-blink": "caret-blink 1.25s ease-out infinite",
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        'fade-in-out': 'fade-in-out 2s ease-in-out',
+        "fade-in-out": "fade-in-out 2s ease-in-out",
       },
     },
   },

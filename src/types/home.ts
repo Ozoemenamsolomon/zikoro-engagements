@@ -22,9 +22,9 @@ export interface ISubscription {
 export enum CreateType {
     qa,
     quiz,
-    wordCloud,
     polls,
-    form
+    form,
+    wordCloud,
 }
 
 
