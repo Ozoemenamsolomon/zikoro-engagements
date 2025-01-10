@@ -9,7 +9,7 @@ export function EmptyQaState({
 }) {
   return (
     <div className="w-full h-[400px] flex items-center justify-center p-6 flex-col gap-y-8">
-      <div className="bg-gradient-to-tr from-custom-bg-gradient-start to-custom-bg-gradient-end w-[100px] h-[100px] rounded-full flex items-center justify-center">
+      <div className=" bg-basePrimary-100 w-[100px] h-[100px] rounded-full flex items-center justify-center">
         <InlineIcon icon="healthicons:alert" color="#001fcc" fontSize={50} />
       </div>
       <h2 className="font-semibold text-center capitalize gradient-text bg-basePrimary text-lg sm:text-2xl">

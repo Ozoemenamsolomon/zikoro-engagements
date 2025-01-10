@@ -141,7 +141,7 @@ function HomeEngagementCard({
       }}
       className="w-full rounded-lg gap-3 text-sm border border-basePrimary-100 p-3 grid grid-cols-7"
     >
-      {data?.coverImage ? (
+      {data?.coverImage && data?.coverImage?.startsWith("https") ? (
         <Image
           src={data?.coverImage}
           alt="engagement"

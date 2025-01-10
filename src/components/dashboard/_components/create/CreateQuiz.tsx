@@ -84,7 +84,7 @@ export function CreateQuiz() {
     });
     setLoading(false);
 
-    window.open(`/e/${values?.workspaceAlias}/qa/o/${alias}`, "_self");
+    window.open(`/e/${values?.workspaceAlias}/quiz/o/${alias}/add-question`, "_self");
   }
   return (
     <>

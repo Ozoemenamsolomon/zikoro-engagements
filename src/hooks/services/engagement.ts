@@ -55,12 +55,12 @@ export function useGetUserEngagements() {
       setLoading(true);
 
       const matchingQas = data?.filter((qa) => {
-        return qa?.organization.teamMembers?.some(
+        return qa?.organization && qa?.organization.teamMembers?.some(
           ({ userEmail }) => userEmail === userData?.userEmail
         );
       });
       const matchingQuizzes = dataquizzes?.filter((quiz) => {
-        return quiz?.organization.teamMembers?.some(
+        return quiz?.organization && quiz?.organization.teamMembers?.some(
           ({ userEmail }) => userEmail === userData?.userEmail
         );
       });
