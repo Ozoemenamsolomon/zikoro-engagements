@@ -1,1 +1,6 @@
 export * from "./TopSection"
+export * from "./QuestionField"
+export * from "./modals/DurationModal"
+export * from "./options/ImageOptions"
+export * from "./options/TextOptions"
+export * from "./options/action/OptionAction"

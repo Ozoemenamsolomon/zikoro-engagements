@@ -8,6 +8,7 @@ import { useGetData } from "@/hooks/services/requests";
 import { LoadingState } from "@/components/composables/LoadingState";
 import { TQuestion, TQuiz } from "@/types/quiz";
 import { AddQuestion } from "./AddQuestion";
+import { useState } from "react";
 
 export default function AddQuizQuestions({
   quizId,
@@ -19,7 +20,11 @@ export default function AddQuizQuestions({
   const { data, isLoading } = useGetData<TQuiz<TQuestion[]>>(
     `engagements/quiz/${quizId}`
   );
+  const [question, setQuestion] = useState<TQuestion | null>(null)
 
+  function editQuestion(q: TQuestion) {
+    setQuestion(q)
+  }
   if (isLoading) {
     return <LoadingState />;
   }
@@ -31,7 +36,7 @@ export default function AddQuizQuestions({
         <TrailingHeadRoute Icon={SettingsIcon} title="Quiz Settings" />
       }
     >
-      <AddQuestion/>
+      <AddQuestion question={question} interactionType=""/>
       {/* {(!data?.questions ||
         (Array.isArray(data?.questions) && data?.questions?.length === 0)) && (
         <EmptyQuestion />

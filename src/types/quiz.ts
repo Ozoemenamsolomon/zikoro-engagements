@@ -1,8 +1,12 @@
-import {z} from "zod";
+import { z } from "zod";
 import { quizQuestionSchema } from "@/schemas/quiz";
 import { AvatarFullConfig } from "react-nice-avatar";
 import { TOrganization } from "./home";
 
+export enum OptionType {
+  text,
+  image,
+}
 export interface TLiveQuizParticipant {
   quizParticipantId: string;
   quizAlias: string;
@@ -28,7 +32,7 @@ export interface TQuiz<T> {
   id: number;
   created_at: string;
   lastUpdated_at: string;
-  workspaceAlias:string;
+  workspaceAlias: string;
   quizName: string;
   createdBy: number;
   coverTitle: string;
@@ -56,12 +60,12 @@ export interface TQuiz<T> {
     isCollectEmail: boolean;
     showAnswer: boolean;
     showResult: boolean;
-    isForm:boolean;
+    isForm: boolean;
   };
 }
 
 export interface TOrganizationQuiz extends TQuiz<TQuestion> {
-    organization: TOrganization
+  organization: TOrganization;
 }
 
 export type TQuestion = z.infer<typeof quizQuestionSchema> & {

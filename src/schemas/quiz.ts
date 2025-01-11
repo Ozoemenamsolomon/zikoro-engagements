@@ -16,7 +16,7 @@ export const quizCreationSchema = z.object({
 const optionsSchema = z.array(
   z.object({
     optionId: z.string(),
-    option: z.string().min(3, { message: "Option is required" }),
+    option: z.any(),
     isAnswer: z.string(),
   })
 );

@@ -132,9 +132,9 @@ function HomeEngagementCard({
           );
         } else {
           window.open(
-            `/e/${data?.workspaceAlias}/q/o/${
+            `/e/${data?.workspaceAlias}/quiz/o/${
               (data as TOrganizationQuiz)?.quizAlias
-            }`,
+            }/add-question`,
             "_self"
           );
         }
@@ -145,12 +145,12 @@ function HomeEngagementCard({
         <Image
           src={data?.coverImage}
           alt="engagement"
-          className="w-full h-[100px] rounded-lg col-span-2"
-          width={200}
-          height={200}
+          className="w-full h-[100px] sm:h-[150px] object-cover xl:h-[180px] rounded-lg col-span-2"
+          width={300}
+          height={400}
         />
       ) : (
-        <div className="bg-basePrimary-100 w-full h-[100px] rounded-lg col-span-2"></div>
+        <div className="bg-basePrimary-100 w-full h-[100px] sm:h-[150px] xl:h-[180px] r rounded-lg col-span-2"></div>
       )}
       <div className="w-full col-span-5 flex items-start justify-between">
         <div className="w-full flex flex-col items-start justify-start gap-3">

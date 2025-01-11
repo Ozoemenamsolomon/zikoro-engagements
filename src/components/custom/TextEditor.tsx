@@ -6,15 +6,21 @@ import "react-quill/dist/quill.snow.css"
 const QuillEditor = dynamic(() => import("react-quill"), { ssr: false });
 
 
-export default function TextEditor({
+export function TextEditor({
   onChange,
   defaultValue,
   placeholder,
+  onFocus,
+  onBlur,
+  error
 
 }: {
   onChange: (value: string) => void;
   defaultValue?: string;
   placeholder?: string;
+  onFocus?:() => void;
+  onBlur?:() => void;
+  error?:string;
 }) {
   const CustomUndo = () => (
     <svg viewBox="0 0 18 18">
@@ -106,6 +112,8 @@ export default function TextEditor({
   return (
     <div className="w-full interaction-input">
         <QuillEditor
+        onBlur={onBlur}
+        onFocus={onFocus}
       value={content}
       onChange={(e) => {
         handleEditorChange(e);
@@ -113,9 +121,11 @@ export default function TextEditor({
       modules={ quillModules }
       formats={quillFormats}
       theme="snow"
+
       placeholder={placeholder || "Enter description"}
       className="w-full  ql-container focus:ring-1"
     />
+     {error && <p className="text-xs textred-500 mt-2">{error}</p>}
     </div>
 
   );
