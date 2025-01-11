@@ -1,11 +1,14 @@
+import { cn } from "@/lib/utils";
+
 export function QuizLayout({
   children,
   LeadingWidget,
   TrailingWidget,
+  className
 }: {
   LeadingWidget?: React.ReactNode;
   TrailingWidget?: React.ReactNode;
-  
+  className?:string;
   children: React.ReactNode;
 }) {
   return (
@@ -14,7 +17,7 @@ export function QuizLayout({
         {LeadingWidget}
         {TrailingWidget}
       </div>
-      <div className="w-full h-full bg-white rounded-lg border">{children}</div>
+      <div className={cn("w-full h-full bg-white rounded-lg border", className)}>{children}</div>
     </div>
   );
 }

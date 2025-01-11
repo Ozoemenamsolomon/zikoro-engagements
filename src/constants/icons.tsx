@@ -2215,3 +2215,169 @@ export function SettingsIcon() {
     </svg>
   );
 }
+
+export function PeopleIcon() {
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        opacity="0.3"
+        d="M9 10C9.82843 10 10.5 9.32843 10.5 8.5C10.5 7.67157 9.82843 7 9 7C8.17157 7 7.5 7.67157 7.5 8.5C7.5 9.32843 8.17157 10 9 10Z"
+        fill="url(#paint0_linear_363_6289)"
+      />
+      <path
+        opacity="0.3"
+        d="M4.33984 17H13.6598C12.8198 16.42 10.7898 15.75 8.99984 15.75C7.20984 15.75 5.17984 16.42 4.33984 17Z"
+        fill="url(#paint1_linear_363_6289)"
+      />
+      <path
+        d="M9 12C10.93 12 12.5 10.43 12.5 8.5C12.5 6.57 10.93 5 9 5C7.07 5 5.5 6.57 5.5 8.5C5.5 10.43 7.07 12 9 12ZM9 7C9.83 7 10.5 7.67 10.5 8.5C10.5 9.33 9.83 10 9 10C8.17 10 7.5 9.33 7.5 8.5C7.5 7.67 8.17 7 9 7ZM9 13.75C6.66 13.75 2 14.92 2 17.25V19H16V17.25C16 14.92 11.34 13.75 9 13.75ZM4.34 17C5.18 16.42 7.21 15.75 9 15.75C10.79 15.75 12.82 16.42 13.66 17H4.34ZM16.04 13.81C17.2 14.65 18 15.77 18 17.25V19H22V17.25C22 15.23 18.5 14.08 16.04 13.81ZM15 12C16.93 12 18.5 10.43 18.5 8.5C18.5 6.57 16.93 5 15 5C14.46 5 13.96 5.13 13.5 5.35C14.13 6.24 14.5 7.33 14.5 8.5C14.5 9.67 14.13 10.76 13.5 11.65C13.96 11.87 14.46 12 15 12Z"
+        fill="url(#paint2_linear_363_6289)"
+      />
+      <defs>
+        <linearGradient
+          id="paint0_linear_363_6289"
+          x1="7.5"
+          y1="8.5"
+          x2="10.5"
+          y2="8.5"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stopColor="#001FCC" />
+          <stop offset="1" stopColor="#9D00FF" />
+        </linearGradient>
+        <linearGradient
+          id="paint1_linear_363_6289"
+          x1="4.33984"
+          y1="16.375"
+          x2="13.6598"
+          y2="16.375"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stopColor="#001FCC" />
+          <stop offset="1" stopColor="#9D00FF" />
+        </linearGradient>
+        <linearGradient
+          id="paint2_linear_363_6289"
+          x1="2"
+          y1="12"
+          x2="22"
+          y2="12"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stopColor="#001FCC" />
+          <stop offset="1" stopColor="#9D00FF" />
+        </linearGradient>
+      </defs>
+    </svg>
+  );
+}
+
+export function TimerIcon() {
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        opacity="0.3"
+        d="M12 6C8.13 6 5 9.13 5 13C5 16.87 8.13 20 12 20C15.87 20 19 16.87 19 13C19 9.13 15.87 6 12 6ZM13 14H11V8H13V14Z"
+        fill="url(#paint0_linear_1078_3710)"
+      />
+      <path
+        d="M9 1H15V3H9V1ZM19.03 7.39L20.45 5.97C20.02 5.46 19.55 4.98 19.04 4.56L17.62 5.98C16.0274 4.69818 14.0444 3.99953 12 4C9.61305 4 7.32387 4.94821 5.63604 6.63604C3.94821 8.32387 3 10.6131 3 13C3 17.97 7.02 22 12 22C13.6943 22.0009 15.3544 21.5232 16.7891 20.622C18.2238 19.7207 19.3748 18.4325 20.1094 16.9057C20.8441 15.379 21.1325 13.6758 20.9415 11.9923C20.7506 10.3087 20.088 8.71341 19.03 7.39ZM12 20C8.13 20 5 16.87 5 13C5 9.13 8.13 6 12 6C15.87 6 19 9.13 19 13C19 16.87 15.87 20 12 20Z"
+        fill="url(#paint1_linear_1078_3710)"
+      />
+      <path d="M11 8H13V14H11V8Z" fill="url(#paint2_linear_1078_3710)" />
+      <defs>
+        <linearGradient
+          id="paint0_linear_1078_3710"
+          x1="5"
+          y1="13"
+          x2="19"
+          y2="13"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stopColor="#001FCC" />
+          <stop offset="1" stopColor="#9D00FF" />
+        </linearGradient>
+        <linearGradient
+          id="paint1_linear_1078_3710"
+          x1="3"
+          y1="11.5"
+          x2="20.9989"
+          y2="11.5"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stopColor="#001FCC" />
+          <stop offset="1" stopColor="#9D00FF" />
+        </linearGradient>
+        <linearGradient
+          id="paint2_linear_1078_3710"
+          x1="11"
+          y1="11"
+          x2="13"
+          y2="11"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stopColor="#001FCC" />
+          <stop offset="1" stopColor="#9D00FF" />
+        </linearGradient>
+      </defs>
+    </svg>
+  );
+}
+
+export function AddQuizImageIcon() {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 18 18"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        opacity="0.3"
+        d="M2 16H16V2H2V16ZM6 10.14L8.14 12.72L11.14 8.85L15 14H3L6 10.14Z"
+        fill="url(#paint0_linear_1078_3011)"
+      />
+      <path
+        d="M16 0H2C0.9 0 0 0.9 0 2V16C0 17.1 0.9 18 2 18H16C17.1 18 18 17.1 18 16V2C18 0.9 17.1 0 16 0ZM16 16H2V2H16V16ZM11.14 8.86L8.14 12.72L6 10.14L3 14H15L11.14 8.86Z"
+        fill="url(#paint1_linear_1078_3011)"
+      />
+      <defs>
+        <linearGradient
+          id="paint0_linear_1078_3011"
+          x1="2"
+          y1="9"
+          x2="16"
+          y2="9"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stopColor="#001FCC" />
+          <stop offset="1" stopColor="#9D00FF" />
+        </linearGradient>
+        <linearGradient
+          id="paint1_linear_1078_3011"
+          x1="5.44824e-09"
+          y1="9"
+          x2="18"
+          y2="9"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stopColor="#001FCC" />
+          <stop offset="1" stopColor="#9D00FF" />
+        </linearGradient>
+      </defs>
+    </svg>
+  );
+}

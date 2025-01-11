@@ -7,6 +7,7 @@ import { LeadingHeadRoute, TrailingHeadRoute } from "../_components";
 import { useGetData } from "@/hooks/services/requests";
 import { LoadingState } from "@/components/composables/LoadingState";
 import { TQuestion, TQuiz } from "@/types/quiz";
+import { AddQuestion } from "./AddQuestion";
 
 export default function AddQuizQuestions({
   quizId,
@@ -24,15 +25,17 @@ export default function AddQuizQuestions({
   }
   return (
     <QuizLayout
+    className="overflow-y-auto"
       LeadingWidget={<LeadingHeadRoute name={data?.coverTitle ?? ""} />}
       TrailingWidget={
         <TrailingHeadRoute Icon={SettingsIcon} title="Quiz Settings" />
       }
     >
-      {(!data?.questions ||
+      <AddQuestion/>
+      {/* {(!data?.questions ||
         (Array.isArray(data?.questions) && data?.questions?.length === 0)) && (
         <EmptyQuestion />
-      )}
+      )} */}
     </QuizLayout>
   );
 }
