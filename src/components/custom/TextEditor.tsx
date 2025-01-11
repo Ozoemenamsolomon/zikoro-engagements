@@ -105,8 +105,18 @@ export default function TextEditor({
 
   return (
     <div className="w-full interaction-input">
-
+        <QuillEditor
+      value={content}
+      onChange={(e) => {
+        handleEditorChange(e);
+      }}
+      modules={ quillModules }
+      formats={quillFormats}
+      theme="snow"
+      placeholder={placeholder || "Enter description"}
+      className="w-full  ql-container focus:ring-1"
+    />
     </div>
-  
+
   );
 }
