@@ -11,7 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import _ from "lodash";
 import { quizCreationSchema } from "@/schemas/quiz";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useGetUserOrganizations } from "@/hooks/services/engagement";
 import { PlusCircle } from "styled-icons/bootstrap";
 import { CreateOrganization } from "@/components/createOrganization/CreateOrganization";
@@ -21,14 +21,20 @@ import useUserStore from "@/store/globalUserStore";
 import { generateInteractionAlias, uploadFile } from "@/utils";
 import { TQuestion, TQuiz } from "@/types/quiz";
 
-export function CreateQuiz() {
+export function CreateQuiz({
+  quiz,
+  refetch,
+}: {
+  quiz?: TQuiz<TQuestion[]>;
+  refetch?: () => Promise<any>;
+}) {
   const [isOpen, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const { user } = useUserStore();
   const { organizations: organizationList, getOrganizations } =
     useGetUserOrganizations();
   const { postData, isLoading } =
-    usePostRequest<Partial<TQuiz<TQuestion>>>("engagements/quiz");
+    usePostRequest<Partial<TQuiz<TQuestion[]>>>("engagements/quiz");
   const form = useForm<z.infer<typeof quizCreationSchema>>({
     resolver: zodResolver(quizCreationSchema),
   });
@@ -73,19 +79,50 @@ export function CreateQuiz() {
         resolve(null);
       }
     });
+
+    const payload: Partial<TQuiz<TQuestion[]>> = quiz
+      ? {
+          ...quiz,
+          ...values,
+          coverImage: image as string,
+          lastUpdated_at: new Date().toISOString(),
+        }
+      : {
+          ...values,
+          createdBy: user?.id,
+          coverImage: image as string,
+          quizAlias: alias,
+          lastUpdated_at: new Date().toISOString(),
+        };
     await postData({
-      payload: {
-        ...values,
-        createdBy: user?.id,
-        coverImage: image as string,
-        quizAlias: alias,
-        lastUpdated_at: new Date().toISOString(),
-      },
+      payload,
     });
     setLoading(false);
-
-    window.open(`/e/${values?.workspaceAlias}/quiz/o/${alias}/add-question`, "_self");
+    refetch?.();
+    if (!quiz) {
+      window.open(
+        `/e/${values?.workspaceAlias}/quiz/o/${alias}/add-question`,
+        "_self"
+      );
+    }
   }
+
+  useEffect(() => {
+    if (quiz) {
+      form.reset({
+        coverImage: quiz?.coverImage,
+        coverTitle: quiz?.coverTitle,
+        description: quiz?.description,
+        workspaceAlias: quiz?.workspaceAlias,
+      });
+    }
+  }, [quiz]);
+
+  const prevOrg = useMemo(() => {
+    if (Array.isArray(formattedList) && quiz) {
+      return formattedList?.find((v) => v?.value === quiz?.workspaceAlias);
+    }
+  }, [quiz, formattedList]);
   return (
     <>
       <Form {...form}>
@@ -93,10 +130,10 @@ export function CreateQuiz() {
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col text-sm items-center gap-4 w-full"
         >
-          <div className="flex items-center flex-col justify-center mb-4 gap-y-2">
+        {!quiz &&  <div className="flex items-center flex-col justify-center mb-4 gap-y-2">
             <QuizIcon />
             <p className="font-semibold">Create Quiz</p>
-          </div>
+          </div>}
 
           <UploadImage image={addedImage} name="coverImage" form={form} />
           <FormField
@@ -134,6 +171,7 @@ export function CreateQuiz() {
               render={({ field }) => (
                 <InputOffsetLabel label="Organization">
                   <ReactSelect
+                    defaultValue={prevOrg ?? ""}
                     {...field}
                     placeHolder="Select a Workspace"
                     options={formattedList}
@@ -159,7 +197,7 @@ export function CreateQuiz() {
             className="text-white h-11 gap-x-2 font-medium bg-basePrimary w-full max-w-xs mt-4"
           >
             {loading && <LoaderAlt size={20} className="animate-spin" />}
-            <p> Create</p>
+            <p> {quiz ? "Update" : "Create"}</p>
           </Button>
         </form>
       </Form>

@@ -54,6 +54,7 @@ export interface TQuiz<T> {
     countdown: boolean;
     timer: boolean;
     countdownTransition: boolean;
+    countDown: number;
     disable: boolean;
     live: boolean;
     isCollectPhone: boolean;
@@ -61,6 +62,9 @@ export interface TQuiz<T> {
     showAnswer: boolean;
     showResult: boolean;
     isForm: boolean;
+    playMusic: boolean,
+    musicList: {label:string, value:string}[] | null,
+    music: {label:string, value:string} | null,
   };
 }
 

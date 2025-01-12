@@ -13,7 +13,7 @@ export function CreateEngagement({
   type: number;
 }) {
   return (
-    <div className="right-0 min-h-screen inset-y-0 fixed z-[100] max-w-3xl w-full bg-white overflow-y-auto">
+    <div className="right-0 min-h-screen animate-float-in  inset-y-0 fixed z-[100] max-w-3xl w-full bg-white overflow-y-auto">
       <div className="w-full flex flex-col items-start p-4 justify-start gap-3">
         <Button
           onClick={close}

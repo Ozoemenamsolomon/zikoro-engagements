@@ -52,13 +52,13 @@ export function ImageOptions({
             };
           }
     
-          return { ...field };
+          return { ...field, isAnswer:"" };
         });
     
         form.setValue("options", updatedField);
       }
   return (
-    <div className="w-full flex flex-col items-start justify-start gap-4">
+    <div className="w-full flex  items-center flex-wrap justify-start gap-4">
     {fields.map((field, index) => (
       <SingleImageOption
         index={index + 1}
@@ -134,7 +134,7 @@ function SingleImageOption({
     handleRadioChange: (i: number) => void;
   }) {
 
-    const questionImg = form.watch(`options.${index}.option` as const);
+    const questionImg = form.watch(`options.${index-1}.option` as const);
     const addedImage = useMemo(() => {
       if (typeof questionImg === "string") {
         return questionImg;
@@ -177,7 +177,7 @@ function SingleImageOption({
           type="file"
           accept="image/*"
           hidden
-          {...form.register(`options.${index}.option` as const)}
+          {...form.register(`options.${index-1}.option` as const)}
           className="w-full h-full inset-0 absolute z-20"
         />
       </label>

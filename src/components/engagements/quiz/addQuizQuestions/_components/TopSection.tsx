@@ -1,6 +1,6 @@
 import { PeopleIcon, TimerIcon } from "@/constants";
 
-export function TopSection({changeDuration, noOfParticipants = 0, duration}: {changeDuration:() => void; duration?: string; noOfParticipants: number}) {
+export function TopSection({changeDuration, points , duration, changePoint}: {changeDuration:() => void; duration?: string; points?: string; changePoint: () => void}) {
   return (
    
       <div className="w-full flex items-center justify-between">
@@ -22,11 +22,20 @@ export function TopSection({changeDuration, noOfParticipants = 0, duration}: {ch
           <p>Question Duration</p>
         </div>
         <div className="flex flex-col items-center justify-center ">
-          <div className="bg-basePrimary-200 h-12 justify-center px-3 rounded-3xl flex items-center gap-x-2">
+         <div className="flex items-center gap-x-2">
+         <button
+            onClick={(e) => {
+                e.stopPropagation()
+                e.preventDefault()
+                changePoint()
+            }}
+            className="text-basePrimary">Edit</button>
+         <div className="bg-basePrimary-200 h-12 justify-center px-3 rounded-3xl flex items-center gap-x-2">
             <PeopleIcon />
-            <p>{noOfParticipants}</p>
+            <p>{points}</p>
           </div>
-          <p>Participants</p>
+         </div>
+          <p className="self-end">Points</p>
         </div>
  
     </div>

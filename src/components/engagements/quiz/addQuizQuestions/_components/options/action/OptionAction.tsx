@@ -54,8 +54,7 @@ export function OptionAction({
       onClick={(e) => {
         e.stopPropagation()
         e.preventDefault()
-       form.setValue(`options.${index-1}.isAnswer` as const,field.optionId )
-       handleRadioChange(index)
+       handleRadioChange(index-1)
       }}
         className={cn(
           "flex items-center gap-x-2",

@@ -22,6 +22,7 @@ export function QuestionField({
   function onChange(v: string) {
     form.setValue("question", v);
   }
+  const {formState:{errors}} = form;
   return (
     <div className="w-full ">
       <div className="w-full flex items-center justify-between">
@@ -35,6 +36,7 @@ export function QuestionField({
               defaultValue={defaultQuestionValue}
               placeholder="Enter your Question"
               onChange={onChange}
+              error={errors?.question ? errors?.question?.message : ""}
             />
           </div>
         )}
@@ -55,6 +57,8 @@ export function QuestionField({
             src={addedImage}
             alt=""
             className="w-[250px] h-[250px] object-cover rounded-lg"
+            width={400}
+            height={400}
           />
         </div>
       )}

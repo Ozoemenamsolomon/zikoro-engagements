@@ -4,15 +4,17 @@ export function QuizLayout({
   children,
   LeadingWidget,
   TrailingWidget,
-  className
+  className,
+  parentClassName
 }: {
   LeadingWidget?: React.ReactNode;
   TrailingWidget?: React.ReactNode;
   className?:string;
   children: React.ReactNode;
+  parentClassName?:string;
 }) {
   return (
-    <div className="w-full px-4 inset-0 text-sm max-w-7xl h-[85vh] m-auto absolute">
+    <div className={cn("w-full px-4 inset-0 text-sm max-w-7xl h-[85vh] m-auto absolute", parentClassName)}>
       <div className="w-full flex items-center mb-2 justify-between">
         {LeadingWidget}
         {TrailingWidget}

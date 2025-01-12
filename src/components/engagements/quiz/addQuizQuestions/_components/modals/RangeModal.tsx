@@ -7,19 +7,23 @@ import { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 
-export function DurationModal({
+export function RangeModal({
   close,
-  duration,
+  value,
   form,
+  name,
+  max,
 }: {
-  duration: number;
+  value: number;
   close: () => void;
   form: UseFormReturn<z.infer<typeof quizQuestionSchema>>;
+  name: "duration" | "points";
+  max: number;
 }) {
-  const [chooseDuration, setChosenDuration] = useState(duration);
+  const [chooseValue, setChosenValue] = useState(value);
 
-  function handleDuration(num: number) {
-    setChosenDuration(num);
+  function handleValue(num: number) {
+    setChosenValue(num);
   }
   return (
     <div
@@ -34,7 +38,7 @@ export function DurationModal({
         className="w-[95%] max-w-md m-auto h-fit text-sm absolute inset-0 bg-white rounded-lg p-3"
       >
         <div className="w-full flex items-center justify-between pb-3 border-b">
-          <p>Question Duration</p>
+          <p>{name === "duration" ? "Question Duration" : "Question Points"}</p>
           <Button
             onClick={close}
             className="h-8 w-8 px-0  flex items-center justify-center self-end rounded-full bg-zinc-700"
@@ -49,22 +53,22 @@ export function DurationModal({
         <div className="w-full flex items-center justify-center flex-col gap-6 h-[18rem]">
           <p>
             <span className="underline text-xl sm:text-3xl font-medium">
-              {chooseDuration}
+              {chooseValue}
             </span>{" "}
-            Secs
+            {name === "duration" ? "Secs" : "Points"}
           </p>
           <div className="w-full grid items-center justify-center grid-cols-12">
             <span className="text-center">0</span>
             <div className="col-span-10 w-full">
               <Slider
                 min={0}
-                max={120}
+                max={max}
                 step={1}
                 size="small"
-                value={chooseDuration}
+                value={chooseValue}
                 className="w-full h-1"
                 onChange={(_, e) => {
-                  handleDuration(e as number);
+                  handleValue(e as number);
                 }}
                 sx={{
                   color: "#6b7280",
@@ -92,13 +96,13 @@ export function DurationModal({
               />
             </div>
 
-            <span className="text-center">120</span>
+            <span className="text-center">{max}</span>
           </div>
 
           <Button
             onClick={() => {
-              form.setValue("duration", String(chooseDuration));
-              close()
+              form.setValue(name, String(chooseValue));
+              close();
             }}
             className="font-medium text-white rounded-lg bg-basePrimary"
           >

@@ -13,7 +13,7 @@ export async function GET(
     try {
       const { data, error, status } = await supabase
         .from("quiz")
-        .select("*")
+        .select("*, organization(*)")
         .eq("quizAlias", quizId)
         .single()
         

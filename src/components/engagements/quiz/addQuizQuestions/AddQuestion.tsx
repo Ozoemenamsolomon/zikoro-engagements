@@ -1,12 +1,12 @@
 "use-client";
 
 import { Button, TextEditor } from "@/components/custom";
-import { DurationModal, TopSection } from "./_components";
+import { RangeModal, TopSection } from "./_components";
 import { QuestionField } from "./_components/QuestionField";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
-import { OptionType, TQuestion } from "@/types/quiz";
+import { OptionType, TQuestion, TQuiz } from "@/types/quiz";
 import { TextOptions } from "./_components/options/TextOptions";
 import { ImageOptions } from "./_components/options/ImageOptions";
 import { InlineIcon } from "@iconify/react/dist/iconify.js";
@@ -15,20 +15,38 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { quizQuestionSchema } from "@/schemas/quiz";
 import { nanoid } from "nanoid";
-import { Form } from "@/components/ui/form";
+import toast from "react-hot-toast";
+import { uploadFile } from "@/utils";
+import { usePostRequest } from "@/hooks/services/requests";
+import { LoaderAlt } from "styled-icons/boxicons-regular";
 
 export function AddQuestion({
   question,
   interactionType,
+  quiz,
+  workspaceAlias,
+  refetch,
+  editQuestion,
 }: {
   interactionType?: string;
   question: TQuestion | null;
+  quiz: TQuiz<TQuestion[]>;
+  workspaceAlias: string;
+  refetch: () => Promise<any>;
+  editQuestion: (t: TQuestion | null) => void;
 }) {
   const [optionType, setOptionType] = useState<OptionType | null>(null);
+  const { postData } =
+    usePostRequest<Partial<TQuiz<TQuestion[]>>>("/engagements/quiz");
   const [isOpenDurationModal, setIsOpenDurationModal] = useState(false);
+  const [isOpenPointModal, setIsOpenPointModal] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   function toggleDuration() {
     setIsOpenDurationModal((prev) => !prev);
+  }
+  function togglePoint() {
+    setIsOpenPointModal((prev) => !prev);
   }
 
   const form = useForm<z.infer<typeof quizQuestionSchema>>({
@@ -36,6 +54,7 @@ export function AddQuestion({
     defaultValues: {
       options: [{ optionId: nanoid(), option: "", isAnswer: "" }],
       duration: "10",
+      points: "10",
     },
   });
 
@@ -45,7 +64,7 @@ export function AddQuestion({
   });
 
   function appendOption() {
-    console.log("appending")
+    console.log("appending");
     append([
       {
         optionId: nanoid(),
@@ -55,74 +74,84 @@ export function AddQuestion({
     ]);
   }
 
- async function onSubmit(values: z.infer<typeof quizQuestionSchema>) {
-  //   // console.log('val',values)
-  //   if (!quiz) return;
-  //   const isCorrectAnswerNotSelected = values?.options?.every(
-  //     (value) => value?.isAnswer?.length <= 0
-  //   );
+  async function onSubmit(values: z.infer<typeof quizQuestionSchema>) {
+    console.log("val", values);
 
-  //   if (isCorrectAnswerNotSelected && quiz?.interactionType !== "poll") {
-  //     toast.error("You have not selected the correct answer");
-  //     return;
-  //   }
+    if (!quiz) return;
+    const isCorrectAnswerNotSelected = values?.options?.every(
+      (value) => value?.isAnswer?.length <= 0
+    );
+    if (isCorrectAnswerNotSelected && quiz?.interactionType !== "poll") {
+      toast.error("You have not selected the correct answer");
+      return;
+    }
+    setLoading(true);
+    const image = await new Promise(async (resolve) => {
+      if (typeof values?.questionImage === "string") {
+        resolve(values?.questionImage);
+      } else if (values?.questionImage && values?.questionImage[0]) {
+        const img = await uploadFile(values?.questionImage[0], "image");
+        resolve(img);
+      } else {
+        resolve(null);
+      }
+    });
+    const refinedOption = await Promise.all(
+      values?.options?.map(async (option) => {
+        if (typeof option.option === "string") {
+          return option;
+        } else if (option.option && option.option[0]) {
+          const img = await uploadFile(option.option[0], "image");
+          return { ...option, option: img };
+        }
+        return option;
+      })
+    );
+    const updatedQuestion = {
+      ...values,
+      options: refinedOption,
+      id: nanoid(),
+      questionImage: image as string,
+    };
+    // filter question
+    const filteredQuestion = quiz?.questions?.filter(
+      ({ id }) => id !== question?.id
+    );
+    const editingQuestion = quiz?.questions?.find(
+      ({ id }) => id === question?.id
+    );
+    const payload: Partial<TQuiz<TQuestion[]>> = {
+      ...quiz,
+      interactionType: "quiz",
+      questions:
+        quiz?.questions?.length > 0
+          ? editingQuestion?.id
+            ? [
+                ...filteredQuestion,
+                {
+                  ...editingQuestion,
+                  ...values,
+                  options: refinedOption,
+                  questionImage: image as string,
+                },
+              ]
+            : [...quiz?.questions, { ...updatedQuestion }]
+          : [{ ...updatedQuestion }],
+      totalDuration:
+        quiz?.totalDuration > 0
+          ? Number(quiz?.totalDuration) + Number(values?.duration || 0)
+          : Number(values?.duration || 0),
+      totalPoints:
+        quiz?.totalDuration > 0
+          ? Number(quiz?.totalPoints) + Number(values?.points || 0)
+          : Number(values?.points || 0),
+      lastUpdated_at: new Date().toISOString(),
+    };
+    await postData({ payload });
 
-  //   setLoading(true);
-
-  //   const image = await new Promise(async (resolve) => {
-  //     if (typeof values?.questionImage === "string") {
-  //       resolve(values?.questionImage);
-  //     } else if (values?.questionImage && values?.questionImage[0]) {
-  //       const img = await uploadFile(values?.questionImage[0], "image");
-  //       resolve(img);
-  //     } else {
-  //       resolve(null);
-  //     }
-  //   });
-
-  //   const updatedQuestion = {
-  //     ...values,
-  //     id: nanoid(),
-  //     questionImage: image as string,
-  //   };
-
-  //   // filter question
-  //   const filteredQuestion = quiz?.questions?.filter(
-  //     ({ id }) => id !== question?.id
-  //   );
-  //   const editingQuestion = quiz?.questions?.find(
-  //     ({ id }) => id === question?.id
-  //   );
-  //   const payload: Partial<TQuiz<TQuestion[]>> = {
-  //     ...quiz,
-  //     questions:
-  //       quiz?.questions?.length > 0
-  //         ? editingQuestion?.id
-  //           ? [
-  //               ...filteredQuestion,
-  //               {
-  //                 ...editingQuestion,
-  //                 ...values,
-  //                 questionImage: image as string,
-  //               },
-  //             ]
-  //           : [...quiz?.questions, { ...updatedQuestion }]
-  //         : [{ ...updatedQuestion }],
-  //     totalDuration:
-  //       quiz?.totalDuration > 0
-  //         ? Number(quiz?.totalDuration) + Number(values?.duration || 0)
-  //         : Number(values?.duration || 0),
-  //     totalPoints:
-  //       quiz?.totalDuration > 0
-  //         ? Number(quiz?.totalPoints) + Number(values?.points || 0)
-  //         : Number(values?.points || 0),
-  //     lastUpdated_at: new Date().toISOString(),
-  //   };
-  //   await updateQuiz({ payload });
-  //   setLoading(false);
-  //   if (refetch) refetch();
-  //   close();
-   }
+    setLoading(false);
+    if (refetch) refetch();
+  }
 
   const questionImg = form.watch("questionImage");
   const addedImage = useMemo(() => {
@@ -138,6 +167,7 @@ export function AddQuestion({
   const questionValue = form.watch("question");
   const feedBackValue = form.watch("feedBack");
   const currentDuration = form.watch("duration");
+  const currentPoint = form.watch("points");
 
   const defaultQuestionValue = useMemo(() => {
     if (typeof questionValue === "string" && questionValue?.length > 0) {
@@ -155,11 +185,11 @@ export function AddQuestion({
     }
   }, [feedBackValue]);
 
-//   useEffect(() => {
-//     if (interactionType) {
-//       form.setValue("interactionType", interactionType);
-//     }
-//   }, [interactionType]);
+  useEffect(() => {
+    if (interactionType) {
+      form.setValue("interactionType", interactionType);
+    }
+  }, [interactionType]);
 
   useEffect(() => {
     if (question) {
@@ -174,27 +204,38 @@ export function AddQuestion({
     }
   }, [question]);
 
-  console.log(fields)
+  useEffect(() => {
+    if (question) {
+      setOptionType(
+        question?.options?.some((opt) => opt.option?.startsWith("https://"))
+          ? OptionType.image
+          : OptionType.text
+      );
+    }
+  }, [question]);
 
+  const questionIndex = useMemo(() => {
+    if (question && quiz) {
+      return quiz?.questions?.findIndex((v) => v?.id === question?.id);
+    } else if (quiz?.questions !== null) return quiz?.questions?.length + 1;
+    else return 1;
+  }, [question, quiz]);
   return (
     <>
       <div className="w-full px-4 sm:px-6 pt-4 sm:pt-6 pb-20 sm:pb-32 h-full">
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-
-          className="w-full"
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
           <TopSection
-            noOfParticipants={0}
+            points={currentPoint}
             duration={currentDuration}
             changeDuration={toggleDuration}
+            changePoint={togglePoint}
           />
 
           <div className="w-full max-w-3xl mx-auto mt-8">
             <div className="w-full flex flex-col  gap-1 items-center">
               <p className="font-medium">Question:</p>
-              <p className="w-14 h-14 flex items-center bg-basePrimary-100 justify-center rounded-full border border-basePrimary">
-                1
+              <p className="w-14 h-14 flex text-2xl items-center bg-basePrimary-100 justify-center rounded-full border border-basePrimary">
+                {questionIndex}
               </p>
             </div>
             <QuestionField
@@ -212,17 +253,10 @@ export function AddQuestion({
                   onClick={(e) => {
                     e.stopPropagation();
                     e.preventDefault();
-                    // setOptionType(null);
-                    // form.setValue("options", [
-                    //   { optionId: nanoid(), option: "", isAnswer: "" },
-                    // ]);
-                    append([
-                        {
-                          optionId: nanoid(),
-                          option: "",
-                          isAnswer: "",
-                        },
-                      ]);
+                    setOptionType(null);
+                    form.setValue("options", [
+                      { optionId: nanoid(), option: "", isAnswer: "" },
+                    ]);
                   }}
                   className="flex items-center gap-x-1"
                 >
@@ -293,18 +327,18 @@ export function AddQuestion({
                     form={form}
                   />
                 )}
-                {/* {OptionType.image === optionType && (
+                {OptionType.image === optionType && (
                   <ImageOptions
                     appendOption={appendOption}
                     remove={remove}
                     fields={fields}
                     form={form}
                   />
-                )} */}
+                )}
               </div>
             )}
 
-            {interactionType !== "poll" && (
+            {interactionType !== "poll" && optionType !== null && (
               <div className="w-full mt-6">
                 {(defaultFeedBackValue || !question) && (
                   <TextEditor
@@ -318,19 +352,44 @@ export function AddQuestion({
               </div>
             )}
 
-            <div className="w-full my-10 flex items-center justify-center">
-              <Button className="h-11 bg-basePrimary rounded-lg text-white font-medium">
+            <div className="w-full my-10 flex gap-3 items-center justify-center">
+              {question !== null && (
+                <Button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    window.location.reload();
+                  }}
+                  className="h-11 bg-basePrimary rounded-lg text-white font-medium"
+                >
+                  <p>Reset</p>
+                </Button>
+              )}
+              <Button className="h-11 bg-basePrimary rounded-lg gap-x-2 text-white font-medium">
+                {loading && <LoaderAlt size={20} className="animate-spin" />}
                 <p>Save Question</p>
               </Button>
             </div>
+            <p className="w-1 h-1"></p>
           </div>
         </form>
       </div>
       {isOpenDurationModal && (
-        <DurationModal
+        <RangeModal
           form={form}
-          duration={Number(currentDuration)}
+          value={Number(currentDuration)}
           close={toggleDuration}
+          name="duration"
+          max={120}
+        />
+      )}
+      {isOpenPointModal && (
+        <RangeModal
+          form={form}
+          value={Number(currentPoint)}
+          close={togglePoint}
+          name="points"
+          max={1000}
         />
       )}
     </>

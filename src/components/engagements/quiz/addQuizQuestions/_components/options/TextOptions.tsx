@@ -50,7 +50,7 @@ export function TextOptions({
         };
       }
 
-      return { ...field };
+      return { ...field, isAnswer: "" };
     });
 
     form.setValue("options", updatedField);
@@ -151,6 +151,7 @@ function SingleOption({
       {isFocused ? (
         <div className="w-full">
           <TextEditor
+          placeholder="Enter Option"
             onChange={(value) => {
               form.setValue(`options.${index-1}.option` as const, value);
             }}
