@@ -17,17 +17,27 @@ const config = {
       },
     },
     extend: {
-      // gradientColorStops:
-      //   '(theme) => ({\n				"custom-gradient-start": "#001FCC",\n				"custom-gradient-end": "#9D00FF",\n				"custom-bg-gradient-start": "#001FCC19",\n				"custom-bg-gradient-end": "#9D00FF19",\n			})',
+      gradientColorStops: (theme) => ({
+        "custom-gradient-start": "#001FCC",
+        "custom-gradient-end": "#9D00FF",
+        "custom-bg-gradient-start": "#001FCC19",
+        "custom-bg-gradient-end": "#9D00FF19",
+        "concert-gradient-start": "rgba(157, 0, 255, 0.14)", // 10% opacity
+        "concert-gradient-end": " rgba(255, 255, 255, 0.14)", // 10% opacity
+      }),
       linearGradientDirections: {
+        // Define your custom gradient direction
         "top-right": "to top right",
       },
-      linearGradientColors:
-        '(theme: (arg0: string) => any) => ({\n				"custom-gradient": [\n					theme("colors.custom-gradient-start"),\n					theme("colors.custom-gradient-end"),\n				],\n			})',
+      linearGradientColors: (theme: (arg0: string) => any) => ({
+        "custom-gradient": [
+          theme("colors.custom-gradient-start"),
+          theme("colors.custom-gradient-end"),
+        ],
+      }),
       colors: {
         zikoroBlue: "hsl(var(--zblue))",
         basePrimary: "#001FCC",
-        "basePrimary-100":"#F7F8FF",
         basebody: "#f3f3f3",
         baseBg: "#F9FAFF",
         ticketColor: "#CFCFCF",
@@ -91,24 +101,6 @@ const config = {
         tiny: "10px",
         mobile: "13px",
         desktop: "15px",
-      },
-      keyframes: {
-        'float-in': {
-          '0%': { transform: 'translateY(-20px)', opacity: '0', visibility: 'hidden' },
-          '100%': { transform: 'translateY(0)', opacity: '1', visibility: 'visible' },
-        },
-        'float-out': {
-          '0%': { transform: 'translateY(0)', opacity: '1' },
-          '100%': { transform: 'translateY(-10px)', opacity: '0', visibility: 'hidden' },
-        },
-      },
-      animation: {
-        'float-in': 'float-in 0.3s ease-out forwards',
-        'float-out': 'float-out 0.3s ease-out forwards',
-        "caret-blink": "caret-blink 1.25s ease-out infinite",
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
-        'fade-in-out': 'fade-in-out 2s ease-in-out',
       },
     },
   },

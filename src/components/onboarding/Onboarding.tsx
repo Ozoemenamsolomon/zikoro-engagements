@@ -386,7 +386,7 @@ export default function OnboardingForm({
       await registration(payload, email, createdAt);
       handleNext();
     } catch (error) {
-      console.error("Registration failed:", error);
+      toast.error("Registration failed");
     }
   }
 
