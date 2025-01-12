@@ -68,6 +68,7 @@ export function TextOptions({
           handleRadioChange={handleRadioChange}
         />
       ))}
+       
 
       <button
       disabled={fields?.length ===4}
@@ -79,7 +80,7 @@ export function TextOptions({
         className="text-basePrimary mt-4"
       >
         Add text option
-      </button>
+      </button> 
     </div>
   );
 }
@@ -132,7 +133,7 @@ function SingleOption({
   handleRadioChange: (i: number) => void;
 }) {
   const [isFocused, setIsFocused] = useState(false);
-  const addedOption = form.watch(`options.${index}.option` as const);
+  const addedOption = form.watch(`options.${index-1}.option` as const);
   const {
     formState: { errors },
   } = form;
@@ -151,9 +152,9 @@ function SingleOption({
         <div className="w-full">
           <TextEditor
             onChange={(value) => {
-              form.setValue(`options.${index}.option` as const, value);
+              form.setValue(`options.${index-1}.option` as const, value);
             }}
-            error={errors?.options ? errors?.options[index]?.message : ""}
+            error={errors?.options ? errors?.options[index-1]?.message : ""}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
           />

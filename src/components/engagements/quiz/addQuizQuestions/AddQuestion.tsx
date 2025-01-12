@@ -55,7 +55,7 @@ export function AddQuestion({
     ]);
   }
 
-  // async function onSubmit(values: z.infer<typeof quizQuestionSchema>) {
+ async function onSubmit(values: z.infer<typeof quizQuestionSchema>) {
   //   // console.log('val',values)
   //   if (!quiz) return;
   //   const isCorrectAnswerNotSelected = values?.options?.every(
@@ -122,7 +122,7 @@ export function AddQuestion({
   //   setLoading(false);
   //   if (refetch) refetch();
   //   close();
-  // }
+   }
 
   const questionImg = form.watch("questionImage");
   const addedImage = useMemo(() => {
@@ -155,11 +155,11 @@ export function AddQuestion({
     }
   }, [feedBackValue]);
 
-  useEffect(() => {
-    if (interactionType) {
-      form.setValue("interactionType", interactionType);
-    }
-  }, [interactionType]);
+//   useEffect(() => {
+//     if (interactionType) {
+//       form.setValue("interactionType", interactionType);
+//     }
+//   }, [interactionType]);
 
   useEffect(() => {
     if (question) {
@@ -174,11 +174,13 @@ export function AddQuestion({
     }
   }, [question]);
 
+  console.log(fields)
+
   return (
     <>
       <div className="w-full px-4 sm:px-6 pt-4 sm:pt-6 pb-20 sm:pb-32 h-full">
         <form
-          //onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={form.handleSubmit(onSubmit)}
 
           className="w-full"
         >
@@ -210,10 +212,17 @@ export function AddQuestion({
                   onClick={(e) => {
                     e.stopPropagation();
                     e.preventDefault();
-                    setOptionType(null);
-                    form.setValue("options", [
-                      { optionId: nanoid(), option: "", isAnswer: "" },
-                    ]);
+                    // setOptionType(null);
+                    // form.setValue("options", [
+                    //   { optionId: nanoid(), option: "", isAnswer: "" },
+                    // ]);
+                    append([
+                        {
+                          optionId: nanoid(),
+                          option: "",
+                          isAnswer: "",
+                        },
+                      ]);
                   }}
                   className="flex items-center gap-x-1"
                 >
@@ -284,14 +293,14 @@ export function AddQuestion({
                     form={form}
                   />
                 )}
-                {OptionType.image === optionType && (
+                {/* {OptionType.image === optionType && (
                   <ImageOptions
                     appendOption={appendOption}
                     remove={remove}
                     fields={fields}
                     form={form}
                   />
-                )}
+                )} */}
               </div>
             )}
 
