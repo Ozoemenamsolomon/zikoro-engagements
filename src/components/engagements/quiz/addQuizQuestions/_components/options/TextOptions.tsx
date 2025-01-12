@@ -70,6 +70,7 @@ export function TextOptions({
       ))}
 
       <button
+      disabled={fields?.length ===4}
         onClick={(e) => {
           e.stopPropagation();
           e.preventDefault();

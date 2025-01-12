@@ -45,6 +45,7 @@ export function AddQuestion({
   });
 
   function appendOption() {
+    console.log("appending")
     append([
       {
         optionId: nanoid(),
