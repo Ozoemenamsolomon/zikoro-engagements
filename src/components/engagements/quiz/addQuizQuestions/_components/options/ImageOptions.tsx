@@ -23,7 +23,7 @@ export function ImageOptions({
       {
         question: string;
         options: {
-          option: any;
+          option?: any;
           optionId: string;
           isAnswer: string;
         }[];
@@ -99,7 +99,7 @@ function SingleImageOption({
       {
         question: string;
         options: {
-          option: any;
+          option?: any;
           optionId: string;
           isAnswer: string;
         }[];
@@ -116,7 +116,7 @@ function SingleImageOption({
       {
         question: string;
         options: {
-          option: any;
+          option?: any;
           optionId: string;
           isAnswer: string;
         }[];

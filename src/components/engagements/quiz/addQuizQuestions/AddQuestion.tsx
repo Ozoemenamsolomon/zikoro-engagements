@@ -288,6 +288,7 @@ export function AddQuestion({
                     appendOption={appendOption}
                     remove={remove}
                     fields={fields}
+                    form={form}
                   />
                 )}
               </div>
