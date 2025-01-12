@@ -58,7 +58,7 @@ export function ImageOptions({
         form.setValue("options", updatedField);
       }
   return (
-    <div className="w-full flex items-start justify-start gap-4">
+    <div className="w-full flex flex-col items-start justify-start gap-4">
     {fields.map((field, index) => (
       <SingleImageOption
         index={index + 1}

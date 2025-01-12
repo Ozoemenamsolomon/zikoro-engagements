@@ -31,7 +31,7 @@ export function DurationModal({
         onClick={(e) => {
           e.stopPropagation();
         }}
-        className="w-[95%] max-w-md text-sm absolute inset-0 bg-white rounded-lg p-3"
+        className="w-[95%] max-w-md m-auto h-fit text-sm absolute inset-0 bg-white rounded-lg p-3"
       >
         <div className="w-full flex items-center justify-between pb-3 border-b">
           <p>Question Duration</p>
@@ -53,13 +53,13 @@ export function DurationModal({
             </span>{" "}
             Secs
           </p>
-          <div className="w-full grid grid-cols-12">
-            <span>0</span>
+          <div className="w-full grid items-center justify-center grid-cols-12">
+            <span className="text-center">0</span>
             <div className="col-span-10 w-full">
               <Slider
                 min={0}
                 max={120}
-                step={0.1}
+                step={1}
                 size="small"
                 value={chooseDuration}
                 className="w-full h-1"
@@ -83,7 +83,7 @@ export function DurationModal({
                     },
                   },
                   "& .MuiSlider-track": {
-                    backgroundColor: "#6b7280",
+                    backgroundColor: "#001fcc",
                   },
                   "& .MuiSlider-rail": {
                     backgroundColor: "#6b7280",
@@ -92,12 +92,13 @@ export function DurationModal({
               />
             </div>
 
-            <span>120</span>
+            <span className="text-center">120</span>
           </div>
 
           <Button
             onClick={() => {
               form.setValue("duration", String(chooseDuration));
+              close()
             }}
             className="font-medium text-white rounded-lg bg-basePrimary"
           >
