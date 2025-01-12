@@ -22,7 +22,7 @@ export function TextOptions({
     {
       question: string;
       options: {
-        option: any;
+        option?: any;
         optionId: string;
         isAnswer: string;
       }[];
@@ -97,7 +97,7 @@ function SingleOption({
     {
       question: string;
       options: {
-        option: any;
+        option?: any;
         optionId: string;
         isAnswer: string;
       }[];
@@ -114,7 +114,7 @@ function SingleOption({
     {
       question: string;
       options: {
-        option: any;
+        option?: any;
         optionId: string;
         isAnswer: string;
       }[];

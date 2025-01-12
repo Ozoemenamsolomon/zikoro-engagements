@@ -12,7 +12,7 @@ export function OptionAction({isDisabled, index, remove, interactionType, handle
       {
         question: string;
         options: {
-          option: any;
+          option?: any;
           optionId: string;
           isAnswer: string;
         }[];
