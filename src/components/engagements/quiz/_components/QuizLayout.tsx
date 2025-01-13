@@ -14,7 +14,7 @@ export function QuizLayout({
   parentClassName?:string;
 }) {
   return (
-    <div className={cn("w-full px-4 inset-0 text-sm max-w-7xl h-[85vh] m-auto absolute", parentClassName)}>
+    <div className={cn("w-full px-4 inset-0 text-sm h-[85vh] m-auto absolute", parentClassName)}>
       <div className="w-full flex items-center mb-2 justify-between">
         {LeadingWidget}
         {TrailingWidget}

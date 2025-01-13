@@ -19,7 +19,7 @@ export function AddedQuestions({
   return (
     <div
       className={cn(
-        "w-full bg-white h-full mt-8 rounded-lg col-span-3 py-6 px-3",
+        "w-full bg-white h-full mt-8 border rounded-lg col-span-3 py-6 px-3",
         className
       )}
     >

@@ -26,10 +26,10 @@ export function Advert({
   return (
     <div
       className={cn(
-        "w-full flex-col  rounded-l-xl h-[90vh] border-l border-y items-start justify-between hidden col-span-3 md:hidden",
+        "w-full flex-col  h-full  items-start justify-between hidden col-span-3 md:hidden",
         isLeftBox && "flex md:flex ",
         !isRightBox && "col-span-3",
-        isRightBox &&  isFromPoll && "col-span-full max-w-3xl border-r rounded-r-xl"
+        isRightBox &&  isFromPoll && "col-span-full max-w-3xl "
       )}
     >
       {quiz?.branding?.eventName ? (

@@ -60,8 +60,8 @@ export default function AddQuizQuestions({
   }
   return (
     <>
-      <div className="w-full min-h-screen px-4 max-w-7xl mx-auto  flex flex-col justify-between">
-        <div className="w-full h-[70vh] gap-4 mt-10 items-start grid grid-cols-12">
+      <div className="w-full min-h-screen px-4  mx-auto  flex flex-col justify-between">
+        <div className="w-full h-[75vh] gap-4 mt-10 items-start grid grid-cols-12">
           {Array.isArray(data?.questions) && data?.questions?.length > 0 && (
             <AddedQuestions
               questions={data?.questions}
@@ -82,7 +82,7 @@ export default function AddQuizQuestions({
           >
             <QuizLayout
               className="overflow-y-auto"
-              parentClassName="h-[70vh] relative px-0"
+              parentClassName="h-[75vh] relative px-0"
               LeadingWidget={<LeadingHeadRoute name={data?.coverTitle ?? ""} />}
               TrailingWidget={
                 <TrailingHeadRoute
