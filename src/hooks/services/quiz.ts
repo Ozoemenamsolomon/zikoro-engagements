@@ -1,7 +1,11 @@
 "use client"
 
+import { TQAQuestion } from "@/types/qa";
+import { TAnswer, TQuiz } from "@/types/quiz";
+import { getRequest } from "@/utils/api";
 import { createClient } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 const supabase = createClient()
 export const useRealtimePresence = (isLive: boolean) => {
@@ -101,4 +105,52 @@ export const useRealtimePresence = (isLive: boolean) => {
         };
       }
     }, [supabase, isLive]);
+  };
+
+
+  export const useGetQuizAnswer = () => {
+    const [answers, setAnswers] = useState<TAnswer[]>([]);
+    const [isLoading, setLoading] = useState<boolean>(false);
+  
+    // console.log({date})
+    const getAnswers = async (quizId: number) => {
+      setLoading(true);
+  
+      const { data, status } = await getRequest<TAnswer[]>({
+        endpoint: `/quiz/answer/${quizId}`,
+      });
+  
+      setLoading(false);
+  
+      if (status !== 200) return;
+  
+      //
+      return setAnswers(data.data);
+    };
+  
+    return { answers, isLoading, getAnswers, setAnswers };
+  };
+
+  export const useFetchQuiz = () => {
+    const [isLoading, setLoading] = useState<boolean>(false);
+  
+    const getQuiz = async (quizId: string) => {
+      try {
+        setLoading(true);
+        const { data, status } = await getRequest<TQuiz<TQAQuestion[]>>({
+          endpoint: `/quiz/single/${quizId}`,
+        });
+  
+        if (status !== 200) {
+          throw data;
+        }
+        return data.data;
+      } catch (error: any) {
+        toast.error(error?.response?.data?.error);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    return { isLoading, getQuiz };
   };

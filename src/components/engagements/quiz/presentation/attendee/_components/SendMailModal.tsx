@@ -5,7 +5,6 @@ import { Form, FormField, FormControl, FormMessage, FormItem } from "@/component
 import { Input } from "@/components/ui/input";
 
 import { useForm } from "react-hook-form";
-// import { CloseOutline } from "styled-icons/evaicons-outline";
 import { Navigation } from "styled-icons/feather";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
