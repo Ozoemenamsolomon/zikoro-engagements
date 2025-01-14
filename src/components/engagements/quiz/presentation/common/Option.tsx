@@ -15,8 +15,7 @@ export function Option({
   option,
   selectOption,
   setIsOptionSelected,
-  isOrganizer,
-  isIdPresent,
+  isAttendee,
   answer,
   showAnswerMetric,
   isDisabled,
@@ -25,8 +24,7 @@ export function Option({
   optionIndex: string;
   option: TOption;
   selectOption?: (id: string) => void;
-  isOrganizer: boolean;
-  isIdPresent: boolean;
+  isAttendee?:boolean;
   answer: TAnswer[];
   showAnswerMetric?: boolean;
   setIsOptionSelected?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -49,7 +47,7 @@ export function Option({
 
   return (
     <>
-      {isOrganizer || isIdPresent ? (
+      {!isAttendee ? (
         <OrganizerQuestOption
           optionIndex={optionIndex}
           option={option?.option ?? ""}
@@ -94,7 +92,7 @@ export function Option({
             <div className="w-full flex items-start gap-x-2">
               <span
                 className={cn(
-                  "rounded-lg h-11 flex items-center justify-center font-medium w-11 bg-white border border-gray-700",
+                  "rounded-lg h-9 flex items-center justify-center font-medium w-9 bg-white border border-gray-700",
                   option?.isCorrect !== "default" &&
                     showAnswerMetric &&
                     option?.isCorrect &&

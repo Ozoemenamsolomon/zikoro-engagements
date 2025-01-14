@@ -23,11 +23,11 @@ export function TopSection({
   
 }) {
   return (
-    <div className="w-full flex items-center justify-between">
+    <div className="w-full flex items-start text-sm justify-between">
       <div className="flex flex-col items-start justify-start ">
         <div
           onClick={toggleJoiningAttempt}
-          className="bg-basePrimary-200 relative h-12 justify-center px-3 rounded-3xl flex items-center gap-x-2"
+          className="bg-basePrimary-200 relative h-10 justify-center px-3 rounded-3xl flex items-center gap-x-2"
         >
           <PeopleIcon />
           <p>{noOfParticipants}</p>
@@ -42,7 +42,7 @@ export function TopSection({
       </div>
 
       {isQuestionView && (
-        <div className="bg-red-300 h-10 justify-center px-3 rounded-3xl flex items-center gap-x-2">
+        <div className="bg-red-100 h-10 justify-center px-3 rounded-3xl flex items-center gap-x-2">
           <InlineIcon
             icon="solar:alarm-bold-duotone"
             color="#ef4444"

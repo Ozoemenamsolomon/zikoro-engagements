@@ -35,7 +35,7 @@ import { QuizLobby } from "../common";
 import { generateAlias } from "@/utils";
 import { AvatarFullConfig } from "react-nice-avatar";
 import { TPlayerDetail } from "../attendee/_components/AttendeeOnboarding";
-import { Advert, LeaderBoard } from "./_components";
+import { Advert, LeaderBoard, QuestionView } from "./_components";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/utils/supabase/client";
 
@@ -76,6 +76,7 @@ export default function QuizOrganizerView({
   const [isAudioMuted, setIsAudioMuted] = useState(false);
   const [isLobby, setIsLobby] = useState(false);
   const params = useSearchParams();
+  const [volume, adjustVolume] = useState(0.05);
   const [isAdvert, setIsAdvert] = useState(true);
   const { liveQuizPlayers, setLiveQuizPlayers, getLiveParticipant } =
     useGetLiveParticipant({
@@ -246,6 +247,29 @@ export default function QuizOrganizerView({
     }, 2000);
   }, []);
 
+
+  useEffect(() => {
+    if (quiz) {
+      const refinedArray = {
+        ...quiz,
+        questions: quiz?.questions?.map((item) => {
+          return {
+            ...item,
+            options: item?.options?.map((option) => {
+              return {
+                ...option,
+                isCorrect: "default",
+              };
+            }),
+          };
+        }),
+      };
+      setRefinedQuizArray(refinedArray);
+
+      getAnswers(quiz?.id);
+    }
+  }, [quiz]);
+
   const isMaxLiveParticipant = useMemo(() => {
     if (
       quiz?.accessibility?.live &&
@@ -318,6 +342,55 @@ export default function QuizOrganizerView({
       return;
     }
     
+
+
+  }
+
+  function onCloseScoreSheet() {
+    setShowScoreSheet(false);
+  }
+
+  function onOpenScoreSheet() {
+    setShowScoreSheet(true);
+    setIsSendMailModal(true);
+  }
+
+  function showSendMailModal() {
+    setIsSendMailModal(false);
+    setShowScoreSheet(true);
+  }
+
+  // show score sheet after live quiz
+  useEffect(() => {
+    (async () => {
+      if (quiz && quiz?.accessibility?.live) {
+        if (quiz?.liveMode?.isEnded) {
+          // saveCookie("currentPlayer", null);
+          setShowScoreSheet(quiz?.liveMode?.isEnded);
+          setIsSendMailModal(true);
+          if (audio) audio.pause();
+          //  if (liveQuizPlayers?.length > 0) {
+          await deleteQuizLobby();
+          //  }
+        }
+      }
+    })();
+  }, [quiz]);
+
+  // change audio state
+  function toggleAudio() {
+    if (audio) {
+      setIsAudioMuted(!audio.muted);
+      audio.muted = !audio.muted;
+    }
+  }
+
+  // audio volume change
+  function handleVolume(num: number) {
+    if (audio) {
+      adjustVolume(num);
+      audio.volume = num;
+    }
   }
 
   if (isLoading) {
@@ -326,7 +399,7 @@ export default function QuizOrganizerView({
 
   return (
     <div className="w-full min-h-screen px-4  mx-auto  flex flex-col justify-between">
-      <div className="w-full  gap-4 items-start grid grid-cols-12">
+      <div className="w-full  items-start grid grid-cols-12">
         {isAdvert && quiz && (
           <OrganizerOnboarding
             isMaxLiveParticipant={isMaxLiveParticipant}
@@ -337,7 +410,7 @@ export default function QuizOrganizerView({
           />
         )}
         {!isAdvert && isLobby && quiz && quiz?.accessibility?.live && (
-          <div className="w-full h-[78vh] col-span-full gap-4 mt-10 items-start rounded-lg grid grid-cols-12">
+          <div className="w-full h-[78vh] col-span-full  mt-10 items-start rounded-lg grid grid-cols-12">
             {quiz && (
               <Advert
                 quiz={quiz}
@@ -375,7 +448,7 @@ export default function QuizOrganizerView({
           </div>
         )}
         {isQuizStarted && (
-          <div className="w-full h-[78vh] col-span-full gap-4 mt-10 items-start rounded-lg grid grid-cols-12">
+          <div className="w-full h-[78vh] col-span-full mt-10 items-start rounded-lg grid grid-cols-12">
             {quiz && (
               <Advert
                 quiz={quiz}
@@ -385,6 +458,33 @@ export default function QuizOrganizerView({
                 close={() => {}}
               />
             )}
+            {quiz &&  refinedQuizArray &&  <QuestionView
+                    isLeftBox={isLeftBox}
+                    answer={answer}
+                    quizAnswer={answers}
+                    getAnswer={getAnswer}
+                    refetchQuiz={getData}
+                    refetchQuizAnswers={getAnswers}
+                    quiz={refinedQuizArray}
+                    actualQuiz={quiz!}
+                    getLiveParticipant={getLiveParticipant}
+                    isRightBox={isRightBox}
+                    toggleRightBox={onToggle}
+                    toggleLeftBox={onClose}
+                    onOpenScoreSheet={onOpenScoreSheet}
+                    updateQuiz={updateQuiz}
+                    updateQuizResult={updateQuizResult}
+                    quizParticipantId={id}
+                    liveQuizPlayers={liveQuizPlayers}
+                    attendeeDetail={{
+                      attendeeId: id || null,
+                      attendeeName: playerDetail?.nickName,
+                      email: playerDetail?.email,
+                      phone: playerDetail?.phone,
+                      avatar: chosenAvatar!,
+                    }}
+                 
+                  />}
             
             {quiz && (
               <LeaderBoard
@@ -403,7 +503,7 @@ export default function QuizOrganizerView({
         <div className="w-fit mx-auto flex items-center gap-x-3 justify-center rounded-[3rem] bg-white border p-2">
           <Button
             onClick={onClickStart}
-            className="rounded-3xl h-fit bg-basePrimary-200 px-2 border border-basePrimary gap-x-2"
+            className="rounded-[3rem] h-fit bg-basePrimary-200 px-2 border border-basePrimary gap-x-2"
           >
             <PlayQuizIcon />
             <p className="bg-basePrimary text-sm sm:text-base gradient-text">

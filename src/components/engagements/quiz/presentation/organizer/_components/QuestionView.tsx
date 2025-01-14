@@ -43,8 +43,7 @@ type TQuestionProps = {
     email: string;
     phone: string;
   };
-  isOrganizer: boolean;
-  isIdPresent: boolean;
+  isAttendee?:boolean;
   answer: TAnswer[];
   quizAnswer: TAnswer[];
   refetchQuiz: () => Promise<any>;
@@ -52,7 +51,7 @@ type TQuestionProps = {
   refetchQuizAnswers: (id: number) => Promise<any>;
   onOpenScoreSheet: () => void;
   updateQuizResult: (q: TQuiz<TRefinedQuestion[]>) => void;
-  goBack: () => void;
+  // goBack: () => void;
   liveQuizPlayers: TLiveQuizParticipant[];
   getLiveParticipant: () => Promise<any>;
   actualQuiz: TQuiz<TQuestion[]>;
@@ -66,8 +65,7 @@ export function QuestionView({
   quiz,
   updateQuiz,
   attendeeDetail,
-  isOrganizer,
-  isIdPresent,
+  isAttendee,
   quizParticipantId,
   answer,
   getAnswer,
@@ -76,7 +74,7 @@ export function QuestionView({
   refetchQuiz,
   onOpenScoreSheet,
   updateQuizResult,
-  goBack,
+  // goBack,
   liveQuizPlayers,
   getLiveParticipant,
   actualQuiz,
@@ -101,7 +99,7 @@ export function QuestionView({
 
   useEffect(() => {
     (async () => {
-      if (quiz && quiz?.accessibility?.live && (isIdPresent || isOrganizer)) {
+      if (quiz && quiz?.accessibility?.live && !isAttendee) {
         const { liveMode, ...restData } = quiz;
         const { startingAt } = liveMode;
 
@@ -139,7 +137,7 @@ export function QuestionView({
 
   //attendee
   useEffect(() => {
-    if (quiz && quiz?.accessibility?.live && !isOrganizer && !isIdPresent) {
+    if (quiz && quiz?.accessibility?.live && isAttendee) {
       if (quiz?.liveMode?.current) {
         setCurrentQuestion(quiz?.liveMode?.current);
         setShowAnswerMetric(false);
@@ -169,7 +167,7 @@ export function QuestionView({
   // isOptionSelected quiz?.liveMode?.isOptionSelected &&
   useEffect(() => {
     (async () => {
-      if (quiz && quiz?.accessibility?.live && (isOrganizer || isIdPresent)) {
+      if (quiz && quiz?.accessibility?.live && !isAttendee) {
         if (currentQuestion) {
           await getAnswer(currentQuestion?.id);
         }
@@ -236,7 +234,7 @@ export function QuestionView({
           isOptionSelected: false,
         },
       };
-      if (isIdPresent || isOrganizer) {
+      if (!isAttendee) {
         setCurrentQuestion(quiz?.questions[currentQuestionIndex + 1]);
         setCurrentQuestionIndex(currentQuestionIndex + 1);
         setShowTransiting(quiz?.accessibility?.countdown);
@@ -264,7 +262,7 @@ export function QuestionView({
 
   // admin
   useEffect(() => {
-    if (quiz && quiz?.accessibility?.live && (isIdPresent || isOrganizer)) {
+    if (quiz && quiz?.accessibility?.live && isAttendee) {
       setShowTransiting(quiz?.accessibility?.countdown);
       // console.log("admin");
     }
@@ -499,22 +497,21 @@ export function QuestionView({
     <>
       <div
         className={cn(
-          "w-full h-full bg-white relative    border-x border-y  col-span-7",
+          "w-full h-full bg-white relative  text-sm  border-x border-y  col-span-6",
           isLeftBox &&
             isRightBox &&
-            (isIdPresent || isOrganizer) &&
-            "col-span-5",
+            !isAttendee &&
+            "col-span-6",
           !isLeftBox &&
             !isRightBox &&
             "col-span-full rounded-xl max-w-4xl mx-auto",
-          !isIdPresent &&
-            !isOrganizer &&
+            isAttendee &&
             "col-span-full rounded-xl max-w-3xl mx-auto",
-          isLeftBox && !isRightBox && "rounded-r-xl",
+          isLeftBox && !isRightBox && "",
           !isLeftBox && isRightBox && "rounded-l-xl"
         )}
       >
-        <div className="w-full overflow-y-auto no-scrollbar px-6 pt-12 space-y-3  h-[90%] pb-52 ">
+        <div className="w-full overflow-y-auto no-scrollbar pt-4 px-6 space-y-3  h-[90%] pb-52 ">
           <>
             {transiting ? (
               <Transition
@@ -523,17 +520,9 @@ export function QuestionView({
               />
             ) : (
               <>
-                <Button
-                  onClick={toggleRightBox}
-                  className={cn(
-                    "absolute right-2 top-2",
-                    isRightBox && "hidden"
-                  )}
-                >
-                  <Maximize2 size={20} />
-                </Button>
+               
                 <TopSection
-                  toggleBoard={() => {}}
+                  toggleBoard={toggleRightBox}
                   toggleJoiningAttempt={toggleJoiningAttempt}
                   attemptingToJoinIndicator={
                     Array.isArray(liveQuizPlayers) &&
@@ -542,19 +531,22 @@ export function QuestionView({
                   noOfParticipants={String(currentParticipants?.length)}
                   isQuestionView
                   timer={timing}
+                  
                 />
 
                 {/** <p className="text-xs sm:text-mobile text-gray-500">{`${
                     currentQuestionIndex + 1
                   }/${quiz?.questions?.length} Questions`}</p> */}
+                  <div className="w-full flex flex-col gap-3 max-w-2xl mx-auto">
 
-                <div className="w-full flex flex-col items-center gap-6">
-                  <p className="w-9 h-9 flex text-2xl items-center bg-basePrimary-100 justify-center rounded-full border border-basePrimary">
+                 
+                <div className="w-full  flex flex-col items-center gap-6">
+                  <p className="w-10 h-10 flex text-lg items-center bg-basePrimary-100 justify-center rounded-full border border-basePrimary">
                     {currentQuestionIndex + 1}
                   </p>
 
                   <div
-                    className="innerhtml w-full"
+                    className="innerhtml mx-auto w-full"
                     dangerouslySetInnerHTML={{
                       __html: currentQuestion?.question ?? "",
                     }}
@@ -575,12 +567,12 @@ export function QuestionView({
 
               
 
-                <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="w-full   flex flex-col items-start justify-start gap-4">
                   {currentQuestion?.options.map((option, index, arr) => (
                     <Option
                       key={index}
                       option={option}
-                      isOrganizer={isOrganizer}
+                      isAttendee={isAttendee}
                       setIsOptionSelected={setIsOptionSelected}
                       showAnswerMetric={showAnswerMetric}
                       answer={answer}
@@ -591,7 +583,7 @@ export function QuestionView({
                             typeof isCorrect === "boolean" || isOptionSelected
                         )
                       }
-                      isIdPresent={isIdPresent}
+                    
                       selectOption={selectOption}
                       optionIndex={optionLetter[index]}
                       quiz={quiz}
@@ -653,6 +645,7 @@ export function QuestionView({
                     </button>
                   </div>
                 )}
+                 </div>
 
                 {/**
              <div className="w-full hidden items-end justify-between">

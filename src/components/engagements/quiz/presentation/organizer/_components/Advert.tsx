@@ -23,8 +23,8 @@ export function Advert({
   // console.log("ileft", isLeftBox, isRightBox);
   const quizLink =
     quiz?.interactionType === "poll"
-      ? `https://engagements.zikoro.com/poll/${quiz?.eventAlias}/present/${quiz?.quizAlias}`
-      : `https://engagements.zikoro.com/quiz/${quiz?.eventAlias}/present/${quiz?.quizAlias}`;
+      ? `https://engagements.zikoro.com/e/poll/${quiz?.workspaceAlias}/o/${quiz?.quizAlias}/presentation`
+      : `https://engagements.zikoro.com/e/quiz/${quiz?.workspaceAlias}/o/${quiz?.quizAlias}/presentation`;
   return (
     <div
       className={cn(
@@ -44,7 +44,7 @@ export function Advert({
       )}
       <div className="w-full p-2 flex  flex-col gap-y-4 items-center justify-center ">
         <div className="w-fit h-fit  bg-white p-2">
-          <QRCode size={300} value={quizLink} />
+          <QRCode size={200} value={quizLink} />
         </div>
 
         <div className="w-full flex items-center">
