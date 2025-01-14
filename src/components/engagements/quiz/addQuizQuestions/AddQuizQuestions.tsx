@@ -127,10 +127,8 @@ export default function AddQuizQuestions({
             <p className="bg-basePrimary  gradient-text">Preview</p>
           </Button>
 
-          <Button
-            onClick={() =>
-              router.push(`/e/${workspaceAlias}/quiz/o/${quizId}/presentation`)
-            }
+          {/* <Button
+            
             disabled={isDisabled}
             className="rounded-3xl h-fit bg-basePrimary-200 px-2 border border-basePrimary gap-x-2"
           >
@@ -138,10 +136,13 @@ export default function AddQuizQuestions({
             <p className="bg-basePrimary text-sm sm:text-base gradient-text">
               Start Quiz
             </p>
-          </Button>
+          </Button> */}
 
           <div className="flex items-center  gap-x-2">
             <Button
+            onClick={() =>
+              router.push(`/e/${workspaceAlias}/quiz/o/${quizId}/presentation`)
+            }
               disabled={isDisabled}
               className="gap-x-2 bg-basePrimary-200 border-basePrimary border  rounded-xl h-9"
             >
