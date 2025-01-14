@@ -128,8 +128,9 @@ export function QuizLobby({
   return (
     <div
       className={cn(
-        "w-full px-4 inset-0 text-sm h-[75vh] m-auto absolute",
-        className
+        "w-full px-4 inset-0 bg-white text-sm h-[75vh] m-auto absolute",
+        className,
+        
       )}
     >
       <LobbyHeader
@@ -148,19 +149,23 @@ export function QuizLobby({
           />
         ))}
 
-{!isLeftBox &&  <Button
-       className="absolute left-3 bottom-3"
-       onClick={(e) => {
-        e.stopPropagation()
-        onToggle()
-       }}
-       >
-        <Maximize2 size={22}/>
-       </Button>}
+        {
+          <Button
+            className="absolute left-3 bottom-3"
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggle();
+            }}
+          >
+            <Maximize2 size={22} />
+          </Button>
+        }
       </div>
       {quiz.branding.poweredBy && (
-          <p className="text-center p-3">Powered by Zikoro</p>
-        )}
+        <p className="text-center absolute mx-auto w-fit inset-x-0 bottom-3 p-3">
+          Powered by Zikoro
+        </p>
+      )}
     </div>
   );
 }

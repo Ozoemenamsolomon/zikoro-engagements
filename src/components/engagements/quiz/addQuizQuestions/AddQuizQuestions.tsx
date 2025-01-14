@@ -20,6 +20,7 @@ import { cn } from "@/lib/utils";
 import { AddedQuestions } from "./AddedQuestion";
 import { TOrganization } from "@/types/home";
 import { QuizSettings } from "../quizSettings/QuizSettings";
+import { useRouter } from "next/navigation";
 
 export default function AddQuizQuestions({
   quizId,
@@ -28,6 +29,7 @@ export default function AddQuizQuestions({
   quizId: string;
   workspaceAlias: string;
 }) {
+  const router = useRouter();
   const { data, isLoading, getData } = useGetData<TQuiz<TQuestion[]>>(
     `engagements/quiz/${quizId}`
   );
@@ -126,6 +128,9 @@ export default function AddQuizQuestions({
           </Button>
 
           <Button
+            onClick={() =>
+              router.push(`/e/${workspaceAlias}/quiz/o/${quizId}/presentation`)
+            }
             disabled={isDisabled}
             className="rounded-3xl h-fit bg-basePrimary-200 px-2 border border-basePrimary gap-x-2"
           >

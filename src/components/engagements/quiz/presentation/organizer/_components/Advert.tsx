@@ -10,15 +10,17 @@ export function Advert({
   isRightBox,
   close,
   isLeftBox,
-  isFromPoll
+  isFromPoll,
+  isAdvert,
 }: {
   quiz: TQuiz<TQuestion[]>;
   isLeftBox: boolean;
   close: () => void;
   isRightBox: boolean;
-  isFromPoll?:boolean;
+  isFromPoll?: boolean;
+  isAdvert?: boolean;
 }) {
- // console.log("ileft", isLeftBox, isRightBox);
+  // console.log("ileft", isLeftBox, isRightBox);
   const quizLink =
     quiz?.interactionType === "poll"
       ? `https://engagements.zikoro.com/poll/${quiz?.eventAlias}/present/${quiz?.quizAlias}`
@@ -29,19 +31,20 @@ export function Advert({
         "w-full flex-col  h-full  items-start justify-between hidden col-span-3 md:hidden",
         isLeftBox && "flex md:flex ",
         !isRightBox && "col-span-3",
-        isRightBox &&  isFromPoll && "col-span-full max-w-3xl "
+        isRightBox && isFromPoll && "col-span-full max-w-2xl ",
+        isAdvert && "mx-auto justify-around"
       )}
     >
       {quiz?.branding?.eventName ? (
-        <h2 className="font-semibold line-clamp-1 w-full border-b p-4 text-base sm:text-xl">
+        <h2 className="font-semibold line-clamp-1 w-full text-center p-4 text-base sm:text-xl">
           {quiz?.coverTitle}
         </h2>
       ) : (
         <div className="w-1 h-1"></div>
       )}
-      <div className="w-full p-2 flex flex-col gap-y-3 items-center justify-center ">
+      <div className="w-full p-2 flex  flex-col gap-y-4 items-center justify-center ">
         <div className="w-fit h-fit  bg-white p-2">
-          <QRCode size={150} value={quizLink} />
+          <QRCode size={300} value={quizLink} />
         </div>
 
         <div className="w-full flex items-center">
@@ -75,11 +78,19 @@ export function Advert({
         </div>
       </div>
 
-      <div className="p-4 w-full flex items-end justify-end">
-        <Button onClick={(e) => {
-          e.stopPropagation()
-          close()
-        }} className="px-0 h-fit w-fit">
+      <div
+        className={cn(
+          "p-4 w-full flex items-end justify-end",
+          isAdvert && "hidden"
+        )}
+      >
+        <Button
+          onClick={(e) => {
+            e.stopPropagation();
+            close();
+          }}
+          className="px-0 h-fit w-fit"
+        >
           <Minimize2 size={20} />
         </Button>
       </div>

@@ -1,7 +1,7 @@
 "use client"
 
 import { TQAQuestion } from "@/types/qa";
-import { TAnswer, TQuiz } from "@/types/quiz";
+import { TAnswer, TLiveQuizParticipant, TQuestion, TQuiz } from "@/types/quiz";
 import { getRequest } from "@/utils/api";
 import { createClient } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
@@ -154,3 +154,99 @@ export const useRealtimePresence = (isLive: boolean) => {
   
     return { isLoading, getQuiz };
   };
+
+
+  export const useGetLiveParticipant = ({ quizId }: { quizId: string }) => {
+    const [isLoading, setLoading] = useState<boolean>(false);
+    const [liveQuizPlayers, setLiveQuizPlayers] = useState<
+      TLiveQuizParticipant[]
+    >([]);
+  
+    const getLiveParticipant = async () => {
+      try {
+        setLoading(true);
+        const { data, status } = await getRequest<TLiveQuizParticipant[]>({
+          endpoint: `engagements/quiz/participant/${quizId}`,
+        });
+  
+        if (status !== 200) {
+          throw data;
+        }
+        setLiveQuizPlayers(data.data);
+      } catch (error: any) {
+        //
+        toast.error(error?.response?.data?.error);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    useEffect(() => {
+      getLiveParticipant();
+    }, [quizId]);
+  
+    return { getLiveParticipant, liveQuizPlayers, isLoading, setLiveQuizPlayers };
+  };
+
+  export const useGetQuiz = ({ quizId }: { quizId: string }) => {
+    const [quiz, setQuiz] = useState<TQuiz<TQuestion[]> | null>(null);
+    const [isLoading, setLoading] = useState<boolean>(false);
+  
+    const getQuiz = async () => {
+      try {
+        setLoading(true);
+        const { data, status } = await getRequest<TQuiz<TQuestion[]>>({
+          endpoint: `engagements/quiz/${quizId}`,
+        });
+  
+        if (status !== 200) {
+          throw data;
+        }
+        setQuiz(data.data);
+      } catch (error: any) {
+        toast.error(error?.response?.data?.error)
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    useEffect(() => {
+      getQuiz();
+    }, [quizId]);
+  
+    const fetchQuiz = (updatedQuiz: TQuiz<TQuestion[]>) => {
+      setQuiz(updatedQuiz);
+    };
+  
+    return { quiz, isLoading, getQuiz, setQuiz: fetchQuiz };
+  };
+
+ 
+export const useGetAnswer = () => {
+  const [answer, setAnswer] = useState<TAnswer[]>([]);
+  const [isLoading, setLoading] = useState<boolean>(false);
+
+  // console.log({date})
+  const getAnswer = async (questionId: string) => {
+    setLoading(true);
+
+    const { data, status } = await getRequest<TAnswer[]>({
+      endpoint: `/quiz/answer/single/${questionId}`,
+    });
+
+    setLoading(false);
+
+    if (status !== 200) return;
+
+    //
+    return setAnswer(data.data);
+  };
+
+  /**
+   useEffect(() => {
+    getAnswer();
+  }, [questionId]);
+  */
+
+  return { answer, isLoading, getAnswer };
+};

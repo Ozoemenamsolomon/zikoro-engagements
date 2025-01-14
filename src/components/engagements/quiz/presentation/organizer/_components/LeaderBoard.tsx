@@ -1,7 +1,5 @@
 "use client";
 
-import { Minimize2 } from "styled-icons/feather";
-import { Button } from "@/components/custom";
 import { cn } from "@/lib/utils";
 import React, {
   useMemo,
@@ -16,6 +14,8 @@ import { AvatarFullConfig } from "react-nice-avatar";
 import { FeedStar } from "styled-icons/octicons";
 import { Plus } from "styled-icons/bootstrap";
 import { Reorder } from "framer-motion";
+import { Button } from "@/components/custom";
+import { Minimize2 } from "styled-icons/feather";
 
 type TLeaderBoard = {
   quizParticipantId: string;
@@ -149,7 +149,6 @@ function OtherPlayers({
   isLeaderBoardVisible: boolean;
 }) {
   {
-
   }
   return (
     <div
@@ -176,7 +175,6 @@ function OtherPlayers({
         score={attendee?.totalScore}
         isLeaderBoardVisible={isLeaderBoardVisible}
       />
-  
     </div>
   );
 }
@@ -288,11 +286,9 @@ export function LeaderBoard({
 
         setBoard(data);
       }
-    }
-    update()
-  }, [restructuredScores, recentAnime])
-
-
+    };
+    update();
+  }, [restructuredScores, recentAnime]);
 
   // observe leader board
 
@@ -316,11 +312,17 @@ export function LeaderBoard({
       ref={observingLeaderBoard}
       className={cn(
         "w-full col-span-3 bg-white h-full border-r border-y rounded-r-xl hidden  md:hidden",
-        isRightBox && "block md:block ",
-        !isLeftBox && "col-span-4"
+        isLeftBox && "block md:block ",
+        !isRightBox && "col-span-3"
       )}
     >
-      <div className="w-full h-[41vh] gap-y-2 flex pb-2 flex-col rounded-tr-xl items-center ">
+      <div className="w-full h-[35vh] relative gap-y-2 flex pb-2 flex-col rounded-tr-xl items-center ">
+        <Button
+          onClick={onToggleBoardVisibility}
+          className="px-0 absolute top-3 right-3 h-fit w-fit"
+        >
+          <Minimize2 size={20} />
+        </Button>
         <div className="flex items-center p-4 justify-center w-full">
           <h2 className="font-semibold  text-base sm:text-xl">LeaderBoard</h2>
           {/* <div className="flex items-center gap-x-2">
@@ -328,12 +330,7 @@ export function LeaderBoard({
               <QUser color="#ffffff" />
               <p>{board?.length || 0}</p>
             </div>
-            <Button
-              onClick={onToggleBoardVisibility}
-              className="px-0 h-fit w-fit"
-            >
-              <Minimize2 size={20} />
-            </Button>
+           
           </div> */}
         </div>
 
@@ -410,7 +407,7 @@ export function LeaderBoard({
             >
               <div className="quiz-player-animation gap-y-1 flex flex-col items-center justify-center">
                 <p className="font-semibold text-base mb-1">3rd</p>
-           
+
                 <Avatar
                   shape="square"
                   className="w-[3.5rem] h-[3.5rem]"
@@ -429,7 +426,7 @@ export function LeaderBoard({
         )}
       </div>
 
-      <div className="w-full overflow-y-auto no-scrollbar h-[49vh] space-y-2">
+      <div className="w-full overflow-y-auto no-scrollbar h-[43vh] space-y-2">
         <Reorder.Group values={board} onReorder={setBoard}>
           {Array.isArray(board) &&
             board.slice(3, board?.length)?.map((attendee, index) => (
