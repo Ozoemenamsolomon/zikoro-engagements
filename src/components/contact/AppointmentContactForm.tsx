@@ -41,7 +41,7 @@ const AppointmentContactForm = () => {
   };
 
   return (
-    <div className="bg-white rounded-[8px] max-w-full lg:max-w-[400px]  ">
+    <div className="bg-basePrimary-100 rounded-[8px] max-w-full lg:max-w-[400px]  ">
       {mailSent ? (
         <div className="flex flex-col items-center h-[50vh] justify-center">
           <Image
