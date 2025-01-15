@@ -562,11 +562,11 @@ export default function QuizOrganizerView({
                 ) : (
                   <PlayQuizIcon />
                 )}
-                <p className="bg-basePrimary text-sm sm:text-base gradient-text">
+                <p className={cn("text-red-500 text-sm sm:text-base ", !isQuizStarted && "gradient-text bg-basePrimary")}>
                   {isQuizStarted ? "End Quiz" : "Start Quiz"}
                 </p>
               </Button>
-              <Button
+            {!isAdvert &&  <Button
                 disabled={
                   questionViewRef.current !==  null &&
                   (questionViewRef.current.loading ||
@@ -581,7 +581,7 @@ export default function QuizOrganizerView({
                 className="px-0 w-fit h-fit"
               >
                 <NextQuestionIcon />
-              </Button>
+              </Button>}
               <Button title="Play Music" className="px-0 w-fit h-fit">
                 <SpeakerIcon />
               </Button>

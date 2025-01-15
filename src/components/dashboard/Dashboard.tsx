@@ -66,7 +66,7 @@ export default function Dashboard() {
             <h2 className="font-medium text-lg">No Data</h2>
           </div>
         )}
-        <div className="w-full grid grid-cols-1 gap-4 sm:grid-cols-1 xl:grid-cols-3">
+        <div className="w-full grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {Array.isArray(quizzes) &&
             quizzes.map((quiz, index) => (
               <QuizCard refetch={getQuizzes} key={index} quiz={quiz}  />

@@ -395,7 +395,7 @@ export default function QuizAttendeeView({
               isAttendee
               liveQuizPlayers={liveQuizPlayers}
               attendeeDetail={{
-                attendeeId: id || null,
+                attendeeId: null,
                 attendeeName: playerDetail?.nickName,
                 email: playerDetail?.email,
                 phone: playerDetail?.phone,

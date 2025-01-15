@@ -2,6 +2,7 @@
 
 import {
   EmptyQuizQuestionIcon,
+  PeopleIcon,
   PlayQuizIcon,
   PresentQuizzIcon,
   SettingsIcon,
@@ -63,22 +64,21 @@ export default function AddQuizQuestions({
   return (
     <>
       <div className="w-full min-h-screen px-4  mx-auto  flex flex-col justify-between">
-        <div className="w-full h-[75vh] gap-4 mt-10 items-start grid grid-cols-12">
+        <div className="w-full h-[83vh] gap-4 mt-10 items-start grid grid-cols-12">
           {(isAddNew ||
-                question !== null ||
-                (Array.isArray(data?.questions) &&
-                  data?.questions?.length > 0)) &&
-                data && (
-            <AddedQuestions
-              questions={data?.questions}
-              editQuestion={editQuestion}
-              editingQuestion={question}
-              addNewQuestion={() => {
-                setIsAddNew(true)
-                editQuestion(null)
-              }}
-            />
-          )}
+            question !== null ||
+            (Array.isArray(data?.questions) && data?.questions?.length > 0)) &&
+            data && (
+              <AddedQuestions
+                questions={data?.questions}
+                editQuestion={editQuestion}
+                editingQuestion={question}
+                addNewQuestion={() => {
+                  setIsAddNew(true);
+                  editQuestion(null);
+                }}
+              />
+            )}
 
           <div
             className={cn(
@@ -87,17 +87,17 @@ export default function AddQuizQuestions({
                 (Array.isArray(data?.questions) &&
                   data?.questions?.length === 0)) &&
                 "col-span-full",
-                (isAddNew ||
-                  question !== null ||
-                  (Array.isArray(data?.questions) &&
-                    data?.questions?.length > 0)) &&
-                  data && 'col-span-9'
-
+              (isAddNew ||
+                question !== null ||
+                (Array.isArray(data?.questions) &&
+                  data?.questions?.length > 0)) &&
+                data &&
+                "col-span-9"
             )}
           >
             <QuizLayout
               className="overflow-y-auto"
-              parentClassName="h-[75vh] relative px-0"
+              parentClassName="h-[83vh] relative px-0"
               LeadingWidget={<LeadingHeadRoute name={data?.coverTitle ?? ""} />}
               TrailingWidget={
                 <TrailingHeadRoute
@@ -138,31 +138,44 @@ export default function AddQuizQuestions({
             className="gap-x-2 bg-basePrimary-200 border-basePrimary border  rounded-xl h-9"
           >
             <SmallPreviewIcon />
-            <p className="bg-basePrimary  gradient-text">Preview</p>
+            <p className="bg-basePrimary  gradient-text"> Preview Mode</p>
           </Button>
 
-          {/* <Button
-            
+          <Button
+             onClick={() =>
+              router.push(
+                `/e/${workspaceAlias}/quiz/o/${quizId}/presentation`
+              )
+            }
             disabled={isDisabled}
-            className="rounded-3xl h-fit bg-basePrimary-200 px-2 border border-basePrimary gap-x-2"
+            className="rounded-[3rem] h-fit bg-basePrimary-200 px-2 border border-basePrimary gap-x-2"
           >
             <PlayQuizIcon />
             <p className="bg-basePrimary text-sm sm:text-base gradient-text">
               Start Quiz
             </p>
-          </Button> */}
+          </Button>
 
           <div className="flex items-center  gap-x-2">
             <Button
-            onClick={() =>
-              router.push(`/e/${workspaceAlias}/quiz/o/${quizId}/presentation`)
-            }
+              disabled={isDisabled}
+              className="gap-x-2 bg-basePrimary-200 px-2 border-basePrimary border  rounded-xl h-9"
+            >
+              <PeopleIcon />
+              <p className="bg-basePrimary gradient-text">
+                {Array.isArray(data?.quizParticipants)
+                  ? data?.quizParticipants?.length
+                  : "0"}
+              </p>
+            </Button>
+            {/* <Button
+             
               disabled={isDisabled}
               className="gap-x-2 bg-basePrimary-200 border-basePrimary border  rounded-xl h-9"
             >
               <PresentQuizzIcon />
               <p className="bg-basePrimary  gradient-text">Present</p>
-            </Button>
+            </Button> */}
             <Button
               disabled={isDisabled}
               className="gap-x-2 bg-basePrimary-200 border-basePrimary border  rounded-xl h-9"

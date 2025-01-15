@@ -106,7 +106,7 @@ export function RangeModal({
             }}
             className="font-medium text-white rounded-lg bg-basePrimary"
           >
-            Update Duration
+           {name === "duration" ? "Update Duration" : "Update Points"}
           </Button>
         </div>
       </div>

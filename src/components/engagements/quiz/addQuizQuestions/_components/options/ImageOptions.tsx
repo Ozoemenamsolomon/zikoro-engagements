@@ -58,6 +58,7 @@ export function ImageOptions({
         form.setValue("options", updatedField);
       }
   return (
+    <>
     <div className="w-full flex  items-center flex-wrap justify-start gap-4">
     {fields.map((field, index) => (
       <SingleImageOption
@@ -71,18 +72,20 @@ export function ImageOptions({
       />
     ))}
 
-    <button
-      disabled={fields?.length ===4}
-      onClick={(e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        appendOption();
-      }}
-      className="text-basePrimary mt-4"
-    >
-      Add image option
-    </button>
+    
   </div>
+  <button
+  disabled={fields?.length ===4}
+  onClick={(e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    appendOption();
+  }}
+  className="text-basePrimary mt-4"
+>
+  Add image option
+</button>
+  </>
   );
 }
 

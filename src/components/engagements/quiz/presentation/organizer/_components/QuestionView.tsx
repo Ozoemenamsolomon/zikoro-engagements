@@ -22,6 +22,7 @@ import { JoiningAttemptTab } from "./JoinAttemptTab";
 import { isAfter } from "date-fns";
 import { usePostRequest } from "@/hooks/services/requests";
 import { TopSection } from "../../_components";
+import Link from "next/link";
 
 export type QuestionViewRef = {
   onNextBtnClick: () => void;
@@ -360,7 +361,7 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(({
       const score = isCorrectAnswer ? 1 : 0;
       // calculate the user point
       const attendeePoints =
-        ((score * millisecondsLeft) / Number(currentQuestion?.duration)) *
+        ((score * millisecondsLeft) / (Number(currentQuestion?.duration) * 1000)) *
         Number(currentQuestion?.points);
 
       // update quiz state
@@ -527,7 +528,7 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(({
             "col-span-6",
           !isLeftBox &&
             !isRightBox &&
-            "col-span-full rounded-xl max-w-4xl h-[78vh] inset-0 absolute m-auto",
+            "col-span-full rounded-xl max-w-4xl h-[100vh] sm:h-[78vh] inset-0 absolute m-auto",
           
           isLeftBox && !isRightBox && "",
           !isLeftBox && isRightBox && "rounded-l-xl"
@@ -713,9 +714,12 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(({
                     </Button>
                   )}
                   {quiz.branding.poweredBy && (
-                    <p className="text-center bg-white text-sm w-full  p-2 ">
-                      Powered By Zikoro
-                    </p>
+                    <Link 
+                    href="/"
+                    target="_blank"
+                    className="text-center bg-white text-xs sm:text-sm w-full  p-2 ">
+                      Create your Quiz with Zikoro
+                    </Link>
                   )}
 
                  {!isAttendee && <Button
