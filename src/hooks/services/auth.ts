@@ -279,10 +279,10 @@ export const getUser = async (email: string | null) => {
   return user;
 };
 
+
 export function useOnboarding() {
   const [loading, setLoading] = useState(false);
   const { setUser } = useUserStore();
-  const router = useRouter();
 
   type CreateUser = {
     values: z.infer<typeof onboardingSchema>;
@@ -290,14 +290,13 @@ export function useOnboarding() {
     createdAt: string | null;
   };
   type FormData = {
-    referralCode: string,
+    referralCode: string;
     referredBy: string;
-    phoneNumber: string,
-    city: string,
-    country: string,
-    firstName: string,
-    lastName: string,
-    industry: string,
+    phoneNumber: string;
+    country: string;
+    firstName: string;
+    lastName: string;
+    industry: string;
   };
 
   async function registration(
@@ -307,22 +306,30 @@ export function useOnboarding() {
   ) {
     try {
       setLoading(true);
-      const { data, status } = await postRequest<CreateUser>({
-        endpoint: "/auth/user",
-        payload: {
-          ...values,
+      const { data, error, status } = await supabase
+        .from("users")
+        .insert({
           userEmail: email,
+          firstName: values.firstName,
+          lastName: values.lastName,
           created_at: createdAt,
-        },
-      });
+          industry: values.industry,
+          referralCode: values.referralCode,
+          phoneNumber: values.phoneNumber,
+          referredBy: values.referredBy
+        });
 
-      if (status === 201 || status === 200) {
-        const user = await getUser(email);
-        setUser(user);
-        setLoading(false);
-        toast.success("Profile Updated Successfully");
+      if (error) {
+        toast.error(error.message);
+        return;
       }
 
+      if (status === 201 || status === 200) {
+        setLoading(false);
+        toast.success("Profile Updated Successfully");
+        const user = await getUser(email);
+        setUser(user);
+      }
       return data;
     } catch (error: any) {
       //
