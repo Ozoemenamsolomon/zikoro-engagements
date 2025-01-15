@@ -554,7 +554,7 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(({
                   isQuestionView
                   timer={timing}
                   isLeftBox={isLeftBox}
-                  isAttendee
+                  isAttendee={isAttendee}
                   playerAvatar={attendeeDetail?.avatar}
                   
                 />

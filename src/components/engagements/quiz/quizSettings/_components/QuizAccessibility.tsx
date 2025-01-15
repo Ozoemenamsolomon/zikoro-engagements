@@ -552,7 +552,7 @@ export function QuizAccessibility({
         </div>
         {/***={loading} */}
         <Switch
-          disabled={organization && organization?.subscriptionPlan === "Free"}
+         // disabled={organization && organization?.subscriptionPlan === "Free"}
           checked={accessibility.live}
           onClick={() =>
             setAccessibility({

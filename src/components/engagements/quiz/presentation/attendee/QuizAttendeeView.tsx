@@ -113,7 +113,9 @@ export default function QuizAttendeeView({
           setQuiz(payload.new as TQuiz<TQuestion[]>);
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log("Subscription status: QUIZ", status);
+      });
 
     return () => {
       supabase.removeChannel(channel);
@@ -141,7 +143,9 @@ export default function QuizAttendeeView({
           ]);
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log("Subscription status: LIVEPLAYER", status);
+      });
 
     return () => {
       supabase.removeChannel(channel);
@@ -165,7 +169,9 @@ export default function QuizAttendeeView({
           setAnswers((prev) => [...prev, payload.new as TAnswer]);
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log("Subscription status: ANSWER", status);
+      });
 
     return () => {
       supabase.removeChannel(channel);
@@ -179,16 +185,16 @@ export default function QuizAttendeeView({
     }
   }, []);
 
-  // show the lobby if organizer has already started the quiz
-  useEffect(() => {
-    if (quiz?.accessibility?.live && quiz?.liveMode?.startingAt) {
-      setIsLobby(true);
-      if (audio) {
-        audio.volume = 0.05;
-        audio.play();
-      }
-    }
-  }, [quiz]);
+//   // show the lobby if organizer has already started the quiz
+//   useEffect(() => {
+//     if (quiz?.accessibility?.live && quiz?.liveMode?.startingAt) {
+//       setIsLobby(true);
+//       if (audio) {
+//         audio.volume = 0.05;
+//         audio.play();
+//       }
+//     }
+//   }, [quiz]);
 
   // ion know
   useEffect(() => {
@@ -357,6 +363,7 @@ export default function QuizAttendeeView({
               quiz={quiz}
               close={() => {}}
               refetch={getData}
+              
               isAttendee
               isMaxLiveParticipant={isMaxLiveParticipant}
               liveQuizPlayers={liveQuizPlayers}

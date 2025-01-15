@@ -12,6 +12,7 @@ export function Advert({
   isLeftBox,
   isFromPoll,
   isAdvert,
+  className
 }: {
   quiz: TQuiz<TQuestion[]>;
   isLeftBox: boolean;
@@ -19,6 +20,7 @@ export function Advert({
   isRightBox: boolean;
   isFromPoll?: boolean;
   isAdvert?: boolean;
+  className?:string;
 }) {
   // console.log("ileft", isLeftBox, isRightBox);
   const quizLink =
@@ -32,7 +34,8 @@ export function Advert({
         isLeftBox && "flex md:flex ",
         !isRightBox && "col-span-3",
         isRightBox && isFromPoll && "col-span-full max-w-2xl ",
-        isAdvert && "mx-auto justify-around"
+        isAdvert && "mx-auto justify-around",
+        className
       )}
     >
       {quiz?.branding?.eventName ? (

@@ -134,7 +134,9 @@ export default function QuizOrganizerView({
           setQuiz(payload.new as TQuiz<TQuestion[]>);
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log("Subscription status QuIZ:", status);
+      });
 
     return () => {
       supabase.removeChannel(channel);
@@ -175,7 +177,9 @@ export default function QuizOrganizerView({
           createBeep();
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log("Subscription status PLAYER:", status);
+      });
 
     return () => {
       supabase.removeChannel(channel);
@@ -200,7 +204,9 @@ export default function QuizOrganizerView({
           setAnswers((prev) => [...prev, payload.new as TAnswer]);
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log("Subscription status: ANSWR", status);
+      });
 
     return () => {
       supabase.removeChannel(channel);
@@ -234,7 +240,7 @@ export default function QuizOrganizerView({
   // show the lobby if organizer has already started the quiz
   useEffect(() => {
     if (quiz?.accessibility?.live && quiz?.liveMode?.startingAt) {
-      setIsLobby(true);
+      setIsAdvert(false)
       if (audio) {
         audio.volume = 0.05;
         audio.play();
@@ -350,6 +356,7 @@ export default function QuizOrganizerView({
         await quizLobbyRef.current.openQuestion();
       }
       setIsQuizStarted(true);
+      setIsLobby(false)
       return;
     }
   }
@@ -401,9 +408,11 @@ export default function QuizOrganizerView({
     }
   }
 
-  if (isLoading) {
-    return <></>;
-  }
+  // if (isLoading) {
+  //   return <></>;
+  // }
+
+  console.log("left", isLeftBox, "right", isRightBox, "lobby", isLobby,"advert", isAdvert )
 
   return (
     <>
@@ -433,14 +442,17 @@ export default function QuizOrganizerView({
               />
             )}
             {!isAdvert && isLobby && quiz && quiz?.accessibility?.live && (
-              <div className="w-full h-[78vh] col-span-full  mt-10 items-start rounded-lg grid grid-cols-12">
+              <div className="w-full h-[78vh] col-span-full mx-auto  mt-10 items-start rounded-lg grid grid-cols-12">
                 {quiz && (
                   <Advert
                     quiz={quiz}
                     isLeftBox={isLeftBox}
                     isRightBox={isRightBox}
                     isFromPoll={true}
-                    close={() => {}}
+                    close={() => {
+                      setRightBox((prev) => !prev)
+                    }}
+                    className={cn("col-span-3", !isRightBox && "col-span-full max-w-2xl mx-auto")}
                   />
                 )}
 
@@ -461,14 +473,15 @@ export default function QuizOrganizerView({
                     liveQuizPlayers={liveQuizPlayers}
                     isLeftBox={isLeftBox}
                     onToggle={() => {
-                      setRightBox((prev) => !prev);
+                      setRightBox(true);
                       setLeftBox((prev) => !prev);
                     }}
                     refetchLobby={getLiveParticipant}
                     id={id}
                     className={cn(
-                      "relative px-0 m-0  h-full border-y border-r col-span-9",
-                      !isLeftBox && "col-span-full rounded-lg border"
+                      "relative px-0 m-0  h-full border-y border-r rounded-r-lg col-span-9",
+                      !isLeftBox && "col-span-full rounded-lg border mx-auto",
+                      !isRightBox && "hidden"
                     )}
                   />
                 }

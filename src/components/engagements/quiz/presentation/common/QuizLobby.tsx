@@ -21,9 +21,9 @@ function WaitingPlayer({
   avatar: Required<AvatarFullConfig>;
 }) {
   return (
-    <div className="w-[60px] quiz-lobby swipeDown flex flex-col items-center justify-center h-[80px]">
-      <Avatar shape="square" className="w-[60px] h-[60px]" {...avatar} />
-      <p className="w-full line-clamp-1 text-xs sm:text-mobile font-medium">
+    <div className="w-16 quiz-lobby swipeDown flex flex-col gap-1 items-center justify-center h-[80px]">
+      <Avatar shape="square" style={{borderRadius:"12px"}} className="w-16 h-16" {...avatar} />
+      <p className="w-full capitalize line-clamp-1 text-xs sm:text-mobile font-medium">
         {nickName}
       </p>
     </div>
@@ -128,6 +128,7 @@ export const QuizLobby =  forwardRef<QuizLobbyRef, QuizLobbyProp>(({
           ? [...quiz?.quizParticipants, ...players]
           : [...players],
     };
+    console.log("payload", payload)
     await postData({ payload });
     await deleteData();
     refetch();
@@ -149,10 +150,10 @@ export const QuizLobby =  forwardRef<QuizLobbyRef, QuizLobbyProp>(({
         isAttendee={isAttendee}
         isMaxReached={isMaxLiveParticipant}
         noOfParticipants={String(players?.length)}
-        isLive={false}
+        isLive={quiz?.accessibility?.live}
         coverTitle={quiz?.coverTitle ?? ""}
       />
-      <div className="w-full flex flex-wrap items-start gap-4">
+      <div className="w-full flex flex-wrap p-4 sm:p-6 items-start gap-4">
         {players?.map((player) => (
           <WaitingPlayer
             key={player?.id}
