@@ -1,5 +1,5 @@
 import toast from "react-hot-toast";
-import { getRequest, postRequest } from "@/utils/api";
+import { getRequest, patchRequest, postRequest } from "@/utils/api";
 import { useEffect, useState } from "react";
 import { deleteRequest } from "@/utils/api";
 
@@ -87,7 +87,7 @@ export const useMutateData = <TData, TReturnData = any>(
       setLoading(true);
       toast.success("performing action...");
 
-      const { data, status } = await postRequest<TReturnData>({
+      const { data, status } = await patchRequest<TReturnData>({
         endpoint,
         payload,
       });
@@ -139,12 +139,12 @@ export const usePostRequest = <T>(endpoint: string) => {
 export const useDeleteRequest = <T>(endpoint: string) => {
   const [isLoading, setLoading] = useState<boolean>(false);
 
-  const deleteData = async () => {
+  const deleteData = async (endpointParam?:string) => {
     setLoading(true);
 
     try {
       const { data, status } = await deleteRequest<T>({
-        endpoint: endpoint,
+        endpoint:endpointParam || endpoint,
       });
 
       if (status !== 201) throw data.data;

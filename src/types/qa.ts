@@ -1,8 +1,11 @@
+import { TOrganization } from "./home";
 
 export interface TQaTag {
     name: string;
     color: string;
   }
+
+
   export interface TQa {
     id: number;
     lastUpdated_at: string;
@@ -12,7 +15,7 @@ export interface TQaTag {
     coverTitle: string;
     created_at: string;
     description: string;
-    workspaceAlis: string;
+    workspaceAlias: string;
     createdBy: number;
     tags: TQaTag[] | null;
     branding: { poweredBy: boolean; eventName: boolean };
@@ -28,6 +31,10 @@ export interface TQaTag {
       indicateAnsweredQuestions:boolean;
       canTag:boolean;
     };
+  }
+
+  export interface TOrganizationQa extends TQa {
+    organization: TOrganization
   }
   
   export type TQAQuestionResponse = Omit<

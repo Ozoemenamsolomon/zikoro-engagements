@@ -4,7 +4,8 @@ import useUserStore from "@/store/globalUserStore";
 import { TOrganization } from "@/types/home";
 import { useState, useEffect, useMemo } from "react";
 import { useGetData } from "./requests";
-import { TQa } from "@/types/qa";
+import { TOrganizationQa, TQa } from "@/types/qa";
+import { TOrganizationQuiz } from "@/types/quiz";
 
 export function useGetUserOrganizations() {
   // const userData = getCookie("user");
@@ -40,32 +41,42 @@ export function useGetUserOrganizations() {
 }
 
 export function useGetUserEngagements() {
-  const [qa, setQa] = useState<TQa[]>([]);
-  const { organizations, loading: isLoading } = useGetUserOrganizations();
-  const {data: qas, isLoading: qaLoading} = useGetData<TQa[]>("engagements/qa")
-  const [loading, setLoading] = useState(false);
+  const [qas, setQas] = useState<TOrganizationQa[]>([]);
+  const [quizzes, setQuizzes] = useState<TOrganizationQuiz[]>([]);
+  const { user: userData } = useUserStore();
+  const { data, isLoading: qaLoading , getData: getQas} =
+    useGetData<TOrganizationQa[]>("engagements/qa");
+  const { data: dataquizzes, isLoading: quizLoading, getData: getQuizzes } =
+    useGetData<TOrganizationQuiz[]>("engagements/quiz");
+
 
   useEffect(() => {
-    if (!isLoading && !qaLoading) {
-      setLoading(true)
-      const organizationAlias = organizations.map(
-        ({ organizationAlias }) => organizationAlias
-      );
+    if (!qaLoading && !quizLoading) {
+  
 
-     
-      const matchingQas = qas?.filter((qa) => {
-        return organizationAlias.includes(qa?.workspaceAlis);
+      const matchingQas = data?.filter((qa) => {
+        return qa?.organization && qa?.organization.teamMembers?.some(
+          ({ userEmail }) => userEmail === userData?.userEmail
+        );
       });
-      setQa(matchingQas)
-      setLoading(false)
+      const matchingQuizzes = dataquizzes?.filter((quiz) => {
+        return quiz?.organization && quiz?.organization.teamMembers?.some(
+          ({ userEmail }) => userEmail === userData?.userEmail
+        );
+      });
+      setQas(matchingQas);
+      setQuizzes(matchingQuizzes);
     }
-  }, [isLoading, organizations]);
-
+  }, [qaLoading, data, quizLoading, dataquizzes]);
+  //!qaLoading && !quizLoading
 
   return {
-    qa,
-    loading
-  }
+    qas,
+    quizzes,
+    loading: false,
+    getQuizzes,
+    getQas,
+  };
 }
 
 export function useVerifyUserAccess(workspaceAlias: string) {
@@ -84,9 +95,9 @@ export function useVerifyUserAccess(workspaceAlias: string) {
     }
   }, [isLoading, data, user]);
 
-
   return {
     isLoading,
-    isHaveAccess
-  }
+  
+    isHaveAccess,
+  };
 }

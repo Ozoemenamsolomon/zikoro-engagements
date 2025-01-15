@@ -31,8 +31,12 @@ export async function isImageValid(url: string): Promise<boolean> {
       formData.append("resource_type", "video");
     } else if (type === "pdf") {
       formData.append("resource_type", "raw");
-    //  formData.append("format", "pdf");
-    } else {
+    
+    } 
+    else if (type === "audio") {  
+      formData.append("resource_type", "audio");
+    }
+    else {
       formData.append("resource_type", "image");
     }
   
@@ -74,3 +78,5 @@ export async function isImageValid(url: string): Promise<boolean> {
     const shortValue = (number / Math.pow(1000, suffixNum)).toFixed(1);
     return shortValue + suffixes[suffixNum];
   };
+
+  export const deploymentUrl = "https://enagagement.zikoro.com"
