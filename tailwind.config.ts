@@ -16,13 +16,24 @@ const config = {
       },
     },
     extend: {
-      // gradientColorStops:
-      //   '(theme) => ({\n				"custom-gradient-start": "#001FCC",\n				"custom-gradient-end": "#9D00FF",\n				"custom-bg-gradient-start": "#001FCC19",\n				"custom-bg-gradient-end": "#9D00FF19",\n			})',
+      gradientColorStops: (theme) => ({
+        "custom-gradient-start": "#001FCC",
+        "custom-gradient-end": "#9D00FF",
+        "custom-bg-gradient-start": "#001FCC19",
+        "custom-bg-gradient-end": "#9D00FF19",
+        "concert-gradient-start": "rgba(157, 0, 255, 0.14)", // 10% opacity
+        "concert-gradient-end": " rgba(255, 255, 255, 0.14)", // 10% opacity
+      }),
       linearGradientDirections: {
+        // Define your custom gradient direction
         "top-right": "to top right",
       },
-      linearGradientColors:
-        '(theme: (arg0: string) => any) => ({\n				"custom-gradient": [\n					theme("colors.custom-gradient-start"),\n					theme("colors.custom-gradient-end"),\n				],\n			})',
+      linearGradientColors: (theme: (arg0: string) => any) => ({
+        "custom-gradient": [
+          theme("colors.custom-gradient-start"),
+          theme("colors.custom-gradient-end"),
+        ],
+      }),
       colors: {
         zikoroBlue: "hsl(var(--zblue))",
         basePrimary: "#001FCC",
