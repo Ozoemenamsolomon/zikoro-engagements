@@ -293,6 +293,7 @@ export function useOnboarding() {
     referralCode: string;
     referredBy: string;
     phoneNumber: string;
+    city: string;
     country: string;
     firstName: string;
     lastName: string;
@@ -312,6 +313,7 @@ export function useOnboarding() {
           userEmail: email,
           firstName: values.firstName,
           lastName: values.lastName,
+          city: values.city,
           created_at: createdAt,
           industry: values.industry,
           referralCode: values.referralCode,
