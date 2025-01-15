@@ -48,11 +48,11 @@ export function useGetUserEngagements() {
     useGetData<TOrganizationQa[]>("engagements/qa");
   const { data: dataquizzes, isLoading: quizLoading, getData: getQuizzes } =
     useGetData<TOrganizationQuiz[]>("engagements/quiz");
-  const [loading, setLoading] = useState(false);
+
 
   useEffect(() => {
     if (!qaLoading && !quizLoading) {
-      setLoading(true);
+  
 
       const matchingQas = data?.filter((qa) => {
         return qa?.organization && qa?.organization.teamMembers?.some(
@@ -66,14 +66,14 @@ export function useGetUserEngagements() {
       });
       setQas(matchingQas);
       setQuizzes(matchingQuizzes);
-      setLoading(false);
     }
-  }, [qaLoading, data, quizLoading, quizzes]);
+  }, [qaLoading, data, quizLoading, dataquizzes]);
+  //!qaLoading && !quizLoading
 
   return {
     qas,
     quizzes,
-    loading,
+    loading: false,
     getQuizzes,
     getQas,
   };
