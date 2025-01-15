@@ -1,8 +1,6 @@
 "use client";
 
 import { ArrowLeftIcon, engagementHomeLinks } from "@/constants";
-import Link from "next/link";
-import { ZikoroImage } from "../custom";
 import Image from "next/image";
 import { ScrollableCards } from "../custom/ScrollableCards";
 import useUserStore from "@/store/globalUserStore";
@@ -13,12 +11,14 @@ import { TOrganizationQa, TQa } from "@/types/qa";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
 import { cn } from "@/lib/utils";
 import { TOrganizationQuiz } from "@/types/quiz";
+import { QuizCard } from "../engagements/quiz/card/QuizCard";
+import { QaCard } from "../engagements/qa/card/QaCard";
 
 export default function Dashboard() {
   const { user } = useUserStore();
   const [isOpen, setOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const { qas, loading, quizzes } = useGetUserEngagements();
+  const { qas, loading, quizzes, getQas, getQuizzes } = useGetUserEngagements();
 
   function onClose() {
     setOpen((prev) => !prev);
@@ -54,7 +54,7 @@ export default function Dashboard() {
         </ScrollableCards>
       </div>
 
-      <div className="w-full  bg-white p-4 rounded-lg">
+      <div className="w-full  bg-basePrimary-100 p-4 rounded-lg">
         <h2 className="font-medium mb-3 sm:mb-6">Engagements</h2>
         {loading && (
           <div className="w-full h-[200px] flex items-center justify-center">
@@ -66,14 +66,14 @@ export default function Dashboard() {
             <h2 className="font-medium text-lg">No Data</h2>
           </div>
         )}
-        <div className="w-full flex flex-col items-start justify-start gap-4">
+        <div className="w-full grid grid-cols-1 gap-4 sm:grid-cols-1 xl:grid-cols-3">
           {Array.isArray(quizzes) &&
             quizzes.map((quiz, index) => (
-              <HomeEngagementCard key={index} data={quiz} type="quiz" />
+              <QuizCard refetch={getQuizzes} key={index} quiz={quiz}  />
             ))}
           {Array.isArray(qas) &&
             qas.map((qa, index) => (
-              <HomeEngagementCard key={index} data={qa} type="qa" />
+              <QaCard key={index} qa={qa} refetch={getQas}  />
             ))}
         </div>
       </div>

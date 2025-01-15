@@ -44,9 +44,9 @@ export function useGetUserEngagements() {
   const [qas, setQas] = useState<TOrganizationQa[]>([]);
   const [quizzes, setQuizzes] = useState<TOrganizationQuiz[]>([]);
   const { user: userData } = useUserStore();
-  const { data, isLoading: qaLoading } =
+  const { data, isLoading: qaLoading , getData: getQas} =
     useGetData<TOrganizationQa[]>("engagements/qa");
-  const { data: dataquizzes, isLoading: quizLoading } =
+  const { data: dataquizzes, isLoading: quizLoading, getData: getQuizzes } =
     useGetData<TOrganizationQuiz[]>("engagements/quiz");
   const [loading, setLoading] = useState(false);
 
@@ -74,6 +74,8 @@ export function useGetUserEngagements() {
     qas,
     quizzes,
     loading,
+    getQuizzes,
+    getQas,
   };
 }
 
@@ -95,6 +97,7 @@ export function useVerifyUserAccess(workspaceAlias: string) {
 
   return {
     isLoading,
+  
     isHaveAccess,
   };
 }

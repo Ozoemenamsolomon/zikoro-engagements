@@ -31,6 +31,7 @@ export function CreateQuiz({
   const [isOpen, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const { user } = useUserStore();
+
   const { organizations: organizationList, getOrganizations } =
     useGetUserOrganizations();
   const { postData, isLoading } =
@@ -92,7 +93,30 @@ export function CreateQuiz({
           createdBy: user?.id,
           coverImage: image as string,
           quizAlias: alias,
+          interactionType: "quiz",
           lastUpdated_at: new Date().toISOString(),
+          accessibility: {
+            visible: false,
+            review: false,
+            countdown: true,
+            timer: true,
+            countdownTransition: true,
+            countDown: 5,
+            disable: false,
+            playMusic: false,
+            musicList: null,
+            music: null,
+            live: false,
+            isCollectPhone: false,
+            isCollectEmail: false,
+            isForm: false,
+            showAnswer: true,
+            showResult: true,
+          },
+          branding: {
+            eventName: true,
+            poweredBy: true,
+          },
         };
     await postData({
       payload,
@@ -130,10 +154,12 @@ export function CreateQuiz({
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col text-sm items-center gap-4 w-full"
         >
-        {!quiz &&  <div className="flex items-center flex-col justify-center mb-4 gap-y-2">
-            <QuizIcon />
-            <p className="font-semibold">Create Quiz</p>
-          </div>}
+          {!quiz && (
+            <div className="flex items-center flex-col justify-center mb-4 gap-y-2">
+              <QuizIcon />
+              <p className="font-semibold">Create Quiz</p>
+            </div>
+          )}
 
           <UploadImage image={addedImage} name="coverImage" form={form} />
           <FormField

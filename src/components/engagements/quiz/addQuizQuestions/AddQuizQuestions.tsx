@@ -64,12 +64,19 @@ export default function AddQuizQuestions({
     <>
       <div className="w-full min-h-screen px-4  mx-auto  flex flex-col justify-between">
         <div className="w-full h-[75vh] gap-4 mt-10 items-start grid grid-cols-12">
-          {Array.isArray(data?.questions) && data?.questions?.length > 0 && (
+          {(isAddNew ||
+                question !== null ||
+                (Array.isArray(data?.questions) &&
+                  data?.questions?.length > 0)) &&
+                data && (
             <AddedQuestions
               questions={data?.questions}
               editQuestion={editQuestion}
               editingQuestion={question}
-              addNewQuestion={() => setIsAddNew(true)}
+              addNewQuestion={() => {
+                setIsAddNew(true)
+                editQuestion(null)
+              }}
             />
           )}
 
@@ -79,7 +86,13 @@ export default function AddQuizQuestions({
               (!data?.questions ||
                 (Array.isArray(data?.questions) &&
                   data?.questions?.length === 0)) &&
-                "col-span-full"
+                "col-span-full",
+                (isAddNew ||
+                  question !== null ||
+                  (Array.isArray(data?.questions) &&
+                    data?.questions?.length > 0)) &&
+                  data && 'col-span-9'
+
             )}
           >
             <QuizLayout
@@ -107,6 +120,7 @@ export default function AddQuizQuestions({
                     quiz={data}
                     interactionType="quiz"
                     workspaceAlias={workspaceAlias}
+                    key={question?.id}
                   />
                 )}
               {(!data?.questions ||

@@ -567,7 +567,7 @@ export function QuestionView({
 
               
 
-                <div className="w-full   flex flex-col items-start justify-start gap-4">
+                <div className="w-full">
                   {currentQuestion?.options.map((option, index, arr) => (
                     <Option
                       key={index}

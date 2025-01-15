@@ -56,6 +56,7 @@ export function AddQuestion({
       duration: "10",
       points: "10",
     },
+
   });
 
   const { fields, remove, append } = useFieldArray({
@@ -175,7 +176,7 @@ export function AddQuestion({
     } else {
       return "";
     }
-  }, [questionValue]);
+  }, [questionValue, question]);
 
   const defaultFeedBackValue = useMemo(() => {
     if (typeof feedBackValue === "string" && feedBackValue?.length > 0) {
@@ -183,7 +184,7 @@ export function AddQuestion({
     } else {
       return "";
     }
-  }, [feedBackValue]);
+  }, [feedBackValue, question]);
 
   useEffect(() => {
     if (interactionType) {
@@ -216,7 +217,7 @@ export function AddQuestion({
 
   const questionIndex = useMemo(() => {
     if (question && quiz) {
-      return quiz?.questions?.findIndex((v) => v?.id === question?.id);
+      return quiz?.questions?.findIndex((v) => v?.id === question?.id) + 1;
     } else if (quiz?.questions !== null) return quiz?.questions?.length + 1;
     else return 1;
   }, [question, quiz]);
@@ -243,6 +244,11 @@ export function AddQuestion({
               question={question}
               form={form}
               addedImage={addedImage}
+              quiz={quiz}
+              refetch={async () => {
+                editQuestion(null)
+                refetch()
+              }}
             />
 
             <div className="my-6 flex flex-col items-start justify-start gap-3">
@@ -353,18 +359,7 @@ export function AddQuestion({
             )}
 
             <div className="w-full my-10 flex gap-3 items-center justify-center">
-              {question !== null && (
-                <Button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    window.location.reload();
-                  }}
-                  className="h-11 bg-basePrimary rounded-lg text-white font-medium"
-                >
-                  <p>Reset</p>
-                </Button>
-              )}
+            
               <Button className="h-11 bg-basePrimary rounded-lg gap-x-2 text-white font-medium">
                 {loading && <LoaderAlt size={20} className="animate-spin" />}
                 <p>Save Question</p>

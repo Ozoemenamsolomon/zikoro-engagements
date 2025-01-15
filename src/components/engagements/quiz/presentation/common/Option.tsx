@@ -7,7 +7,7 @@ import { useMemo } from "react";
 type TOption = {
   optionId: string;
   isAnswer: string;
-  option: string;
+  option?: any;
   isCorrect: boolean | string;
 };
 export function Option({
@@ -70,7 +70,7 @@ export function Option({
             }
           }}
           className={cn(
-            "w-full px-4 text-gray-600 space-y-1  min-h-[60px] h-fit rounded-lg  bg-basePrimary-100",
+            "w-full px-4 text-gray-600 space-y-1 mb-4  min-h-[60px] h-fit rounded-lg  bg-basePrimary-100",
             typeof option?.isCorrect === "boolean" &&
               option?.isCorrect &&
               showAnswerMetric &&
@@ -165,7 +165,7 @@ export function OrganizerQuestOption({
   return (
     <button
       className={cn(
-        "w-full px-4 text-gray-500 gap-y-1  min-h-[44px] h-fit rounded-md border border-gray-500 bg-gray-100",
+        "w-full px-4 text-gray-500 gap-y-1  min-h-[60px] h-fit rounded-md border border-gray-500 bg-gray-100",
         (isCorrect && isCorrectAnswer) ||
           (quiz?.accessibility?.live &&
             quiz?.liveMode?.correctOptionId === optionId &&
@@ -176,7 +176,7 @@ export function OrganizerQuestOption({
         <div className="flex items-center gap-x-1">
           <span
             className={cn(
-              "rounded-lg h-11 flex items-center justify-center font-medium w-11 bg-white border border-gray-700",
+              "rounded-lg h-10 flex items-center justify-center font-medium w-10 bg-white border border-gray-700",
               (isCorrect && isCorrectAnswer) ||
                 (quiz?.accessibility?.live &&
                   quiz?.liveMode?.correctOptionId === optionId &&

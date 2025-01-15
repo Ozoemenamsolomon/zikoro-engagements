@@ -117,7 +117,7 @@ export const useRealtimePresence = (isLive: boolean) => {
       setLoading(true);
   
       const { data, status } = await getRequest<TAnswer[]>({
-        endpoint: `/quiz/answer/${quizId}`,
+        endpoint: `engagements/quiz/answer/${quizId}`,
       });
   
       setLoading(false);
@@ -231,7 +231,7 @@ export const useGetAnswer = () => {
     setLoading(true);
 
     const { data, status } = await getRequest<TAnswer[]>({
-      endpoint: `/quiz/answer/single/${questionId}`,
+      endpoint: `engagements/quiz/answer/single/${questionId}`,
     });
 
     setLoading(false);

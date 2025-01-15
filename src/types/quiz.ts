@@ -68,7 +68,7 @@ export interface TQuiz<T> {
   };
 }
 
-export interface TOrganizationQuiz extends TQuiz<TQuestion> {
+export interface TOrganizationQuiz extends TQuiz<TQuestion[]> {
   organization: TOrganization;
 }
 
@@ -86,7 +86,7 @@ export type TRefinedQuestion = {
   feedBack?: any;
   options: {
     optionId: string;
-    option: string;
+    option?: any;
     isAnswer: string;
     isCorrect: boolean | string;
   }[];
