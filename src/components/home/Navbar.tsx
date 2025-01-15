@@ -133,7 +133,9 @@ const Navbar = () => {
             {/* right */}
             <div
               className="cursor-pointer "
-              onClick={() => router.push("https://bookings.zikoro.com/")}
+              onClick={() =>
+                window.open("https://bookings.zikoro.com/", "_blank")
+              }
             >
               <NavModalIcon />
             </div>
@@ -154,7 +156,9 @@ const Navbar = () => {
             {/* right */}
             <div
               className="cursor-pointer "
-              onClick={() => router.push("https://credentials.zikoro.com/")}
+              onClick={() =>
+                window.open("https://credentials.zikoro.com/", "_blank")
+              }
             >
               <NavModalIcon />
             </div>
