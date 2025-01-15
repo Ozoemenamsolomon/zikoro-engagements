@@ -375,7 +375,7 @@ export function CreateOrganization({
             </div>
           </div>
           {/**btn */}
-          <div className="py-3 px-2 flex items-center w-full justify-between bg-gradient-to-tr from-custom-bg-gradient-start to-custom-bg-gradient-end rounded-lg ">
+          <div className="py-3 px-2 flex items-center w-full justify-between  rounded-lg ">
             <p className="text-xl font-medium">Total Cost</p>
             <p className="text-xl font-medium">
               {selectedPricing
@@ -585,7 +585,7 @@ export function CreateOrganization({
                   }}
                   className="h-10 text-white rounded-r-md rounded-l-none bg-gray-500 font-medium px-0 w-[25%]"
                 >
-                  {"" ? "Verifying..." : "Redeem"}
+                  {false ? "Verifying..." : "Redeem"}
                 </Button>
               </div>
 

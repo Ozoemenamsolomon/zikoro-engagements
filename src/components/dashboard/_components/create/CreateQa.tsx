@@ -83,7 +83,7 @@ export function CreateQa() {
     });
     setLoading(false);
 
-    window.open(`/e/${values?.workspaceAlis}/qa/o/${alias}`, "_self");
+    window.open(`/e/${values?.workspaceAlias}/qa/o/${alias}`, "_self");
   }
   return (
     <>
@@ -129,7 +129,7 @@ export function CreateQa() {
           <div className="w-full flex items-end gap-x-2">
             <FormField
               control={form.control}
-              name="workspaceAlis"
+              name="workspaceAlias"
               render={({ field }) => (
                 <InputOffsetLabel label="Organization">
                   <ReactSelect

@@ -87,13 +87,13 @@ export function QaSetting({
           coverImage: promise,
           branding,
           accessibility,
-          workspaceAlis: workspaceAlias,
+          workspaceAlias: workspaceAlias,
           lastUpdated_at: new Date().toISOString(),
         }
       : {
           ...values,
           QandAAlias: qaAlias,
-          workspaceAlis: workspaceAlias,
+          workspaceAlias: workspaceAlias,
           coverImage: promise,
           branding,
           accessibility,

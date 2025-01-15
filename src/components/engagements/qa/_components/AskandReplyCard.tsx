@@ -284,7 +284,7 @@ export function AskandReplyCard({
           "w-full flex h-fit flex-col items-start p-3 relative rounded-lg justify-start gap-y-3 sm:gap-y-4",
           className,
           qaQuestion?.isAnswered &&
-            "bg-gradient-to-tr from-custom-bg-gradient-start to-custom-bg-gradient-end"
+            " bg-basePrimary-100"
         )}
       >
         <div className={cn("flex w-full items-center justify-between")}>
@@ -392,7 +392,7 @@ export function AskandReplyCard({
               }
             }}
             disabled={isLoading}
-            className="rounded-3xl bg-gradient-to-tr from-custom-bg-gradient-start to-custom-bg-gradient-end gap-x-2 px-2 py-1 h-fit"
+            className="rounded-3xl  bg-basePrimary-100 gap-x-2 px-2 py-1 h-fit"
           >
             <span className="text-mobile">{formatVotesCount}</span>
             {isLiked ? (
@@ -405,7 +405,7 @@ export function AskandReplyCard({
           {!isReply && qaQuestion && (
             <Button
               onClick={() => showReply?.(qaQuestion as TQAQuestion)}
-              className="rounded-3xl bg-gradient-to-tr from-custom-bg-gradient-start to-custom-bg-gradient-end gap-x-2 px-2 py-1 h-fit"
+              className="rounded-3xl  bg-basePrimary-100 gap-x-2 px-2 py-1 h-fit"
             >
               <span className="text-mobile">{formatResponsesCount}</span>
               <InlineIcon fontSize={20} icon="mdi-light:message" />
@@ -416,7 +416,7 @@ export function AskandReplyCard({
               disabled={isAttendee}
               onClick={toggleIsAnswered}
               className={cn(
-                "rounded-3xl gap-x-1 px-2 bg-gradient-to-tr from-custom-bg-gradient-start to-custom-bg-gradient-end py-1 h-fit",
+                "rounded-3xl gap-x-1 px-2  bg-basePrimary-100 py-1 h-fit",
                 isAttendee && !qaQuestion?.isAnswered && "hidden"
               )}
             >

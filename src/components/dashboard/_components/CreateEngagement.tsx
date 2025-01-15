@@ -2,6 +2,7 @@ import { Button } from "@/components/custom";
 import { InlineIcon } from "@iconify/react/dist/iconify.js";
 import { CreateQa } from "./create/CreateQa";
 import { CreateType } from "@/types/home";
+import { CreateQuiz } from "./create/CreateQuiz";
 
 
 export function CreateEngagement({
@@ -12,7 +13,7 @@ export function CreateEngagement({
   type: number;
 }) {
   return (
-    <div className="right-0 min-h-screen inset-y-0 fixed z-[100] max-w-3xl w-full bg-white overflow-y-auto">
+    <div className="right-0 min-h-screen animate-float-in  inset-y-0 fixed z-[100] max-w-3xl w-full bg-white overflow-y-auto">
       <div className="w-full flex flex-col items-start p-4 justify-start gap-3">
         <Button
           onClick={close}
@@ -35,6 +36,8 @@ function RenderCreateEngagement({ type }: { type: number }) {
   switch (type) {
     case CreateType.qa:
       return <CreateQa/>;
+      case CreateType.quiz:
+        return <CreateQuiz/>;  
     default:
       return <></>;
   }

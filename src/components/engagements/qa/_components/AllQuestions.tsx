@@ -206,7 +206,7 @@ export function AllQuestions({
                   height={100}
                 />
               ) : (
-                <div className="w-[3rem] bg-gradient-to-tr border-basePrimary from-custom-bg-gradient-start border to-custom-bg-gradient-end h-[3rem] rounded-full flex items-center justify-center">
+                <div className="w-[3rem]  border-basePrimary  border  bg-basePrimary-100 h-[3rem] rounded-full flex items-center justify-center">
                   <p className="gradient-text  bg-basePrimary text-lg uppercase">
                     {useAcronym}
                   </p>

@@ -42,13 +42,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Method not allowed" });
   }
 }
-
 export async function GET(req: NextRequest) {
   const supabase = createClient()
 
   if (req.method === "GET") {
     try {
-      const { data, error } = await supabase.from("QandA").select("*");
+      const { data, error } = await supabase
+        .from("QandA")
+        .select("*, organization(*)");
 
       if (error) {
         return NextResponse.json(

@@ -69,7 +69,7 @@ export const ReactSelect = React.forwardRef<
             ...baseStyles,
          
             height: "100%",
-            minHeight: "35px",
+            minHeight: "46px",
              backgroundColor: "#F7F8FF",
             boxShadow: "0px",
             borderRadius: "6px",
@@ -112,7 +112,7 @@ export const ReactSelect = React.forwardRef<
           }),
           container: (baseStyle) => ({
             ...baseStyle,
-            height: "35px",
+            height: "46px",
             border: '1px',
             borderColor:"#e5e5e5"
           }),
