@@ -15,7 +15,7 @@ export function LobbyHeader({
   isMaxReached:boolean;
 }) {
   return (
-    <div className="mt-6 mb-4 gap-3 flex flex-col items-center justify-center">
+    <div className="mt-6 sm:mt-10 mb-4 sm:mb-6 gap-3 flex flex-col items-center justify-center">
       {isAttendee && (
         <>
           {isLive && (

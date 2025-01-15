@@ -21,7 +21,7 @@ import {
   SpeakerIcon,
 } from "@/constants";
 import { OrganizerOnboarding } from "./_components/OrganizerOnboarding";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { isAfter } from "date-fns";
 import { useSearchParams } from "next/navigation";
 import {
@@ -31,13 +31,20 @@ import {
   useGetQuizAnswer,
 } from "@/hooks/services/quiz";
 import { LoadingState } from "@/components/composables/LoadingState";
-import { QuizLobby } from "../common";
+import { QuizLobby, QuizLobbyRef } from "../common";
 import { generateAlias } from "@/utils";
 import { AvatarFullConfig } from "react-nice-avatar";
 import { TPlayerDetail } from "../attendee/_components/AttendeeOnboarding";
-import { Advert, LeaderBoard, QuestionView } from "./_components";
+import {
+  Advert,
+  LeaderBoard,
+  QuestionView,
+  QuestionViewRef,
+} from "./_components";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/utils/supabase/client";
+import { ScoreBoard } from "../common/ScoreBoard";
+import { InlineIcon } from "@iconify/react/dist/iconify.js";
 
 // audio instance
 function createAudioInstance(music: string) {
@@ -76,6 +83,8 @@ export default function QuizOrganizerView({
   const [isAudioMuted, setIsAudioMuted] = useState(false);
   const [isLobby, setIsLobby] = useState(false);
   const params = useSearchParams();
+  const questionViewRef = useRef<QuestionViewRef>(null);
+  const quizLobbyRef = useRef<QuizLobbyRef>(null);
   const [volume, adjustVolume] = useState(0.05);
   const [isAdvert, setIsAdvert] = useState(true);
   const { liveQuizPlayers, setLiveQuizPlayers, getLiveParticipant } =
@@ -247,7 +256,6 @@ export default function QuizOrganizerView({
     }, 2000);
   }, []);
 
-
   useEffect(() => {
     if (quiz) {
       const refinedArray = {
@@ -319,7 +327,7 @@ export default function QuizOrganizerView({
     setQuizResult(quiz);
   }
 
-  function onClickStart() {
+  async function onClickStart() {
     if (isAdvert) {
       setIsAdvert(false);
 
@@ -327,6 +335,7 @@ export default function QuizOrganizerView({
         setIsLobby(true);
         setLeftBox(true);
         setRightBox(false);
+        startLiveQuiz();
         return;
       }
       if (!quiz?.accessibility?.live) {
@@ -335,15 +344,14 @@ export default function QuizOrganizerView({
         setRightBox(false);
         return;
       }
-      
     }
     if (isLobby) {
+      if (quiz?.accessibility?.live && quizLobbyRef?.current) {
+        await quizLobbyRef.current.openQuestion();
+      }
       setIsQuizStarted(true);
       return;
     }
-    
-
-
   }
 
   function onCloseScoreSheet() {
@@ -394,71 +402,92 @@ export default function QuizOrganizerView({
   }
 
   if (isLoading) {
-    return <LoadingState />;
+    return <></>;
   }
 
   return (
-    <div className="w-full min-h-screen px-4  mx-auto  flex flex-col justify-between">
-      <div className="w-full  items-start grid grid-cols-12">
-        {isAdvert && quiz && (
-          <OrganizerOnboarding
-            isMaxLiveParticipant={isMaxLiveParticipant}
-            quiz={quiz}
-            organization={organization}
-            isLobby={isLobby}
-            isAdvert={isAdvert}
+    <>
+      {showScoreSheet ? (
+        <div className="w-full ">
+          <ScoreBoard
+            answers={answers}
+            id={id}
+            quiz={quizResult}
+            actualQuiz={quiz}
+            close={() => {
+              setShowScoreSheet(false);
+              if (audio) audio.pause();
+            }}
           />
-        )}
-        {!isAdvert && isLobby && quiz && quiz?.accessibility?.live && (
-          <div className="w-full h-[78vh] col-span-full  mt-10 items-start rounded-lg grid grid-cols-12">
-            {quiz && (
-              <Advert
-                quiz={quiz}
-                isLeftBox={isLeftBox}
-                isRightBox={isRightBox}
-                isFromPoll={true}
-                close={() => {}}
-              />
-            )}
-
-            {
-              <QuizLobby
-                goBack={() => {
-                  setIsLobby(false);
-                  setIsAdvert(true);
-                }}
-                quiz={quiz}
-                close={() => setIsLobby(false)}
-                refetch={getData}
+        </div>
+      ) : (
+        <div className="w-full min-h-screen px-4  mx-auto  flex flex-col justify-between">
+          <div className="w-full  items-start grid grid-cols-12">
+            {isAdvert && quiz && (
+              <OrganizerOnboarding
                 isMaxLiveParticipant={isMaxLiveParticipant}
-                liveQuizPlayers={liveQuizPlayers}
-                isLeftBox={isLeftBox}
-                onToggle={() => {
-                  setRightBox((prev) => !prev);
-                  setLeftBox((prev) => !prev);
-                }}
-                refetchLobby={getLiveParticipant}
-                id={id}
-                className={cn(
-                  "relative px-0 m-0  h-full border-y border-r col-span-9",
-                  !isLeftBox && "col-span-full rounded-lg border"
-                )}
-              />
-            }
-          </div>
-        )}
-        {isQuizStarted && (
-          <div className="w-full h-[78vh] col-span-full mt-10 items-start rounded-lg grid grid-cols-12">
-            {quiz && (
-              <Advert
                 quiz={quiz}
-                isLeftBox={isLeftBox}
-                isRightBox={isRightBox}
-                isFromPoll={true}
-                close={() => {}}
+                organization={organization}
+                isLobby={isLobby}
+                isAdvert={isAdvert}
               />
             )}
-            {quiz &&  refinedQuizArray &&  <QuestionView
+            {!isAdvert && isLobby && quiz && quiz?.accessibility?.live && (
+              <div className="w-full h-[78vh] col-span-full  mt-10 items-start rounded-lg grid grid-cols-12">
+                {quiz && (
+                  <Advert
+                    quiz={quiz}
+                    isLeftBox={isLeftBox}
+                    isRightBox={isRightBox}
+                    isFromPoll={true}
+                    close={() => {}}
+                  />
+                )}
+
+                {
+                  <QuizLobby
+                    ref={quizLobbyRef}
+                    goBack={() => {
+                      setIsLobby(false);
+                      setIsAdvert(true);
+                    }}
+                    quiz={quiz}
+                    close={() => {
+                      setIsLobby(false);
+                      setIsQuizStarted(true);
+                    }}
+                    refetch={getData}
+                    isMaxLiveParticipant={isMaxLiveParticipant}
+                    liveQuizPlayers={liveQuizPlayers}
+                    isLeftBox={isLeftBox}
+                    onToggle={() => {
+                      setRightBox((prev) => !prev);
+                      setLeftBox((prev) => !prev);
+                    }}
+                    refetchLobby={getLiveParticipant}
+                    id={id}
+                    className={cn(
+                      "relative px-0 m-0  h-full border-y border-r col-span-9",
+                      !isLeftBox && "col-span-full rounded-lg border"
+                    )}
+                  />
+                }
+              </div>
+            )}
+            {isQuizStarted && (
+              <div className="w-full h-[78vh] col-span-full mt-10 items-start rounded-lg grid grid-cols-12">
+                {quiz && (
+                  <Advert
+                    quiz={quiz}
+                    isLeftBox={isLeftBox}
+                    isRightBox={isRightBox}
+                    isFromPoll={true}
+                    close={() => {}}
+                  />
+                )}
+                {quiz && refinedQuizArray && (
+                  <QuestionView
+                    ref={questionViewRef}
                     isLeftBox={isLeftBox}
                     answer={answer}
                     quizAnswer={answers}
@@ -469,7 +498,10 @@ export default function QuizOrganizerView({
                     actualQuiz={quiz!}
                     getLiveParticipant={getLiveParticipant}
                     isRightBox={isRightBox}
-                    toggleRightBox={onToggle}
+                    toggleRightBox={() => {
+                      setLeftBox((prev) => !prev);
+                      setRightBox(true);
+                    }}
                     toggleLeftBox={onClose}
                     onOpenScoreSheet={onOpenScoreSheet}
                     updateQuiz={updateQuiz}
@@ -483,44 +515,70 @@ export default function QuizOrganizerView({
                       phone: playerDetail?.phone,
                       avatar: chosenAvatar!,
                     }}
-                 
-                  />}
-            
-            {quiz && (
-              <LeaderBoard
-                isRightBox={isRightBox}
-                isLeftBox={isLeftBox}
-                close={onToggle}
-                quiz={quiz}
-                answers={answers}
-              />
+                  />
+                )}
+
+                {quiz && (
+                  <LeaderBoard
+                    isRightBox={isRightBox}
+                    isLeftBox={isLeftBox}
+                    close={onToggle}
+                    quiz={quiz}
+                    answers={answers}
+                  />
+                )}
+              </div>
             )}
           </div>
-        )}
-      </div>
 
-      <div className="w-full py-4">
-        <div className="w-fit mx-auto flex items-center gap-x-3 justify-center rounded-[3rem] bg-white border p-2">
-          <Button
-            onClick={onClickStart}
-            className="rounded-[3rem] h-fit bg-basePrimary-200 px-2 border border-basePrimary gap-x-2"
-          >
-            <PlayQuizIcon />
-            <p className="bg-basePrimary text-sm sm:text-base gradient-text">
-              Start Quiz
-            </p>
-          </Button>
-          <Button className="px-0 w-fit h-fit">
-            <NextQuestionIcon />
-          </Button>
-          <Button className="px-0 w-fit h-fit">
-            <SpeakerIcon />
-          </Button>
-          <Button className="px-0 w-fit h-fit">
-            <FullScreenIcon />
-          </Button>
+          <div className="w-full py-4">
+            <div className="w-fit mx-auto flex items-center gap-x-3 justify-center rounded-[3rem] bg-white border p-2">
+              <Button
+                onClick={onClickStart} //startLiveQuiz
+                className={cn(
+                  "rounded-[3rem] h-fit bg-basePrimary-200 px-2 border border-basePrimary gap-x-2",
+                  isQuizStarted && "border-red-500 bg-red-100"
+                )}
+              >
+                {isQuizStarted ? (
+                  <InlineIcon
+                    fontSize={52}
+                    color="#ef4444"
+                    icon="solar:stop-circle-bold-duotone"
+                  />
+                ) : (
+                  <PlayQuizIcon />
+                )}
+                <p className="bg-basePrimary text-sm sm:text-base gradient-text">
+                  {isQuizStarted ? "End Quiz" : "Start Quiz"}
+                </p>
+              </Button>
+              <Button
+                disabled={
+                  questionViewRef.current !==  null &&
+                  (questionViewRef.current.loading ||
+                    questionViewRef.current?.isUpdating)
+                }
+                onClick={() => {
+                  if (questionViewRef.current) {
+                    questionViewRef.current.onNextBtnClick();
+                  }
+                }}
+                title="Next Question"
+                className="px-0 w-fit h-fit"
+              >
+                <NextQuestionIcon />
+              </Button>
+              <Button title="Play Music" className="px-0 w-fit h-fit">
+                <SpeakerIcon />
+              </Button>
+              <Button className="px-0 w-fit h-fit">
+                <FullScreenIcon />
+              </Button>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 }

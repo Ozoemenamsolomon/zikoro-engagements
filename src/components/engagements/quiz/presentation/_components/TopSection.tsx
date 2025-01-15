@@ -1,5 +1,6 @@
 import { PeopleIcon, SmallLeaderBoardIcon } from "@/constants";
 import { InlineIcon } from "@iconify/react/dist/iconify.js";
+import Avatar, { AvatarFullConfig } from "react-nice-avatar";
 
 export function TopSection({
   isAttendee,
@@ -10,6 +11,8 @@ export function TopSection({
   attemptingToJoinIndicator,
   isLive,
   toggleJoiningAttempt,
+  isLeftBox,
+  playerAvatar
 }: {
   changeDuration?: () => void;
   noOfParticipants?: string;
@@ -20,6 +23,8 @@ export function TopSection({
   attemptingToJoinIndicator?: boolean;
   isLive?: boolean;
   toggleJoiningAttempt?: () => void;
+  isLeftBox?:boolean;
+  playerAvatar?: Required<AvatarFullConfig>
   
 }) {
   return (
@@ -42,11 +47,11 @@ export function TopSection({
       </div>
 
       {isQuestionView && (
-        <div className="bg-red-100 h-10 justify-center px-3 rounded-3xl flex items-center gap-x-2">
+        <div className="bg-red-100 h-9 justify-center px-3 rounded-3xl flex items-center gap-x-2">
           <InlineIcon
             icon="solar:alarm-bold-duotone"
             color="#ef4444"
-            fontSize={18}
+            fontSize={20}
           />
           <p>{timer}</p>
         </div>
@@ -58,9 +63,14 @@ export function TopSection({
           className="bg-basePrimary-200 h-10 justify-center px-3 rounded-3xl flex items-center gap-x-2"
         >
           <SmallLeaderBoardIcon />
-          <p>Show LeaderBoard</p>
+          <p>{isLeftBox ? "Hide Leaderboard" : "Show LeaderBoard"}</p>
         </button>
       )}
+      {isAttendee && <div className="flex items-center gap-x-1">
+        <div className="w-10 h-10 rounded-full relative">
+          <Avatar className="w-10 h-10 rounded-full" {...playerAvatar}/>
+        </div>
+        </div>}
     </div>
   );
 }

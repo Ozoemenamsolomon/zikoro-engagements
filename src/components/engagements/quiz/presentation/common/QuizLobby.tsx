@@ -9,7 +9,7 @@ import {
   TQuizParticipant,
 } from "@/types/quiz";
 import Avatar, { AvatarFullConfig } from "react-nice-avatar";
-import { useEffect, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { useDeleteRequest, usePostRequest } from "@/hooks/services/requests";
 import { Maximize2 } from "styled-icons/feather";
 import { Button } from "@/components/custom";
@@ -30,20 +30,12 @@ function WaitingPlayer({
   );
 }
 
-export function QuizLobby({
-  isAttendee,
-  className,
-  quiz,
-  close,
-  goBack,
-  refetch,
-  liveQuizPlayers,
-  isMaxLiveParticipant,
-  onToggle,
-  isLeftBox,
-  refetchLobby,
-  id,
-}: {
+export type QuizLobbyRef = {
+  openQuestion:() => Promise<void>;
+  loading: boolean;
+}
+
+type QuizLobbyProp = {
   isAttendee?: boolean;
   className?: string;
   close: () => void;
@@ -56,7 +48,21 @@ export function QuizLobby({
   isLeftBox: boolean;
   refetchLobby?: () => Promise<any>;
   id: string;
-}) {
+}
+
+export const QuizLobby =  forwardRef<QuizLobbyRef, QuizLobbyProp>(({
+  isAttendee,
+  className,
+  quiz,
+  close,
+  goBack,
+  refetch,
+  liveQuizPlayers,
+  isMaxLiveParticipant,
+  onToggle,
+  refetchLobby,
+  id,
+}: QuizLobbyProp, ref)  => {
   const [loading, setLoading] = useState(false);
   const { postData } =
     usePostRequest<Partial<TQuiz<TQuestion[]>>>("engagements/quiz");
@@ -64,6 +70,12 @@ export function QuizLobby({
     `engagements/quiz/participant/${quiz?.quizAlias}`
   );
   const [players, setPlayers] = useState<TQuizParticipant[]>([]);
+
+
+  useImperativeHandle(ref, () => ({
+    openQuestion,
+    loading
+  }))
 
   useEffect(() => {
     (() => {
@@ -128,7 +140,7 @@ export function QuizLobby({
   return (
     <div
       className={cn(
-        "w-full px-4 inset-0 bg-white text-sm h-[75vh] m-auto absolute",
+        "w-[95%] px-4  inset-0  bg-white text-sm h-[75vh] m-auto absolute",
         className,
         
       )}
@@ -149,7 +161,7 @@ export function QuizLobby({
           />
         ))}
 
-        {
+        {!isAttendee &&
           <Button
             className="absolute left-3 bottom-3"
             onClick={(e) => {
@@ -167,5 +179,5 @@ export function QuizLobby({
         </p>
       )}
     </div>
-  );
-}
+  )
+})

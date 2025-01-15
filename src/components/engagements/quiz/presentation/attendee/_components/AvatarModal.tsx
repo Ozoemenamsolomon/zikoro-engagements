@@ -58,7 +58,9 @@ export function AvatarModal({
                 )}
               >
                 <Avatar
-                  className="w-[80px] h-[80px] rounded-full"
+                style={{borderRadius:"12px"}}
+                  className="w-16 h-16"
+                  shape="square"
                   {...avatar}
                 />
               </button>

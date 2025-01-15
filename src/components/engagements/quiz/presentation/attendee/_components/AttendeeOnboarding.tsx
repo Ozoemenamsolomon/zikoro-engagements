@@ -35,8 +35,6 @@ export function AttendeeOnboarding({
   setChosenAvatar,
   audio,
   quiz,
-  onToggle,
-  isLeftBox,
   liveQuizPlayers,
   refetchLobby,
   organization,
@@ -59,8 +57,6 @@ export function AttendeeOnboarding({
   >;
   audio?: HTMLAudioElement | null;
   quiz: TQuiz<TQuestion[]>;
-  onToggle: () => void;
-  isLeftBox: boolean;
   liveQuizPlayers: TLiveQuizParticipant[];
 }) {
   const { postData: updateQuiz } = usePostRequest("engagements/quiz");
@@ -132,6 +128,7 @@ export function AttendeeOnboarding({
   // player start quiz
   async function submit(e: any) {
     e.preventDefault();
+    console.log(playerDetail)
     if (!playerDetail?.nickName) {
       toast.error("Pls add a nickName");
       return;
@@ -141,7 +138,7 @@ export function AttendeeOnboarding({
       return;
     }
 
-    if (!quiz?.accessibility?.visible && !attendeeId) {
+    if (!quiz?.accessibility?.visible) {
       toast.error("You are not a registered attendee for this event");
       return;
     }
@@ -208,40 +205,20 @@ export function AttendeeOnboarding({
     setLoading(false);
   }
 
-  function onClose() {
-    setisLobby(false);
-    close();
-  }
+ 
 
-  // organizer start live quiz
-  async function startLiveQuiz() {
-    setLoading(true);
-    const payload: Partial<TQuiz<TQuestion[]>> = {
-      ...quiz,
-      liveMode: { startingAt: new Date().toISOString() },
-    };
-    await updateQuiz({ payload });
-    refetch();
-    setisLobby(true);
-    setLoading(false);
-    if (audio) {
-      audio.volume = 0.05;
-      audio.play();
-    }
-  }
-
-  useEffect(() => {
-    if (!quiz?.liveMode?.startingAt) return;
-    const currentTime = new Date();
-    const quizStartingTime = new Date(quiz?.liveMode?.startingAt);
-    let interval = setInterval(() => {
-      if (isLobby && isAfter(currentTime, quizStartingTime)) {
-        refetch();
-      } else {
-        clearInterval(interval);
-      }
-    }, 2000);
-  }, []);
+  // useEffect(() => {
+  //   if (!quiz?.liveMode?.startingAt) return;
+  //   const currentTime = new Date();
+  //   const quizStartingTime = new Date(quiz?.liveMode?.startingAt);
+  //   let interval = setInterval(() => {
+  //     if (isLobby && isAfter(currentTime, quizStartingTime)) {
+  //       refetch();
+  //     } else {
+  //       clearInterval(interval);
+  //     }
+  //   }, 2000);
+  // }, []);
 
   // show the lobby if organizer has already started the quiz
   useEffect(() => {
@@ -263,7 +240,7 @@ export function AttendeeOnboarding({
       <form
         onSubmit={submit}
         className={cn(
-          "w-full text-sm p-4 gap-y-6 col-span-full flex flex-col h-fit absolute inset-0  justify-center items-center m-auto max-w-3xl rounded-lg",
+          "w-full text-sm p-4 gap-y-6 animate-float-in col-span-full flex flex-col h-fit absolute inset-0  justify-center items-center m-auto max-w-3xl rounded-lg",
           isLobby && "hidden"
         )}
       >
@@ -296,14 +273,14 @@ export function AttendeeOnboarding({
               e.stopPropagation();
               toggleAvatarModal();
             }}
-            className="text-white rounded-full h-20 w-20 flex items-center justify-center bg-black/50 flex-col"
+            className="text-basePrimary rounded-lg h-16 w-16 flex items-center justify-center border flex-col"
           >
             {chosenAvatar ? (
-              <Avatar className="h-20 w-20 rounded-lg" {...chosenAvatar} />
+              <Avatar style={{borderRadius: "12px"}} shape="square" className="h-16 w-16 rounded-lg" {...chosenAvatar} />
             ) : (
               <>
-                <Plus size={24} />
-                <p className="text-xs font-medium">Avatar</p>
+                <Plus size={24} className="" />
+                <p className="text-xs text-gray-600 font-medium">Avatar</p>
               </>
             )}
           </button>
@@ -374,22 +351,6 @@ export function AttendeeOnboarding({
         </Button>
       </form>
 
-      {isLobby && (
-        <QuizLobby
-          goBack={() => setisLobby(false)}
-          quiz={quiz}
-          close={onClose}
-          refetch={refetch}
-          isAttendee
-          isMaxLiveParticipant={isMaxLiveParticipant}
-          liveQuizPlayers={liveQuizPlayers}
-          isLeftBox={isLeftBox}
-          onToggle={onToggle}
-          refetchLobby={refetchLobby}
-          id={id}
-         
-        />
-      )}
       {isAvatarModal && (
         <AvatarModal
           close={toggleAvatarModal}

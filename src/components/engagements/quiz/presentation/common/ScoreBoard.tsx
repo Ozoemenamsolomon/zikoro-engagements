@@ -48,12 +48,15 @@ export function ScoreBoard({
   close: () => void;
   quiz: TQuiz<TRefinedQuestion[]> | null;
   id: string;
-  isAttendee: boolean;
+  isAttendee?: boolean;
   actualQuiz: TQuiz<TQuestion[]> | null;
 }) {
   const [isQuizResult, setQuizResult] = useState(false);
-  const { postData: updateQuiz, isLoading } = usePostRequest("engagements/quiz");
-  const {deleteData: deleteQuizLobby} = useDeleteRequest<TLiveQuizParticipant[]>(`engagements/quiz/participant/${actualQuiz?.quizAlias}`)
+  const { postData: updateQuiz, isLoading } =
+    usePostRequest("engagements/quiz");
+  const { deleteData: deleteQuizLobby } = useDeleteRequest<
+    TLiveQuizParticipant[]
+  >(`engagements/quiz/participant/${actualQuiz?.quizAlias}`);
 
   const board = useMemo(() => {
     const participantGroup: { [key: string]: TParticipantScores } = {};
@@ -117,7 +120,7 @@ export function ScoreBoard({
 
   const userPosition = useMemo(() => {
     if (isAttendee && actualQuiz) {
-      const playerId =  id;
+      const playerId = id;
       const index = board?.findIndex(
         ({ quizParticipantId }) => quizParticipantId === playerId
       );
@@ -127,7 +130,7 @@ export function ScoreBoard({
   }, [board]);
   const userScore = useMemo(() => {
     if (isAttendee && actualQuiz) {
-      const playerId =  id;
+      const playerId = id;
       const score = board?.find(
         ({ quizParticipantId }) => quizParticipantId === playerId
       );
@@ -145,14 +148,11 @@ export function ScoreBoard({
         },
       };
       await updateQuiz({ payload });
-      await deleteQuizLobby()
-     
+      await deleteQuizLobby();
+
       close();
     }
-    window.open(
-      `/quiz/${actualQuiz?.eventAlias}/present/${actualQuiz?.quizAlias}`,
-      "_self"
-    );
+    window.location.reload();
   }
 
   return (
@@ -166,9 +166,9 @@ export function ScoreBoard({
           userScore={userScore}
         />
       ) : (
-        <div className="w-full inset-0 fixed  bg-[url('/scoresheetbg.png')] overflow-x-auto h-full ">
+        <div className="w-full inset-0 fixed overflow-x-auto h-full ">
           <div className="absolute inset-x-0  mx-auto px-4 w-full max-w-3xl mt-8">
-            <h2 className="w-full text-white text-center mb-3 font-semibold text-lg sm:text-2xl">
+            <h2 className="w-full  text-center mb-3 font-semibold text-lg sm:text-2xl">
               LeaderBoard
             </h2>
 

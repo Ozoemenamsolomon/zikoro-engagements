@@ -76,7 +76,7 @@ export function AddQuestion({
   }
 
   async function onSubmit(values: z.infer<typeof quizQuestionSchema>) {
-    console.log("val", values);
+    
 
     if (!quiz) return;
     const isCorrectAnswerNotSelected = values?.options?.every(

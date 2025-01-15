@@ -1,6 +1,6 @@
 
 
-import QuizOrganizerView from "@/components/engagements/quiz/presentation/organizer/QuizOrganizerView";
+import QuizAttendeeView from "@/components/engagements/quiz/presentation/attendee/QuizAttendeeView";
 import { Metadata } from "next";
 
 // export const generateMetadata = async ({
@@ -36,5 +36,5 @@ export default function Page({
 }: {
   params: { quizId: string; workspaceAlias:string; };
 }) {
-  return <QuizOrganizerView quizId={quizId} workspaceAlias={workspaceAlias} />;
+  return <QuizAttendeeView quizId={quizId} workspaceAlias={workspaceAlias} />;
 }

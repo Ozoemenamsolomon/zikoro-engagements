@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Option } from "../../common";
 import { Button } from "@/components/custom";
 import { Maximize2 } from "styled-icons/feather";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, forwardRef, useImperativeHandle } from "react";
 import { cn } from "@/lib/utils";
 import {
   TQuiz,
@@ -22,6 +22,12 @@ import { JoiningAttemptTab } from "./JoinAttemptTab";
 import { isAfter } from "date-fns";
 import { usePostRequest } from "@/hooks/services/requests";
 import { TopSection } from "../../_components";
+
+export type QuestionViewRef = {
+  onNextBtnClick: () => void;
+  loading: boolean;
+    isUpdating: boolean;
+};
 
 type ChosenAnswerStatus = {
   isCorrect: boolean;
@@ -57,7 +63,7 @@ type TQuestionProps = {
   actualQuiz: TQuiz<TQuestion[]>;
 };
 
-export function QuestionView({
+export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(({
   isRightBox,
   isLeftBox,
   toggleRightBox,
@@ -78,7 +84,7 @@ export function QuestionView({
   liveQuizPlayers,
   getLiveParticipant,
   actualQuiz,
-}: TQuestionProps) {
+}: TQuestionProps, ref) => {
   const [currentQuestion, setCurrentQuestion] =
     useState<TRefinedQuestion | null>(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -96,6 +102,12 @@ export function QuestionView({
   const { postData: createAnswer } = usePostRequest<Partial<TAnswer>>(
     "engagements/quiz/answer"
   );
+
+  useImperativeHandle(ref, () => ({
+    onNextBtnClick,
+    loading,
+    isUpdating
+  }));
 
   useEffect(() => {
     (async () => {
@@ -177,16 +189,18 @@ export function QuestionView({
   // console.log("yu", quiz?.liveMode);
 
   const timing = useMemo(() => {
+   
     const seconds = Math.floor(
-      (millisecondsLeft % Number(currentQuestion?.duration)) / 1000
+      (millisecondsLeft % (Number(currentQuestion?.duration) * 1000)) / 1000
     );
-    // console.log(minutes, seconds, millisecondsLeft)
+     console.log( seconds, millisecondsLeft)
 
     return seconds;
   }, [millisecondsLeft, currentQuestion]);
+
   useEffect(() => {
     if (currentQuestion?.duration) {
-      setMillisecondsLeft(Number(currentQuestion?.duration));
+      setMillisecondsLeft(Number(currentQuestion?.duration) * 1000);
     }
   }, [currentQuestion?.id]);
 
@@ -493,6 +507,15 @@ export function QuestionView({
     } else return [];
   }, [actualQuiz]);
 
+  const isImageOption = useMemo(() => {
+    if (currentQuestion) {
+      return currentQuestion?.options?.some((opt) => (opt?.option as string)?.startsWith('https://'))
+    }
+    else return false
+  },[currentQuestion])
+
+  console.log(timing)
+
   return (
     <>
       <div
@@ -504,14 +527,13 @@ export function QuestionView({
             "col-span-6",
           !isLeftBox &&
             !isRightBox &&
-            "col-span-full rounded-xl max-w-4xl mx-auto",
-            isAttendee &&
-            "col-span-full rounded-xl max-w-3xl mx-auto",
+            "col-span-full rounded-xl max-w-4xl h-[78vh] inset-0 absolute m-auto",
+          
           isLeftBox && !isRightBox && "",
           !isLeftBox && isRightBox && "rounded-l-xl"
         )}
       >
-        <div className="w-full overflow-y-auto no-scrollbar pt-4 px-6 space-y-3  h-[90%] pb-52 ">
+        <div className={cn("w-full overflow-y-auto no-scrollbar pt-4 px-6 space-y-3  h-[90%] pb-8 ", isAttendee && "pb-[16rem]")}>
           <>
             {transiting ? (
               <Transition
@@ -531,6 +553,9 @@ export function QuestionView({
                   noOfParticipants={String(currentParticipants?.length)}
                   isQuestionView
                   timer={timing}
+                  isLeftBox={isLeftBox}
+                  isAttendee
+                  playerAvatar={attendeeDetail?.avatar}
                   
                 />
 
@@ -546,7 +571,7 @@ export function QuestionView({
                   </p>
 
                   <div
-                    className="innerhtml mx-auto w-full"
+                    className="innerhtml mx-auto w-fit"
                     dangerouslySetInnerHTML={{
                       __html: currentQuestion?.question ?? "",
                     }}
@@ -564,10 +589,9 @@ export function QuestionView({
                     <div className="w-1 h-1"></div>
                   )}
                 </div>
-
               
 
-                <div className="w-full">
+                <div className={cn("w-full", isImageOption && "flex items-center justify-center flex-wrap gap-4")}>
                   {currentQuestion?.options.map((option, index, arr) => (
                     <Option
                       key={index}
@@ -576,6 +600,7 @@ export function QuestionView({
                       setIsOptionSelected={setIsOptionSelected}
                       showAnswerMetric={showAnswerMetric}
                       answer={answer}
+                      isImageOption={isImageOption}
                       isDisabled={
                         timing === 0 ||
                         arr?.some(
@@ -618,7 +643,7 @@ export function QuestionView({
                         }`}</p>
                       </div>
                     )}
-                  <p className="self-end bg-basePrimary/20 rounded-3xl text-sm text-basePrimary px-2 py-1">{`${Number(
+                  <p className="self-end bg-basePrimary-200 rounded-3xl text-sm text-basePrimary px-2 py-1">{`${Number(
                     currentQuestion?.points
                   )} ${Number(currentQuestion?.points) > 1 ? `pts` : `pt`}`}</p>
                 </div>
@@ -647,8 +672,7 @@ export function QuestionView({
                 )}
                  </div>
 
-                {/**
-             <div className="w-full hidden items-end justify-between">
+             {/* <div className="w-full hidden items-end justify-between">
               <div className="flex items-center gap-x-2">
                 <Button
                   onClick={previousQuestion}
@@ -671,18 +695,30 @@ export function QuestionView({
               </div>
 
               <p className="w-1 h-1"></p>
-            </div>
-          */}
+            </div> */}
+         
 
                 <div className="w-full rounded-b-xl flex flex-col items-center justify-center mx-auto absolute inset-x-0 bottom-0 gap-y-3  bg-white py-2">
-                 
+                {!quiz?.accessibility?.live &&
+                  isAttendee && (
+                    <Button
+                      disabled={loading || isUpdating} //
+                      onClick={onNextBtnClick}
+                      className="text-gray-50  mx-auto w-[180px] my-4 bg-[#001fcc] gap-x-2 h-11 font-medium flex"
+                    >
+                      {isUpdating && (
+                        <LoaderAlt size={22} className="animate-spin" />
+                      )}
+                      <p>Next </p>
+                    </Button>
+                  )}
                   {quiz.branding.poweredBy && (
                     <p className="text-center bg-white text-sm w-full  p-2 ">
                       Powered By Zikoro
                     </p>
                   )}
 
-                  <Button
+                 {!isAttendee && <Button
                     onClick={toggleLeftBox}
                     className={cn(
                       "absolute bottom-1 left-1",
@@ -690,7 +726,7 @@ export function QuestionView({
                     )}
                   >
                     <Maximize2 size={20} />
-                  </Button>
+                  </Button>}
                 </div>
               </>
             )}
@@ -709,7 +745,7 @@ export function QuestionView({
       )}
     </>
   );
-}
+})
 
 function Transition({
   setShowTransiting,
@@ -736,7 +772,7 @@ function Transition({
   }, [secondsLeft]);
 
   return (
-    <div className="w-full h-full flex items-center flex-col gap-y-3 justify-between">
+    <div className="w-full h-full flex items-center flex-col gap-[40%] ">
       <p className="font-semibold text-base sm:text-xl  ">Next question</p>
       <div className="w-[170px] h-[170px]">
         <CircularProgressbar
