@@ -10,19 +10,24 @@ export function AddedQuestions({
   editingQuestion,
   editQuestion,
   addNewQuestion,
+  isAddNew
 }: {
   questions: TQuestion[];
   className?: string;
   editingQuestion: TQuestion | null;
   editQuestion: (t: TQuestion) => void;
   addNewQuestion: () => void;
+  isAddNew:boolean;
 }) {
   const [isNew, setIsNew] = useState(true)
   return (
     <div
       className={cn(
-        "w-full bg-white h-full mt-8 border rounded-lg col-span-3 py-6 px-3",
-        className
+        "w-full bg-white h-full sm:mt-8 border overflow-y-auto no-scrollbar rounded-lg col-span-full sm:col-span-3 py-6 px-3",
+        className,
+        editingQuestion !== null && 'hidden sm:block',
+        isAddNew && "hidden sm:block"
+
       )}
     >
       <div className="w-full mb-6 flex items-center justify-between">
