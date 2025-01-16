@@ -237,30 +237,33 @@ export default function QuizOrganizerView({
     }
   }
 
-  // show the lobby if organizer has already started the quiz
+  
   useEffect(() => {
     if (quiz?.accessibility?.live && quiz?.liveMode?.startingAt) {
-      setIsAdvert(false)
+   
       if (audio) {
         audio.volume = 0.05;
         audio.play();
       }
     }
-  }, [quiz]);
+  }, [quiz?.liveMode?.startingAt]);
 
-  // ion know
-  useEffect(() => {
-    if (!quiz?.liveMode?.startingAt) return;
-    const currentTime = new Date();
-    const quizStartingTime = new Date(quiz?.liveMode?.startingAt);
-    let interval = setInterval(() => {
-      if (isLobby && isAfter(currentTime, quizStartingTime)) {
-        getData();
-      } else {
-        clearInterval(interval);
-      }
-    }, 2000);
-  }, []);
+
+    // ion know
+    useEffect(() => {
+      if (!quiz?.liveMode?.startingAt) return;
+      const currentTime = new Date();
+      const quizStartingTime = new Date(quiz?.liveMode?.startingAt);
+      let interval = setInterval(() => {
+        if (isLobby && isAfter(currentTime, quizStartingTime)) {
+          getData();
+        } else {
+          clearInterval(interval);
+        }
+      }, 2000);
+    }, []);
+
+
 
   useEffect(() => {
     if (quiz) {
@@ -340,17 +343,18 @@ export default function QuizOrganizerView({
       if (quiz?.accessibility?.live) {
         setIsLobby(true);
         setLeftBox(true);
-        setRightBox(false);
+       // setRightBox(false);
         startLiveQuiz();
         return;
       }
       if (!quiz?.accessibility?.live) {
         setIsQuizStarted(true);
         setLeftBox(true);
-        setRightBox(false);
+        //setRightBox(false);
         return;
       }
     }
+    console.log("reach here");
     if (isLobby) {
       if (quiz?.accessibility?.live && quizLobbyRef?.current) {
         await quizLobbyRef.current.openQuestion();
@@ -414,6 +418,8 @@ export default function QuizOrganizerView({
 
   console.log("left", isLeftBox, "right", isRightBox, "lobby", isLobby,"advert", isAdvert )
 
+  console.log(quiz)
+
   return (
     <>
       {showScoreSheet ? (
@@ -452,7 +458,7 @@ export default function QuizOrganizerView({
                     close={() => {
                       setRightBox((prev) => !prev)
                     }}
-                    className={cn("col-span-3", !isRightBox && "col-span-full max-w-2xl mx-auto")}
+                    className={cn("col-span-3", !isRightBox && !quiz?.accessibility?.live && "col-span-full max-w-2xl mx-auto")}
                   />
                 )}
 
@@ -481,7 +487,7 @@ export default function QuizOrganizerView({
                     className={cn(
                       "relative px-0 m-0  h-full border-y border-r rounded-r-lg col-span-9",
                       !isLeftBox && "col-span-full rounded-lg border mx-auto",
-                      !isRightBox && "hidden"
+                      !isRightBox && !quiz?.accessibility?.live && "hidden"
                     )}
                   />
                 }
@@ -496,6 +502,7 @@ export default function QuizOrganizerView({
                     isRightBox={isRightBox}
                     isFromPoll={true}
                     close={() => {}}
+                    className={cn("", !isLeftBox && "flex md:flex", isRightBox && "col-span-3 max-w-full",!isRightBox && !isLeftBox && "hidden md:hidden" )}
                   />
                 )}
                 {quiz && refinedQuizArray && (
@@ -512,10 +519,12 @@ export default function QuizOrganizerView({
                     getLiveParticipant={getLiveParticipant}
                     isRightBox={isRightBox}
                     toggleRightBox={() => {
+                  
                       setLeftBox((prev) => !prev);
-                      setRightBox(true);
                     }}
-                    toggleLeftBox={onClose}
+                    toggleLeftBox={() => {
+                      setRightBox((prev) => !prev)
+                    }}
                     onOpenScoreSheet={onOpenScoreSheet}
                     updateQuiz={updateQuiz}
                     updateQuizResult={updateQuizResult}
@@ -528,6 +537,7 @@ export default function QuizOrganizerView({
                       phone: playerDetail?.phone,
                       avatar: chosenAvatar!,
                     }}
+                    className={cn("", !isLeftBox && "col-span-9 max-w-full relative m-0 h-full sm:h-full rounded-none rounded-r-lg", !isRightBox && "col-span-9 rounded-r-lg", !isLeftBox && !isRightBox && "rounded-l-lg  max-w-4xl col-span-full mx-auto")}
                   />
                 )}
 

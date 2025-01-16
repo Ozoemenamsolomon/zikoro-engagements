@@ -117,6 +117,8 @@ export const QuizLobby =  forwardRef<QuizLobbyRef, QuizLobbyProp>(({
     }
   }, [quiz]);
 
+  
+
   async function openQuestion() {
     setLoading(true);
     const { startingAt } = quiz?.liveMode;

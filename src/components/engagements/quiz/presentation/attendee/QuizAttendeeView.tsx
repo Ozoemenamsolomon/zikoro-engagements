@@ -283,6 +283,31 @@ export default function QuizAttendeeView({
     setShowScoreSheet(true);
   }
 
+    // // configure what to show
+    // useEffect(() => {
+    //   if (quiz?.accessibility?.live && quiz?.liveMode?.startingAt) {
+    //     const isStarting = quiz?.liveMode?.isStarting;
+    //     const isQuestion = quiz?.liveMode?.current;
+    //     if (isQuestion) setIsQuizStarted(true)
+    //    if (isStarting) {
+  
+    //     setIsLobby(false) 
+    //     setIsQuizStarted(true)
+        
+    //    }  
+    //   //  if (!isStarting && !isQuestion) {
+        
+  
+    //   //  }
+     
+  
+    //     // if (audio && !isStarting && !isQuestion) {
+    //     //   audio.volume = 0.05;
+    //     //   audio.play();
+    //     // }
+    //   }
+    // }, [quiz]);
+
   // show score sheet after live quiz
   useEffect(() => {
     (async () => {

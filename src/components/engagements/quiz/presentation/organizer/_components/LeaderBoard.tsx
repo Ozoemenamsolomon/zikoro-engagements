@@ -161,7 +161,8 @@ function OtherPlayers({
         <p className="text-sm">{`${index + 4}th`}</p>
 
         <Avatar
-          shape="circle"
+          style={{ borderRadius: "12px" }}
+          shape="square"
           className="w-[2.5rem] h-[2.5rem]"
           {...attendee?.image}
         />
@@ -312,8 +313,8 @@ export function LeaderBoard({
       ref={observingLeaderBoard}
       className={cn(
         "w-full col-span-3 bg-white h-full border-r border-y rounded-r-xl hidden  md:hidden",
-        isLeftBox && "block md:block ",
-        !isRightBox && "col-span-3"
+        isLeftBox && "block md:block "
+        //  !isRightBox && "col-span-3"
       )}
     >
       <div className="w-full h-[35vh] relative gap-y-2 flex pb-2 flex-col rounded-tr-xl items-center ">
@@ -354,6 +355,7 @@ export function LeaderBoard({
               />*/}
                 <Avatar
                   shape="square"
+                  style={{borderRadius: "12px"}}
                   className="w-[4.0rem]  h-[4.0rem]"
                   {...board[1]?.image}
                 />
@@ -386,6 +388,7 @@ export function LeaderBoard({
               />*/}
                 <Avatar
                   shape="square"
+                  style={{borderRadius: "12px"}}
                   className="w-[5.5rem] h-[5.5rem]"
                   {...board[0]?.image}
                 />
@@ -410,6 +413,7 @@ export function LeaderBoard({
 
                 <Avatar
                   shape="square"
+                  style={{borderRadius: "12px"}}
                   className="w-[3.5rem] h-[3.5rem]"
                   {...board[2]?.image}
                 />
