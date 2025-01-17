@@ -67,8 +67,8 @@ export default function AddQuizQuestions({
   }
   return (
     <>
-      <div className="w-full min-h-screen sm:px-4  mx-auto  flex flex-col justify-between">
-        <div className="w-full h-[89vh] sm:h-[83vh] gap-4 sm:mt-4 items-start grid grid-cols-12">
+      <div className="w-full min-h-screen sm:px-4  mx-auto ">
+        <div className="w-full h-full gap-4 sm:mt-4 items-start grid grid-cols-12">
           {(isAddNew ||
             question !== null ||
             (Array.isArray(data?.questions) && data?.questions?.length > 0)) &&
@@ -145,7 +145,9 @@ export default function AddQuizQuestions({
             </QuizLayout>
           </div>
         </div>
-        <div className="w-full bg-white px-4 sm:px-6 py-4 flex items-center justify-between">
+     
+      </div>
+      <div className="w-full bg-white fixed bottom-0 inset-x-0 z-50 px-4 sm:px-6 py-4 flex items-center justify-between">
           <Button
             disabled={isDisabled}
             className="gap-x-2 bg-basePrimary-200  border-basePrimary border  rounded-xl h-9"
@@ -201,7 +203,6 @@ export default function AddQuizQuestions({
             </Button>
           </div>
         </div>
-      </div>
       {isToggleSetting && data && organization && (
         <QuizSettings
           close={toggleSetting}
