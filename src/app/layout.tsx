@@ -39,6 +39,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
+      id="layout-container"
+     
         className={`${montserrat.className} text-mobile sm:text-desktop bg-basePrimary-100 antialiased`}
       >
         <ToastContainer />

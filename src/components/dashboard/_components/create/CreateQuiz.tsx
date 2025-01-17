@@ -142,11 +142,11 @@ export function CreateQuiz({
     }
   }, [quiz]);
 
-  const prevOrg = useMemo(() => {
-    if (Array.isArray(formattedList) && quiz) {
-      return formattedList?.find((v) => v?.value === quiz?.workspaceAlias);
-    }
-  }, [quiz, formattedList]);
+  // const prevOrg = useMemo(() => {
+  //   if (Array.isArray(formattedList) && quiz) {
+  //     return formattedList?.find((v) => v?.value === quiz?.workspaceAlias);
+  //   }
+  // }, [quiz, formattedList]);
   return (
     <>
       <Form {...form}>
@@ -197,7 +197,7 @@ export function CreateQuiz({
               render={({ field }) => (
                 <InputOffsetLabel label="Organization">
                   <ReactSelect
-                    defaultValue={prevOrg ?? ""}
+                    defaultValue={formattedList?.find((v) => v?.value === quiz?.workspaceAlias) ??''}
                     {...field}
                     placeHolder="Select a Workspace"
                     options={formattedList}

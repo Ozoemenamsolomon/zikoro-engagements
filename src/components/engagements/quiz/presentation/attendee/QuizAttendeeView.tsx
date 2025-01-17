@@ -69,6 +69,7 @@ export default function QuizAttendeeView({
   const { deleteData: deleteQuizLobby } = useDeleteRequest<
     TLiveQuizParticipant[]
   >(`engagements/quiz/participant/${quiz?.quizAlias}`);
+   const [isQuizResult, setIsQuizResult] = useState(false);
 
   const { postData } =
     usePostRequest<Partial<TQuiz<TQuestion[]>>>("engagements/quiz");
@@ -283,6 +284,31 @@ export default function QuizAttendeeView({
     setShowScoreSheet(true);
   }
 
+    // // configure what to show
+    // useEffect(() => {
+    //   if (quiz?.accessibility?.live && quiz?.liveMode?.startingAt) {
+    //     const isStarting = quiz?.liveMode?.isStarting;
+    //     const isQuestion = quiz?.liveMode?.current;
+    //     if (isQuestion) setIsQuizStarted(true)
+    //    if (isStarting) {
+  
+    //     setIsLobby(false) 
+    //     setIsQuizStarted(true)
+        
+    //    }  
+    //   //  if (!isStarting && !isQuestion) {
+        
+  
+    //   //  }
+     
+  
+    //     // if (audio && !isStarting && !isQuestion) {
+    //     //   audio.volume = 0.05;
+    //     //   audio.play();
+    //     // }
+    //   }
+    // }, [quiz]);
+
   // show score sheet after live quiz
   useEffect(() => {
     (async () => {
@@ -312,6 +338,8 @@ export default function QuizAttendeeView({
               id={id}
               quiz={quizResult}
               actualQuiz={quiz}
+            //  isQuizResult={isQuizResult}
+              setIsQuizResult={setIsQuizResult}
               isAttendee
               answers={answers}
               attendeeEmail={playerDetail?.email}
@@ -327,7 +355,10 @@ export default function QuizAttendeeView({
               }}
               id={id}
               quiz={quizResult}
+              isQuizResult={isQuizResult}
+              setIsQuizResult={setIsQuizResult}
               actualQuiz={quiz}
+             // onClose={showSendMailModal}
             />
           )}
         </>

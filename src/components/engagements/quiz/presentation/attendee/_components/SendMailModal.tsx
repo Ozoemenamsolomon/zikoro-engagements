@@ -1,7 +1,13 @@
 "use client";
 
 import { Button } from "@/components/custom";
-import { Form, FormField, FormControl, FormMessage, FormItem } from "@/components/ui/form";
+import {
+  Form,
+  FormField,
+  FormControl,
+  FormMessage,
+  FormItem,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
 import { useForm } from "react-hook-form";
@@ -13,7 +19,7 @@ import { TQuiz, TQuestion, TAnswer } from "@/types/quiz";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
 import Link from "next/link";
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { InlineIcon } from "@iconify/react";
 import { FaWhatsapp } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
@@ -29,6 +35,7 @@ export function SendMailModal<T>({
   actualQuiz,
   attendeeEmail,
   answers,
+  setIsQuizResult,
 }: {
   close: () => void;
   quiz: TQuiz<T[]> | null;
@@ -37,8 +44,9 @@ export function SendMailModal<T>({
   actualQuiz: TQuiz<TQuestion[]> | null;
   attendeeEmail?: string;
   answers?: TAnswer[];
+  setIsQuizResult: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const { mutateData: updateQuiz,  isLoading } = useMutateData("/quiz/score");
+  const { mutateData: updateQuiz, isLoading } = useMutateData("/quiz/score");
   const form = useForm<z.infer<typeof sendMailQuizSchema>>({
     resolver: zodResolver(sendMailQuizSchema),
     defaultValues: {
@@ -48,8 +56,8 @@ export function SendMailModal<T>({
   const [isShow, showSuccess] = useState(false);
   const url =
     quiz?.interactionType !== "poll"
-      ? `${window.location.origin}/quiz/${quiz?.eventAlias}/present/${quiz?.quizAlias}`
-      : `${window.location.origin}/poll/${quiz?.eventAlias}/present/${quiz?.quizAlias}`;
+      ? `https://engagements.zikoro.com/e/poll/${quiz?.workspaceAlias}/a/${quiz?.quizAlias}/presentation`
+      : `https://engagements.zikoro.com/e/quiz/${quiz?.workspaceAlias}/a/${quiz?.quizAlias}/presentation`;
   function copyLink() {
     copy(url);
     showSuccess(true);
@@ -145,7 +153,9 @@ export function SendMailModal<T>({
           </h1>
           {quiz?.interactionType !== "poll" && (
             <div className="space-y-2 flex flex-col items-center justify-center">
-              <p className="font-medium text-lg sm:text-2xl">{attendeePoint?.toFixed(0)}</p>
+              <p className="font-medium text-lg sm:text-2xl">
+                {attendeePoint?.toFixed(0)}
+              </p>
               <p className="flex items-center gap-x-2">
                 <InlineIcon
                   icon="solar:star-circle-bold-duotone"
@@ -232,8 +242,11 @@ export function SendMailModal<T>({
         {quiz?.interactionType !== "poll" && (
           <div className="w-full mt-6 sm:mt-10 flex items-center justify-center gap-x-3">
             <Button
-              className="rounded-lg border border-basePrimary gap-x-2 bg-gradient-to-tr from-custom-bg-gradient-start to-custom-bg-gradient-end"
-              onClick={close}
+              className="rounded-lg border border-basePrimary gap-x-2 bg-basePrimary-200"
+              onClick={() => {
+                close();
+                setIsQuizResult(false);
+              }}
             >
               <InlineIcon
                 fontSize={22}
@@ -241,6 +254,15 @@ export function SendMailModal<T>({
                 color="#9D00FF"
               />
               <p className="gradient-text bg-basePrimary">LeaderBoard</p>
+            </Button>
+            <Button
+              className="rounded-lg border border-basePrimary gap-x-2 bg-basePrimary-200"
+              onClick={() => {
+                close();
+                setIsQuizResult(true);
+              }}
+            >
+              <p className="gradient-text bg-basePrimary">Quiz Result</p>
             </Button>
           </div>
         )}

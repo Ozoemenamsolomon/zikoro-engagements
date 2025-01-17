@@ -45,6 +45,7 @@ import { cn } from "@/lib/utils";
 import { createClient } from "@/utils/supabase/client";
 import { ScoreBoard } from "../common/ScoreBoard";
 import { InlineIcon } from "@iconify/react/dist/iconify.js";
+import { ActionModal } from "@/components/custom/ActionModal";
 
 // audio instance
 function createAudioInstance(music: string) {
@@ -87,6 +88,8 @@ export default function QuizOrganizerView({
   const quizLobbyRef = useRef<QuizLobbyRef>(null);
   const [volume, adjustVolume] = useState(0.05);
   const [isAdvert, setIsAdvert] = useState(true);
+  const [isAttemptingToExit, setIsAttemptingToExit]  = useState(false)
+  const [isLoadingAttempt, setIsLoadingAttempt] = useState(false)
   const { liveQuizPlayers, setLiveQuizPlayers, getLiveParticipant } =
     useGetLiveParticipant({
       quizId: quizId,
@@ -143,16 +146,15 @@ export default function QuizOrganizerView({
     };
   }, [supabase, quiz]);
 
+  
   function createBeep() {
     if (typeof window !== undefined) {
-      if (quiz?.accessibility?.playMusic && quiz?.accessibility?.music) {
-        const audio = new Audio(quiz?.accessibility?.music?.value);
-        //  audio.src = "audio/AylexCinematic.mp3";
+      const audio = new Audio("/audio/beep.wav");
+      //  audio.src = "audio/AylexCinematic.mp3";
 
-        audio.volume = 0.2;
+      audio.volume = 0.2;
 
-        audio.play();
-      }
+      audio.play();
     }
   }
   // subscribe to player
@@ -237,16 +239,14 @@ export default function QuizOrganizerView({
     }
   }
 
-  // show the lobby if organizer has already started the quiz
   useEffect(() => {
     if (quiz?.accessibility?.live && quiz?.liveMode?.startingAt) {
-      setIsAdvert(false)
       if (audio) {
         audio.volume = 0.05;
         audio.play();
       }
     }
-  }, [quiz]);
+  }, [quiz?.liveMode?.startingAt]);
 
   // ion know
   useEffect(() => {
@@ -334,29 +334,36 @@ export default function QuizOrganizerView({
   }
 
   async function onClickStart() {
+
     if (isAdvert) {
       setIsAdvert(false);
 
       if (quiz?.accessibility?.live) {
         setIsLobby(true);
         setLeftBox(true);
-        setRightBox(false);
+        // setRightBox(false);
         startLiveQuiz();
         return;
       }
       if (!quiz?.accessibility?.live) {
         setIsQuizStarted(true);
         setLeftBox(true);
-        setRightBox(false);
+        //setRightBox(false);
         return;
       }
     }
+
     if (isLobby) {
       if (quiz?.accessibility?.live && quizLobbyRef?.current) {
         await quizLobbyRef.current.openQuestion();
       }
       setIsQuizStarted(true);
-      setIsLobby(false)
+      setIsLobby(false);
+      return;
+    }
+
+    if (isQuizStarted) {
+      setIsAttemptingToExit(true)
       return;
     }
   }
@@ -408,14 +415,49 @@ export default function QuizOrganizerView({
     }
   }
 
+  async function exitQuiz() {
+    setIsLoadingAttempt(true)
+   if (quiz?.accessibility?.live) await deleteQuizLobby()
+    window.location.reload()
+    setIsLoadingAttempt(false)
+  }
+
   // if (isLoading) {
   //   return <></>;
   // }
 
-  console.log("left", isLeftBox, "right", isRightBox, "lobby", isLobby,"advert", isAdvert )
+  //console.log("left", isLeftBox, "right", isRightBox, "lobby", isLobby,"advert", isAdvert )
+
+  ///console.log(quiz)
+
+  async function handleFullScreen() {
+    const element = document.getElementById("layout-container");
+
+    if (element) {
+      element
+        .requestFullscreen()
+        .then(() => {})
+        .catch((err) => {
+          console.log("error while requesting full screen", err);
+        });
+    }
+  }
+
+  function formatPosition(position: number): string {
+    const suffixes = ['th', 'st', 'nd', 'rd'];
+    const remainder = position % 100;
+    
+    // Handle special cases 11, 12, 13
+    if (remainder >= 11 && remainder <= 13) {
+      return `${position}th`;
+    }
+    
+    const suffix = suffixes[position % 10] || suffixes[0];
+    return `${position}${suffix}`;
+  }
 
   return (
-    <>
+    <div style={{backgroundColor:"#f7f8ff"}}  className="w-full">
       {showScoreSheet ? (
         <div className="w-full ">
           <ScoreBoard
@@ -450,9 +492,14 @@ export default function QuizOrganizerView({
                     isRightBox={isRightBox}
                     isFromPoll={true}
                     close={() => {
-                      setRightBox((prev) => !prev)
+                      setRightBox((prev) => !prev);
                     }}
-                    className={cn("col-span-3", !isRightBox && "col-span-full max-w-2xl mx-auto")}
+                    className={cn(
+                      "col-span-3",
+                      !isRightBox &&
+                        !quiz?.accessibility?.live &&
+                        "col-span-full max-w-2xl mx-auto"
+                    )}
                   />
                 )}
 
@@ -481,7 +528,7 @@ export default function QuizOrganizerView({
                     className={cn(
                       "relative px-0 m-0  h-full border-y border-r rounded-r-lg col-span-9",
                       !isLeftBox && "col-span-full rounded-lg border mx-auto",
-                      !isRightBox && "hidden"
+                      !isRightBox && !quiz?.accessibility?.live && "hidden"
                     )}
                   />
                 }
@@ -496,6 +543,12 @@ export default function QuizOrganizerView({
                     isRightBox={isRightBox}
                     isFromPoll={true}
                     close={() => {}}
+                    className={cn(
+                      "",
+                      !isLeftBox && "flex md:flex",
+                      isRightBox && "col-span-3 max-w-full",
+                      !isRightBox && !isLeftBox && "hidden md:hidden"
+                    )}
                   />
                 )}
                 {quiz && refinedQuizArray && (
@@ -513,9 +566,10 @@ export default function QuizOrganizerView({
                     isRightBox={isRightBox}
                     toggleRightBox={() => {
                       setLeftBox((prev) => !prev);
-                      setRightBox(true);
                     }}
-                    toggleLeftBox={onClose}
+                    toggleLeftBox={() => {
+                      setRightBox((prev) => !prev);
+                    }}
                     onOpenScoreSheet={onOpenScoreSheet}
                     updateQuiz={updateQuiz}
                     updateQuizResult={updateQuizResult}
@@ -528,6 +582,15 @@ export default function QuizOrganizerView({
                       phone: playerDetail?.phone,
                       avatar: chosenAvatar!,
                     }}
+                    className={cn(
+                      "",
+                      !isLeftBox &&
+                        "col-span-9 max-w-full relative m-0 h-full sm:h-full rounded-none rounded-r-lg",
+                      !isRightBox && "col-span-9 rounded-r-lg",
+                      !isLeftBox &&
+                        !isRightBox &&
+                        "rounded-l-lg  max-w-4xl col-span-full mx-auto"
+                    )}
                   />
                 )}
 
@@ -562,36 +625,45 @@ export default function QuizOrganizerView({
                 ) : (
                   <PlayQuizIcon />
                 )}
-                <p className={cn("text-red-500 text-sm sm:text-base ", !isQuizStarted && "gradient-text bg-basePrimary")}>
+                <p
+                  className={cn(
+                    "text-red-500 text-sm sm:text-base ",
+                    !isQuizStarted && "gradient-text bg-basePrimary"
+                  )}
+                >
                   {isQuizStarted ? "End Quiz" : "Start Quiz"}
                 </p>
               </Button>
-            {!isAdvert &&  <Button
-                disabled={
-                  questionViewRef.current !==  null &&
-                  (questionViewRef.current.loading ||
-                    questionViewRef.current?.isUpdating)
-                }
-                onClick={() => {
-                  if (questionViewRef.current) {
-                    questionViewRef.current.onNextBtnClick();
+              {!isAdvert && (
+                <Button
+                  disabled={
+                    (questionViewRef.current !== null &&
+                      (questionViewRef.current.loading ||
+                        questionViewRef.current?.isUpdating)) ||
+                    isLobby
                   }
-                }}
-                title="Next Question"
-                className="px-0 w-fit h-fit"
-              >
-                <NextQuestionIcon />
-              </Button>}
+                  onClick={() => {
+                    if (questionViewRef.current) {
+                      questionViewRef.current.onNextBtnClick();
+                    }
+                  }}
+                  title="Next Question"
+                  className="px-0 w-fit h-fit"
+                >
+                  <NextQuestionIcon />
+                </Button>
+              )}
               <Button title="Play Music" className="px-0 w-fit h-fit">
                 <SpeakerIcon />
               </Button>
-              <Button className="px-0 w-fit h-fit">
+              <Button onClick={handleFullScreen} className="px-0 w-fit h-fit">
                 <FullScreenIcon />
               </Button>
             </div>
           </div>
         </div>
       )}
-    </>
+      {isAttemptingToExit && <ActionModal loading={isLoadingAttempt} close={() => setIsAttemptingToExit(false)} asynAction={exitQuiz} buttonText="Exit" buttonColor="bg-basePrimary text-white"/>}
+    </div>
   );
 }

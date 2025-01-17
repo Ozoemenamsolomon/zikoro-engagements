@@ -51,6 +51,7 @@ type TQuestionProps = {
     phone: string;
   };
   isAttendee?:boolean;
+  className?:string;
   answer: TAnswer[];
   quizAnswer: TAnswer[];
   refetchQuiz: () => Promise<any>;
@@ -85,6 +86,7 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(({
   liveQuizPlayers,
   getLiveParticipant,
   actualQuiz,
+  className
 }: TQuestionProps, ref) => {
   const [currentQuestion, setCurrentQuestion] =
     useState<TRefinedQuestion | null>(null);
@@ -112,7 +114,7 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(({
 
   useEffect(() => {
     (async () => {
-      if (quiz && quiz?.accessibility?.live && !isAttendee) {
+      if (quiz && quiz?.accessibility?.live && quiz?.liveMode?.isStarting && !isAttendee) {
         const { liveMode, ...restData } = quiz;
         const { startingAt } = liveMode;
 
@@ -515,7 +517,6 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(({
     else return false
   },[currentQuestion])
 
-  console.log(timing)
 
   return (
     <>
@@ -531,7 +532,8 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(({
             "col-span-full rounded-xl max-w-4xl h-[100vh] sm:h-[78vh] inset-0 absolute m-auto",
           
           isLeftBox && !isRightBox && "",
-          !isLeftBox && isRightBox && "rounded-l-xl"
+          !isLeftBox && isRightBox && "rounded-l-xl",
+          className
         )}
       >
         <div className={cn("w-full overflow-y-auto no-scrollbar pt-4 px-6 space-y-3  h-[90%] pb-8 ", isAttendee && "pb-[16rem]")}>
@@ -726,7 +728,7 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(({
                     onClick={toggleLeftBox}
                     className={cn(
                       "absolute bottom-1 left-1",
-                      isLeftBox && "hidden"
+                    
                     )}
                   >
                     <Maximize2 size={20} />
