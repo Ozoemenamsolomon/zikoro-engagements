@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils";
 import { AddedQuestions } from "./AddedQuestion";
 import { TOrganization } from "@/types/home";
 import { QuizSettings } from "../quizSettings/QuizSettings";
+import {MdNavigateBefore} from "react-icons/md"
 import { useRouter } from "next/navigation";
 
 export default function AddQuizQuestions({
@@ -58,13 +59,16 @@ export default function AddQuizQuestions({
     setToggleSetting((prev) => !prev);
   }
 
+  console.log(question === null || !isAddNew)
+
+
   if (isLoading) {
     return <LoadingState />;
   }
   return (
     <>
-      <div className="w-full min-h-screen px-4  mx-auto  flex flex-col justify-between">
-        <div className="w-full h-[83vh] gap-4 mt-10 items-start grid grid-cols-12">
+      <div className="w-full min-h-screen sm:px-4  mx-auto  flex flex-col justify-between">
+        <div className="w-full h-[90vh] sm:h-[83vh] gap-4 sm:mt-10 items-start grid grid-cols-12">
           {(isAddNew ||
             question !== null ||
             (Array.isArray(data?.questions) && data?.questions?.length > 0)) &&
@@ -77,6 +81,7 @@ export default function AddQuizQuestions({
                   setIsAddNew(true);
                   editQuestion(null);
                 }}
+                isAddNew={isAddNew}
               />
             )}
 
@@ -92,13 +97,21 @@ export default function AddQuizQuestions({
                 (Array.isArray(data?.questions) &&
                   data?.questions?.length > 0)) &&
                 data &&
-                "col-span-9"
+                "col-span-9",
+              (question !== null || isAddNew) && "block col-span-full sm:col-span-9"
             )}
           >
             <QuizLayout
               className="overflow-y-auto"
-              parentClassName="h-[83vh] relative px-0"
-              LeadingWidget={<LeadingHeadRoute name={data?.coverTitle ?? ""} />}
+              parentClassName={cn(
+                "h-[83vh] relative px-0",
+                question === null && "hidden sm:block",
+                isAddNew && "block"
+              )}
+              LeadingWidget={<LeadingHeadRoute onClick={() => {
+                setIsAddNew(false)
+                editQuestion(null)
+              }} name={data?.coverTitle ?? ""} Icon={MdNavigateBefore} />}
               TrailingWidget={
                 <TrailingHeadRoute
                   as="button"
@@ -135,23 +148,24 @@ export default function AddQuizQuestions({
         <div className="w-full bg-white px-4 sm:px-6 py-4 flex items-center justify-between">
           <Button
             disabled={isDisabled}
-            className="gap-x-2 bg-basePrimary-200 border-basePrimary border  rounded-xl h-9"
+            className="gap-x-2 bg-basePrimary-200  border-basePrimary border  rounded-xl h-9"
           >
             <SmallPreviewIcon />
-            <p className="bg-basePrimary  gradient-text"> Preview Mode</p>
+            <p className="bg-basePrimary hidden sm:block  gradient-text">
+              {" "}
+              Preview Mode
+            </p>
           </Button>
 
           <Button
-             onClick={() =>
-              router.push(
-                `/e/${workspaceAlias}/quiz/o/${quizId}/presentation`
-              )
+            onClick={() =>
+              router.push(`/e/${workspaceAlias}/quiz/o/${quizId}/presentation`)
             }
             disabled={isDisabled}
-            className="rounded-[3rem] h-fit bg-basePrimary-200 px-2 border border-basePrimary gap-x-2"
+            className="rounded-full h-fit sm:bg-basePrimary-200 px-2 sm:border border-basePrimary gap-x-2"
           >
             <PlayQuizIcon />
-            <p className="bg-basePrimary text-sm sm:text-base gradient-text">
+            <p className="bg-basePrimary hidden sm:block text-sm sm:text-base gradient-text">
               Start Quiz
             </p>
           </Button>
@@ -159,7 +173,7 @@ export default function AddQuizQuestions({
           <div className="flex items-center  gap-x-2">
             <Button
               disabled={isDisabled}
-              className="gap-x-2 bg-basePrimary-200 px-2 border-basePrimary border  rounded-xl h-9"
+              className="gap-x-2 bg-basePrimary-200 px-2 hidden sm:flex border-basePrimary border  rounded-xl h-9"
             >
               <PeopleIcon />
               <p className="bg-basePrimary gradient-text">
@@ -181,7 +195,9 @@ export default function AddQuizQuestions({
               className="gap-x-2 bg-basePrimary-200 border-basePrimary border  rounded-xl h-9"
             >
               <SmallShareIcon />
-              <p className="bg-basePrimary gradient-text">Share</p>
+              <p className="bg-basePrimary hidden sm:block gradient-text">
+                Share
+              </p>
             </Button>
           </div>
         </div>

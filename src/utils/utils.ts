@@ -80,3 +80,16 @@ export async function isImageValid(url: string): Promise<boolean> {
   };
 
   export const deploymentUrl = "https://enagagement.zikoro.com"
+
+  export function formatPosition(position: number): string {
+    const suffixes = ['th', 'st', 'nd', 'rd'];
+    const remainder = position % 100;
+    
+    
+    if (remainder >= 11 && remainder <= 13) {
+      return `${position}th`;
+    }
+    
+    const suffix = suffixes[position % 10] || suffixes[0];
+    return `${position}${suffix}`;
+  }

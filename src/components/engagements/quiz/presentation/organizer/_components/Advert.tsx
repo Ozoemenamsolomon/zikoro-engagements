@@ -25,14 +25,14 @@ export function Advert({
   // console.log("ileft", isLeftBox, isRightBox);
   const quizLink =
     quiz?.interactionType === "poll"
-      ? `https://engagements.zikoro.com/e/poll/${quiz?.workspaceAlias}/o/${quiz?.quizAlias}/presentation`
-      : `https://engagements.zikoro.com/e/quiz/${quiz?.workspaceAlias}/o/${quiz?.quizAlias}/presentation`;
+      ? `https://engagements.zikoro.com/e/poll/${quiz?.workspaceAlias}/a/${quiz?.quizAlias}/presentation`
+      : `https://engagements.zikoro.com/e/quiz/${quiz?.workspaceAlias}/a/${quiz?.quizAlias}/presentation`;
   return (
     <div
       className={cn(
         "w-full flex-col  h-full  items-start justify-between hidden col-span-3 md:hidden",
         isLeftBox && "flex md:flex ",
-        !isRightBox && "col-span-3",
+       !isRightBox && "hidden md:hidden",
         isRightBox && isFromPoll && "col-span-full max-w-2xl ",
         isAdvert && "mx-auto justify-around",
         className
