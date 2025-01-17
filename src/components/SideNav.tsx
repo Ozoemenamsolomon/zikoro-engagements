@@ -3,12 +3,13 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { FeedbackIcon, navLinks, ReferIcon, SupportIcon } from "@/constants";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { InlineIcon } from "@iconify/react";
 import { useState } from "react";
 
 export function SideBarLayout({ children }: { children: React.ReactNode }) {
   const [isSideNav, setSideNav] = useState(false);
+
   function onClose() {
     setSideNav((prev) => !prev);
   }
@@ -36,6 +37,7 @@ export default function SideNav({
   close: () => void;
 }) {
   const pathname = usePathname();
+  const router  =useRouter()
   return (
     <div
       onClick={(e) => {
@@ -66,7 +68,7 @@ export default function SideNav({
             height={50}
           />
         </div>
-        <div className="w-full h-[45vh] overflow-y-auto no-scrollbar">
+        <div className="w-full h-[40vh] overflow-y-auto no-scrollbar">
           <div className="w-full flex  flex-col gap-y-3 items-start justify-start px-3">
             {navLinks.slice(0, 2).map((nav, index) => (
               <Navs
@@ -82,7 +84,7 @@ export default function SideNav({
           </div>
         </div>
 
-        <div className="w-full h-[30vh]">
+        <div className="w-full h-[35vh]">
           <div className="w-full border-y  py-3 flex flex-col items-start justify-start gap-y-3">
             <Navs as="div" navName="Refer & Earn" Icon={ReferIcon} />
             <Navs as="div" navName="Support" Icon={SupportIcon} />
@@ -91,11 +93,25 @@ export default function SideNav({
         </div>
         <div className="absolute bottom-2 w-full px-3 inset-x-0">
           <div className="flex p-2 w-full rounded-lg bg-basePrimary-100  items-center gap-x-2">
-            <InlineIcon icon="uim:user-nurse" fontSize={30} />
+            <InlineIcon icon="uim:user-nurse" fontSize={24} />
             <p className="text-ellipsis group-hover:block hidden whitespace-nowrap w-full overflow-hidden max-w-[8rem] ">
               {"User"}
             </p>
           </div>
+          <button
+          onClick={() => {
+            if (typeof window !== undefined) {
+              localStorage.clear()
+              router.push("/")
+            }
+          }}
+          className="flex p-2 mt-2  w-full rounded-lg bg-basePrimary-100  items-center gap-x-2">
+            <InlineIcon icon="solar:logout-3-bold-duotone" fontSize={24} />
+            <p className="text-ellipsis group-hover:block hidden whitespace-nowrap w-full overflow-hidden max-w-[8rem] ">
+             LogOut
+            </p>
+          </button>
+          
         </div>
       </div>
     </div>
@@ -122,7 +138,7 @@ function Navs({
       href={href}
       onClick={actionFn}
       className={cn(
-        "flex items-center justify-center group-hover:justify-center w-full gap-x-2 p-2 rounded-lg",
+        "flex items-center group-hover:justify-start justify-center w-full gap-x-2 p-2 rounded-lg",
         isActive && "bg-basePrimary-100"
       )}
     >
