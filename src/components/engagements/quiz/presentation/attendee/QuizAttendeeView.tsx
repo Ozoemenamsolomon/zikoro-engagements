@@ -69,6 +69,7 @@ export default function QuizAttendeeView({
   const { deleteData: deleteQuizLobby } = useDeleteRequest<
     TLiveQuizParticipant[]
   >(`engagements/quiz/participant/${quiz?.quizAlias}`);
+   const [isQuizResult, setIsQuizResult] = useState(false);
 
   const { postData } =
     usePostRequest<Partial<TQuiz<TQuestion[]>>>("engagements/quiz");
@@ -337,6 +338,8 @@ export default function QuizAttendeeView({
               id={id}
               quiz={quizResult}
               actualQuiz={quiz}
+            //  isQuizResult={isQuizResult}
+              setIsQuizResult={setIsQuizResult}
               isAttendee
               answers={answers}
               attendeeEmail={playerDetail?.email}
@@ -352,7 +355,10 @@ export default function QuizAttendeeView({
               }}
               id={id}
               quiz={quizResult}
+              isQuizResult={isQuizResult}
+              setIsQuizResult={setIsQuizResult}
               actualQuiz={quiz}
+             // onClose={showSendMailModal}
             />
           )}
         </>

@@ -15,10 +15,11 @@ import { ArrowBackOutline } from "styled-icons/evaicons-outline";
 import { cn } from "@/lib/utils";
 import { CheckCircle } from "styled-icons/bootstrap";
 import { CloseOutline } from "styled-icons/zondicons";
-import Avatar from "react-nice-avatar";
-import { AvatarFullConfig } from "react-nice-avatar";
+import Avatar, { AvatarFullConfig } from "react-nice-avatar";
 import { ArrowUpwardOutline } from "styled-icons/evaicons-outline";
 import { useDeleteRequest, usePostRequest } from "@/hooks/services/requests";
+import { InlineIcon } from "@iconify/react/dist/iconify.js";
+import { formatPosition } from "@/utils";
 
 type TLeaderBoard = {
   quizParticipantId: string;
@@ -42,7 +43,9 @@ export function ScoreBoard({
   quiz,
   id,
   isAttendee,
+  isQuizResult,
   actualQuiz,
+  setIsQuizResult,
 }: {
   answers: TAnswer[];
   close: () => void;
@@ -50,8 +53,9 @@ export function ScoreBoard({
   id: string;
   isAttendee?: boolean;
   actualQuiz: TQuiz<TQuestion[]> | null;
+  isQuizResult?: boolean;
+  setIsQuizResult?: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const [isQuizResult, setQuizResult] = useState(false);
   const { postData: updateQuiz, isLoading } =
     usePostRequest("engagements/quiz");
   const { deleteData: deleteQuizLobby } = useDeleteRequest<
@@ -113,7 +117,7 @@ export function ScoreBoard({
   }, [answers]);
 
   function onClose() {
-    setQuizResult((prev) => !prev);
+    //setQuizResult((prev) => !prev);
   }
 
   // console.log("quizresult", quiz);
@@ -136,6 +140,15 @@ export function ScoreBoard({
       );
 
       return score?.totalScore || 0;
+    }
+  }, [board]);
+
+  const userAvatar = useMemo(() => {
+    if (isAttendee) {
+      const playerId = id;
+      return board?.find(
+        ({ quizParticipantId, image }) => quizParticipantId === playerId
+      )?.image;
     }
   }, [board]);
 
@@ -164,6 +177,9 @@ export function ScoreBoard({
           id={id}
           userPosition={userPosition}
           userScore={userScore}
+          setIsQuizResult={setIsQuizResult}
+          noOfParticipants={board.length}
+          userAvatar={userAvatar}
         />
       ) : (
         <div className="w-full inset-0 fixed overflow-x-auto h-full ">
@@ -180,14 +196,6 @@ export function ScoreBoard({
               >
                 Go To Quiz Page
               </Button>
-              {isAttendee && quiz?.accessibility?.showResult && (
-                <Button
-                  onClick={onClose}
-                  className="underline rounded-none px-2 h-10 w-fit"
-                >
-                  View Quiz Result
-                </Button>
-              )}
             </div>
 
             <div className="mx-auto w-full relative">
@@ -200,10 +208,9 @@ export function ScoreBoard({
                     )}
                   >
                     <div className="flex flex-col mr-11 items-center justify-center gap-y-2">
-                 
                       <Avatar
-                       shape="square"
-                       style={{borderRadius:"12px"}}
+                        shape="square"
+                        style={{ borderRadius: "12px" }}
                         className="w-[5rem]  h-[5rem]"
                         {...board[1]?.image}
                       />
@@ -224,7 +231,7 @@ export function ScoreBoard({
                         <p className=" font-semibold text-lg">2</p>
                         <p className=" bg-white text-basePrimary font-medium rounded-3xl px-3 py-1">{`${
                           board[1]?.totalScore?.toFixed(0) ?? 0
-                        }p`}</p>
+                        } pt`}</p>
                       </div>
                     </div>
                   </div>
@@ -235,10 +242,9 @@ export function ScoreBoard({
                     )}
                   >
                     <div className="flex flex-col items-center justify-center gap-y-2">
-                   
                       <Avatar
-                       shape="square"
-                       style={{borderRadius:"12px"}}
+                        shape="square"
+                        style={{ borderRadius: "12px" }}
                         className="w-[5rem] h-[5rem]"
                         {...board[0]?.image}
                       />
@@ -259,7 +265,7 @@ export function ScoreBoard({
                         <p className="font-semibold text-lg ">1</p>
                         <p className="font-medium bg-white text-basePrimary rounded-3xl px-3 py-1">{`${
                           board[0]?.totalScore.toFixed(0) ?? 0
-                        }p`}</p>
+                        } pt`}</p>
                       </div>
                     </div>
                   </div>
@@ -270,10 +276,9 @@ export function ScoreBoard({
                     )}
                   >
                     <div className="flex flex-col ml-11 items-center justify-center gap-y-2">
-                   
                       <Avatar
                         shape="square"
-                        style={{borderRadius:"12px"}}
+                        style={{ borderRadius: "12px" }}
                         className="w-[5rem] h-[5rem]"
                         {...board[2]?.image}
                       />
@@ -294,7 +299,7 @@ export function ScoreBoard({
                         <p className="font-semibold text-lg">3</p>
                         <p className="font-medium bg-white text-basePrimary rounded-3xl px-3 py-1">{`${
                           board[2]?.totalScore.toFixed(0) ?? 0
-                        }p`}</p>
+                        } pt`}</p>
                       </div>
                     </div>
                   </div>
@@ -302,39 +307,55 @@ export function ScoreBoard({
               )}
               {/** */}
 
-              <div className="w-full overflow-y-auto pb-20 no-scrollbar z-50 bg-white absolute inset-x-0 h-full top-80 rounded-t-lg py-6 px-8">
+              <div className="w-full overflow-y-auto pb-20 no-scrollbar z-50 bg-white absolute inset-x-0 h-full top-80 rounded-t-lg py-6 ">
+                {board.slice(3, board?.length).length > 0 && (
+                  <div className="w-full px-8 text-sm pb-2 grid grid-cols-3">
+                    <p>Rank</p>
+                    <p>Participants ({board.slice(3, board?.length).length})</p>
+                    <p className="text-end">Points</p>
+                  </div>
+                )}
                 <div className="w-full flex flex-col items-start justify-start">
                   {Array.isArray(board) &&
                     board.slice(3, board?.length).map((player, index) => (
                       <div
                         key={index}
-                        className="grid grid-cols-3 items-center w-full py-3 border-b px-2"
+                        className={cn(
+                          "grid grid-cols-3 px-8 items-center w-full py-3 border-b ",
+                          player.quizParticipantId === id &&
+                            "bg-basePrimary-200"
+                        )}
                       >
                         <div className="flex items-center col-span-2 gap-x-3">
-                          <div className="flex flex-col items-center justify-center">
-                            {/* <Image
+                          <p>{`${index + 4}th`}</p>
+                          {/* <Image
                               src="/quizattendee.png"
                               className="w-[4rem] h-[4rem]"
                               alt=""
                               width={150}
                               height={150}
                             />*/}
+                          <div className="w-fit ml-10 h-fit relative">
                             <Avatar
-                             shape="square"
-                             style={{borderRadius:"12px"}}
-                             className="w-[4rem]  h-[4rem]"
+                              shape="square"
+                              style={{ borderRadius: "12px" }}
+                              className="w-[3rem]  h-[3rem]"
                               {...player?.image}
                             />
-                            <p>{`${index + 4}th`}</p>
+                            {player?.quizParticipantId === id && (
+                              <span className="absolute top-[-2px] right-0 text-white bg-basePrimary rounded-3xl p-1 text-xs">
+                                You
+                              </span>
+                            )}
                           </div>
+
                           <p className="">{player?.attendeeName}</p>
                         </div>
                         <div className="flex items-center justify-end gap-x-1">
                           <p className="flex items-center">
                             <span>
-                              {Number(player?.totalScore ?? 0).toFixed(0)}
+                              {Number(player?.totalScore ?? 0).toFixed(0)} pt
                             </span>
-                            p
                           </p>
                           {player?.recentScore > 0 && (
                             <div className="flex text-white bg-basePrimary rounded-3xl px-2 py-1 items-center gap-x-1 text-xs">
@@ -361,67 +382,158 @@ function AttendeeScore({
   id,
   close,
   userScore,
+  setIsQuizResult,
+  userAvatar,
+  noOfParticipants,
 }: {
   userPosition?: number;
   id: string;
   quiz: TQuiz<TRefinedQuestion[]>;
   close: () => void;
   userScore?: number;
+  setIsQuizResult?: React.Dispatch<React.SetStateAction<boolean>>;
+  userAvatar: Required<AvatarFullConfig> | undefined;
+  noOfParticipants: number;
 }) {
   const [isAnswers, setIsAnswer] = useState(false);
 
   function showAnswers() {
     setIsAnswer((prev) => !prev);
   }
+  const correctAnswers = useMemo(() => {
+    return quiz?.questions?.filter((item) =>
+      item?.options.some(
+        (opt) =>
+          typeof opt?.isCorrect === "boolean" && opt.isAnswer === opt.optionId
+      )
+    )?.length;
+  }, [quiz]);
+
+  console.log(userAvatar);
 
   return (
-    <div className="w-full h-full inset-0 fixed overflow-y-auto bg-gray-100">
+    <div className="w-full h-full inset-0 fixed overflow-y-auto bg-basePrimary-100">
       {isAnswers ? (
         <AnswerSheet quiz={quiz} close={showAnswers} />
       ) : (
-        <div className="bg-white rounded-lg p-4 absolute inset-0 m-auto h-fit max-w-2xl flex flex-col items-center gap-y-6">
-          <Button
-            onClick={close}
-            className="gap-x-1 self-start w-fit h-fit px-2"
-          >
-            <ArrowBackOutline size={20} />
-            <p className="text-sm">Back</p>
-          </Button>
-          <Image
-            src={quiz?.coverImage || "/quiztime.png"}
-            alt="cover-image"
-            className="w-full h-[250px] object-cover"
-            width={2000}
-            height={1000}
-          />
-
-          <div className="flex flex-col mb-4 items-center justify-center gap-y-3 w-full">
-            <h2 className="font-semibold text-base sm:text-2xl">
-              {quiz?.coverTitle ?? ""}
-            </h2>
-            <div className="mx-auto w-[60%] my-6 flex items-center justify-between">
-              <p>
-                Points won:{" "}
-                <span className="font-medium">
-                  {userScore?.toFixed(0) ?? ""}
+        <div className="max-w-2xl h-fit flex flex-col items-center justify-center absolute inset-0 m-auto w-[95%] ">
+          <div className="bg-white rounded-lg  max-w-2xl w-full justify-center h-fit  flex flex-col items-center gap-y-4">
+            <div className="w-full flex flex-col items-center justify-center p-4">
+              <div className="flex  items-center w-fit gap-x-2 justify-center border-2 rounded-full p-2">
+                <Avatar {...userAvatar} className="h-16 w-16" shape="circle" />
+                <span className="font-semibold text-lg sm:text-xl">
+                  {formatPosition(userPosition ?? 0)}
                 </span>
-              </p>
-              <p>
-                Position:{" "}
-                <span className="font-medium">{userPosition ?? ""}</span>
+              </div>
+              <p className="text-center my-4">
+                You ranked {formatPosition(userPosition ?? 0)} out of{" "}
+                {noOfParticipants} participants
               </p>
             </div>
-          </div>
 
-          <button onClick={showAnswers} className="mb-10 underline">
-            View Quiz Scores
-          </button>
+            <div className="w-full grid grid-cols-4 h-20 border-t">
+              <AbouttAttendeeScore
+                type="Points"
+                metric={userScore ?? 0}
+                Icon={
+                  <InlineIcon
+                    icon="solar:star-circle-bold-duotone"
+                    fontSize={18}
+                    color="#001fcc"
+                  />
+                }
+              />
+              <AbouttAttendeeScore
+                type="Questions"
+                className="border-x"
+                metric={quiz?.questions?.length}
+                Icon={
+                  <InlineIcon
+                    icon="line-md:question-circle-twotone"
+                    fontSize={18}
+                    color="#001fcc"
+                  />
+                }
+              />
+              <AbouttAttendeeScore
+                type="Correct"
+                metric={correctAnswers ?? 0}
+                Icon={
+                  <InlineIcon
+                    icon="icon-park-twotone:correct"
+                    fontSize={18}
+                    color="#22c55e"
+                  />
+                }
+                className="border-r"
+              />
+              <AbouttAttendeeScore
+                type="Wrong"
+                metric={quiz?.questions?.length - correctAnswers ?? 0}
+                Icon={
+                  <InlineIcon
+                    icon="line-md:close-circle-twotone"
+                    fontSize={18}
+                    color="#ef4444"
+                  />
+                }
+              />
+            </div>
+          </div>
+          <Button
+            className="rounded-lg border mt-6 self-center border-basePrimary gap-x-2 bg-basePrimary-200"
+            onClick={() => {
+              // close();
+              setIsQuizResult?.(false);
+            }}
+          >
+            <InlineIcon
+              fontSize={22}
+              icon="iconoir:leaderboard-star"
+              color="#9D00FF"
+            />
+            <p className="gradient-text bg-basePrimary">LeaderBoard</p>
+          </Button>
         </div>
+      )}
+
+      {!isAnswers && (
+        <Button
+          onClick={showAnswers}
+          className="absolute bottom-2  right-2 bg-basePrimary h-11 rounded-md text-mobile"
+        >
+          <p className="text-white">View Quiz Result</p>
+        </Button>
       )}
     </div>
   );
 }
-
+function AbouttAttendeeScore({
+  Icon,
+  metric,
+  type,
+  className,
+}: {
+  metric: number;
+  Icon: React.ReactNode;
+  type: string;
+  className?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "w-full h-full flex flex-col gap-2 items-center justify-center",
+        className
+      )}
+    >
+      <p className="font-semibold text-lg sm:text-2xl">{metric}</p>
+      <div className="flex items-center text-sm gap-x-2">
+        {Icon}
+        <p className="capitalize">{type}</p>
+      </div>
+    </div>
+  );
+}
 function AnswerSheet({
   quiz,
   close,

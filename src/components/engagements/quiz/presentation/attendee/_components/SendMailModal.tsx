@@ -19,7 +19,7 @@ import { TQuiz, TQuestion, TAnswer } from "@/types/quiz";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
 import Link from "next/link";
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { InlineIcon } from "@iconify/react";
 import { FaWhatsapp } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
@@ -35,6 +35,7 @@ export function SendMailModal<T>({
   actualQuiz,
   attendeeEmail,
   answers,
+  setIsQuizResult,
 }: {
   close: () => void;
   quiz: TQuiz<T[]> | null;
@@ -43,6 +44,7 @@ export function SendMailModal<T>({
   actualQuiz: TQuiz<TQuestion[]> | null;
   attendeeEmail?: string;
   answers?: TAnswer[];
+  setIsQuizResult: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const { mutateData: updateQuiz, isLoading } = useMutateData("/quiz/score");
   const form = useForm<z.infer<typeof sendMailQuizSchema>>({
@@ -241,7 +243,10 @@ export function SendMailModal<T>({
           <div className="w-full mt-6 sm:mt-10 flex items-center justify-center gap-x-3">
             <Button
               className="rounded-lg border border-basePrimary gap-x-2 bg-basePrimary-200"
-              onClick={close}
+              onClick={() => {
+                close();
+                setIsQuizResult(false);
+              }}
             >
               <InlineIcon
                 fontSize={22}
@@ -252,7 +257,10 @@ export function SendMailModal<T>({
             </Button>
             <Button
               className="rounded-lg border border-basePrimary gap-x-2 bg-basePrimary-200"
-              onClick={close}
+              onClick={() => {
+                close();
+                setIsQuizResult(true);
+              }}
             >
               <p className="gradient-text bg-basePrimary">Quiz Result</p>
             </Button>

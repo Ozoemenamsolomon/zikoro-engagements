@@ -443,6 +443,19 @@ export default function QuizOrganizerView({
     }
   }
 
+  function formatPosition(position: number): string {
+    const suffixes = ['th', 'st', 'nd', 'rd'];
+    const remainder = position % 100;
+    
+    // Handle special cases 11, 12, 13
+    if (remainder >= 11 && remainder <= 13) {
+      return `${position}th`;
+    }
+    
+    const suffix = suffixes[position % 10] || suffixes[0];
+    return `${position}${suffix}`;
+  }
+
   return (
     <div style={{backgroundColor:"#f7f8ff"}}  className="w-full">
       {showScoreSheet ? (
