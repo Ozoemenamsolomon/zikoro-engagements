@@ -1,7 +1,13 @@
 "use client";
 
 import { Button } from "@/components/custom";
-import { Form, FormField, FormControl, FormMessage, FormItem } from "@/components/ui/form";
+import {
+  Form,
+  FormField,
+  FormControl,
+  FormMessage,
+  FormItem,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
 import { useForm } from "react-hook-form";
@@ -38,7 +44,7 @@ export function SendMailModal<T>({
   attendeeEmail?: string;
   answers?: TAnswer[];
 }) {
-  const { mutateData: updateQuiz,  isLoading } = useMutateData("/quiz/score");
+  const { mutateData: updateQuiz, isLoading } = useMutateData("/quiz/score");
   const form = useForm<z.infer<typeof sendMailQuizSchema>>({
     resolver: zodResolver(sendMailQuizSchema),
     defaultValues: {
@@ -48,8 +54,8 @@ export function SendMailModal<T>({
   const [isShow, showSuccess] = useState(false);
   const url =
     quiz?.interactionType !== "poll"
-      ? `${window.location.origin}/quiz/${quiz?.eventAlias}/present/${quiz?.quizAlias}`
-      : `${window.location.origin}/poll/${quiz?.eventAlias}/present/${quiz?.quizAlias}`;
+      ? `https://engagements.zikoro.com/e/poll/${quiz?.workspaceAlias}/a/${quiz?.quizAlias}/presentation`
+      : `https://engagements.zikoro.com/e/quiz/${quiz?.workspaceAlias}/a/${quiz?.quizAlias}/presentation`;
   function copyLink() {
     copy(url);
     showSuccess(true);
@@ -145,7 +151,9 @@ export function SendMailModal<T>({
           </h1>
           {quiz?.interactionType !== "poll" && (
             <div className="space-y-2 flex flex-col items-center justify-center">
-              <p className="font-medium text-lg sm:text-2xl">{attendeePoint?.toFixed(0)}</p>
+              <p className="font-medium text-lg sm:text-2xl">
+                {attendeePoint?.toFixed(0)}
+              </p>
               <p className="flex items-center gap-x-2">
                 <InlineIcon
                   icon="solar:star-circle-bold-duotone"
@@ -232,7 +240,7 @@ export function SendMailModal<T>({
         {quiz?.interactionType !== "poll" && (
           <div className="w-full mt-6 sm:mt-10 flex items-center justify-center gap-x-3">
             <Button
-              className="rounded-lg border border-basePrimary gap-x-2 bg-gradient-to-tr from-custom-bg-gradient-start to-custom-bg-gradient-end"
+              className="rounded-lg border border-basePrimary gap-x-2 bg-basePrimary-200"
               onClick={close}
             >
               <InlineIcon
@@ -241,6 +249,12 @@ export function SendMailModal<T>({
                 color="#9D00FF"
               />
               <p className="gradient-text bg-basePrimary">LeaderBoard</p>
+            </Button>
+            <Button
+              className="rounded-lg border border-basePrimary gap-x-2 bg-basePrimary-200"
+              onClick={close}
+            >
+              <p className="gradient-text bg-basePrimary">Quiz Result</p>
             </Button>
           </div>
         )}

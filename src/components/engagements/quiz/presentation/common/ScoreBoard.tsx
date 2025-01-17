@@ -200,15 +200,10 @@ export function ScoreBoard({
                     )}
                   >
                     <div className="flex flex-col mr-11 items-center justify-center gap-y-2">
-                      {/*  <Image
-                        src="/quizattendee.png"
-                        className="w-[5rem]  h-[5rem]"
-                        alt=""
-                        width={150}
-                        height={150}
-                      />*/}
+                 
                       <Avatar
-                        shape="circle"
+                       shape="square"
+                       style={{borderRadius:"12px"}}
                         className="w-[5rem]  h-[5rem]"
                         {...board[1]?.image}
                       />
@@ -226,8 +221,8 @@ export function ScoreBoard({
                         height={500}
                       />
                       <div className="absolute mr-11 inset-x-0 top-10 text-white mx-auto flex flex-col items-center justify-center">
-                        <p className="font-medium">2nd</p>
-                        <p className="text-tiny bg-white/20 rounded-3xl px-3 py-1">{`${
+                        <p className=" font-semibold text-lg">2</p>
+                        <p className=" bg-white text-basePrimary font-medium rounded-3xl px-3 py-1">{`${
                           board[1]?.totalScore?.toFixed(0) ?? 0
                         }p`}</p>
                       </div>
@@ -235,20 +230,15 @@ export function ScoreBoard({
                   </div>
                   <div
                     className={cn(
-                      "flex flex-col relative z-30 gap-y-4 justify-center invisible",
+                      "flex flex-col relative z-30 gap-y-4 mt-[-6rem] justify-center invisible",
                       board[0]?.attendeeName && "visible"
                     )}
                   >
                     <div className="flex flex-col items-center justify-center gap-y-2">
-                      {/*   <Image
-                        src="/quizattendee.png"
-                        className="w-[5rem] h-[5rem]"
-                        alt=""
-                        width={150}
-                        height={150}
-                      />*/}
+                   
                       <Avatar
-                        shape="circle"
+                       shape="square"
+                       style={{borderRadius:"12px"}}
                         className="w-[5rem] h-[5rem]"
                         {...board[0]?.image}
                       />
@@ -266,8 +256,8 @@ export function ScoreBoard({
                         height={500}
                       />
                       <div className="absolute inset-x-0 top-10 text-white mx-auto flex flex-col items-center justify-center">
-                        <p className="font-medium text-sm">1st</p>
-                        <p className="text-tiny bg-white/20 rounded-3xl px-3 py-1">{`${
+                        <p className="font-semibold text-lg ">1</p>
+                        <p className="font-medium bg-white text-basePrimary rounded-3xl px-3 py-1">{`${
                           board[0]?.totalScore.toFixed(0) ?? 0
                         }p`}</p>
                       </div>
@@ -280,15 +270,10 @@ export function ScoreBoard({
                     )}
                   >
                     <div className="flex flex-col ml-11 items-center justify-center gap-y-2">
-                      {/*  <Image
-                        src="/quizattendee.png"
-                        className="w-[5rem] h-[5rem]"
-                        alt=""
-                        width={150}
-                        height={150}
-                      />*/}
+                   
                       <Avatar
-                        shape="circle"
+                        shape="square"
+                        style={{borderRadius:"12px"}}
                         className="w-[5rem] h-[5rem]"
                         {...board[2]?.image}
                       />
@@ -306,8 +291,8 @@ export function ScoreBoard({
                         height={500}
                       />
                       <div className="absolute inset-x-0 ml-11 top-10 text-white mx-auto flex flex-col items-center justify-center">
-                        <p className="font-medium">3rd</p>
-                        <p className="text-tiny bg-white/20 rounded-3xl px-3 py-1">{`${
+                        <p className="font-semibold text-lg">3</p>
+                        <p className="font-medium bg-white text-basePrimary rounded-3xl px-3 py-1">{`${
                           board[2]?.totalScore.toFixed(0) ?? 0
                         }p`}</p>
                       </div>
@@ -335,8 +320,9 @@ export function ScoreBoard({
                               height={150}
                             />*/}
                             <Avatar
-                              shape="circle"
-                              className="w-[4rem] h-[4rem]"
+                             shape="square"
+                             style={{borderRadius:"12px"}}
+                             className="w-[4rem]  h-[4rem]"
                               {...player?.image}
                             />
                             <p>{`${index + 4}th`}</p>
