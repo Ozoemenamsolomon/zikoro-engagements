@@ -73,7 +73,7 @@ export function useGetUserEngagements() {
   return {
     qas,
     quizzes,
-    loading: false,
+    loading: qaLoading || quizLoading,
     getQuizzes,
     getQas,
   };

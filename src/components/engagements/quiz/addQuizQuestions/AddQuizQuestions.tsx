@@ -68,7 +68,7 @@ export default function AddQuizQuestions({
   return (
     <>
       <div className="w-full min-h-screen sm:px-4  mx-auto  flex flex-col justify-between">
-        <div className="w-full h-[90vh] sm:h-[83vh] gap-4 sm:mt-10 items-start grid grid-cols-12">
+        <div className="w-full h-[89vh] sm:h-[83vh] gap-4 sm:mt-4 items-start grid grid-cols-12">
           {(isAddNew ||
             question !== null ||
             (Array.isArray(data?.questions) && data?.questions?.length > 0)) &&
