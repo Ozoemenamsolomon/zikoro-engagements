@@ -56,8 +56,8 @@ export function SendMailModal<T>({
   const [isShow, showSuccess] = useState(false);
   const url =
     quiz?.interactionType !== "poll"
-      ? `https://engagements.zikoro.com/e/poll/${quiz?.workspaceAlias}/a/${quiz?.quizAlias}/presentation`
-      : `https://engagements.zikoro.com/e/quiz/${quiz?.workspaceAlias}/a/${quiz?.quizAlias}/presentation`;
+      ? `https://engagements.zikoro.com/e/${quiz?.workspaceAlias}/poll/a/${quiz?.quizAlias}/presentation`
+      : `https://engagements.zikoro.com/e/${quiz?.workspaceAlias}/quiz/a/${quiz?.quizAlias}/presentation`;
   function copyLink() {
     copy(url);
     showSuccess(true);
