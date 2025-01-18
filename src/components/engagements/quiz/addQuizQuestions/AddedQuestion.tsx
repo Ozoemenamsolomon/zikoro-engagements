@@ -19,7 +19,7 @@ export function AddedQuestions({
   addNewQuestion: () => void;
   isAddNew:boolean;
 }) {
-  const [isNew, setIsNew] = useState(true)
+  const [isNew, setIsNew] = useState(false)
   return (
     <div
       className={cn(

@@ -59,7 +59,7 @@ export function QuizSettings({
           ))}
         </div>
         {QuizSettingType.details === active && (
-          <CreateQuiz quiz={quiz} refetch={refetch} />
+          <CreateQuiz quiz={quiz} refetch={refetch} organization={organization} />
         )}
         {QuizSettingType.accessibility === active && (
           <QuizAccessibility
