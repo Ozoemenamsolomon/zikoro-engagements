@@ -319,12 +319,12 @@ export function LeaderBoard({
       )}
     >
       <div className="w-full  relative gap-y-2 flex pb-2 flex-col rounded-tr-xl items-center ">
-        <Button
+        {/* <Button
           onClick={onToggleBoardVisibility}
           className="px-0 absolute top-3 right-3 h-fit w-fit"
         >
           <Minimize2 size={20} />
-        </Button>
+        </Button> */}
         <div className="flex items-center p-4 justify-center w-full">
           <h2 className="font-semibold  text-base sm:text-xl">LeaderBoard</h2>
           {/* <div className="flex items-center gap-x-2">

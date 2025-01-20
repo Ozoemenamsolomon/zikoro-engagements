@@ -491,6 +491,7 @@ export default function QuizOrganizerView({
                     isLeftBox={isLeftBox}
                     isRightBox={isRightBox}
                     isFromPoll={true}
+                    isLobby={isLobby}
                     close={() => {
                       setRightBox((prev) => !prev);
                     }}
@@ -663,7 +664,7 @@ export default function QuizOrganizerView({
           </div>
         </div>
       )}
-      {isAttemptingToExit && <ActionModal loading={isLoadingAttempt} close={() => setIsAttemptingToExit(false)} asynAction={exitQuiz} buttonText="Exit" buttonColor="bg-basePrimary text-white"/>}
+      {isAttemptingToExit && <ActionModal loading={isLoadingAttempt} modalText={"Are you sure you want to exit?"} close={() => setIsAttemptingToExit(false)} asynAction={exitQuiz} buttonText="Exit" buttonColor="bg-basePrimary text-white"/>}
     </div>
   );
 }

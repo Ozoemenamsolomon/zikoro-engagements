@@ -10,13 +10,15 @@ export function ActionModal({
     asynAction,
     loading,
     buttonText,
-    buttonColor
+    buttonColor,
+    modalText
   }: {
     close: () => void;
     asynAction: () => Promise<any>;
     loading: boolean;
     buttonText: string;
     buttonColor?:string;
+    modalText?:string;
   }) {
     return (
       <div
@@ -32,7 +34,7 @@ export function ActionModal({
         >
           <div className="flex flex-col items-center justify-center gap-y-2">
             <AlertTriangleOutline size={50} className="text-basePrimary" />
-            <p>Are you sure you want to continue?</p>
+            <p>{modalText || "Are you sure you want to continue?"}</p>
           </div>
   
           <div className="w-full flex items-end justify-end gap-x-3">

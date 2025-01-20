@@ -55,6 +55,7 @@ export function AddQuestion({
       options: [{ optionId: nanoid(), option: "", isAnswer: "" }],
       duration: "10",
       points: "10",
+  
     },
 
   });
@@ -359,6 +360,7 @@ export function AddQuestion({
                     onChange={(value) => {
                       form.setValue("feedBack", value);
                     }}
+                    key={defaultFeedBackValue}
                   />
                 )}
               </div>

@@ -106,7 +106,7 @@ export default function AddQuizQuestions({
             )}
           >
             <QuizLayout
-              className=" w-full  h-[90vh] overflow-y-auto pb-32"
+              className=" w-full  h-[80vh]  vert-scroll overflow-y-auto pb-40"
               parentClassName={cn(
                 "  relative px-0 h-full",
                 question === null && "hidden sm:block",
