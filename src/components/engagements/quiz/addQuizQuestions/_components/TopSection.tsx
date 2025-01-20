@@ -1,4 +1,4 @@
-import { PeopleIcon, TimerIcon } from "@/constants";
+import {  PointIcon, TimerIcon } from "@/constants";
 
 export function TopSection({changeDuration, points , duration, changePoint}: {changeDuration:() => void; duration?: string; points?: string; changePoint: () => void}) {
   return (
@@ -31,7 +31,7 @@ export function TopSection({changeDuration, points , duration, changePoint}: {ch
             }}
             className="text-basePrimary">Edit</button>
          <div className="bg-basePrimary-200 h-12 justify-center px-3 rounded-3xl flex items-center gap-x-2">
-         <TimerIcon />
+         <PointIcon />
             <p>{points}</p>
           </div>
          </div>

@@ -92,9 +92,9 @@ export default function AddQuizQuestions({
     });
     setUpdatingMode(false);
   }
-  console.log(data)
+  console.log(data);
 
-  console.log({"accessibility": accessibility})
+  console.log({ accessibility: accessibility });
 
   if (isLoading) {
     return <LoadingState />;
@@ -189,6 +189,9 @@ export default function AddQuizQuestions({
       </div>
       <div className="w-full bg-white fixed bottom-0 border-t inset-x-0 z-50 px-4 sm:px-6 py-4 flex items-center justify-between">
         <Button
+            onClick={() =>
+              router.push(`/e/${workspaceAlias}/quiz/o/${quizId}/presentation?type=preview`)
+            }
           disabled={isDisabled}
           className="gap-x-2 bg-basePrimary-200  border-basePrimary border  rounded-xl h-9"
         >
@@ -214,6 +217,9 @@ export default function AddQuizQuestions({
 
         <div className="flex items-center  gap-x-2">
           <Button
+            onClick={() =>
+              router.push(`/e/${workspaceAlias}/quiz/o/${quizId}/leaderboard`)
+            }
             disabled={isDisabled}
             className="gap-x-2 bg-basePrimary-200 px-2 hidden sm:flex border-basePrimary border  rounded-xl h-9"
           >
@@ -242,16 +248,21 @@ export default function AddQuizQuestions({
             </p>
           </Button>
           {data && accessibility && (
-            <div 
-          
-            className="hidden text-sm sm:flex items-center gap-x-1">
+            <div className="hidden text-sm sm:flex items-center gap-x-1">
               <Switch
                 // disabled={organization && organization?.subscriptionPlan === "Free"}
                 checked={accessibility.live}
                 onClick={() => updateMode()}
                 className=""
               />
-              <p className={cn('', accessibility?.live && 'gradient-text bg-basePrimary')}>Live Mode</p>
+              <p
+                className={cn(
+                  "",
+                  accessibility?.live && "gradient-text bg-basePrimary"
+                )}
+              >
+                Live Mode
+              </p>
             </div>
           )}
         </div>

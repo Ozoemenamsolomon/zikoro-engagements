@@ -6,12 +6,13 @@ import { TOrganization } from "@/types/home";
 import { TQuestion, TQuiz } from "@/types/quiz";
 import { InlineIcon } from "@iconify/react/dist/iconify.js";
 import { useState } from "react";
-import { QuizAccessibility, QuizBranding } from "./_components";
+import { QuizAccessibility, QuizBranding, QuizIntegration } from "./_components";
 
 export enum QuizSettingType {
   details,
   accessibility,
   branding,
+  integration
 }
 
 export function QuizSettings({
@@ -53,7 +54,7 @@ export function QuizSettings({
           </div>
 
           <div className="w-fit flex my-6 mx-auto items-center justify-center">
-            {["Details", "Accessibility", "Branding"].map((v, index) => (
+            {["Details", "Accessibility", "Branding", "Integration"].map((v, index) => (
               <button
                 onClick={() => setActive(index)}
                 className={cn(
@@ -81,6 +82,13 @@ export function QuizSettings({
           )}
           {QuizSettingType.branding === active && (
             <QuizBranding refetch={refetch} quiz={quiz} />
+          )}
+           {QuizSettingType.integration === active && (
+            <QuizIntegration
+              organization={organization}
+              refetch={refetch}
+              quiz={quiz}
+            />
           )}
         </div>
       </div>

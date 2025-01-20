@@ -20,33 +20,44 @@ import { uploadFile } from "@/utils";
 import { usePostRequest } from "@/hooks/services/requests";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
 
-function FeedbackWidget({defaultFeedBackValue, question, form}:{defaultFeedBackValue: string; question: TQuestion | null; form: UseFormReturn<z.infer<typeof quizQuestionSchema>>}) {
-    const [isFocused, setIsFocused] = useState(false);
-    return (
+function FeedbackWidget({
+  defaultFeedBackValue,
+  question,
+  form,
+}: {
+  defaultFeedBackValue: string;
+  question: TQuestion | null;
+  form: UseFormReturn<z.infer<typeof quizQuestionSchema>>;
+}) {
+  const [isFocused, setIsFocused] = useState(false);
+  return (
+    <>
+      {defaultFeedBackValue && !question && (
         <div className="w-full" id="select-feedback">
-                  {isFocused ? (
-        <div className="w-full">
-          <TextEditor
-          placeholder="Enter Option"
-            onChange={(value) => {
-              form.setValue(`options.${index-1}.option` as const, value);
-            }}
-            error={errors?.options ? errors?.options[index-1]?.message : ""}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-          />
+          {isFocused ? (
+            <div className="w-full">
+              <TextEditor
+                defaultValue={defaultFeedBackValue}
+                placeholder="Enter your Feedback"
+                onChange={(value) => {
+                  form.setValue("feedBack", value);
+                }}
+                key={defaultFeedBackValue}
+              />
+            </div>
+          ) : (
+            <div
+              onClick={() => setIsFocused(true)}
+              className="innerhtml w-full p-3 rounded-lg bg-basePrimary-100"
+              dangerouslySetInnerHTML={{
+                __html: defaultFeedBackValue || "Enter Your Feedback",
+              }}
+            />
+          )}
         </div>
-      ) : (
-        <div
-          onClick={() => setIsFocused(true)}
-          className="innerhtml w-full p-3 rounded-lg bg-basePrimary-100"
-          dangerouslySetInnerHTML={{
-            __html: addedOption || "Enter Option",
-          }}
-        />
       )}
-        </div>
-    )
+    </>
+  );
 }
 
 export function AddQuestion({
@@ -84,9 +95,7 @@ export function AddQuestion({
       options: [{ optionId: nanoid(), option: "", isAnswer: "" }],
       duration: "10",
       points: "10",
-  
     },
-
   });
 
   const { fields, remove, append } = useFieldArray({
@@ -106,8 +115,6 @@ export function AddQuestion({
   }
 
   async function onSubmit(values: z.infer<typeof quizQuestionSchema>) {
-    
-
     if (!quiz) return;
     const isCorrectAnswerNotSelected = values?.options?.every(
       (value) => value?.isAnswer?.length <= 0
@@ -182,7 +189,7 @@ export function AddQuestion({
     await postData({ payload });
 
     setLoading(false);
-    editQuestion(null)
+    editQuestion(null);
     if (refetch) refetch();
   }
 
@@ -233,7 +240,7 @@ export function AddQuestion({
         points: question?.points,
         feedBack: question?.feedBack,
         options: question?.options,
-        interactionType: question?.interactionType
+        interactionType: question?.interactionType,
       });
     }
   }, [question]);
@@ -282,8 +289,8 @@ export function AddQuestion({
               addedImage={addedImage}
               quiz={quiz}
               refetch={async () => {
-                editQuestion(null)
-                refetch()
+                editQuestion(null);
+                refetch();
               }}
             />
 
@@ -382,21 +389,15 @@ export function AddQuestion({
 
             {interactionType !== "poll" && optionType !== null && (
               <div className="w-full mt-6">
-                {(defaultFeedBackValue || !question) && (
-                  <TextEditor
-                    defaultValue={defaultFeedBackValue}
-                    placeholder="Enter your Feedback"
-                    onChange={(value) => {
-                      form.setValue("feedBack", value);
-                    }}
-                    key={defaultFeedBackValue}
-                  />
-                )}
+                <FeedbackWidget
+                  defaultFeedBackValue={defaultFeedBackValue}
+                  question={question}
+                  form={form}
+                />
               </div>
             )}
 
             <div className="w-full my-10 flex gap-3 items-center justify-center">
-            
               <Button className="h-11 bg-basePrimary rounded-lg gap-x-2 text-white font-medium">
                 {loading && <LoaderAlt size={20} className="animate-spin" />}
                 <p>Save Question</p>

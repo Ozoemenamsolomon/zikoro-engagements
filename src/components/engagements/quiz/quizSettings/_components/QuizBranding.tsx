@@ -45,7 +45,14 @@ export function QuizBranding({
         />
       </div>
       <div className="flex w-full text-mobile sm:text-sm items-center justify-between">
-        <p>Show Powered by Zikoro</p>
+      <div className="flex flex-col items-start justify-start">
+      <p>Show Zikoro Branding</p>
+          <p className="text-xs text-gray-500">
+           Create your own Quiz with Zikoro will be hidden
+           
+          </p>
+        </div>
+        
         <Switch
           checked={branding?.poweredBy}
           disabled={loading}

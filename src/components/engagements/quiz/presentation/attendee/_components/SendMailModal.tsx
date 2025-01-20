@@ -94,7 +94,7 @@ export function SendMailModal<T>({
       quiz: updatedQuiz,
       mailto: {
         email: values?.email,
-        createQuiz: `/create`,
+        createQuiz: `/home`,
         attendeePoint,
         url,
         leaderboard:
@@ -283,7 +283,7 @@ export function SendMailModal<T>({
                 } now`}
               </h3>
               <Link
-                href={`/create`}
+                href={`/home`}
                 className="text-white font-medium flex items-center justify-center h-11 text-center px-6 rounded-lg bg-basePrimary"
               >
                 {`Create your own ${
