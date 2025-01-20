@@ -6,7 +6,7 @@ import { ThreeDotsVertical } from "styled-icons/bootstrap";
 import { ActivateQA, CopyQA, DeleteQA } from "./cardActions";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { TOrganizationQa, TQa } from "@/types/qa";
+import { TOrganizationQa } from "@/types/qa";
 
 export function QaCard({
   qa,
@@ -58,6 +58,7 @@ export function QaCard({
             src={qa?.coverImage}
             width={400}
             height={400}
+            
           />
         ) : (
           <div className="w-full rounded-t-md h-48 2xl:h-56  bg-gray-200">

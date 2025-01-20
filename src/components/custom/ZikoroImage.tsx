@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import React from "react";
+import withImageValidation from "./withImageValidation";
 
 interface ZikoroImageProps {
   src: string;
@@ -8,7 +9,7 @@ interface ZikoroImageProps {
   className: string;
   width: number;
   height: number;
-  isValid?: boolean;
+  isValid: boolean;
 }
 
 const ZikoroImage: React.FC<ZikoroImageProps> = ({
@@ -32,4 +33,4 @@ const ZikoroImage: React.FC<ZikoroImageProps> = ({
   );
 };
 
-export  {ZikoroImage};
+export default withImageValidation(ZikoroImage);

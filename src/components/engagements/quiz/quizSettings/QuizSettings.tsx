@@ -29,48 +29,60 @@ export function QuizSettings({
     QuizSettingType.details
   );
   return (
-    <div className="right-0 min-h-screen animate-float-in  inset-y-0 fixed z-[100] max-w-3xl w-full bg-white overflow-y-auto">
-      <div className="w-full flex flex-col items-start p-4 justify-start gap-3">
-        <div className="w-full flex items-center justify-between">
-          <h2>Quiz Settings</h2>
-          <Button
-            onClick={close}
-            className="h-10 w-10 px-0  flex items-center justify-center self-end rounded-full bg-zinc-700"
-          >
-            <InlineIcon
-              icon={"mingcute:close-line"}
-              fontSize={22}
-              color="#ffffff"
-            />
-          </Button>
-        </div>
-
-        <div className="w-fit flex my-6 mx-auto items-center justify-center">
-          {["Details", "Accessibility", "Branding"].map((v, index) => (
-            <button
-              onClick={() => setActive(index)}
-              className={cn(
-                "px-6 py-3 border-b-2",
-                active === index && "text-basePrimary border-basePrimary"
-              )}
+    <div
+      onClick={close}
+      className="w-screen h-screen fixed inset-0 bg-white/50 z-[100] "
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="right-0 min-h-screen animate-float-in border vert-scroll inset-y-0 absolute max-w-3xl w-full bg-white overflow-y-auto"
+      >
+        <div className="w-full flex flex-col items-start p-4 justify-start gap-3">
+          <div className="w-full flex items-center justify-between">
+            <h2>Quiz Settings</h2>
+            <Button
+              onClick={close}
+              className="h-10 w-10 px-0  flex items-center justify-center self-end rounded-full bg-zinc-700"
             >
-              {v}
-            </button>
-          ))}
+              <InlineIcon
+                icon={"mingcute:close-line"}
+                fontSize={22}
+                color="#ffffff"
+              />
+            </Button>
+          </div>
+
+          <div className="w-fit flex my-6 mx-auto items-center justify-center">
+            {["Details", "Accessibility", "Branding"].map((v, index) => (
+              <button
+                onClick={() => setActive(index)}
+                className={cn(
+                  "px-6 py-3 border-b-2",
+                  active === index && "text-basePrimary border-basePrimary"
+                )}
+              >
+                {v}
+              </button>
+            ))}
+          </div>
+          {QuizSettingType.details === active && (
+            <CreateQuiz
+              quiz={quiz}
+              refetch={refetch}
+              organization={organization}
+            />
+          )}
+          {QuizSettingType.accessibility === active && (
+            <QuizAccessibility
+              organization={organization}
+              refetch={refetch}
+              quiz={quiz}
+            />
+          )}
+          {QuizSettingType.branding === active && (
+            <QuizBranding refetch={refetch} quiz={quiz} />
+          )}
         </div>
-        {QuizSettingType.details === active && (
-          <CreateQuiz quiz={quiz} refetch={refetch} organization={organization} />
-        )}
-        {QuizSettingType.accessibility === active && (
-          <QuizAccessibility
-            organization={organization}
-            refetch={refetch}
-            quiz={quiz}
-          />
-        )}
-        {QuizSettingType.branding === active && (
-          <QuizBranding refetch={refetch} quiz={quiz} />
-        )}
       </div>
     </div>
   );

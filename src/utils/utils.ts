@@ -19,6 +19,20 @@ export async function isImageValid(url: string): Promise<boolean> {
   
     return alias;
   }
+
+
+export function calculateAndSetWindowHeight(
+  divRef: React.RefObject<HTMLDivElement>
+) {
+  const div = divRef.current;
+
+  if (div) {
+    
+
+    
+    div.style.height = `${window.innerHeight -100}px`;
+  }
+}
   
   
   export async function uploadFile(file: File | string, type: string) {
