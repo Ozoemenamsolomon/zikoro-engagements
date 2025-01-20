@@ -16,7 +16,7 @@ import { useGetData } from "@/hooks/services/requests";
 import { LoadingState } from "@/components/composables/LoadingState";
 import { TQuestion, TQuiz } from "@/types/quiz";
 import { AddQuestion } from "./AddQuestion";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { AddedQuestions } from "./AddedQuestion";
 import { TOrganization } from "@/types/home";
@@ -59,7 +59,11 @@ export default function AddQuizQuestions({
     setToggleSetting((prev) => !prev);
   }
 
-  console.log(question === null || !isAddNew)
+  useEffect(() => {
+    if (data !== null && Array.isArray(data?.questions)) {
+        editQuestion(data?.questions[0])
+    }
+  },[data])
 
 
   if (isLoading) {
@@ -67,8 +71,8 @@ export default function AddQuizQuestions({
   }
   return (
     <>
-      <div className="w-full min-h-screen sm:px-4  mx-auto  flex flex-col justify-between">
-        <div className="w-full h-[90vh] sm:h-[83vh] gap-4 sm:mt-10 items-start grid grid-cols-12">
+      <div className="w-screen min-h-screen fixed z-10 inset-0 sm:px-4  mx-auto ">
+        <div className="w-full h-full gap-4 sm:pt-4 items-start grid grid-cols-12">
           {(isAddNew ||
             question !== null ||
             (Array.isArray(data?.questions) && data?.questions?.length > 0)) &&
@@ -87,7 +91,7 @@ export default function AddQuizQuestions({
 
           <div
             className={cn(
-              "w-full col-span-9",
+              "w-full col-span-9 h-full",
               (!data?.questions ||
                 (Array.isArray(data?.questions) &&
                   data?.questions?.length === 0)) &&
@@ -102,9 +106,9 @@ export default function AddQuizQuestions({
             )}
           >
             <QuizLayout
-              className="overflow-y-auto"
+              className=" w-full  h-[90vh] overflow-y-auto pb-32"
               parentClassName={cn(
-                "h-[83vh] relative px-0",
+                "  relative px-0 h-full",
                 question === null && "hidden sm:block",
                 isAddNew && "block"
               )}
@@ -145,7 +149,9 @@ export default function AddQuizQuestions({
             </QuizLayout>
           </div>
         </div>
-        <div className="w-full bg-white px-4 sm:px-6 py-4 flex items-center justify-between">
+     
+      </div>
+      <div className="w-full bg-white fixed bottom-0 border-t inset-x-0 z-50 px-4 sm:px-6 py-4 flex items-center justify-between">
           <Button
             disabled={isDisabled}
             className="gap-x-2 bg-basePrimary-200  border-basePrimary border  rounded-xl h-9"
@@ -201,7 +207,6 @@ export default function AddQuizQuestions({
             </Button>
           </div>
         </div>
-      </div>
       {isToggleSetting && data && organization && (
         <QuizSettings
           close={toggleSetting}
@@ -216,7 +221,7 @@ export default function AddQuizQuestions({
 
 function EmptyQuestion({ addNewQuestion }: { addNewQuestion: () => void }) {
   return (
-    <div className="w-full h-full flex items-center justify-center flex-col gap-5">
+    <div className="w-full min-h-screen flex items-center justify-center flex-col gap-5">
       <EmptyQuizQuestionIcon />
       <h2 className="font-semibold text-base sm:text-lg mt-5">
         Your Quiz is Empty

@@ -20,21 +20,28 @@ import { LoaderAlt } from "styled-icons/boxicons-regular";
 import useUserStore from "@/store/globalUserStore";
 import { generateInteractionAlias, uploadFile } from "@/utils";
 import { TQuestion, TQuiz } from "@/types/quiz";
+import { LoadingState } from "@/components/composables/LoadingState";
+import { TOrganization } from "@/types/home";
 
 export function CreateQuiz({
   quiz,
   refetch,
+  organization,
 }: {
   quiz?: TQuiz<TQuestion[]>;
   refetch?: () => Promise<any>;
+  organization?: TOrganization;
 }) {
   const [isOpen, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const { user } = useUserStore();
 
-  const { organizations: organizationList, getOrganizations } =
-    useGetUserOrganizations();
-  const { postData, isLoading } =
+  const {
+    organizations: organizationList,
+    getOrganizations,
+    loading: isLoading,
+  } = useGetUserOrganizations();
+  const { postData } =
     usePostRequest<Partial<TQuiz<TQuestion[]>>>("engagements/quiz");
   const form = useForm<z.infer<typeof quizCreationSchema>>({
     resolver: zodResolver(quizCreationSchema),
@@ -142,11 +149,16 @@ export function CreateQuiz({
     }
   }, [quiz]);
 
-  // const prevOrg = useMemo(() => {
-  //   if (Array.isArray(formattedList) && quiz) {
-  //     return formattedList?.find((v) => v?.value === quiz?.workspaceAlias);
-  //   }
-  // }, [quiz, formattedList]);
+  const prevOrg = useMemo(() => {
+    if (organization) {
+      return {
+        value: organization?.organizationAlias,
+        label: organization?.organizationName,
+      };
+    } else return "";
+  }, [organization]);
+
+  // if (isLoading) return <LoadingState/>
   return (
     <>
       <Form {...form}>
@@ -197,7 +209,7 @@ export function CreateQuiz({
               render={({ field }) => (
                 <InputOffsetLabel label="Organization">
                   <ReactSelect
-                    defaultValue={formattedList?.find((v) => v?.value === quiz?.workspaceAlias) ??''}
+                    defaultValue={prevOrg}
                     {...field}
                     placeHolder="Select a Workspace"
                     options={formattedList}

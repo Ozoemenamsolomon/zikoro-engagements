@@ -87,6 +87,7 @@ export function AddQuestion({
       return;
     }
     setLoading(true);
+
     const image = await new Promise(async (resolve) => {
       if (typeof values?.questionImage === "string") {
         resolve(values?.questionImage);
@@ -151,6 +152,7 @@ export function AddQuestion({
     await postData({ payload });
 
     setLoading(false);
+    editQuestion(null)
     if (refetch) refetch();
   }
 
@@ -201,6 +203,7 @@ export function AddQuestion({
         points: question?.points,
         feedBack: question?.feedBack,
         options: question?.options,
+        interactionType: question?.interactionType
       });
     }
   }, [question]);
@@ -221,6 +224,9 @@ export function AddQuestion({
     } else if (quiz?.questions !== null) return quiz?.questions?.length + 1;
     else return 1;
   }, [question, quiz]);
+
+  console.log(form.formState.errors);
+
   return (
     <>
       <div className="w-full px-4 sm:px-6 pt-4 sm:pt-6 pb-20 sm:pb-32 h-full">
