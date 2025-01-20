@@ -229,7 +229,7 @@ export function AddQuestion({
 
   return (
     <>
-      <div className="w-full px-4 sm:px-6 pt-4 sm:pt-6 pb-20 sm:pb-32 h-full">
+      <div className="w-full px-4 sm:px-6 pt-4 sm:pt-6  h-full">
         <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
           <TopSection
             points={currentPoint}

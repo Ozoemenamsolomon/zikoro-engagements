@@ -12,17 +12,18 @@ import {
 import { QuizLayout } from "../_components/QuizLayout";
 import { Button } from "@/components/custom";
 import { LeadingHeadRoute, TrailingHeadRoute } from "../_components";
-import { useGetData } from "@/hooks/services/requests";
+import { useGetData, usePostRequest } from "@/hooks/services/requests";
 import { LoadingState } from "@/components/composables/LoadingState";
 import { TQuestion, TQuiz } from "@/types/quiz";
 import { AddQuestion } from "./AddQuestion";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { AddedQuestions } from "./AddedQuestion";
 import { TOrganization } from "@/types/home";
 import { QuizSettings } from "../quizSettings/QuizSettings";
-import {MdNavigateBefore} from "react-icons/md"
+import { MdNavigateBefore } from "react-icons/md";
 import { useRouter } from "next/navigation";
+import { Switch } from "@/components/ui/switch";
 
 export default function AddQuizQuestions({
   quizId,
@@ -41,6 +42,9 @@ export default function AddQuizQuestions({
   const [question, setQuestion] = useState<TQuestion | null>(null);
   const [isAddNew, setIsAddNew] = useState(false);
   const [isToggleSetting, setToggleSetting] = useState(false);
+  const [accessibility, setAccessibility] = useState(data?.accessibility);
+  const { postData } = usePostRequest<TQuiz<TQuestion[]>>("engagements/quiz");
+  const [updatingMode, setUpdatingMode] = useState(false);
 
   function editQuestion(q: TQuestion | null) {
     setQuestion(q);
@@ -61,10 +65,36 @@ export default function AddQuizQuestions({
 
   useEffect(() => {
     if (data !== null && Array.isArray(data?.questions)) {
-        editQuestion(data?.questions[0])
+      editQuestion(data?.questions[0]);
     }
-  },[data])
+  }, [data]);
 
+  useEffect(() => {
+    if (data) {
+      setAccessibility(data?.accessibility);
+    }
+  }, [data]);
+
+  async function updateMode() {
+    setAccessibility({
+      ...accessibility,
+      live: !accessibility.live,
+    });
+    setUpdatingMode(true);
+    await postData({
+      payload: {
+        ...data,
+        accessibility: {
+          ...accessibility,
+          live: !accessibility.live,
+        },
+      },
+    });
+    setUpdatingMode(false);
+  }
+  console.log(data)
+
+  console.log({"accessibility": accessibility})
 
   if (isLoading) {
     return <LoadingState />;
@@ -102,20 +132,27 @@ export default function AddQuizQuestions({
                   data?.questions?.length > 0)) &&
                 data &&
                 "col-span-9",
-              (question !== null || isAddNew) && "block col-span-full sm:col-span-9"
+              (question !== null || isAddNew) &&
+                "block col-span-full sm:col-span-9"
             )}
           >
             <QuizLayout
-              className=" w-full  h-[90vh] overflow-y-auto pb-32"
+              className=" w-full  overflow-y-auto pb-32"
               parentClassName={cn(
                 "  relative px-0 h-full",
                 question === null && "hidden sm:block",
                 isAddNew && "block"
               )}
-              LeadingWidget={<LeadingHeadRoute onClick={() => {
-                setIsAddNew(false)
-                editQuestion(null)
-              }} name={data?.coverTitle ?? ""} Icon={MdNavigateBefore} />}
+              LeadingWidget={
+                <LeadingHeadRoute
+                  onClick={() => {
+                    setIsAddNew(false);
+                    editQuestion(null);
+                  }}
+                  name={data?.coverTitle ?? ""}
+                  Icon={MdNavigateBefore}
+                />
+              }
               TrailingWidget={
                 <TrailingHeadRoute
                   as="button"
@@ -149,46 +186,45 @@ export default function AddQuizQuestions({
             </QuizLayout>
           </div>
         </div>
-     
       </div>
       <div className="w-full bg-white fixed bottom-0 border-t inset-x-0 z-50 px-4 sm:px-6 py-4 flex items-center justify-between">
+        <Button
+          disabled={isDisabled}
+          className="gap-x-2 bg-basePrimary-200  border-basePrimary border  rounded-xl h-9"
+        >
+          <SmallPreviewIcon />
+          <p className="bg-basePrimary hidden sm:block  gradient-text">
+            {" "}
+            Preview Mode
+          </p>
+        </Button>
+
+        <Button
+          onClick={() =>
+            router.push(`/e/${workspaceAlias}/quiz/o/${quizId}/presentation`)
+          }
+          disabled={isDisabled}
+          className="rounded-full h-fit sm:bg-basePrimary-200 px-2 sm:border border-basePrimary gap-x-2"
+        >
+          <PlayQuizIcon />
+          <p className="bg-basePrimary hidden sm:block text-sm sm:text-base gradient-text">
+            Start Quiz
+          </p>
+        </Button>
+
+        <div className="flex items-center  gap-x-2">
           <Button
             disabled={isDisabled}
-            className="gap-x-2 bg-basePrimary-200  border-basePrimary border  rounded-xl h-9"
+            className="gap-x-2 bg-basePrimary-200 px-2 hidden sm:flex border-basePrimary border  rounded-xl h-9"
           >
-            <SmallPreviewIcon />
-            <p className="bg-basePrimary hidden sm:block  gradient-text">
-              {" "}
-              Preview Mode
+            <PeopleIcon />
+            <p className="bg-basePrimary gradient-text">
+              {Array.isArray(data?.quizParticipants)
+                ? data?.quizParticipants?.length
+                : "0"}
             </p>
           </Button>
-
-          <Button
-            onClick={() =>
-              router.push(`/e/${workspaceAlias}/quiz/o/${quizId}/presentation`)
-            }
-            disabled={isDisabled}
-            className="rounded-full h-fit sm:bg-basePrimary-200 px-2 sm:border border-basePrimary gap-x-2"
-          >
-            <PlayQuizIcon />
-            <p className="bg-basePrimary hidden sm:block text-sm sm:text-base gradient-text">
-              Start Quiz
-            </p>
-          </Button>
-
-          <div className="flex items-center  gap-x-2">
-            <Button
-              disabled={isDisabled}
-              className="gap-x-2 bg-basePrimary-200 px-2 hidden sm:flex border-basePrimary border  rounded-xl h-9"
-            >
-              <PeopleIcon />
-              <p className="bg-basePrimary gradient-text">
-                {Array.isArray(data?.quizParticipants)
-                  ? data?.quizParticipants?.length
-                  : "0"}
-              </p>
-            </Button>
-            {/* <Button
+          {/* <Button
              
               disabled={isDisabled}
               className="gap-x-2 bg-basePrimary-200 border-basePrimary border  rounded-xl h-9"
@@ -196,17 +232,30 @@ export default function AddQuizQuestions({
               <PresentQuizzIcon />
               <p className="bg-basePrimary  gradient-text">Present</p>
             </Button> */}
-            <Button
-              disabled={isDisabled}
-              className="gap-x-2 bg-basePrimary-200 border-basePrimary border  rounded-xl h-9"
-            >
-              <SmallShareIcon />
-              <p className="bg-basePrimary hidden sm:block gradient-text">
-                Share
-              </p>
-            </Button>
-          </div>
+          <Button
+            disabled={isDisabled}
+            className="gap-x-2 bg-basePrimary-200 border-basePrimary border  rounded-xl h-9"
+          >
+            <SmallShareIcon />
+            <p className="bg-basePrimary hidden sm:block gradient-text">
+              Share
+            </p>
+          </Button>
+          {data && accessibility && (
+            <div 
+          
+            className="hidden text-sm sm:flex items-center gap-x-1">
+              <Switch
+                // disabled={organization && organization?.subscriptionPlan === "Free"}
+                checked={accessibility.live}
+                onClick={() => updateMode()}
+                className=""
+              />
+              <p className={cn('', accessibility?.live && 'gradient-text bg-basePrimary')}>Live Mode</p>
+            </div>
+          )}
         </div>
+      </div>
       {isToggleSetting && data && organization && (
         <QuizSettings
           close={toggleSetting}

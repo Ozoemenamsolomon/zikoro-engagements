@@ -1,6 +1,4 @@
-
 import React from "react";
-import {ZikoroImage} from "./ZikoroImage";
 import { isImageValid } from "@/utils";
 
 interface WithImageValidationProps {
@@ -11,15 +9,13 @@ interface WithImageValidationProps {
   height: number;
 }
 
-const withImageValidation = (Component: React.FC<any>) => {
-  const WrappedComponent: React.FC<WithImageValidationProps> = async (
-    props
-  ) => {
+const withImageValidation = <P extends object>(
+  Component: React.ComponentType<P & { isValid: boolean }>
+) => {
+  return async (props: Omit<P, "isValid"> & WithImageValidationProps) => {
     const isValid = await isImageValid(props.src);
-    return <Component {...props} isValid={isValid} />;
+    return <Component {...(props as P)} isValid={isValid} />;
   };
-
-  return WrappedComponent;
 };
 
-export default withImageValidation(ZikoroImage);
+export default withImageValidation;
