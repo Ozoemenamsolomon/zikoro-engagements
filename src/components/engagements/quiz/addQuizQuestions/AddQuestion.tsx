@@ -12,13 +12,42 @@ import { ImageOptions } from "./_components/options/ImageOptions";
 import { InlineIcon } from "@iconify/react/dist/iconify.js";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useFieldArray, useForm, UseFormReturn } from "react-hook-form";
 import { quizQuestionSchema } from "@/schemas/quiz";
 import { nanoid } from "nanoid";
 import toast from "react-hot-toast";
 import { uploadFile } from "@/utils";
 import { usePostRequest } from "@/hooks/services/requests";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
+
+function FeedbackWidget({defaultFeedBackValue, question, form}:{defaultFeedBackValue: string; question: TQuestion | null; form: UseFormReturn<z.infer<typeof quizQuestionSchema>>}) {
+    const [isFocused, setIsFocused] = useState(false);
+    return (
+        <div className="w-full" id="select-feedback">
+                  {isFocused ? (
+        <div className="w-full">
+          <TextEditor
+          placeholder="Enter Option"
+            onChange={(value) => {
+              form.setValue(`options.${index-1}.option` as const, value);
+            }}
+            error={errors?.options ? errors?.options[index-1]?.message : ""}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+          />
+        </div>
+      ) : (
+        <div
+          onClick={() => setIsFocused(true)}
+          className="innerhtml w-full p-3 rounded-lg bg-basePrimary-100"
+          dangerouslySetInnerHTML={{
+            __html: addedOption || "Enter Option",
+          }}
+        />
+      )}
+        </div>
+    )
+}
 
 export function AddQuestion({
   question,
