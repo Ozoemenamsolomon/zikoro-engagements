@@ -23,7 +23,7 @@ const Navbar = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      const topSectionHeight = 100; // Adjust this to define the "top section" height
+      const topSectionHeight = 40; // Adjust this to define the "top section" height
       if (window.scrollY > topSectionHeight) {
         setIsScrolled(true);
       } else {
