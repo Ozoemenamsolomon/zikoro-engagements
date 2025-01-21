@@ -6,13 +6,17 @@ import { TOrganization } from "@/types/home";
 import { TQuestion, TQuiz } from "@/types/quiz";
 import { InlineIcon } from "@iconify/react/dist/iconify.js";
 import { useState } from "react";
-import { QuizAccessibility, QuizBranding, QuizIntegration } from "./_components";
+import {
+  QuizAccessibility,
+  QuizBranding,
+  QuizIntegration,
+} from "./_components";
 
 export enum QuizSettingType {
   details,
   accessibility,
   branding,
-  integration
+  integration,
 }
 
 export function QuizSettings({
@@ -54,17 +58,19 @@ export function QuizSettings({
           </div>
 
           <div className="w-fit flex my-6 mx-auto items-center justify-center">
-            {["Details", "Accessibility", "Branding", "Integration"].map((v, index) => (
-              <button
-                onClick={() => setActive(index)}
-                className={cn(
-                  "px-6 py-3 border-b-2",
-                  active === index && "text-basePrimary border-basePrimary"
-                )}
-              >
-                {v}
-              </button>
-            ))}
+            {["Details", "Accessibility", "Branding", "Integration"].map(
+              (v, index) => (
+                <button
+                  onClick={() => setActive(index)}
+                  className={cn(
+                    "px-6 py-3 border-b-2",
+                    active === index && "text-basePrimary border-basePrimary"
+                  )}
+                >
+                  {v}
+                </button>
+              )
+            )}
           </div>
           {QuizSettingType.details === active && (
             <CreateQuiz
@@ -83,7 +89,7 @@ export function QuizSettings({
           {QuizSettingType.branding === active && (
             <QuizBranding refetch={refetch} quiz={quiz} />
           )}
-           {QuizSettingType.integration === active && (
+          {QuizSettingType.integration === active && (
             <QuizIntegration
               organization={organization}
               refetch={refetch}
