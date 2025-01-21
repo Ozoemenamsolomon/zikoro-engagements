@@ -41,7 +41,7 @@ const AppointmentContactForm = () => {
   };
 
   return (
-    <div className="bg-white rounded-[8px] max-w-full lg:max-w-[400px]  ">
+    <div className="bg-basePrimary-100 rounded-[8px] max-w-full lg:max-w-[400px]  ">
       {mailSent ? (
         <div className="flex flex-col items-center h-[50vh] justify-center">
           <Image
@@ -69,7 +69,7 @@ const AppointmentContactForm = () => {
               value={formData.firstName}
               onChange={handleChange}
               placeholder="Enter First Name"
-              className="border-[1px] border-gray-200 px-[10px] py-4 w-full text-base rounded-[6px] outline-none"
+              className="border-[1px] border-gray-200 bg-transparent px-[10px] py-4 w-full text-base rounded-[6px] outline-none"
             />
           </div>
           <div className="flex flex-col gap-y-3 mt-6 ">
@@ -81,7 +81,7 @@ const AppointmentContactForm = () => {
               value={formData.lastName}
               onChange={handleChange}
               placeholder="Enter Last Name"
-              className="border-[1px] border-gray-200 px-[10px] py-4 w-full text-base rounded-[6px] outline-none"
+              className="border-[1px] border-gray-200 bg-transparent px-[10px] py-4 w-full text-base rounded-[6px] outline-none"
             />
           </div>
           <div className="flex flex-col gap-y-3 mt-6">
@@ -93,7 +93,7 @@ const AppointmentContactForm = () => {
               value={formData.email}
               onChange={handleChange}
               placeholder="Enter Email Address"
-              className="border-[1px] border-gray-200 px-[10px] py-4 w-full text-base rounded-[6px] outline-none"
+              className="border-[1px] border-gray-200 bg-transparent px-[10px] py-4 w-full text-base rounded-[6px] outline-none"
             />
           </div>
           <div className="flex flex-col gap-y-3 mt-6">
@@ -104,7 +104,7 @@ const AppointmentContactForm = () => {
               value={formData.phoneNumber}
               onChange={handleChange}
               placeholder="Enter Phone Number"
-              className="border-[1px] border-gray-200 px-[10px] py-4 w-full text-base rounded-[6px] outline-none"
+              className="border-[1px] border-gray-200 bg-transparent px-[10px] py-4 w-full text-base rounded-[6px] outline-none"
             />
           </div>
           <div className="flex flex-col gap-y-3 mt-6">
@@ -117,7 +117,7 @@ const AppointmentContactForm = () => {
               id=""
               cols={30}
               rows={10}
-              className="border-[1px] border-gray-200 px-[10px] py-4 text-base rounded-[6px] h-full outline-none"
+              className="border-[1px] border-gray-200 bg-transparent px-[10px] py-4 text-base rounded-[6px] h-full outline-none"
             ></textarea>
           </div>
 
