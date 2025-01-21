@@ -165,7 +165,8 @@ export function ScoreBoard({
 
       close();
     }
-    window.location.reload();
+    window.open(`/e/${actualQuiz?.workspaceAlias}/quiz/${isAttendee ? "a" : "o"}/${actualQuiz?.quizAlias}/presentation`)
+   // window.location.reload();
   }
 
   return (
@@ -214,7 +215,7 @@ export function ScoreBoard({
                         className="w-[5rem]  h-[5rem]"
                         {...board[1]?.image}
                       />
-                      <p className="text-white font-medium">
+                      <p className="text-zinc-700 text-sm font-medium">
                         {board[1]?.attendeeName ?? ""}
                       </p>
                     </div>
@@ -248,7 +249,7 @@ export function ScoreBoard({
                         className="w-[5rem] h-[5rem]"
                         {...board[0]?.image}
                       />
-                      <p className="text-white font-medium text-sm">
+                      <p className="text-zinc-700 font-medium text-sm">
                         {board[0]?.attendeeName ?? ""}
                       </p>
                     </div>
@@ -282,7 +283,7 @@ export function ScoreBoard({
                         className="w-[5rem] h-[5rem]"
                         {...board[2]?.image}
                       />
-                      <p className="text-white font-medium">
+                      <p className="text-zinc-700 text-sm font-medium">
                         {board[2]?.attendeeName ?? ""}
                       </p>
                     </div>
@@ -305,7 +306,7 @@ export function ScoreBoard({
                   </div>
                 </div>
               )}
-              {/** */}
+          
 
               <div className="w-full overflow-y-auto pb-20 no-scrollbar z-50 bg-white absolute inset-x-0 h-full top-80 rounded-t-lg py-6 ">
                 {board.slice(3, board?.length).length > 0 && (
@@ -357,12 +358,12 @@ export function ScoreBoard({
                               {Number(player?.totalScore ?? 0).toFixed(0)} pt
                             </span>
                           </p>
-                          {player?.recentScore > 0 && (
+                          {/* {player?.recentScore > 0 && (
                             <div className="flex text-white bg-basePrimary rounded-3xl px-2 py-1 items-center gap-x-1 text-xs">
                               <ArrowUpwardOutline size={15} />
                               <p>{Number(player?.recentScore)?.toFixed(0)}</p>
                             </div>
-                          )}
+                          )} */}
                         </div>
                       </div>
                     ))}
