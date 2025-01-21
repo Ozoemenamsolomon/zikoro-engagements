@@ -6,6 +6,7 @@ import { useState } from "react";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
 import { usePostRequest } from "@/hooks/services/requests";
 import { Button } from "@/components/custom";
+
 export function QuizBranding({
   quiz,
   refetch,
