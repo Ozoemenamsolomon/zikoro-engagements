@@ -217,9 +217,10 @@ export default function AddQuizQuestions({
 
         <div className="flex items-center  gap-x-2">
           <Button
-            onClick={() =>
-              router.push(`/e/${workspaceAlias}/quiz/o/${quizId}/leaderboard`)
-            }
+            onClick={() => {
+            
+              router.push(`/e/${workspaceAlias}/quiz/a/${quizId}/leaderboard?type=o`)
+            }}
             disabled={isDisabled}
             className="gap-x-2 bg-basePrimary-200 px-2 hidden sm:flex border-basePrimary border  rounded-xl h-9"
           >

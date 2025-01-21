@@ -187,12 +187,14 @@ export function LeaderBoard({
   close,
   answers,
   quiz,
+  id
 }: {
   isLeftBox: boolean;
   isRightBox: boolean;
   close: () => void;
   answers: TAnswer[];
   quiz: TQuiz<TQuestion[]>;
+  id?:string
 }) {
   //console.log(answers);
   const [recentAnime, setRecentAnime] = useState(false);
@@ -352,7 +354,7 @@ export function LeaderBoard({
                         className="w-[4rem]  h-[4rem]"
                         {...board[1]?.image}
                       />
-                      <p className=" font-medium">
+                      <p className="text-sm text-zinc-700 font-medium">
                         {board[1]?.attendeeName ?? ""}
                       </p>
                     </div>
@@ -387,7 +389,7 @@ export function LeaderBoard({
                         className="w-[4rem] h-[4rem]"
                         {...board[0]?.image}
                       />
-                      <p className=" font-medium text-sm">
+                      <p className=" text-sm text-zinc-700 font-medium">
                         {board[0]?.attendeeName ?? ""}
                       </p>
                     </div>
@@ -422,7 +424,7 @@ export function LeaderBoard({
                         className="w-[4rem] h-[4rem]"
                         {...board[2]?.image}
                       />
-                      <p className=" font-medium">
+                      <p className=" text-sm text-zinc-700 font-medium">
                         {board[2]?.attendeeName ?? ""}
                       </p>
                     </div>
@@ -451,7 +453,7 @@ export function LeaderBoard({
        {board.slice(3, board?.length).length > 0 && <div className="w-full text-xs sm:text-sm px-3 py-2 grid grid-cols-4">
           <div className="w-full col-span-2 flex items-center gap-x-2">
             <p>Rank</p>
-            <p className="flex items-center gap-x-1">Participants <span>({board.slice(3, board?.length).length})</span> </p>
+            <p className="flex items-center gap-x-1">Participants  </p>
           </div>
           <p className="w-1 h-1"></p>
           <div className="">
