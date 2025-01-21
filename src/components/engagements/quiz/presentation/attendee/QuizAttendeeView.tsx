@@ -1,6 +1,6 @@
 "use client";
 
-import { useState,  useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { createClient } from "@/utils/supabase/client";
 import {
   useDeleteRequest,
@@ -33,9 +33,11 @@ import { QuizLobby } from "../common";
 import { QuestionView } from "../organizer/_components";
 import { SendMailModal } from "./_components/SendMailModal";
 import { ScoreBoard } from "../common/ScoreBoard";
+import { InlineIcon } from "@iconify/react/dist/iconify.js";
 
 // audio instance
 function createAudioInstance(music: string) {
+  console.log("music", music)
   if (typeof window !== undefined) {
     const audio = new Audio(music);
     //  audio.src = "audio/AylexCinematic.mp3";
@@ -69,7 +71,7 @@ export default function QuizAttendeeView({
   const { deleteData: deleteQuizLobby } = useDeleteRequest<
     TLiveQuizParticipant[]
   >(`engagements/quiz/participant/${quiz?.quizAlias}`);
-   const [isQuizResult, setIsQuizResult] = useState(false);
+  const [isQuizResult, setIsQuizResult] = useState(false);
 
   const { postData } =
     usePostRequest<Partial<TQuiz<TQuestion[]>>>("engagements/quiz");
@@ -95,6 +97,7 @@ export default function QuizAttendeeView({
   });
   const query = params.get("redirect");
   const aId = params.get("id");
+  const [audio, setAudio] = useState<HTMLAudioElement | null>(null)
 
   // subscribe to quiz
   useEffect(() => {
@@ -180,22 +183,25 @@ export default function QuizAttendeeView({
   }, [supabase, quiz]);
 
   // memoized audio instance
-  const audio = useMemo(() => {
+ useMemo(() => {
     if (quiz?.accessibility?.playMusic && quiz?.accessibility?.music) {
-      return createAudioInstance(quiz?.accessibility?.music?.value);
+    
+      if (!audio || audio.paused) {
+        setAudio(createAudioInstance(quiz?.accessibility?.music?.value));
     }
-  }, []);
+    }
+  }, [quiz]);
 
-//   // show the lobby if organizer has already started the quiz
-//   useEffect(() => {
-//     if (quiz?.accessibility?.live && quiz?.liveMode?.startingAt) {
-//       setIsLobby(true);
-//       if (audio) {
-//         audio.volume = 0.05;
-//         audio.play();
-//       }
-//     }
-//   }, [quiz]);
+  //   // show the lobby if organizer has already started the quiz
+  //   useEffect(() => {
+  //     if (quiz?.accessibility?.live && quiz?.liveMode?.startingAt) {
+  //       setIsLobby(true);
+  //       if (audio) {
+  //         audio.volume = 0.05;
+  //         audio.play();
+  //       }
+  //     }
+  //   }, [quiz]);
 
   // ion know
   useEffect(() => {
@@ -284,30 +290,28 @@ export default function QuizAttendeeView({
     setShowScoreSheet(true);
   }
 
-    // // configure what to show
-    // useEffect(() => {
-    //   if (quiz?.accessibility?.live && quiz?.liveMode?.startingAt) {
-    //     const isStarting = quiz?.liveMode?.isStarting;
-    //     const isQuestion = quiz?.liveMode?.current;
-    //     if (isQuestion) setIsQuizStarted(true)
-    //    if (isStarting) {
-  
-    //     setIsLobby(false) 
-    //     setIsQuizStarted(true)
-        
-    //    }  
-    //   //  if (!isStarting && !isQuestion) {
-        
-  
-    //   //  }
-     
-  
-    //     // if (audio && !isStarting && !isQuestion) {
-    //     //   audio.volume = 0.05;
-    //     //   audio.play();
-    //     // }
-    //   }
-    // }, [quiz]);
+  // // configure what to show
+  // useEffect(() => {
+  //   if (quiz?.accessibility?.live && quiz?.liveMode?.startingAt) {
+  //     const isStarting = quiz?.liveMode?.isStarting;
+  //     const isQuestion = quiz?.liveMode?.current;
+  //     if (isQuestion) setIsQuizStarted(true)
+  //    if (isStarting) {
+
+  //     setIsLobby(false)
+  //     setIsQuizStarted(true)
+
+  //    }
+  //   //  if (!isStarting && !isQuestion) {
+
+  //   //  }
+
+  //     // if (audio && !isStarting && !isQuestion) {
+  //     //   audio.volume = 0.05;
+  //     //   audio.play();
+  //     // }
+  //   }
+  // }, [quiz]);
 
   // show score sheet after live quiz
   useEffect(() => {
@@ -326,11 +330,9 @@ export default function QuizAttendeeView({
     })();
   }, [quiz]);
 
- 
-
   return (
     <div className="w-full ">
-      {showScoreSheet  ? (
+      {showScoreSheet ? (
         <>
           {isSendMailModal ? (
             <SendMailModal<TRefinedQuestion>
@@ -338,7 +340,7 @@ export default function QuizAttendeeView({
               id={id}
               quiz={quizResult}
               actualQuiz={quiz}
-            //  isQuizResult={isQuizResult}
+              //  isQuizResult={isQuizResult}
               setIsQuizResult={setIsQuizResult}
               isAttendee
               answers={answers}
@@ -358,7 +360,7 @@ export default function QuizAttendeeView({
               isQuizResult={isQuizResult}
               setIsQuizResult={setIsQuizResult}
               actualQuiz={quiz}
-             // onClose={showSendMailModal}
+              // onClose={showSendMailModal}
             />
           )}
         </>
@@ -392,9 +394,11 @@ export default function QuizAttendeeView({
             <QuizLobby
               goBack={() => setIsLobby(false)}
               quiz={quiz}
-              close={() => {}}
+              close={() => {
+                setIsLobby(false)
+                setIsQuizStarted(true)
+              }}
               refetch={getData}
-              
               isAttendee
               isMaxLiveParticipant={isMaxLiveParticipant}
               liveQuizPlayers={liveQuizPlayers}
@@ -435,6 +439,14 @@ export default function QuizAttendeeView({
             />
           )}
         </>
+      )}
+      {quiz && quiz?.accessibility?.disable && (
+        <div className="w-full h-[300px] flex flex-col bg-basePrimary-200 rounded-lg items-center justify-center">
+          <InlineIcon icon="clarity:sad-face-line" fontSize={30} />
+          <p className="font-medium text-base sm:text-lg">
+            You don't have access to this quiz
+          </p>
+        </div>
       )}
     </div>
   );

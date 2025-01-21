@@ -33,10 +33,7 @@ function AddMusic({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // if (!file.type.match("audio/(mp3|wav)")) {
-    //   alert("Please upload only mp3 or wav files");
-    //   return;
-    // }
+    
 
     const reader = new FileReader();
     reader.onload = (event) => {
@@ -45,7 +42,7 @@ function AddMusic({
         label: file.name,
         value: base64String,
       };
-      console.log(file.name);
+    //  console.log(file.name);
       addMusic(musicObject);
     };
     reader.readAsDataURL(file);
@@ -209,8 +206,8 @@ export function QuizAccessibility({
     isCollectPhone: false,
     isCollectEmail: false,
     isForm: false,
-    showAnswer: quiz.interactionType === "quiz" ? true : false,
-    showResult: quiz.interactionType === "quiz" ? true : false,
+    showAnswer: false,
+    showResult: false,
   });
   const isQuiz = useMemo(() => {
     return quiz.interactionType === "quiz";
@@ -331,7 +328,6 @@ export function QuizAccessibility({
                 setAccessibility({
                   ...accessibility,
                   isCollectEmail: !accessibility.isCollectEmail,
-                  isCollectPhone: false,
                 })
               }
               className=""
@@ -348,7 +344,6 @@ export function QuizAccessibility({
                 setAccessibility({
                   ...accessibility,
                   isCollectPhone: !accessibility.isCollectPhone,
-                  isCollectEmail: false,
                 })
               }
               className=""
@@ -417,7 +412,7 @@ export function QuizAccessibility({
         />
       </div>
 
-      <div className="flex w-full text-mobile sm:text-sm items-center justify-between">
+      {/* <div className="flex w-full text-mobile sm:text-sm items-center justify-between">
         <p>Show countdown before the next question</p>
 
         <Switch
@@ -431,7 +426,7 @@ export function QuizAccessibility({
           }
           className=""
         />
-      </div>
+      </div> */}
 
       <div className="flex w-full text-mobile sm:text-sm items-center justify-between">
         <div className="flex flex-col items-start justify-start">
@@ -552,7 +547,7 @@ export function QuizAccessibility({
         </div>
         {/***={loading} */}
         <Switch
-         // disabled={organization && organization?.subscriptionPlan === "Free"}
+          // disabled={organization && organization?.subscriptionPlan === "Free"}
           checked={accessibility.live}
           onClick={() =>
             setAccessibility({

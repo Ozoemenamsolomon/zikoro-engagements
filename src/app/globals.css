@@ -281,6 +281,46 @@
   }
 }
 
+
+.vert-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.vert-scroll:hover::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+  display: block;
+}
+
+.vert-scroll::-webkit-scrollbar-thumb {
+  border-radius: 6px;
+  @apply bg-gray-300;
+}
+
+.vert-scroll::-webkit-scrollbar-track {
+  border-radius: 6px;
+  @apply bg-gray-100;
+}
+
+.partner-scroll-style::-webkit-scrollbar {
+  display: none;
+}
+
+.partner-scroll-style:hover::-webkit-scrollbar {
+  width: 10px;
+  height: 6px;
+  display: block;
+}
+
+.partner-scroll-style::-webkit-scrollbar-thumb {
+  border-radius: 6px;
+  @apply bg-gray-300;
+}
+
+.partner-scroll-style::-webkit-scrollbar-track {
+  border-radius: 6px;
+  @apply bg-gray-100;
+}
 .radio-input {
   appearance: none; /* Remove default radio button styling */
   width: 16px;
@@ -299,4 +339,5 @@
 
 .radio-input:focus {
   outline: 2px solid #6d28d9; /* Purple outline on focus */
+
 }

@@ -5,7 +5,7 @@ import { TLiveQuizParticipant, TQuestion, TQuiz } from "@/types/quiz";
 import { useRouter, useSearchParams } from "next/navigation";
 import { isAfter } from "date-fns";
 import Image from "next/image";
-import toast from "react-hot-toast";
+import {toast} from "react-toastify";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Plus } from "styled-icons/bootstrap";
@@ -138,8 +138,8 @@ export function AttendeeOnboarding({
       return;
     }
 
-    if (!quiz?.accessibility?.visible) {
-      toast.error("You are not a registered attendee for this event");
+    if (quiz?.accessibility?.visible && playerDetail?.email?.length === 0) {
+      toast.error("You have to add ur email address");
       return;
     }
 

@@ -39,7 +39,7 @@ export default function ScoreBoardPage({ quizId }: { quizId: string }) {
 
   function goBack() {
     if (actualQuiz)
-      router.push(`/quiz/${actualQuiz?.eventAlias}/present/${quizId}`);
+      router.push(`/e/${actualQuiz?.workspaceAlias}/quiz/a/${quizId}/presentation`);
   }
 
   console.log("actual", actualQuiz, quiz, id);

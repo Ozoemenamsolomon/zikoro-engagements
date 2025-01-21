@@ -192,14 +192,14 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(({
   // console.log("yu", quiz?.liveMode);
 
   const timing = useMemo(() => {
-   
+    if (transiting) return 0;
     const seconds = Math.floor(
       (millisecondsLeft % (Number(currentQuestion?.duration) * 1000)) / 1000
     );
      console.log( seconds, millisecondsLeft)
 
     return seconds;
-  }, [millisecondsLeft, currentQuestion]);
+  }, [millisecondsLeft, currentQuestion, transiting]);
 
   useEffect(() => {
     if (currentQuestion?.duration) {
@@ -556,6 +556,7 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(({
                   noOfParticipants={String(currentParticipants?.length)}
                   isQuestionView
                   timer={timing}
+                  isTimer={quiz?.accessibility?.timer}
                   isLeftBox={isLeftBox}
                   isAttendee={isAttendee}
                   playerAvatar={attendeeDetail?.avatar}
@@ -760,7 +761,7 @@ function Transition({
   setShowTransiting: React.Dispatch<React.SetStateAction<boolean>>;
   countDown: number;
 }) {
-  const [secondsLeft, setSecondsLeft] = useState(5);
+  const [secondsLeft, setSecondsLeft] = useState(countDown);
 
   useEffect(() => {
     const countdownInterval = setInterval(() => {

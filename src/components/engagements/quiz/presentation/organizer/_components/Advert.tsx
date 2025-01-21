@@ -5,6 +5,7 @@ import { TQuiz, TQuestion } from "@/types/quiz";
 import QRCode from "react-qr-code";
 import { cn } from "@/lib/utils";
 import copy from "copy-to-clipboard";
+import { toast } from "react-toastify";
 export function Advert({
   quiz,
   isRightBox,
@@ -12,7 +13,9 @@ export function Advert({
   isLeftBox,
   isFromPoll,
   isAdvert,
-  className
+  className,
+  isLobby,
+  isQuizStarted
 }: {
   quiz: TQuiz<TQuestion[]>;
   isLeftBox: boolean;
@@ -20,7 +23,9 @@ export function Advert({
   isRightBox: boolean;
   isFromPoll?: boolean;
   isAdvert?: boolean;
-  className?:string;
+  className?: string;
+  isLobby?: boolean;
+  isQuizStarted?:boolean;
 }) {
   // console.log("ileft", isLeftBox, isRightBox);
   const quizLink =
@@ -32,7 +37,7 @@ export function Advert({
       className={cn(
         "w-full flex-col  h-full  items-start justify-between hidden col-span-3 md:hidden",
         isLeftBox && "flex md:flex ",
-       !isRightBox && "hidden md:hidden",
+        !isRightBox && "hidden md:hidden",
         isRightBox && isFromPoll && "col-span-full max-w-2xl ",
         isAdvert && "mx-auto justify-around",
         className
@@ -63,6 +68,7 @@ export function Advert({
           <Button
             onClick={() => {
               copy(quizLink);
+              toast.success("Copied!");
             }}
             className="w-[20%] rounded-r-lg rounded-l-none bg-basePrimary text-white text-mobile"
           >
@@ -87,15 +93,17 @@ export function Advert({
           isAdvert && "hidden"
         )}
       >
-        <Button
-          onClick={(e) => {
-            e.stopPropagation();
-            close();
-          }}
-          className="px-0 h-fit w-fit"
-        >
-          <Minimize2 size={20} />
-        </Button>
+        {isAdvert && (
+          <Button
+            onClick={(e) => {
+              e.stopPropagation();
+              close();
+            }}
+            className="px-0 h-fit w-fit"
+          >
+            <Minimize2 size={20} />
+          </Button>
+        )}
       </div>
     </div>
   );

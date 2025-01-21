@@ -94,7 +94,7 @@ export function SendMailModal<T>({
       quiz: updatedQuiz,
       mailto: {
         email: values?.email,
-        createQuiz: `/create`,
+        createQuiz: `/home`,
         attendeePoint,
         url,
         leaderboard:
@@ -255,7 +255,7 @@ export function SendMailModal<T>({
               />
               <p className="gradient-text bg-basePrimary">LeaderBoard</p>
             </Button>
-            <Button
+           {quiz?.accessibility?.showResult && <Button
               className="rounded-lg border border-basePrimary gap-x-2 bg-basePrimary-200"
               onClick={() => {
                 close();
@@ -263,7 +263,7 @@ export function SendMailModal<T>({
               }}
             >
               <p className="gradient-text bg-basePrimary">Quiz Result</p>
-            </Button>
+            </Button>}
           </div>
         )}
 
@@ -283,7 +283,7 @@ export function SendMailModal<T>({
                 } now`}
               </h3>
               <Link
-                href={`/create`}
+                href={`/home`}
                 className="text-white font-medium flex items-center justify-center h-11 text-center px-6 rounded-lg bg-basePrimary"
               >
                 {`Create your own ${
