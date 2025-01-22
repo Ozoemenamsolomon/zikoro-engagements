@@ -1,28 +1,21 @@
 import React from "react";
 import AppointmentSignupForm from "@/components/signup/AppointmentSignupForm";
+import Banner from "@/public/bgImg.png";
+import Image from "next/image";
 
 const AppointmentSignupPage = () => {
   return (
-    <div
-      className="flex items-center lg:items-start w-full h-screen justify-center gap-x-[162px] lg:h-screen xl:h-screen py-1 px-5 lg:py-[50px] lg:px-[50px] xl:px-[91px] xl:py-[50px] max-w-full"
-      style={{
-        backgroundImage: `url(/bgImg.webp)`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
-    >
-      <div className="mt-[34px] hidden lg:block">
-        <p className=" bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end gradient-text text-[32px] font-extrabold leading-none">
-          Get started with{" "}
-          <span className="leading-none text-[40px] inline lg:block">
-            Zikoro Bookings
-          </span>{" "}
-        </p>
-        <p className="text-base p-2 text-white bg-blue-500 font-medium opacity-50 mt-[10px] rounded-[8px]">
-          Simplify Scheduling for a Seamless Client Experience.
-        </p>
+    <div className="flex items-center w-full h-screen ">
+      <div className="w-[50%] hidden lg:flex items-center bg-gradient-to-tr from-concert-gradient-start to-concert-gradient-end h-screen">
+        <Image
+          src="/appointments/signupBanner.png"
+          alt="banner"
+          width={867}
+          height={810}
+          className=" mx-auto w-fit h-fit bg-contain"
+        />
       </div>
-      <div>
+      <div className="w-full lg:w-[50%]">
         <AppointmentSignupForm />
       </div>
     </div>

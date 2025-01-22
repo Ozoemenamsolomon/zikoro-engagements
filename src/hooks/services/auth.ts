@@ -293,7 +293,6 @@ export function useOnboarding() {
     referralCode: string;
     referredBy: string;
     phoneNumber: string;
-    city: string;
     country: string;
     firstName: string;
     lastName: string;
@@ -313,7 +312,6 @@ export function useOnboarding() {
           userEmail: email,
           firstName: values.firstName,
           lastName: values.lastName,
-          city: values.city,
           created_at: createdAt,
           industry: values.industry,
           referralCode: values.referralCode,
@@ -346,4 +344,26 @@ export function useOnboarding() {
   };
 }
 
+
+export const useGetUserId = () => {
+  const getUserId = async (email: string | null): Promise<string | undefined> => {
+    if (!email) return;
+
+    const { data: user, error } = await supabase
+      .from("users")
+      .select("id") // Select only the id field
+      .eq("userEmail", email)
+      .order("created_at", { ascending: false })
+      .single();
+
+
+    if (error) {
+      console.error("Error fetching user ID:", error);
+      return;
+    }
+    return user.id; // Return the user ID
+  };
+
+  return { getUserId };
+};
 
