@@ -1,8 +1,6 @@
 import Onboarding from "@/components/onboarding/Onboarding";
 import Image from "next/image";
 import React from "react";
-import sBanner from "@/public/appointments/signupBannerS.png";
-import Banner from "@/public/appointments/signupBanner.png";
 
 type SearchParamsType = {
   email: string;
@@ -18,7 +16,7 @@ const OnboardingPage = ({
     <div>
       {/* large screen */}
       <div className="bg-[#f9faff] hidden lg:flex items-center">
-        <div className="w-[50%] hidden lg:flex items-center bg-gradient-to-tr from-concert-gradient-start to-concert-gradient-end h-screen">
+        <div className="w-[50%] hidden lg:flex items-end [@media(min-width:2000px)]:items-center bg-gradient-to-tr from-concert-gradient-start to-concert-gradient-end h-screen">
           <Image
             src="/appointments/signupBanner.png"
             alt="banner"
