@@ -20,6 +20,7 @@ import { ArrowUpwardOutline } from "styled-icons/evaicons-outline";
 import { useDeleteRequest, usePostRequest } from "@/hooks/services/requests";
 import { InlineIcon } from "@iconify/react/dist/iconify.js";
 import { formatPosition } from "@/utils";
+import { ActionModal } from "@/components/custom/ActionModal";
 
 type TLeaderBoard = {
   quizParticipantId: string;
@@ -37,6 +38,7 @@ interface TParticipantScores {
   recentScore: number;
   recentAt: Date;
 }
+
 export function ScoreBoard({
   answers,
   close,
@@ -56,11 +58,16 @@ export function ScoreBoard({
   isQuizResult?: boolean;
   setIsQuizResult?: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
+  const { deleteData } = useDeleteRequest(
+    `engagements/quiz/answer/${actualQuiz?.quizAlias}`
+  );
   const { postData: updateQuiz, isLoading } =
-    usePostRequest("engagements/quiz");
+    usePostRequest<Partial<TQuiz<TQuestion[]>>>("engagements/quiz");
   const { deleteData: deleteQuizLobby } = useDeleteRequest<
     TLiveQuizParticipant[]
   >(`engagements/quiz/participant/${actualQuiz?.quizAlias}`);
+  const [isToClear, setIsToClear] = useState(false);
+  const [isLoadingClear, setIsLoadingClear] = useState(false);
 
   const board = useMemo(() => {
     const participantGroup: { [key: string]: TParticipantScores } = {};
@@ -173,6 +180,28 @@ export function ScoreBoard({
     // window.location.reload();
   }
 
+  function onToggleClear() {
+    setIsToClear((prev) => !prev);
+  }
+
+  // clear record
+  async function clearRecord() {
+    setIsLoadingClear(true);
+
+    // delete all answers for a quiz
+    await deleteData();
+
+    // delete all the participant for a quiz
+    await updateQuiz({
+      payload: {
+        ...actualQuiz,
+        quizParticipants: [],
+      },
+    });
+
+    setIsLoadingClear(false);
+  }
+
   return (
     <>
       {isQuizResult && quiz ? (
@@ -185,24 +214,57 @@ export function ScoreBoard({
           setIsQuizResult={setIsQuizResult}
           noOfParticipants={board.length}
           userAvatar={userAvatar}
+          answers={answers}
         />
       ) : (
         <div className="w-full inset-0 fixed overflow-x-auto h-full ">
-          <div className="absolute inset-x-0  mx-auto px-4 w-full max-w-3xl mt-8">
-            <h2 className="w-full  text-center mb-3 font-semibold text-lg sm:text-2xl">
+          {!isAttendee ? (
+            <div className="w-full flex items-center justify-between">
+              <Button className="rounded-lg border border-basePrimary gap-x-2 bg-basePrimary-200">
+                <InlineIcon
+                  fontSize={22}
+                  icon="iconoir:leaderboard-star"
+                  color="#9D00FF"
+                />
+                <p className="gradient-text bg-basePrimary">LeaderBoard</p>
+              </Button>
+
+              <div className="flex items-center gap-x-[1px]">
+                <Button className="flex items-center text-white bg-basePrimary h-10 rounded-none rounded-l-lg gap-x-2">
+                  <InlineIcon
+                    icon="mdi:eye-outline"
+                    fontSize={18}
+                    color="#ffffff"
+                  />
+                  <p>View Individual Quiz Result</p>
+                </Button>
+                <Button className="flex items-center rounded-none bg-basePrimary h-10 text-white rounded-r-lg gap-x-2">
+                  <InlineIcon
+                    icon="carbon:export"
+                    fontSize={18}
+                    color="#ffffff"
+                  />
+                  <p>Export as CSV</p>
+                </Button>
+                <Button
+                  onClick={onToggleClear}
+                  className="flex items-center rounded-none h-10  bg-red-500 text-white rounded-r-lg gap-x-2"
+                >
+                  <InlineIcon
+                    icon="mingcute:delete-line"
+                    fontSize={18}
+                    color="#ffffff"
+                  />
+                  <p>Delete Record</p>
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <h2 className="font-semibold text-base sm:text-lg text-center ">
               LeaderBoard
             </h2>
-
-            <div className="mx-auto w-fit flex px-2 mb-6 items-center gap-x-8 sm:gap-x-20 bg-white h-10 rounded-3xl">
-              <Button
-                disabled={isLoading}
-                onClick={endLiveQuiz}
-                className="underline rounded-none px-2 h-10 w-fit"
-              >
-                Go To Quiz Page
-              </Button>
-            </div>
-
+          )}
+          <div className="absolute inset-x-0  mx-auto px-4 w-full max-w-3xl mt-8">
             <div className="mx-auto w-full relative">
               {Array.isArray(board) && board?.length > 0 && (
                 <div className=" flex w-full justify-center text-sm">
@@ -376,6 +438,20 @@ export function ScoreBoard({
           </div>
         </div>
       )}
+
+      {isToClear && (
+        <ActionModal
+          loading={isLoadingClear}
+          close={onToggleClear}
+          asynAction={clearRecord}
+          buttonText="Delete"
+          buttonColor="text-white bg-red-500"
+          titleColor="text-red-500"
+          modalTitle="Delete Quiz Record"
+          title="Clear Record"
+          modalText="Participants records, scores and points will be deleted and can not be recovered."
+        />
+      )}
     </>
   );
 }
@@ -389,6 +465,7 @@ function AttendeeScore({
   setIsQuizResult,
   userAvatar,
   noOfParticipants,
+  answers,
 }: {
   userPosition?: number;
   id: string;
@@ -398,6 +475,7 @@ function AttendeeScore({
   setIsQuizResult?: React.Dispatch<React.SetStateAction<boolean>>;
   userAvatar: Required<AvatarFullConfig> | undefined;
   noOfParticipants: number;
+  answers: TAnswer[];
 }) {
   const [isAnswers, setIsAnswer] = useState(false);
 
@@ -413,12 +491,15 @@ function AttendeeScore({
     )?.length;
   }, [quiz]);
 
-  console.log(userAvatar);
-
   return (
     <div className="w-full h-full inset-0 fixed overflow-y-auto bg-basePrimary-100">
       {isAnswers ? (
-        <AnswerSheet quiz={quiz} close={showAnswers} />
+        <AnswerSheet
+          quiz={quiz}
+          close={showAnswers}
+          answer={answers}
+          userAvatar={userAvatar}
+        />
       ) : (
         <div className="max-w-2xl h-fit flex flex-col items-center justify-center absolute inset-0 m-auto w-[95%] ">
           <div className="bg-white rounded-lg  max-w-2xl w-full justify-center h-fit  flex flex-col items-center gap-y-4">
@@ -541,19 +622,23 @@ function AbouttAttendeeScore({
 function AnswerSheet({
   quiz,
   close,
+  answer,
+  userAvatar,
 }: {
   quiz: TQuiz<TRefinedQuestion[]>;
+  answer: TAnswer[];
   close: () => void;
+  userAvatar: Required<AvatarFullConfig> | undefined;
 }) {
-  const [showExplanation, setShowExplanation] = useState(false);
+  // const [showExplanation, setShowExplanation] = useState(false);
 
-  function toggleExplanationVisibility() {
-    setShowExplanation((prev) => !prev);
-  }
-  const optionLetter = ["A", "B", "C", "D"];
+  // function toggleExplanationVisibility() {
+  //   setShowExplanation((prev) => !prev);
+  // }
+  const optionLetter = ["1", "2", "3", "4"];
 
   return (
-    <div className="w-full max-w-3xl absolute top-0 mx-auto inset-x-0 bg-white p-4">
+    <div className="w-full max-w-4xl absolute top-0 mx-auto inset-x-0 bg-white p-4">
       <Button onClick={close} className="gap-x-1 self-start w-fit h-fit px-2">
         <ArrowBackOutline size={20} />
         <p className="text-sm">Back</p>
@@ -575,23 +660,49 @@ function AnswerSheet({
               ({ isCorrect }) => typeof isCorrect === "boolean"
             );
 
+            // correct answer
+            const correctAnswer = question?.options?.find(
+              ({ isAnswer }) => isAnswer !== ""
+            );
+
             const isImageOption = question?.options?.some((opt) =>
               (opt?.option as string)?.startsWith("https://")
             );
+            const chosedOption = () => {
+              const i = answer?.filter((ans) => {
+                return (
+                  question?.options[chosenAsnwerIndex].optionId ===
+                  ans?.selectedOptionId?.optionId
+                );
+              });
+
+              return i?.length || 0;
+            };
+
+            const correctOption = () => {
+              const i = answer?.filter((ans) => {
+                return (
+                  question?.options[correctAnswerIndex].optionId ===
+                  ans?.selectedOptionId?.optionId
+                );
+              });
+
+              return i?.length || 0;
+            };
 
             return (
-              <div className="w-full space-y-3 ">
+              <div className="w-full space-y-4 bg-basePrimary-200 rounded-lg p-4  ">
                 <h2>{`Question ${index + 1}`}</h2>
 
                 <div
-                  className="innerhtml w-full"
+                  className="innerhtml text-center w-full"
                   dangerouslySetInnerHTML={{
                     __html: question?.question ?? "",
                   }}
                 />
                 {question?.questionImage && (
                   <Image
-                    className="w-full h-40 object-cover"
+                    className="w-full max-w-[10rem] mx-auto rounded-md h-40 object-cover"
                     src={question?.questionImage}
                     width={700}
                     height={300}
@@ -599,50 +710,242 @@ function AnswerSheet({
                   />
                 )}
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
-                  {question?.options.map((option, index) => (
-                    <div className="w-full flex items-center gap-x-2">
-                      <p>{`${optionLetter[index]}.`}</p>
-                      <p
-                        className=""
-                        dangerouslySetInnerHTML={{
-                          __html: option?.option ?? "",
-                        }}
+                {isImageOption ? (
+                  <div className="flex flex-wrap items-center justify-center gap-3 w-full">
+                    <div
+                      className={cn(
+                        "w-fit  text-white gap-3 flex flex-col bg-red-500 items-center p-2 h-fit rounded-lg ",
+                        typeof chosenAnswer?.isCorrect === "boolean" &&
+                          chosenAnswer?.isCorrect &&
+                          "bg-green-500"
+                      )}
+                    >
+                      <div className="w-full flex items-end justify-between">
+                        <p className="w-1 h-1"></p>
+                        <span
+                          className={cn(
+                            "rounded-lg h-9 flex items-center text-red-500 justify-center font-medium w-9 bg-white border border-gray-700",
+                            typeof chosenAnswer?.isCorrect === "boolean" &&
+                              chosenAnswer?.isCorrect &&
+                              "text-green-500"
+                          )}
+                        >
+                          {optionLetter[chosenAsnwerIndex]}
+                        </span>
+                        <Avatar
+                          {...userAvatar}
+                          shape="circle"
+                          className="w-7 h-7 rounded-full"
+                        />
+                      </div>
+                      <div className="w-full flex items-center justify-between">
+                        <div className="w-11/12 relative h-2 ring-1 rounded-3xl bg-gray-200">
+                          <span
+                            style={{
+                              width: chosedOption()
+                                ? `${(
+                                    (chosedOption() / answer?.length) *
+                                    100
+                                  ).toFixed(0)}%`
+                                : "0%",
+                            }}
+                            className={cn(
+                              "absolute rounded-3xl bg-red-500 inset-0  h-full",
+                              typeof chosenAnswer?.isCorrect === "boolean" &&
+                                chosenAnswer?.isCorrect &&
+                                "bg-green-500"
+                            )}
+                          ></span>
+                        </div>
+
+                        <div className="text-mobile">
+                          <span>
+                            {chosedOption
+                              ? `${(
+                                  (chosedOption() / answer?.length) *
+                                  100
+                                ).toFixed(0)}%`
+                              : "0%"}
+                          </span>
+                        </div>
+                      </div>
+                      <Image
+                        src={chosenAnswer?.option}
+                        alt=""
+                        width={400}
+                        height={400}
+                        className="w-28 rounded-lg object-cover h-32"
                       />
                     </div>
-                  ))}
-                </div>
-                <div className="w-full flex flex-col gap-y-1 items-start justify-start">
-                  <div
-                    className={cn(
-                      "text-white font-medium bg-red-500 w-full px-2 py-3 flex items-center justify-between",
-                      typeof chosenAnswer?.isCorrect === "boolean" &&
-                        chosenAnswer?.isCorrect &&
-                        "bg-green-500"
-                    )}
-                  >
-                    <p>Your Answer</p>
-                    <div className="flex items-center gap-x-2">
-                      {typeof chosenAnswer?.isCorrect === "boolean" &&
-                      chosenAnswer?.isCorrect ? (
-                        <CheckCircle size={22} />
-                      ) : (
-                        <CloseOutline size={22} />
+
+                    <div
+                      className={cn(
+                        "w-fit  text-white gap-3 flex flex-col bg-green-500 items-center p-2 h-fit rounded-lg "
                       )}
-                      <p>{optionLetter[chosenAsnwerIndex]}</p>
+                    >
+                      <span
+                        className={cn(
+                          "rounded-lg h-9 flex items-center text-green-500 justify-center font-medium w-9 bg-white border border-gray-700"
+                        )}
+                      >
+                        {optionLetter[correctAnswerIndex]}
+                      </span>
+                      <div className="w-full flex items-center justify-between">
+                        <div className="w-11/12 relative h-2 ring-1 rounded-3xl bg-gray-200">
+                          <span
+                            style={{
+                              width: correctOption()
+                                ? `${(
+                                    (correctOption() / answer?.length) *
+                                    100
+                                  ).toFixed(0)}%`
+                                : "0%",
+                            }}
+                            className={cn(
+                              "absolute rounded-3xl bg-green-500 inset-0  h-full"
+                            )}
+                          ></span>
+                        </div>
+
+                        <div className="text-mobile">
+                          <span>
+                            {correctOption
+                              ? `${(
+                                  (correctOption() / answer?.length) *
+                                  100
+                                ).toFixed(0)}%`
+                              : "0%"}
+                          </span>
+                        </div>
+                      </div>
+                      <Image
+                        src={correctAnswer?.option}
+                        alt=""
+                        width={400}
+                        height={400}
+                        className="w-28 rounded-lg object-cover h-32"
+                      />
                     </div>
                   </div>
-                  <div className="text-white font-medium bg-green-500 w-full px-2 py-3 flex items-center justify-between">
-                    <p>Correct Answer</p>
-                    <div className="flex items-center gap-x-2">
-                      <CheckCircle size={22} />
+                ) : (
+                  <div className="w-full ">
+                    <div className="w-[95%] flex flex-col gap-y-2 items-start justify-start">
+                      <div
+                        className={cn(
+                          "text-white rounded-lg font-medium relative bg-red-500 w-full px-2 py-3 flex flex-col items-start justify-start",
+                          typeof chosenAnswer?.isCorrect === "boolean" &&
+                            chosenAnswer?.isCorrect &&
+                            "bg-green-500"
+                        )}
+                      >
+                        <div className="w-full flex items-center gap-x-2">
+                          <span
+                            className={cn(
+                              "rounded-lg h-10 flex items-center justify-center text-red-500 font-medium w-10 bg-white border border-gray-700",
+                              typeof chosenAnswer?.isCorrect === "boolean" &&
+                                chosenAnswer?.isCorrect &&
+                                "text-green-500"
+                            )}
+                          >
+                            {optionLetter[chosenAsnwerIndex]}
+                          </span>
+                          <p
+                            className="innerhtml text-white"
+                            dangerouslySetInnerHTML={{
+                              __html: chosenAnswer?.option ?? "",
+                            }}
+                          />
+                        </div>
+                        <div className="w-full flex mt-2 items-center justify-between">
+                          <div className="w-11/12 relative h-2 ring-1 rounded-3xl bg-gray-200">
+                            <span
+                              style={{
+                                width: chosedOption()
+                                  ? `${(
+                                      (chosedOption() / answer?.length) *
+                                      100
+                                    ).toFixed(0)}%`
+                                  : "0%",
+                              }}
+                              className={cn(
+                                "absolute rounded-3xl bg-red-500 inset-0  h-full",
+                                typeof chosenAnswer?.isCorrect === "boolean" &&
+                                chosenAnswer?.isCorrect &&
+                                "bg-green-500"
+                              )}
+                            ></span>
+                          </div>
 
-                      <p>{optionLetter[correctAnswerIndex]}</p>
+                          <div className="text-mobile">
+                            <span>
+                              {chosedOption()
+                                ? `${(
+                                    (chosedOption() / answer?.length) *
+                                    100
+                                  ).toFixed(0)}%`
+                                : "0%"}
+                            </span>
+                          </div>
+                        </div>
+
+                        <Avatar
+                          {...userAvatar}
+                          shape="circle"
+                          className="w-8 h-8 absolute top-[35%] right-[-40px] rounded-full"
+                        />
+                      </div>
+                      <div className="text-white rounded-lg font-medium bg-green-500 w-full px-2 py-3 flex flex-col items-start justify-start">
+                        <div className="w-full flex items-center gap-x-2">
+                          <span
+                            className={cn(
+                              "rounded-lg h-10 flex items-center justify-center text-green-500 font-medium w-10 bg-white border border-gray-700"
+                            )}
+                          >
+                            {optionLetter[correctAnswerIndex]}
+                          </span>
+
+                          <p
+                            className="innerhtml text-white"
+                            dangerouslySetInnerHTML={{
+                              __html: correctAnswer?.option ?? "",
+                            }}
+                          />
+                        </div>
+
+                        <div className="w-full flex items-center justify-between">
+                          <div className="w-11/12 relative h-2 ring-1 rounded-3xl bg-gray-200">
+                            <span
+                              style={{
+                                width: correctOption()
+                                  ? `${(
+                                      (correctOption() / answer?.length) *
+                                      100
+                                    ).toFixed(0)}%`
+                                  : "0%",
+                              }}
+                              className={cn(
+                                "absolute rounded-3xl bg-green-500 inset-0  h-full"
+                              )}
+                            ></span>
+                          </div>
+
+                          <div className="text-mobile">
+                            <span>
+                              {correctOption()
+                                ? `${(
+                                    (correctOption() / answer?.length) *
+                                    100
+                                  ).toFixed(0)}%`
+                                : "0%"}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
 
-                {showExplanation && (
+                {/* {showExplanation && (
                   <p className="mb-3 text-xs sm:text-sm text-gray-500">
                     {question?.feedBack ?? "No Explanation"}
                   </p>
@@ -653,11 +956,17 @@ function AnswerSheet({
                   className="text-xs sm:text-sm text-basePrimary underline"
                 >
                   {showExplanation ? "Hide Explanation" : "Show Explanation"}
-                </button>
+                </button> */}
               </div>
             );
           })}
       </div>
     </div>
+  );
+}
+
+function OrganizerSheet() {
+  return (
+    <div className="w-full max-w-4xl absolute top-0 mx-auto inset-x-0 bg-white p-4"></div>
   );
 }
