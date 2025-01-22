@@ -123,7 +123,7 @@ export const usePostRequest = <T>(endpoint: string) => {
         payload,
       });
 
-      toast.success("Creation Attempt Successful");
+      toast.success("Success");
       return data;
     } catch (error: any) {
       //

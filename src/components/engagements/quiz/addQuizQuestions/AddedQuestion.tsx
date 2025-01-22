@@ -23,7 +23,7 @@ export function AddedQuestions({
   return (
     <div
       className={cn(
-        "w-full bg-white h-full sm:mt-8 border overflow-y-auto no-scrollbar rounded-lg col-span-full sm:col-span-3 py-6 px-3",
+        "w-full bg-white vert-scroll pb-40 h-full sm:mt-8 border overflow-y-auto rounded-lg col-span-full sm:col-span-3 pt-6  px-3",
         className,
         editingQuestion !== null && 'hidden sm:block',
         isAddNew && "hidden sm:block"
@@ -50,7 +50,7 @@ export function AddedQuestions({
           <p className="font-medium text-basePrimary">Add Question</p>
         </Button>
       </div>
-      <div className="w-full flex flex-col items-start justify-start gap-3">
+      <div className="w-full flex  flex-col items-start justify-start gap-3">
         {Array.isArray(questions) &&
           questions?.map((quest, index) => (
             <div

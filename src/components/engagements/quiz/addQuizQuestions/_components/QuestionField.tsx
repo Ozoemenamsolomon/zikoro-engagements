@@ -1,4 +1,5 @@
 import { TextEditor } from "@/components/custom";
+import { ActionModal } from "@/components/custom/ActionModal";
 import { AddQuizImageIcon } from "@/constants";
 import { usePostRequest } from "@/hooks/services/requests";
 import { quizQuestionSchema } from "@/schemas/quiz";
@@ -15,50 +16,60 @@ export function QuestionField({
   addedImage,
   form,
   quiz,
-  refetch
+  refetch,
 }: {
   defaultQuestionValue: string;
   question: TQuestion | null;
   form: UseFormReturn<z.infer<typeof quizQuestionSchema>>;
   addedImage: string | null;
   quiz: TQuiz<TQuestion[]>;
-  refetch:() => Promise<any>
+  refetch: () => Promise<any>;
 }) {
-  const {postData} = usePostRequest<Partial<TQuiz<TQuestion[]>>>('engagements/quiz')
-  const [isLoading, setIsLoading] = useState(false)
+  const { postData } =
+    usePostRequest<Partial<TQuiz<TQuestion[]>>>("engagements/quiz");
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDelete, setIsDelete] = useState(false);
   function onChange(v: string) {
     form.setValue("question", v);
   }
-  const {formState:{errors}} = form;
+  const {
+    formState: { errors },
+  } = form;
 
   async function deleteQuestion() {
     if (!question) return;
-    setIsLoading(true)
-    const filteredQuestion = quiz?.questions?.filter((q) => q.id !== question.id)
+    setIsLoading(true);
+    const filteredQuestion = quiz?.questions?.filter(
+      (q) => q.id !== question.id
+    );
     const payload: Partial<TQuiz<TQuestion[]>> = {
       ...quiz,
-      questions: filteredQuestion
+      questions: filteredQuestion,
+    };
 
+    await postData({ payload });
+    setIsLoading(false);
+    refetch();
+  }
 
-    }
-
-    await postData({payload})
-    refetch()
-
+  function showDeletModal() {
+    setIsDelete((prev) => !prev);
   }
   return (
     <div className="w-full ">
       <div className="w-full flex items-center justify-between">
         <p>Question</p>
-      {question !== null && <button
-      onClick={(e) => {
-        e.stopPropagation()
-        e.preventDefault()
-        deleteQuestion()
-      }}
-      >
-       <InlineIcon icon="icon-park-twotone:delete" fontSize={22} />
-       </button>}
+        {question !== null && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              showDeletModal();
+            }}
+          >
+            <InlineIcon icon="icon-park-twotone:delete" fontSize={22} />
+          </button>
+        )}
       </div>
       <div className="w-full mt-3  flex items-center gap-x-3">
         {(defaultQuestionValue || !question) && (
@@ -92,6 +103,16 @@ export function QuestionField({
             height={400}
           />
         </div>
+      )}
+
+      {isDelete && (
+        <ActionModal
+          close={showDeletModal}
+          asynAction={deleteQuestion}
+          buttonText="Delete"
+          buttonColor="bg-red-500 text-white"
+          loading={isLoading}
+        />
       )}
     </div>
   );

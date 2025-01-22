@@ -12,7 +12,8 @@ export function TopSection({
   isLive,
   toggleJoiningAttempt,
   isLeftBox,
-  playerAvatar
+  playerAvatar,
+  isTimer
 }: {
   changeDuration?: () => void;
   noOfParticipants?: string;
@@ -24,7 +25,8 @@ export function TopSection({
   isLive?: boolean;
   toggleJoiningAttempt?: () => void;
   isLeftBox?:boolean;
-  playerAvatar?: Required<AvatarFullConfig>
+  playerAvatar?: Required<AvatarFullConfig>;
+  isTimer?:boolean;
   
 }) {
   return (
@@ -46,7 +48,7 @@ export function TopSection({
         <p>Participants</p>
       </div>
 
-      {isQuestionView && (
+      {isQuestionView && isTimer && (
         <div className="bg-red-100 h-9 justify-center px-3 rounded-3xl flex items-center gap-x-2">
           <InlineIcon
             icon="solar:alarm-bold-duotone"

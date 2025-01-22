@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { TQuiz, TQuestion, TOrganizationQuiz } from "@/types/quiz";
 import { cn } from "@/lib/utils";
 
+
 export function QuizCard({
   quiz,
   refetch,

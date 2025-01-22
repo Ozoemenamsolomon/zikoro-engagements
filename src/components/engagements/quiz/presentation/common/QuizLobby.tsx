@@ -13,6 +13,7 @@ import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { useDeleteRequest, usePostRequest } from "@/hooks/services/requests";
 import { Maximize2 } from "styled-icons/feather";
 import { Button } from "@/components/custom";
+import Link from "next/link"
 function WaitingPlayer({
   nickName,
   avatar,
@@ -177,9 +178,9 @@ export const QuizLobby =  forwardRef<QuizLobbyRef, QuizLobbyProp>(({
         }
       </div>
       {quiz.branding.poweredBy && (
-        <p className="text-center absolute mx-auto w-fit inset-x-0 bottom-3 p-3">
-          Powered by Zikoro
-        </p>
+        <Link href="/home" className="text-center absolute mx-auto w-fit inset-x-0 bottom-3 p-3">
+          Create your Quiz with Zikoro
+        </Link>
       )}
     </div>
   )
