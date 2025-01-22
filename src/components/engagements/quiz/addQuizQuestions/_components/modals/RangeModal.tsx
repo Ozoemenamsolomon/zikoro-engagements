@@ -35,7 +35,7 @@ export function RangeModal({
         onClick={(e) => {
           e.stopPropagation();
         }}
-        className="w-[95%] max-w-md m-auto h-fit text-sm absolute inset-0 bg-white rounded-lg p-3"
+        className="w-[95%] max-w-md m-auto animate-float-in h-fit text-sm absolute inset-0 bg-white rounded-lg p-3"
       >
         <div className="w-full flex items-center justify-between pb-3 border-b">
           <p>{name === "duration" ? "Question Duration" : "Question Points"}</p>

@@ -165,8 +165,12 @@ export function ScoreBoard({
 
       close();
     }
-    window.open(`/e/${actualQuiz?.workspaceAlias}/quiz/${isAttendee ? "a" : "o"}/${actualQuiz?.quizAlias}/presentation`)
-   // window.location.reload();
+    window.open(
+      `/e/${actualQuiz?.workspaceAlias}/quiz/${isAttendee ? "a" : "o"}/${
+        actualQuiz?.quizAlias
+      }/presentation`
+    );
+    // window.location.reload();
   }
 
   return (
@@ -306,7 +310,6 @@ export function ScoreBoard({
                   </div>
                 </div>
               )}
-          
 
               <div className="w-full overflow-y-auto pb-20 no-scrollbar z-50 bg-white absolute inset-x-0 h-full top-80 rounded-t-lg py-6 ">
                 {board.slice(3, board?.length).length > 0 && (
@@ -572,6 +575,10 @@ function AnswerSheet({
               ({ isCorrect }) => typeof isCorrect === "boolean"
             );
 
+            const isImageOption = question?.options?.some((opt) =>
+              (opt?.option as string)?.startsWith("https://")
+            );
+
             return (
               <div className="w-full space-y-3 ">
                 <h2>{`Question ${index + 1}`}</h2>
@@ -584,7 +591,7 @@ function AnswerSheet({
                 />
                 {question?.questionImage && (
                   <Image
-                    className="w-full h-40 "
+                    className="w-full h-40 object-cover"
                     src={question?.questionImage}
                     width={700}
                     height={300}

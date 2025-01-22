@@ -255,7 +255,7 @@ export function SendMailModal<T>({
               />
               <p className="gradient-text bg-basePrimary">LeaderBoard</p>
             </Button>
-            <Button
+           {quiz?.accessibility?.showResult && <Button
               className="rounded-lg border border-basePrimary gap-x-2 bg-basePrimary-200"
               onClick={() => {
                 close();
@@ -263,7 +263,7 @@ export function SendMailModal<T>({
               }}
             >
               <p className="gradient-text bg-basePrimary">Quiz Result</p>
-            </Button>
+            </Button>}
           </div>
         )}
 

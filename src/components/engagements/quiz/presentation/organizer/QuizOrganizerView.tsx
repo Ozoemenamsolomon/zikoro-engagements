@@ -32,7 +32,7 @@ import {
 } from "@/hooks/services/quiz";
 import { LoadingState } from "@/components/composables/LoadingState";
 import { QuizLobby, QuizLobbyRef } from "../common";
-import { generateAlias } from "@/utils";
+import { calculateAndSetWindowHeight, generateAlias } from "@/utils";
 import { AvatarFullConfig } from "react-nice-avatar";
 import { TPlayerDetail } from "../attendee/_components/AttendeeOnboarding";
 import {
@@ -88,8 +88,10 @@ export default function QuizOrganizerView({
   const quizLobbyRef = useRef<QuizLobbyRef>(null);
   const [volume, adjustVolume] = useState(0.05);
   const [isAdvert, setIsAdvert] = useState(true);
-  const [isAttemptingToExit, setIsAttemptingToExit]  = useState(false)
-  const [isLoadingAttempt, setIsLoadingAttempt] = useState(false)
+  const [isAttemptingToExit, setIsAttemptingToExit] = useState(false);
+  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
+  const divRef = useRef<HTMLDivElement | null>(null);
+  const [isLoadingAttempt, setIsLoadingAttempt] = useState(false);
   const { liveQuizPlayers, setLiveQuizPlayers, getLiveParticipant } =
     useGetLiveParticipant({
       quizId: quizId,
@@ -146,7 +148,6 @@ export default function QuizOrganizerView({
     };
   }, [supabase, quiz]);
 
-  
   function createBeep() {
     if (typeof window !== undefined) {
       const audio = new Audio("/audio/beep.wav");
@@ -216,11 +217,13 @@ export default function QuizOrganizerView({
   }, [supabase, quiz]);
 
   // memoized audio instance
-  const audio = useMemo(() => {
+  useMemo(() => {
     if (quiz?.accessibility?.playMusic && quiz?.accessibility?.music) {
-      return createAudioInstance(quiz?.accessibility?.music?.value);
+      if (!audio || audio.paused) {
+        setAudio(createAudioInstance(quiz?.accessibility?.music?.value));
+      }
     }
-  }, []);
+  }, [quiz]);
 
   // organizer start live quiz
   async function startLiveQuiz() {
@@ -284,6 +287,12 @@ export default function QuizOrganizerView({
     }
   }, [quiz]);
 
+  useEffect(() => {
+    if (divRef) {
+      calculateAndSetWindowHeight(divRef, 150);
+    }
+  }, [divRef]);
+
   const isMaxLiveParticipant = useMemo(() => {
     if (
       quiz?.accessibility?.live &&
@@ -334,7 +343,6 @@ export default function QuizOrganizerView({
   }
 
   async function onClickStart() {
-
     if (isAdvert) {
       setIsAdvert(false);
 
@@ -363,7 +371,7 @@ export default function QuizOrganizerView({
     }
 
     if (isQuizStarted) {
-      setIsAttemptingToExit(true)
+      setIsAttemptingToExit(true);
       return;
     }
   }
@@ -416,10 +424,10 @@ export default function QuizOrganizerView({
   }
 
   async function exitQuiz() {
-    setIsLoadingAttempt(true)
-   if (quiz?.accessibility?.live) await deleteQuizLobby()
-    window.location.reload()
-    setIsLoadingAttempt(false)
+    setIsLoadingAttempt(true);
+    if (quiz?.accessibility?.live) await deleteQuizLobby();
+    window.location.reload();
+    setIsLoadingAttempt(false);
   }
 
   // if (isLoading) {
@@ -444,20 +452,20 @@ export default function QuizOrganizerView({
   }
 
   function formatPosition(position: number): string {
-    const suffixes = ['th', 'st', 'nd', 'rd'];
+    const suffixes = ["th", "st", "nd", "rd"];
     const remainder = position % 100;
-    
+
     // Handle special cases 11, 12, 13
     if (remainder >= 11 && remainder <= 13) {
       return `${position}th`;
     }
-    
+
     const suffix = suffixes[position % 10] || suffixes[0];
     return `${position}${suffix}`;
   }
 
   return (
-    <div style={{backgroundColor:"#f7f8ff"}}  className="w-full">
+    <div style={{ backgroundColor: "#f7f8ff" }} className="w-full">
       {showScoreSheet ? (
         <div className="w-full ">
           <ScoreBoard
@@ -473,7 +481,7 @@ export default function QuizOrganizerView({
         </div>
       ) : (
         <div className="w-full min-h-screen px-4  mx-auto  flex flex-col justify-between">
-          <div className="w-full  items-start grid grid-cols-12">
+          <div ref={divRef} className="w-full  items-start grid grid-cols-12">
             {isAdvert && quiz && (
               <OrganizerOnboarding
                 isMaxLiveParticipant={isMaxLiveParticipant}
@@ -484,7 +492,7 @@ export default function QuizOrganizerView({
               />
             )}
             {!isAdvert && isLobby && quiz && quiz?.accessibility?.live && (
-              <div className="w-full h-[78vh] col-span-full mx-auto  mt-10 items-start rounded-lg grid grid-cols-12">
+              <div className="w-full h-full col-span-full mx-auto  mt-10 items-start rounded-lg grid grid-cols-12">
                 {quiz && (
                   <Advert
                     quiz={quiz}
@@ -536,7 +544,7 @@ export default function QuizOrganizerView({
               </div>
             )}
             {isQuizStarted && (
-              <div className="w-full h-[78vh] col-span-full mt-10 items-start rounded-lg grid grid-cols-12">
+              <div className="w-full h-full col-span-full mt-10 items-start rounded-lg grid grid-cols-12">
                 {quiz && (
                   <Advert
                     quiz={quiz}
@@ -587,7 +595,7 @@ export default function QuizOrganizerView({
                       "",
                       !isLeftBox &&
                         "col-span-9 max-w-full relative m-0 h-full sm:h-full rounded-none rounded-r-lg",
-                      !isRightBox && "col-span-9 rounded-r-lg",
+                      !isRightBox && "col-span-9 rounded-l-lg",
                       !isLeftBox &&
                         !isRightBox &&
                         "rounded-l-lg  max-w-4xl col-span-full mx-auto"
@@ -664,7 +672,16 @@ export default function QuizOrganizerView({
           </div>
         </div>
       )}
-      {isAttemptingToExit && <ActionModal loading={isLoadingAttempt} modalText={"Are you sure you want to exit?"} close={() => setIsAttemptingToExit(false)} asynAction={exitQuiz} buttonText="Exit" buttonColor="bg-basePrimary text-white"/>}
+      {isAttemptingToExit && (
+        <ActionModal
+          loading={isLoadingAttempt}
+          modalText={"Are you sure you want to exit?"}
+          close={() => setIsAttemptingToExit(false)}
+          asynAction={exitQuiz}
+          buttonText="Exit"
+          buttonColor="bg-basePrimary text-white"
+        />
+      )}
     </div>
   );
 }

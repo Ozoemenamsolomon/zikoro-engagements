@@ -22,7 +22,7 @@ export async function isImageValid(url: string): Promise<boolean> {
 
 
 export function calculateAndSetWindowHeight(
-  divRef: React.RefObject<HTMLDivElement>
+  divRef: React.RefObject<HTMLDivElement>, ded: number = 100
 ) {
   const div = divRef.current;
 
@@ -30,9 +30,11 @@ export function calculateAndSetWindowHeight(
     
 
     
-    div.style.height = `${window.innerHeight -100}px`;
+    div.style.height = `${window.innerHeight -ded}px`;
   }
 }
+  
+
   
   
   export async function uploadFile(file: File | string, type: string) {

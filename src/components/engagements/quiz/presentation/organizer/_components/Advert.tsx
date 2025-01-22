@@ -15,6 +15,7 @@ export function Advert({
   isAdvert,
   className,
   isLobby,
+  isQuizStarted
 }: {
   quiz: TQuiz<TQuestion[]>;
   isLeftBox: boolean;
@@ -24,6 +25,7 @@ export function Advert({
   isAdvert?: boolean;
   className?: string;
   isLobby?: boolean;
+  isQuizStarted?:boolean;
 }) {
   // console.log("ileft", isLeftBox, isRightBox);
   const quizLink =
@@ -91,7 +93,7 @@ export function Advert({
           isAdvert && "hidden"
         )}
       >
-        {!isLobby && (
+        {isAdvert && (
           <Button
             onClick={(e) => {
               e.stopPropagation();

@@ -24,6 +24,7 @@ import { QuizSettings } from "../quizSettings/QuizSettings";
 import { MdNavigateBefore } from "react-icons/md";
 import { useRouter } from "next/navigation";
 import { Switch } from "@/components/ui/switch";
+import { ShareQuiz } from "./_components";
 
 export default function AddQuizQuestions({
   quizId,
@@ -45,6 +46,7 @@ export default function AddQuizQuestions({
   const [accessibility, setAccessibility] = useState(data?.accessibility);
   const { postData } = usePostRequest<TQuiz<TQuestion[]>>("engagements/quiz");
   const [updatingMode, setUpdatingMode] = useState(false);
+  const [isShare, setIsShare] = useState(false);
 
   function editQuestion(q: TQuestion | null) {
     setQuestion(q);
@@ -92,7 +94,11 @@ export default function AddQuizQuestions({
     });
     setUpdatingMode(false);
   }
-  console.log(data);
+  // console.log(data);
+
+  function onShare() {
+    setIsShare((prev) => !prev);
+  }
 
   console.log({ accessibility: accessibility });
 
@@ -189,9 +195,11 @@ export default function AddQuizQuestions({
       </div>
       <div className="w-full bg-white fixed bottom-0 border-t inset-x-0 z-50 px-4 sm:px-6 py-4 flex items-center justify-between">
         <Button
-            onClick={() =>
-              router.push(`/e/${workspaceAlias}/quiz/o/${quizId}/presentation?type=preview`)
-            }
+          onClick={() =>
+            router.push(
+              `/e/${workspaceAlias}/quiz/o/${quizId}/presentation?type=preview`
+            )
+          }
           disabled={isDisabled}
           className="gap-x-2 bg-basePrimary-200  border-basePrimary border  rounded-xl h-9"
         >
@@ -218,8 +226,9 @@ export default function AddQuizQuestions({
         <div className="flex items-center  gap-x-2">
           <Button
             onClick={() => {
-            
-              router.push(`/e/${workspaceAlias}/quiz/a/${quizId}/leaderboard?type=o`)
+              router.push(
+                `/e/${workspaceAlias}/quiz/a/${quizId}/leaderboard?type=o`
+              );
             }}
             disabled={isDisabled}
             className="gap-x-2 bg-basePrimary-200 px-2 hidden sm:flex border-basePrimary border  rounded-xl h-9"
@@ -240,6 +249,7 @@ export default function AddQuizQuestions({
               <p className="bg-basePrimary  gradient-text">Present</p>
             </Button> */}
           <Button
+            onClick={onShare}
             disabled={isDisabled}
             className="gap-x-2 bg-basePrimary-200 border-basePrimary border  rounded-xl h-9"
           >
@@ -251,6 +261,7 @@ export default function AddQuizQuestions({
           {data && accessibility && (
             <div className="hidden text-sm sm:flex items-center gap-x-1">
               <Switch
+                disabled={updatingMode}
                 // disabled={organization && organization?.subscriptionPlan === "Free"}
                 checked={accessibility.live}
                 onClick={() => updateMode()}
@@ -276,6 +287,8 @@ export default function AddQuizQuestions({
           organization={organization}
         />
       )}
+
+      {isShare && data && <ShareQuiz quiz={data} close={onShare} />}
     </>
   );
 }
