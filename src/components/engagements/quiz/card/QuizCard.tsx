@@ -9,7 +9,7 @@ import { QUsers } from "@/constants";
 import { useRouter } from "next/navigation";
 import { TQuiz, TQuestion, TOrganizationQuiz } from "@/types/quiz";
 import { cn } from "@/lib/utils";
-import ZikoroImage from "@/components/custom/ZikoroImage";
+
 
 export function QuizCard({
   quiz,
@@ -73,7 +73,7 @@ export function QuizCard({
         </div>
 
         {quiz?.coverImage ? (
-          <ZikoroImage
+          <Image
             className="w-full rounded-t-md h-48 2xl:h-56 object-cover"
             alt="quiz"
             src={quiz?.coverImage}
