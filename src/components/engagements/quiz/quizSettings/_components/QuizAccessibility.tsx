@@ -191,24 +191,7 @@ export function QuizAccessibility({
   const [loading, setLoading] = useState(false);
   const { postData, isLoading } =
     usePostRequest<Partial<TQuiz<TQuestion[]>>>("engagements/quiz");
-  const [accessibility, setAccessibility] = useState({
-    visible: false,
-    review: false,
-    countdown: true,
-    timer: true,
-    countdownTransition: true,
-    countDown: 5,
-    disable: false,
-    playMusic: false,
-    musicList: quiz?.accessibility ? quiz?.accessibility?.musicList : null,
-    music: quiz?.accessibility ? quiz?.accessibility?.music : null,
-    live: false,
-    isCollectPhone: false,
-    isCollectEmail: false,
-    isForm: false,
-    showAnswer: false,
-    showResult: false,
-  });
+  const [accessibility, setAccessibility] = useState(quiz?.accessibility)
   const isQuiz = useMemo(() => {
     return quiz.interactionType === "quiz";
   }, [quiz]);
@@ -294,7 +277,7 @@ export function QuizAccessibility({
   }
   return (
     <div className="w-full flex flex-col items-center gap-4">
-      <div className="flex w-full text-mobile sm:text-sm items-center justify-between">
+      {/* <div className="flex w-full text-mobile sm:text-sm items-center justify-between">
         <div className="flex flex-col items-start justify-start">
           <p>Make{isQuiz ? " Quiz " : " Poll "}Visible to Everyone?</p>
           <p className="text-xs text-gray-500">
@@ -313,7 +296,7 @@ export function QuizAccessibility({
           }
           className=""
         />
-      </div>
+      </div> */}
 
       {accessibility?.visible && (
         <>
