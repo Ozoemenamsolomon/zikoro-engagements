@@ -99,7 +99,7 @@ export function SendMailModal<T>({
         url,
         leaderboard:
           quiz?.interactionType !== "poll"
-            ? `/interaction/quiz/scoreboard/${actualQuiz?.quizAlias}?id=${id}&type=a`
+            ? `/e/${actualQuiz?.workspaceAlias}/quiz/o/${actualQuiz?.quizAlias}/leaderboard?id=${id}&type=a`
             : `/interaction/poll/sheet/${actualQuiz?.quizAlias}?id=${id}&type=a`,
       },
     };
