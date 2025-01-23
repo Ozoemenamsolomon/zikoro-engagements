@@ -14,8 +14,6 @@ import { AvatarFullConfig } from "react-nice-avatar";
 import { FeedStar } from "styled-icons/octicons";
 import { Plus } from "styled-icons/bootstrap";
 import { Reorder } from "framer-motion";
-import { Button } from "@/components/custom";
-import { Minimize2 } from "styled-icons/feather";
 import Image from "next/image";
 
 type TLeaderBoard = {

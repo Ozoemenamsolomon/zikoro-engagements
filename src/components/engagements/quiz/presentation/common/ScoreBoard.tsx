@@ -9,14 +9,12 @@ import {
   TQuestion,
   TConnectedUser,
   TLiveQuizParticipant,
+  TExportedAnswer,
 } from "@/types/quiz";
 import { useMemo, useState } from "react";
-import { ArrowBackOutline } from "styled-icons/evaicons-outline";
 import { cn } from "@/lib/utils";
-import { CheckCircle } from "styled-icons/bootstrap";
-import { CloseOutline } from "styled-icons/zondicons";
 import Avatar, { AvatarFullConfig } from "react-nice-avatar";
-import { ArrowUpwardOutline } from "styled-icons/evaicons-outline";
+import * as XLSX from "xlsx";
 import { useDeleteRequest, usePostRequest } from "@/hooks/services/requests";
 import { InlineIcon } from "@iconify/react/dist/iconify.js";
 import { formatPosition } from "@/utils";
@@ -28,7 +26,7 @@ type TLeaderBoard = {
   image: Required<AvatarFullConfig>;
   totalScore: number;
   recentScore: number;
-  answeredQuestion: TRefinedQuestion[]
+  answeredQuestion: TRefinedQuestion[];
 };
 
 interface TParticipantScores {
@@ -147,12 +145,15 @@ export function ScoreBoard({
             recentAt: createdAt,
             recentScore: Number(ans?.attendeePoints),
             totalScore: 0,
-            answeredQuestion: [ans?.answeredQuestion]
+            answeredQuestion: [ans?.answeredQuestion],
           };
         }
         participantGroup[key].totalScore += Number(ans?.attendeePoints);
 
-        participantGroup[key].answeredQuestion = [...participantGroup[key].answeredQuestion, ans?.answeredQuestion]
+        participantGroup[key].answeredQuestion = [
+          ...participantGroup[key].answeredQuestion,
+          ans?.answeredQuestion,
+        ];
 
         if (createdAt > participantGroup[key].recentAt) {
           participantGroup[key].recentScore = Number(ans?.attendeePoints);
@@ -167,7 +168,7 @@ export function ScoreBoard({
           image: data?.image,
           recentScore: Number(data?.recentScore),
           totalScore: data?.totalScore,
-          answeredQuestion: data?.answeredQuestion
+          answeredQuestion: data?.answeredQuestion,
         })
       );
 
@@ -186,8 +187,6 @@ export function ScoreBoard({
   function onToggleIndResult() {
     setIsViewIndResult((prev) => !prev);
   }
-
-   
 
   const userPosition = useMemo(() => {
     if (isAttendee && actualQuiz) {
@@ -262,6 +261,35 @@ export function ScoreBoard({
     setIsLoadingClear(false);
   }
 
+  function exportAsCSV() {
+    const exportedAnswer: TExportedAnswer[] = answers?.map((answer) => {
+      const {
+        answeredQuestion,
+        questionId,
+        avatar,
+        correctOptionId,
+        selectedOptionId,
+        ...rest
+      } = answer;
+      const actualQuestion = actualQuiz?.questions?.find(
+        (v) => v?.id === questionId
+      );
+      return {
+        ...rest,
+        question: actualQuestion?.question!,
+        selectedOption: actualQuestion?.options?.find(
+          (v) => v?.optionId === selectedOptionId?.optionId
+        )?.option,
+      };
+    });
+
+
+    const worksheet = XLSX.utils.json_to_sheet(exportedAnswer);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Quiz Data");
+    XLSX.writeFile(workbook, "quiz-answer.xlsx");
+  }
+
   return (
     <>
       {!isViewIndResult && (
@@ -303,7 +331,10 @@ export function ScoreBoard({
                       />
                       <p>View Individual Quiz Result</p>
                     </Button>
-                    <Button className="flex items-center rounded-none bg-basePrimary h-10 text-white  gap-x-2">
+                    <Button
+                      onClick={exportAsCSV}
+                      className="flex items-center rounded-none bg-basePrimary h-10 text-white  gap-x-2"
+                    >
                       <InlineIcon
                         icon="carbon:export"
                         fontSize={18}
@@ -1041,7 +1072,9 @@ function OrganizerSheet({
   const [selectedPlayer, setSelectedPlayer] = useState<TselectedPlayer | null>(
     null
   );
-  const [refinedQuiz, setQuiz] = useState<TQuiz<TRefinedQuestion[]> | null>(null)
+  const [refinedQuiz, setQuiz] = useState<TQuiz<TRefinedQuestion[]> | null>(
+    null
+  );
   const [isOpen, setIsOpen] = useState(false);
 
   const userAvatar = useMemo(() => {
@@ -1052,9 +1085,6 @@ function OrganizerSheet({
       )?.image;
     }
   }, [players]);
-
-
-
 
   return (
     <div className="w-full max-w-7xl absolute h-[90vh] overflow-y-auto vert-scroll rounded-lg top-0 m-auto inset-0 bg-white p-6">
@@ -1107,7 +1137,7 @@ function OrganizerSheet({
           )}
         </button>
       </div>
-      {selectedPlayer  && refinedQuiz && (
+      {selectedPlayer && refinedQuiz && (
         <AnswerSheet
           className="relative bg-transparent max-w-full"
           answer={answers}
@@ -1126,7 +1156,7 @@ function OrganizerPlayerDropDown({
   selectedPlayer,
   close,
   setQuiz,
-  quiz
+  quiz,
 }: {
   players: TLeaderBoard[];
   setSelectedPlayer: React.Dispatch<
@@ -1135,8 +1165,9 @@ function OrganizerPlayerDropDown({
   selectedPlayer: TselectedPlayer | null;
   close: () => void;
   setQuiz: React.Dispatch<
-  React.SetStateAction<TQuiz<TRefinedQuestion[]> | null>>;
-  quiz: TQuiz<TQuestion[]>
+    React.SetStateAction<TQuiz<TRefinedQuestion[]> | null>
+  >;
+  quiz: TQuiz<TQuestion[]>;
 }) {
   return (
     <div
@@ -1153,12 +1184,11 @@ function OrganizerPlayerDropDown({
             <button
               onClick={() => {
                 setSelectedPlayer({ player, playerIndex: index });
-                const data : TQuiz<TRefinedQuestion[]> = {
+                const data: TQuiz<TRefinedQuestion[]> = {
                   ...quiz,
-                  questions: player?.answeredQuestion
-
-                }
-                setQuiz(data)
+                  questions: player?.answeredQuestion,
+                };
+                setQuiz(data);
                 close();
               }}
               className={cn(

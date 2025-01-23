@@ -116,6 +116,29 @@ export interface TAnswer {
   answeredQuestion: TRefinedQuestion
 }
 
+export interface TExportedAnswer {
+  id: number;
+  created_at: string;
+  attendeeId: string | null;
+  attendeeName: string;
+  quizId: number;
+  quizParticipantId: string;
+  startTime: string;
+  endTime: string;
+  maxPoints: number;
+  maxDuration: number;
+  attendeePoints: number;
+  answerDuration: number;
+  quizAlias: string;
+  selectedOption: string
+  email: string;
+  phone: string;
+  eventAlias: string;
+  question:string;
+  
+
+}
+
 export interface TConnectedUser {
   connectedAt: string;
   userId: string;
