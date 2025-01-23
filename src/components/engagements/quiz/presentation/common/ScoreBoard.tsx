@@ -264,6 +264,7 @@ export function ScoreBoard({
     });
 
     setIsLoadingClear(false);
+    onToggleClear()
   }
 
   async function exportAsCSV() {
