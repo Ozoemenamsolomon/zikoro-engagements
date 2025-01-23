@@ -43,7 +43,7 @@ export default function ScoreBoardPage({ quizId }: { quizId: string }) {
       router.push(`/e/${actualQuiz?.workspaceAlias}/quiz/${type}/${quizId}/presentation`);
   }
 
-  //console.log("actual", actualQuiz, quiz, id);
+  console.log("actual", actualQuiz, quiz, id);
 
   return (
     <>

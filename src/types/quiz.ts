@@ -113,6 +113,7 @@ export interface TAnswer {
   phone: string;
   correctOptionId: { optionId: string };
   eventAlias: string;
+  answeredQuestion: TRefinedQuestion
 }
 
 export interface TConnectedUser {

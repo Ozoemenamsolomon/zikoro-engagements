@@ -28,6 +28,7 @@ type TLeaderBoard = {
   image: Required<AvatarFullConfig>;
   totalScore: number;
   recentScore: number;
+  answeredQuestion: TRefinedQuestion[]
 };
 
 interface TParticipantScores {
@@ -37,6 +38,58 @@ interface TParticipantScores {
   totalScore: number;
   recentScore: number;
   recentAt: Date;
+  answeredQuestion: TRefinedQuestion[];
+}
+
+function PlayerRankWidget({
+  player,
+  index,
+  id,
+  isSelected,
+  className,
+}: {
+  id?: string;
+  index: number;
+  player: TLeaderBoard;
+  isSelected?: boolean;
+  className?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "grid grid-cols-3 px-8 items-center w-full py-3 border-b ",
+        player.quizParticipantId === id && "bg-basePrimary-200",
+        className
+      )}
+    >
+      <div className="flex items-center col-span-2 gap-x-3">
+        <p>{`${index + 4}th`}</p>
+        <div className="w-fit ml-10 h-fit relative">
+          <Avatar
+            shape="square"
+            style={{ borderRadius: "12px" }}
+            className="w-[3rem]  h-[3rem]"
+            {...player?.image}
+          />
+          {player?.quizParticipantId === id && (
+            <span className="absolute top-[-2px] right-0 text-white bg-basePrimary rounded-3xl p-1 text-xs">
+              You
+            </span>
+          )}
+        </div>
+
+        <p className="">{player?.attendeeName}</p>
+      </div>
+      <div className="flex items-center justify-center gap-x-2">
+        <p className="flex items-center">
+          <span>{Number(player?.totalScore ?? 0).toFixed(0)} pt</span>
+        </p>
+        {isSelected && (
+          <InlineIcon icon="iconamoon:arrow-down-2-thin" fontSize={20} />
+        )}
+      </div>
+    </div>
+  );
 }
 
 export function ScoreBoard({
@@ -61,6 +114,7 @@ export function ScoreBoard({
   const { deleteData } = useDeleteRequest(
     `engagements/quiz/answer/${actualQuiz?.quizAlias}`
   );
+  const [isViewIndResult, setIsViewIndResult] = useState(false);
   const { postData: updateQuiz, isLoading } =
     usePostRequest<Partial<TQuiz<TQuestion[]>>>("engagements/quiz");
   const { deleteData: deleteQuizLobby } = useDeleteRequest<
@@ -93,9 +147,12 @@ export function ScoreBoard({
             recentAt: createdAt,
             recentScore: Number(ans?.attendeePoints),
             totalScore: 0,
+            answeredQuestion: [ans?.answeredQuestion]
           };
         }
         participantGroup[key].totalScore += Number(ans?.attendeePoints);
+
+        participantGroup[key].answeredQuestion = [...participantGroup[key].answeredQuestion, ans?.answeredQuestion]
 
         if (createdAt > participantGroup[key].recentAt) {
           participantGroup[key].recentScore = Number(ans?.attendeePoints);
@@ -110,6 +167,7 @@ export function ScoreBoard({
           image: data?.image,
           recentScore: Number(data?.recentScore),
           totalScore: data?.totalScore,
+          answeredQuestion: data?.answeredQuestion
         })
       );
 
@@ -123,11 +181,13 @@ export function ScoreBoard({
     }
   }, [answers]);
 
-  function onClose() {
-    //setQuizResult((prev) => !prev);
+  function onClose() {}
+
+  function onToggleIndResult() {
+    setIsViewIndResult((prev) => !prev);
   }
 
-  // console.log("quizresult", quiz);
+   
 
   const userPosition = useMemo(() => {
     if (isAttendee && actualQuiz) {
@@ -204,239 +264,218 @@ export function ScoreBoard({
 
   return (
     <>
-      {isQuizResult && quiz ? (
-        <AttendeeScore
-          quiz={quiz}
-          close={onClose}
-          id={id}
-          userPosition={userPosition}
-          userScore={userScore}
-          setIsQuizResult={setIsQuizResult}
-          noOfParticipants={board.length}
-          userAvatar={userAvatar}
-          answers={answers}
-        />
-      ) : (
-        <div className="w-full inset-0 fixed overflow-x-auto h-full ">
-          {!isAttendee ? (
-            <div className="w-full flex items-center justify-between">
-              <Button className="rounded-lg border border-basePrimary gap-x-2 bg-basePrimary-200">
-                <InlineIcon
-                  fontSize={22}
-                  icon="iconoir:leaderboard-star"
-                  color="#9D00FF"
-                />
-                <p className="gradient-text bg-basePrimary">LeaderBoard</p>
-              </Button>
-
-              <div className="flex items-center gap-x-[1px]">
-                <Button className="flex items-center text-white bg-basePrimary h-10 rounded-none rounded-l-lg gap-x-2">
-                  <InlineIcon
-                    icon="mdi:eye-outline"
-                    fontSize={18}
-                    color="#ffffff"
-                  />
-                  <p>View Individual Quiz Result</p>
-                </Button>
-                <Button className="flex items-center rounded-none bg-basePrimary h-10 text-white rounded-r-lg gap-x-2">
-                  <InlineIcon
-                    icon="carbon:export"
-                    fontSize={18}
-                    color="#ffffff"
-                  />
-                  <p>Export as CSV</p>
-                </Button>
-                <Button
-                  onClick={onToggleClear}
-                  className="flex items-center rounded-none h-10  bg-red-500 text-white rounded-r-lg gap-x-2"
-                >
-                  <InlineIcon
-                    icon="mingcute:delete-line"
-                    fontSize={18}
-                    color="#ffffff"
-                  />
-                  <p>Delete Record</p>
-                </Button>
-              </div>
-            </div>
+      {!isViewIndResult && (
+        <>
+          {isQuizResult && quiz ? (
+            <AttendeeScore
+              quiz={quiz}
+              close={onClose}
+              id={id}
+              userPosition={userPosition}
+              userScore={userScore}
+              setIsQuizResult={setIsQuizResult}
+              noOfParticipants={board.length}
+              userAvatar={userAvatar}
+              answers={answers}
+            />
           ) : (
-            <h2 className="font-semibold text-base sm:text-lg text-center ">
-              LeaderBoard
-            </h2>
-          )}
-          <div className="absolute inset-x-0  mx-auto px-4 w-full max-w-3xl mt-8">
-            <div className="mx-auto w-full relative">
-              {Array.isArray(board) && board?.length > 0 && (
-                <div className=" flex w-full justify-center text-sm">
-                  <div
-                    className={cn(
-                      "flex invisible flex-col relative left-11  mt-8 gap-y-4 justify-center",
-                      board[1]?.attendeeName && "visible"
-                    )}
-                  >
-                    <div className="flex flex-col mr-11 items-center justify-center gap-y-2">
-                      <Avatar
-                        shape="square"
-                        style={{ borderRadius: "12px" }}
-                        className="w-[5rem]  h-[5rem]"
-                        {...board[1]?.image}
-                      />
-                      <p className="text-zinc-700 text-sm font-medium">
-                        {board[1]?.attendeeName ?? ""}
-                      </p>
-                    </div>
+            <div className="w-full inset-0 fixed overflow-x-auto h-full ">
+              {!isAttendee ? (
+                <div className="w-full flex items-center p-3 justify-between">
+                  <Button className="rounded-lg border border-basePrimary gap-x-2 bg-basePrimary-200">
+                    <InlineIcon
+                      fontSize={22}
+                      icon="iconoir:leaderboard-star"
+                      color="#9D00FF"
+                    />
+                    <p className="gradient-text bg-basePrimary">LeaderBoard</p>
+                  </Button>
 
-                    <div className="w-[11.2rem]  relative h-fit">
-                      <Image
-                        src="/secondp.png"
-                        className="w-[11.2rem]  object-cover"
-                        alt=""
-                        width={150}
-                        height={500}
+                  <div className="flex items-center gap-x-[1px]">
+                    <Button
+                      onClick={onToggleIndResult}
+                      className="flex items-center text-white bg-basePrimary h-10 rounded-none rounded-l-lg gap-x-2"
+                    >
+                      <InlineIcon
+                        icon="mdi:eye-outline"
+                        fontSize={18}
+                        color="#ffffff"
                       />
-                      <div className="absolute mr-11 inset-x-0 top-10 text-white mx-auto flex flex-col items-center justify-center">
-                        <p className=" font-semibold text-lg">2</p>
-                        <p className=" bg-white text-basePrimary font-medium rounded-3xl px-3 py-1">{`${
-                          board[1]?.totalScore?.toFixed(0) ?? 0
-                        } pt`}</p>
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    className={cn(
-                      "flex flex-col relative z-30 gap-y-4 mt-[-6rem] justify-center invisible",
-                      board[0]?.attendeeName && "visible"
-                    )}
-                  >
-                    <div className="flex flex-col items-center justify-center gap-y-2">
-                      <Avatar
-                        shape="square"
-                        style={{ borderRadius: "12px" }}
-                        className="w-[5rem] h-[5rem]"
-                        {...board[0]?.image}
+                      <p>View Individual Quiz Result</p>
+                    </Button>
+                    <Button className="flex items-center rounded-none bg-basePrimary h-10 text-white  gap-x-2">
+                      <InlineIcon
+                        icon="carbon:export"
+                        fontSize={18}
+                        color="#ffffff"
                       />
-                      <p className="text-zinc-700 font-medium text-sm">
-                        {board[0]?.attendeeName ?? ""}
-                      </p>
-                    </div>
-
-                    <div className="w-[11.2rem]  relative h-fit">
-                      <Image
-                        src="/firstp.png"
-                        className="w-[11.2rem] object-cover"
-                        alt=""
-                        width={150}
-                        height={500}
+                      <p>Export as CSV</p>
+                    </Button>
+                    <Button
+                      onClick={onToggleClear}
+                      className="flex items-center rounded-none h-10  bg-red-500 text-white rounded-r-lg gap-x-2"
+                    >
+                      <InlineIcon
+                        icon="mingcute:delete-line"
+                        fontSize={18}
+                        color="#ffffff"
                       />
-                      <div className="absolute inset-x-0 top-10 text-white mx-auto flex flex-col items-center justify-center">
-                        <p className="font-semibold text-lg ">1</p>
-                        <p className="font-medium bg-white text-basePrimary rounded-3xl px-3 py-1">{`${
-                          board[0]?.totalScore.toFixed(0) ?? 0
-                        } pt`}</p>
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    className={cn(
-                      "flex flex-col relative right-11 mt-10 gap-y-4 justify-center invisible",
-                      board[2]?.attendeeName && "visible"
-                    )}
-                  >
-                    <div className="flex flex-col ml-11 items-center justify-center gap-y-2">
-                      <Avatar
-                        shape="square"
-                        style={{ borderRadius: "12px" }}
-                        className="w-[5rem] h-[5rem]"
-                        {...board[2]?.image}
-                      />
-                      <p className="text-zinc-700 text-sm font-medium">
-                        {board[2]?.attendeeName ?? ""}
-                      </p>
-                    </div>
-
-                    <div className="w-[11.2rem] relative h-fit">
-                      <Image
-                        src="/thirdp.png"
-                        className="w-[11.2rem] object-cover"
-                        alt=""
-                        width={150}
-                        height={500}
-                      />
-                      <div className="absolute inset-x-0 ml-11 top-10 text-white mx-auto flex flex-col items-center justify-center">
-                        <p className="font-semibold text-lg">3</p>
-                        <p className="font-medium bg-white text-basePrimary rounded-3xl px-3 py-1">{`${
-                          board[2]?.totalScore.toFixed(0) ?? 0
-                        } pt`}</p>
-                      </div>
-                    </div>
+                      <p>Delete Record</p>
+                    </Button>
                   </div>
                 </div>
+              ) : (
+                <h2 className="font-semibold text-base sm:text-lg text-center ">
+                  LeaderBoard
+                </h2>
               )}
-
-              <div className="w-full overflow-y-auto pb-20 no-scrollbar z-50 bg-white absolute inset-x-0 h-full top-80 rounded-t-lg py-6 ">
-                {board.slice(3, board?.length).length > 0 && (
-                  <div className="w-full px-8 text-sm pb-2 grid grid-cols-3">
-                    <p>Rank</p>
-                    <p>Participants ({board.slice(3, board?.length).length})</p>
-                    <p className="text-end">Points</p>
-                  </div>
-                )}
-                <div className="w-full flex flex-col items-start justify-start">
-                  {Array.isArray(board) &&
-                    board.slice(3, board?.length).map((player, index) => (
+              <div className="absolute inset-x-0  mx-auto px-4 w-full max-w-3xl mt-8">
+                <div className="mx-auto w-full relative">
+                  {Array.isArray(board) && board?.length > 0 && (
+                    <div className=" flex w-full justify-center text-sm">
                       <div
-                        key={index}
                         className={cn(
-                          "grid grid-cols-3 px-8 items-center w-full py-3 border-b ",
-                          player.quizParticipantId === id &&
-                            "bg-basePrimary-200"
+                          "flex invisible flex-col relative left-11  mt-8 gap-y-4 justify-center",
+                          board[1]?.attendeeName && "visible"
                         )}
                       >
-                        <div className="flex items-center col-span-2 gap-x-3">
-                          <p>{`${index + 4}th`}</p>
-                          {/* <Image
-                              src="/quizattendee.png"
-                              className="w-[4rem] h-[4rem]"
-                              alt=""
-                              width={150}
-                              height={150}
-                            />*/}
-                          <div className="w-fit ml-10 h-fit relative">
-                            <Avatar
-                              shape="square"
-                              style={{ borderRadius: "12px" }}
-                              className="w-[3rem]  h-[3rem]"
-                              {...player?.image}
-                            />
-                            {player?.quizParticipantId === id && (
-                              <span className="absolute top-[-2px] right-0 text-white bg-basePrimary rounded-3xl p-1 text-xs">
-                                You
-                              </span>
-                            )}
-                          </div>
-
-                          <p className="">{player?.attendeeName}</p>
-                        </div>
-                        <div className="flex items-center justify-end gap-x-1">
-                          <p className="flex items-center">
-                            <span>
-                              {Number(player?.totalScore ?? 0).toFixed(0)} pt
-                            </span>
+                        <div className="flex flex-col mr-11 items-center justify-center gap-y-2">
+                          <Avatar
+                            shape="square"
+                            style={{ borderRadius: "12px" }}
+                            className="w-[5rem]  h-[5rem]"
+                            {...board[1]?.image}
+                          />
+                          <p className="text-zinc-700 text-sm font-medium">
+                            {board[1]?.attendeeName ?? ""}
                           </p>
-                          {/* {player?.recentScore > 0 && (
-                            <div className="flex text-white bg-basePrimary rounded-3xl px-2 py-1 items-center gap-x-1 text-xs">
-                              <ArrowUpwardOutline size={15} />
-                              <p>{Number(player?.recentScore)?.toFixed(0)}</p>
-                            </div>
-                          )} */}
+                        </div>
+
+                        <div className="w-[11.2rem]  relative h-fit">
+                          <Image
+                            src="/secondp.png"
+                            className="w-[11.2rem]  object-cover"
+                            alt=""
+                            width={150}
+                            height={500}
+                          />
+                          <div className="absolute mr-11 inset-x-0 top-10 text-white mx-auto flex flex-col items-center justify-center">
+                            <p className=" font-semibold text-lg">2</p>
+                            <p className=" bg-white text-basePrimary font-medium rounded-3xl px-3 py-1">{`${
+                              board[1]?.totalScore?.toFixed(0) ?? 0
+                            } pt`}</p>
+                          </div>
                         </div>
                       </div>
-                    ))}
+                      <div
+                        className={cn(
+                          "flex flex-col relative z-30 gap-y-4 mt-[-6rem] justify-center invisible",
+                          board[0]?.attendeeName && "visible"
+                        )}
+                      >
+                        <div className="flex flex-col items-center justify-center gap-y-2">
+                          <Avatar
+                            shape="square"
+                            style={{ borderRadius: "12px" }}
+                            className="w-[5rem] h-[5rem]"
+                            {...board[0]?.image}
+                          />
+                          <p className="text-zinc-700 font-medium text-sm">
+                            {board[0]?.attendeeName ?? ""}
+                          </p>
+                        </div>
+
+                        <div className="w-[11.2rem]  relative h-fit">
+                          <Image
+                            src="/firstp.png"
+                            className="w-[11.2rem] object-cover"
+                            alt=""
+                            width={150}
+                            height={500}
+                          />
+                          <div className="absolute inset-x-0 top-10 text-white mx-auto flex flex-col items-center justify-center">
+                            <p className="font-semibold text-lg ">1</p>
+                            <p className="font-medium bg-white text-basePrimary rounded-3xl px-3 py-1">{`${
+                              board[0]?.totalScore.toFixed(0) ?? 0
+                            } pt`}</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        className={cn(
+                          "flex flex-col relative right-11 mt-10 gap-y-4 justify-center invisible",
+                          board[2]?.attendeeName && "visible"
+                        )}
+                      >
+                        <div className="flex flex-col ml-11 items-center justify-center gap-y-2">
+                          <Avatar
+                            shape="square"
+                            style={{ borderRadius: "12px" }}
+                            className="w-[5rem] h-[5rem]"
+                            {...board[2]?.image}
+                          />
+                          <p className="text-zinc-700 text-sm font-medium">
+                            {board[2]?.attendeeName ?? ""}
+                          </p>
+                        </div>
+
+                        <div className="w-[11.2rem] relative h-fit">
+                          <Image
+                            src="/thirdp.png"
+                            className="w-[11.2rem] object-cover"
+                            alt=""
+                            width={150}
+                            height={500}
+                          />
+                          <div className="absolute inset-x-0 ml-11 top-10 text-white mx-auto flex flex-col items-center justify-center">
+                            <p className="font-semibold text-lg">3</p>
+                            <p className="font-medium bg-white text-basePrimary rounded-3xl px-3 py-1">{`${
+                              board[2]?.totalScore.toFixed(0) ?? 0
+                            } pt`}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="w-full overflow-y-auto pb-20 no-scrollbar z-50 bg-white absolute inset-x-0 h-full top-80 rounded-t-lg py-6 ">
+                    {board.slice(3, board?.length).length > 0 && (
+                      <div className="w-full px-8 text-sm pb-2 grid grid-cols-3">
+                        <p>Rank</p>
+                        <p>
+                          Participants ({board.slice(3, board?.length).length})
+                        </p>
+                        <p className="text-end">Points</p>
+                      </div>
+                    )}
+                    <div className="w-full flex flex-col items-start justify-start">
+                      {Array.isArray(board) &&
+                        board
+                          .slice(3, board?.length)
+                          .map((player, index) => (
+                            <PlayerRankWidget
+                              player={player}
+                              key={index}
+                              id={id}
+                              index={index}
+                            />
+                          ))}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
+          )}
+        </>
+      )}
+
+      {isViewIndResult && (
+        <OrganizerSheet
+          close={onToggleIndResult}
+          answers={answers}
+          quiz={actualQuiz}
+          players={board}
+        />
       )}
 
       {isToClear && (
@@ -624,11 +663,13 @@ function AnswerSheet({
   close,
   answer,
   userAvatar,
+  className,
 }: {
   quiz: TQuiz<TRefinedQuestion[]>;
   answer: TAnswer[];
-  close: () => void;
+  close?: () => void;
   userAvatar: Required<AvatarFullConfig> | undefined;
+  className?: string;
 }) {
   // const [showExplanation, setShowExplanation] = useState(false);
 
@@ -638,13 +679,29 @@ function AnswerSheet({
   const optionLetter = ["1", "2", "3", "4"];
 
   return (
-    <div className="w-full max-w-4xl absolute top-0 mx-auto inset-x-0 bg-white p-4">
-      <Button onClick={close} className="gap-x-1 self-start w-fit h-fit px-2">
-        <ArrowBackOutline size={20} />
-        <p className="text-sm">Back</p>
-      </Button>
+    <div
+      className={cn(
+        "w-full max-w-4xl absolute top-0 mx-auto inset-x-0 bg-white p-4",
+        className
+      )}
+    >
+      {close && (
+        <div className="w-full flex items-center justify-between pb-3 border-b">
+          <p>Quiz Result</p>
+          <Button
+            onClick={close}
+            className="h-8 w-8 px-0  flex items-center justify-center self-end rounded-full bg-zinc-700"
+          >
+            <InlineIcon
+              icon={"mingcute:close-line"}
+              fontSize={20}
+              color="#ffffff"
+            />
+          </Button>
+        </div>
+      )}
 
-      <div className="W-full max-w-xl mx-auto mt-8 flex gap-y-3 flex-col items-start justify-start">
+      <div className="W-full max-w-2xl mx-auto mt-8 flex gap-y-3 flex-col items-start justify-start">
         {Array.isArray(quiz?.questions) &&
           quiz?.questions?.map((question, index) => {
             // correct answer index
@@ -870,8 +927,8 @@ function AnswerSheet({
                               className={cn(
                                 "absolute rounded-3xl bg-red-500 inset-0  h-full",
                                 typeof chosenAnswer?.isCorrect === "boolean" &&
-                                chosenAnswer?.isCorrect &&
-                                "bg-green-500"
+                                  chosenAnswer?.isCorrect &&
+                                  "bg-green-500"
                               )}
                             ></span>
                           </div>
@@ -965,8 +1022,156 @@ function AnswerSheet({
   );
 }
 
-function OrganizerSheet() {
+interface TselectedPlayer {
+  playerIndex: number;
+  player: TLeaderBoard;
+}
+
+function OrganizerSheet({
+  close,
+  players,
+  quiz,
+  answers,
+}: {
+  players: TLeaderBoard[];
+  close: () => void;
+  quiz: TQuiz<TQuestion[]> | null;
+  answers: TAnswer[];
+}) {
+  const [selectedPlayer, setSelectedPlayer] = useState<TselectedPlayer | null>(
+    null
+  );
+  const [refinedQuiz, setQuiz] = useState<TQuiz<TRefinedQuestion[]> | null>(null)
+  const [isOpen, setIsOpen] = useState(false);
+
+  const userAvatar = useMemo(() => {
+    if (selectedPlayer) {
+      const playerId = selectedPlayer?.player.quizParticipantId;
+      return players?.find(
+        ({ quizParticipantId, image }) => quizParticipantId === playerId
+      )?.image;
+    }
+  }, [players]);
+
+
+
+
   return (
-    <div className="w-full max-w-4xl absolute top-0 mx-auto inset-x-0 bg-white p-4"></div>
+    <div className="w-full max-w-7xl absolute h-[90vh] overflow-y-auto vert-scroll rounded-lg top-0 m-auto inset-0 bg-white p-6">
+      <div className="w-full flex items-center justify-between mb-6">
+        <button onClick={close}>
+          <InlineIcon
+            icon="material-symbols:arrow-back-rounded"
+            fontSize={20}
+          />
+        </button>
+
+        <p className="font-semibold text-base sm:text-lg">Player Result</p>
+        <Button className="flex items-center bg-basePrimary h-10 text-white rounded-lg gap-x-2">
+          <InlineIcon icon="carbon:export" fontSize={18} color="#ffffff" />
+          <p>Export as CSV</p>
+        </Button>
+      </div>
+
+      <div className="w-full max-w-sm mx-auto mb-6">
+        <p className="font-medium text-sm sm:text-base mb-2">
+          Select Recipient:
+        </p>
+        <button onClick={() => setIsOpen(true)} className="w-full relative">
+          {selectedPlayer ? (
+            <PlayerRankWidget
+              player={selectedPlayer.player}
+              index={selectedPlayer.playerIndex}
+              isSelected
+              className="border-b px-4"
+            />
+          ) : (
+            <div className="w-full border-b p-3 flex items-center justify-between">
+              <p className="text-gray-300">Select Player</p>
+              <InlineIcon
+                icon="iconoir:nav-arrow-up"
+                fontSize={18}
+                color="#d1d5db"
+              />
+            </div>
+          )}
+          {isOpen && quiz && (
+            <OrganizerPlayerDropDown
+              close={() => setIsOpen(false)}
+              players={players}
+              setQuiz={setQuiz}
+              quiz={quiz}
+              selectedPlayer={selectedPlayer}
+              setSelectedPlayer={setSelectedPlayer}
+            />
+          )}
+        </button>
+      </div>
+      {selectedPlayer  && refinedQuiz && (
+        <AnswerSheet
+          className="relative bg-transparent max-w-full"
+          answer={answers}
+          quiz={refinedQuiz}
+          userAvatar={userAvatar}
+          key={selectedPlayer.playerIndex}
+        />
+      )}
+    </div>
+  );
+}
+
+function OrganizerPlayerDropDown({
+  players,
+  setSelectedPlayer,
+  selectedPlayer,
+  close,
+  setQuiz,
+  quiz
+}: {
+  players: TLeaderBoard[];
+  setSelectedPlayer: React.Dispatch<
+    React.SetStateAction<TselectedPlayer | null>
+  >;
+  selectedPlayer: TselectedPlayer | null;
+  close: () => void;
+  setQuiz: React.Dispatch<
+  React.SetStateAction<TQuiz<TRefinedQuestion[]> | null>>;
+  quiz: TQuiz<TQuestion[]>
+}) {
+  return (
+    <div
+      onClick={(e) => e.stopPropagation()}
+      className="w-full absolute top-14"
+    >
+      <div
+        onClick={close}
+        className="w-full h-full inset-0 fixed z-[999]"
+      ></div>
+      <div className="w-full relative bg-white z-[9999] py-4">
+        <div className="w-full flex flex-col items-start justify-start">
+          {players.map((player, index) => (
+            <button
+              onClick={() => {
+                setSelectedPlayer({ player, playerIndex: index });
+                const data : TQuiz<TRefinedQuestion[]> = {
+                  ...quiz,
+                  questions: player?.answeredQuestion
+
+                }
+                setQuiz(data)
+                close();
+              }}
+              className={cn(
+                "w-full border-b",
+                selectedPlayer?.playerIndex === index && "bg-basePrimary-100"
+              )}
+              key={index}
+            >
+              <PlayerRankWidget player={player} index={index} />
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }

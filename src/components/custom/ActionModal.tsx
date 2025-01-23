@@ -57,11 +57,11 @@ export function ActionModal({
         </div>
         <div className="flex flex-col items-center justify-center gap-y-4">
           {modalTitle && (
-            <p className={cn("text-base sm:text-xl font-semibold", titleColor)}>
+            <p className={cn("text-base text-center sm:text-xl font-semibold", titleColor)}>
               {modalTitle}
             </p>
           )}
-          <p>{modalText || "Are you sure you want to continue?"}</p>
+          <p className="text-center w-full">{modalText || "Are you sure you want to continue?"}</p>
 
           <Button
             disabled={loading}
