@@ -112,6 +112,7 @@ export function ScoreBoard({
   const { deleteData } = useDeleteRequest(
     `engagements/quiz/answer/${actualQuiz?.quizAlias}`
   );
+  const [isExport, setIsExport] = useState(false);
   const [isViewIndResult, setIsViewIndResult] = useState(false);
   const { postData: updateQuiz, isLoading } =
     usePostRequest<Partial<TQuiz<TQuestion[]>>>("engagements/quiz");
@@ -188,6 +189,10 @@ export function ScoreBoard({
     setIsViewIndResult((prev) => !prev);
   }
 
+  function toggleIExport() {
+    setIsExport((prev) => !prev);
+  }
+
   const userPosition = useMemo(() => {
     if (isAttendee && actualQuiz) {
       const playerId = id;
@@ -261,7 +266,7 @@ export function ScoreBoard({
     setIsLoadingClear(false);
   }
 
-  function exportAsCSV() {
+  async function exportAsCSV() {
     const exportedAnswer: TExportedAnswer[] = answers?.map((answer) => {
       const {
         answeredQuestion,
@@ -283,11 +288,11 @@ export function ScoreBoard({
       };
     });
 
-
     const worksheet = XLSX.utils.json_to_sheet(exportedAnswer);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Quiz Data");
     XLSX.writeFile(workbook, "quiz-answer.xlsx");
+    toggleIExport();
   }
 
   return (
@@ -332,7 +337,7 @@ export function ScoreBoard({
                       <p>View Individual Quiz Result</p>
                     </Button>
                     <Button
-                      onClick={exportAsCSV}
+                      onClick={toggleIExport}
                       className="flex items-center rounded-none bg-basePrimary h-10 text-white  gap-x-2"
                     >
                       <InlineIcon
@@ -506,6 +511,20 @@ export function ScoreBoard({
           answers={answers}
           quiz={actualQuiz}
           players={board}
+        />
+      )}
+
+      {isExport && (
+        <ActionModal
+          close={toggleIExport}
+          titleColor="bg-basePrimary gradient-text"
+          title="Export"
+          modalTitle="Export to CSV"
+          modalText="Are you sure you want to continue?"
+          asynAction={exportAsCSV}
+          loading
+          buttonText="Export"
+          buttonColor="bg-basePrimary text-white"
         />
       )}
 
