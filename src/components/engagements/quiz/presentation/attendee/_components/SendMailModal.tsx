@@ -99,8 +99,8 @@ export function SendMailModal<T>({
         url,
         leaderboard:
           quiz?.interactionType !== "poll"
-            ? `/interaction/quiz/scoreboard/${actualQuiz?.quizAlias}?id=${id}`
-            : `/interaction/poll/sheet/${actualQuiz?.quizAlias}?id=${id}`,
+            ? `/e/${actualQuiz?.workspaceAlias}/quiz/o/${actualQuiz?.quizAlias}/leaderboard?id=${id}&type=a`
+            : `/interaction/poll/sheet/${actualQuiz?.quizAlias}?id=${id}&type=a`,
       },
     };
     await updateQuiz({ payload });

@@ -18,7 +18,7 @@ export function ActionModal({
 }: {
   close: () => void;
   asynAction: () => Promise<any>;
-  loading: boolean;
+  loading?: boolean;
   buttonText: string;
   buttonColor?: string;
   modalText?: string;

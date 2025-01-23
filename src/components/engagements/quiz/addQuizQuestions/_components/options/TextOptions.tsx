@@ -152,6 +152,7 @@ function SingleOption({
         <div className="w-full">
           <TextEditor
           placeholder="Enter Option"
+          defaultValue={addedOption}
             onChange={(value) => {
               form.setValue(`options.${index-1}.option` as const, value);
             }}

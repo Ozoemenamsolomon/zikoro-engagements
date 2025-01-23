@@ -41,15 +41,15 @@ interface TParticipantScores {
 
 function PlayerRankWidget({
   player,
-  index,
   id,
   isSelected,
   className,
+  position
 }: {
   id?: string;
-  index: number;
   player: TLeaderBoard;
   isSelected?: boolean;
+  position:string;
   className?: string;
 }) {
   return (
@@ -61,7 +61,7 @@ function PlayerRankWidget({
       )}
     >
       <div className="flex items-center col-span-2 gap-x-3">
-        <p>{`${index + 4}th`}</p>
+        <p>{position}</p>
         <div className="w-fit ml-10 h-fit relative">
           <Avatar
             shape="square"
@@ -146,7 +146,7 @@ export function ScoreBoard({
             recentAt: createdAt,
             recentScore: Number(ans?.attendeePoints),
             totalScore: 0,
-            answeredQuestion: [ans?.answeredQuestion],
+            answeredQuestion: [],
           };
         }
         participantGroup[key].totalScore += Number(ans?.attendeePoints);
@@ -264,6 +264,7 @@ export function ScoreBoard({
     });
 
     setIsLoadingClear(false);
+    onToggleClear()
   }
 
   async function exportAsCSV() {
@@ -493,7 +494,7 @@ export function ScoreBoard({
                               player={player}
                               key={index}
                               id={id}
-                              index={index}
+                              position={formatPosition(index + 4)}
                             />
                           ))}
                     </div>
@@ -522,7 +523,7 @@ export function ScoreBoard({
           modalTitle="Export to CSV"
           modalText="Are you sure you want to continue?"
           asynAction={exportAsCSV}
-          loading
+          
           buttonText="Export"
           buttonColor="bg-basePrimary text-white"
         />
@@ -1096,6 +1097,7 @@ function OrganizerSheet({
   );
   const [isOpen, setIsOpen] = useState(false);
 
+  console.log( refinedQuiz)
   const userAvatar = useMemo(() => {
     if (selectedPlayer) {
       const playerId = selectedPlayer?.player.quizParticipantId;
@@ -1103,7 +1105,7 @@ function OrganizerSheet({
         ({ quizParticipantId, image }) => quizParticipantId === playerId
       )?.image;
     }
-  }, [players]);
+  }, [selectedPlayer]);
 
   return (
     <div className="w-full max-w-7xl absolute h-[90vh] overflow-y-auto vert-scroll rounded-lg top-0 m-auto inset-0 bg-white p-6">
@@ -1130,7 +1132,8 @@ function OrganizerSheet({
           {selectedPlayer ? (
             <PlayerRankWidget
               player={selectedPlayer.player}
-              index={selectedPlayer.playerIndex}
+              
+              position={formatPosition(selectedPlayer.playerIndex+ 1)}
               isSelected
               className="border-b px-4"
             />
@@ -1216,7 +1219,7 @@ function OrganizerPlayerDropDown({
               )}
               key={index}
             >
-              <PlayerRankWidget player={player} index={index} />
+              <PlayerRankWidget player={player} position={formatPosition(index + 1)} />
             </button>
           ))}
         </div>

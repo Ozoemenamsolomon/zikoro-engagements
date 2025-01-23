@@ -227,7 +227,7 @@ export default function AddQuizQuestions({
           <Button
             onClick={() => {
               router.push(
-                `/e/${workspaceAlias}/quiz/a/${quizId}/leaderboard?type=o`
+                `/e/${workspaceAlias}/quiz/o/${quizId}/leaderboard?type=o`
               );
             }}
             disabled={isDisabled}
