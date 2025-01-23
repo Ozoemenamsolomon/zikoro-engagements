@@ -82,7 +82,7 @@ export function Option({
             typeof option?.isCorrect === "boolean" &&
               !option?.isCorrect &&
               showAnswerMetric &&
-              "bg-red-500 text-hwite",
+              "bg-red-500 text-white",
 
             isCorrectAnswer &&
               showAnswerMetric &&
@@ -109,14 +109,22 @@ export function Option({
           </span>
           <div className="w-full flex items-center justify-between">
             {showAnswerMetric && (
-              <div className="w-11/12 relative h-1 rounded-3xl bg-gray-200">
+              <div className="w-11/12 relative h-2 rounded-3xl bg-gray-200">
                 <span
                   style={{
                     width: chosedOption
                       ? `${((chosedOption / answer?.length) * 100).toFixed(0)}%`
                       : "0%",
                   }}
-                  className="absolute rounded-3xl inset-0 bg-basePrimary h-full"
+                  className={cn(
+                    "absolute rounded-3xl bg-[#001fcc] inset-0  h-full",
+                    option?.isCorrect !== "default" &&
+                      !option?.isCorrect &&
+                      "bg-red-500",
+                    option?.isCorrect !== "default" &&
+                      option?.isCorrect &&
+                      "bg-green-500"
+                  )}
                 ></span>
               </div>
             )}
@@ -207,14 +215,22 @@ export function Option({
           </div>
 
           {showAnswerMetric && (
-            <div className="w-full relative h-1 rounded-3xl bg-gray-200">
+            <div className="w-full relative h-2 rounded-3xl bg-gray-200">
               <span
                 style={{
                   width: chosedOption
                     ? `${((chosedOption / answer?.length) * 100).toFixed(0)}%`
                     : "0%",
                 }}
-                className="absolute rounded-3xl inset-0 bg-basePrimary h-full"
+                className={cn(
+                  "absolute rounded-3xl inset-0 bg-[#001fcc] h-full",
+                  option?.isCorrect !== "default" &&
+                    !option?.isCorrect &&
+                    "bg-red-500",
+                  option?.isCorrect !== "default" &&
+                    option?.isCorrect &&
+                    "bg-green-500"
+                )}
               ></span>
             </div>
           )}

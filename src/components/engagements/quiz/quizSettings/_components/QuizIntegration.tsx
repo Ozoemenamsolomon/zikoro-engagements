@@ -78,6 +78,7 @@ export function QuizIntegration({
             setAccessibility({
               ...accessibility,
               visible: !accessibility.visible,
+              isCollectEmail: true
             })
           }
           className=""
