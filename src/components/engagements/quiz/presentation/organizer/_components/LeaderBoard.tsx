@@ -14,8 +14,6 @@ import { AvatarFullConfig } from "react-nice-avatar";
 import { FeedStar } from "styled-icons/octicons";
 import { Plus } from "styled-icons/bootstrap";
 import { Reorder } from "framer-motion";
-import { Button } from "@/components/custom";
-import { Minimize2 } from "styled-icons/feather";
 import Image from "next/image";
 
 type TLeaderBoard = {
@@ -315,7 +313,7 @@ export function LeaderBoard({
     <div
       ref={observingLeaderBoard}
       className={cn(
-        "w-full col-span-3 bg-white relative h-full border-r border-y rounded-r-xl hidden  md:hidden",
+        "w-full col-span-3 bg-white overflow-hidden relative h-full border-r border-y rounded-r-xl hidden  md:hidden",
         isLeftBox && "block md:block "
         //  !isRightBox && "col-span-3"
       )}

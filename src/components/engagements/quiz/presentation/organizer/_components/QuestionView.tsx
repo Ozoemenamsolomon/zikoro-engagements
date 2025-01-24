@@ -366,10 +366,8 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(({
         ((score * millisecondsLeft) / (Number(currentQuestion?.duration) * 1000)) *
         Number(currentQuestion?.points);
 
-      // update quiz state
-      const updatedQuiz: TQuiz<TRefinedQuestion[]> = {
-        ...quiz,
-        questions: quiz?.questions?.map((item) => {
+
+        const refinedQuestions = quiz?.questions?.map((item) => {
           if (item?.id === currentQuestion?.id) {
             return {
               ...item,
@@ -377,7 +375,11 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(({
             };
           }
           return item;
-        }),
+        })
+      // update quiz state
+      const updatedQuiz: TQuiz<TRefinedQuestion[]> = {
+        ...quiz,
+        questions: refinedQuestions
       };
 
       // udpate chosen option state, if quiz is not live
@@ -385,14 +387,14 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(({
         updateQuiz(updatedQuiz);
       }
       updateQuizResult(updatedQuiz);
-
+      const refinedQuestion = {...currentQuestion, options:updatedOptions }
       const payload: Partial<TAnswer> = {
         ...attendeeDetail,
         quizId: quiz?.id,
         eventAlias: quiz?.eventAlias,
         questionId: currentQuestion?.id,
         quizParticipantId: quizParticipantId,
-
+        answeredQuestion: refinedQuestion,
         attendeePoints,
         answerDuration: millisecondsLeft,
         quizAlias: quiz?.quizAlias,

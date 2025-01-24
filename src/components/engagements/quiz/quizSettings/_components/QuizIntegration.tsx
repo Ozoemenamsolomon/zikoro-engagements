@@ -20,24 +20,7 @@ export function QuizIntegration({
 
   const { postData, isLoading } =
     usePostRequest<Partial<TQuiz<TQuestion[]>>>("engagements/quiz");
-  const [accessibility, setAccessibility] = useState({
-    visible: false,
-    review: false,
-    countdown: true,
-    timer: true,
-    countdownTransition: true,
-    countDown: 5,
-    disable: false,
-    playMusic: false,
-    musicList: quiz?.accessibility ? quiz?.accessibility?.musicList : null,
-    music: quiz?.accessibility ? quiz?.accessibility?.music : null,
-    live: false,
-    isCollectPhone: false,
-    isCollectEmail: false,
-    isForm: false,
-    showAnswer: quiz.interactionType === "quiz" ? true : false,
-    showResult: quiz.interactionType === "quiz" ? true : false,
-  });
+  const [accessibility, setAccessibility] = useState(quiz?.accessibility);
 
   useEffect(() => {
     if (quiz && quiz?.accessibility !== null) {
@@ -52,7 +35,10 @@ export function QuizIntegration({
     setLoading(true)
     await postData({ payload : {
         ...quiz,
-        accessibility
+        accessibility : {
+          ...accessibility,
+          isCollectEmail: accessibility.visible ?true :false
+        }
     } });
     setLoading(false);
     refetch();
@@ -78,6 +64,7 @@ export function QuizIntegration({
             setAccessibility({
               ...accessibility,
               visible: !accessibility.visible,
+              
             })
           }
           className=""

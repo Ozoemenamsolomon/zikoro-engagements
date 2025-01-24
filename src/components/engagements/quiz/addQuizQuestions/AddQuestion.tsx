@@ -32,7 +32,7 @@ function FeedbackWidget({
   const [isFocused, setIsFocused] = useState(false);
   return (
     <>
-      {defaultFeedBackValue && !question && (
+      { (
         <div className="w-full" id="select-feedback">
           {isFocused ? (
             <div className="w-full">
@@ -42,7 +42,9 @@ function FeedbackWidget({
                 onChange={(value) => {
                   form.setValue("feedBack", value);
                 }}
-                key={defaultFeedBackValue}
+              //  key={defaultFeedBackValue}
+                onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
               />
             </div>
           ) : (

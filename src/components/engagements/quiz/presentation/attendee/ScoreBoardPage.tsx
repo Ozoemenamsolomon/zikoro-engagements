@@ -14,6 +14,7 @@ export default function ScoreBoardPage({ quizId }: { quizId: string }) {
   );
   const params = useSearchParams();
   const id = params.get("id");
+  const type = params.get("type")
 
   const router = useRouter();
 
@@ -39,10 +40,10 @@ export default function ScoreBoardPage({ quizId }: { quizId: string }) {
 
   function goBack() {
     if (actualQuiz)
-      router.push(`/e/${actualQuiz?.workspaceAlias}/quiz/a/${quizId}/presentation`);
+      router.push(`/e/${actualQuiz?.workspaceAlias}/quiz/${type}/${quizId}/presentation`);
   }
 
-  console.log("actual", actualQuiz, quiz, id);
+ // console.log("actual", actualQuiz, quiz, id);
 
   return (
     <>
@@ -51,7 +52,7 @@ export default function ScoreBoardPage({ quizId }: { quizId: string }) {
         close={goBack}
         quiz={quiz}
         id={id as string}
-        isAttendee={true}
+        isAttendee={type === "o" ? false: true }
         actualQuiz={actualQuiz}
       />
     </>
