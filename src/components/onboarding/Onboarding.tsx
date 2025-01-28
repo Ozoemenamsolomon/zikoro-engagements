@@ -356,9 +356,8 @@ export default function OnboardingForm({
   searchParams: SearchParamsType;
 }) {
   const [isReferralCode, setIsReferralCode] = useState<boolean>(false);
-  const {registration, newUser } = useOnboarding();
-  const [loading, setLoading] = useState(false)
-
+  const { registration, newUser } = useOnboarding();
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     referralCode: "",
@@ -377,7 +376,7 @@ export default function OnboardingForm({
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
-  const { postData,  } = usePostRequest<any>("organization");
+  const { postData } = usePostRequest<any>("organization");
   const stages = ["stage1", "stage2", "stage3", "stage4", "stage5"];
 
   // State to track the current paragraph index
@@ -400,7 +399,7 @@ export default function OnboardingForm({
   //create user
   async function handleCreateUser(e: React.FormEvent, values: FormData) {
     e.preventDefault();
-    
+
     const payload = {
       ...values,
       industry: values?.organizationType === "Business" ? "" : values?.industry,
@@ -412,7 +411,7 @@ export default function OnboardingForm({
     };
 
     try {
-      setLoading(true)
+      setLoading(true);
       await registration(payload, email, createdAt);
 
       // create organization
@@ -429,16 +428,16 @@ export default function OnboardingForm({
           userId: newUser?.id,
         },
       });
-      handleNext();
+
+      if (formData.organizationType === "Private") {
+        setCurrentIndex(4);
+      } else handleNext();
     } catch (error) {
       toast.error("Registration failed");
-    }
-    finally {
-      setLoading(false)
+    } finally {
+      setLoading(false);
     }
   }
-
-
 
   return (
     <div>
@@ -542,8 +541,7 @@ export default function OnboardingForm({
               {/* 1st input */}
               <div>
                 <p className="text-black text-[14px] ">Workspace</p>
-                <div className="flex gap-x-[10px] items-center border-[1px] border-gray-200 hover:border-indigo-600 w-full pl-[10px] py-4 rounded-[6px] mt-3">
-                  <p>+</p>
+                <div className="flex items-center border-[1px] border-gray-200 hover:border-indigo-600 w-full px-[9px] py-4 rounded-[6px] mt-3">
                   <input
                     type="text"
                     placeholder="Workspace Name"
@@ -718,19 +716,34 @@ export default function OnboardingForm({
                 >
                   Prev
                 </button>{" "}
-                <button
-                  onClick={() => {
-                    if (!formData.firstName || !formData.lastName) {
-                      toast.error("Please fill out all required fields!");
-                    } else {
-                      handleNext();
-                    }
-                  }}
-                  disabled={currentIndex === stages.length - 1}
-                  className="text-white font-semibold text-base bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end py-3 px-4 rounded-[8px]"
-                >
-                  Next
-                </button>{" "}
+                {formData.organizationType === "Private" ? (
+                  <button
+                    onClick={(e) => {
+                      handleCreateUser(e, formData);
+                    }}
+                    disabled={currentIndex === stages.length - 1}
+                    className="text-white font-semibold text-base bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end py-3 px-4 rounded-[8px]"
+                  >
+                    {loading && (
+                      <LoaderAlt size={22} className="animate-spin" />
+                    )}
+                    Create Profile
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      if (!formData.firstName || !formData.lastName) {
+                        toast.error("Please fill out all required fields!");
+                      } else {
+                        handleNext();
+                      }
+                    }}
+                    disabled={currentIndex === stages.length - 1}
+                    className="text-white font-semibold text-base bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end py-3 px-4 rounded-[8px]"
+                  >
+                    Next
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -751,12 +764,7 @@ export default function OnboardingForm({
             <div className="mt-6 lg:mt-[8px] ">
               {/* 1st input */}
 
-              <div
-                className={cn(
-                  "mt-[29px] hidden",
-                  formData.organizationType === "Business" && "block"
-                )}
-              >
+              <div className="mt-[29px] ">
                 <p className="text-black text-[11px] lg:text-[14px] ">
                   Which of these options best describes your industry
                 </p>
