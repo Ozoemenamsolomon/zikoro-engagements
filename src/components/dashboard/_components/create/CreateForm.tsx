@@ -19,7 +19,7 @@ import { PlusCircle } from "styled-icons/bootstrap";
 import { CreateOrganization } from "@/components/createOrganization/CreateOrganization";
 import { UploadImage } from "../UploadImage";
 import { FormIcon } from "@/constants";
-import { generateAlphanumericHash } from "@/components/onboarding/Onboarding";
+import { generateInteractionAlias } from "@/utils";
 import { uploadFile } from "@/utils";
 import { TEngagementFormQuestion } from "@/types/form";
 
@@ -62,7 +62,7 @@ export function CreateForm() {
     }
 
     const alias = useMemo(() => {
-      return generateAlphanumericHash();
+      return generateInteractionAlias();
     }, []);
   
     async function onSubmit(values: z.infer<typeof formCreationSchema>) {

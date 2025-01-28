@@ -438,15 +438,7 @@ export default function OnboardingForm({
     }
   }
 
-  //update workspace ID
-  const updateWorkspaceId = async () => {
-    const response = await getUserId(email);
-    console.log(response);
-    setOrgId(Number(response));
-    await updateOrganization(orgAlias, orgId);
-    await createTeamMember(orgId, email, orgAlias);
-    router.push("/home");
-  };
+
 
   return (
     <div>
@@ -655,7 +647,7 @@ export default function OnboardingForm({
                 </button>{" "}
                 <button
                   onClick={() => {
-                    if (!workspaceName) {
+                    if (!formData.organizationName) {
                       toast.error("Please fill out all required fields!");
                     } else {
                       handleNext();
@@ -841,7 +833,7 @@ export default function OnboardingForm({
             {/* buttons */}
             <div className="flex justify-center gap-x-4 mx-auto mt-[52px] ">
               <button
-                onClick={() => updateWorkspaceId()}
+                onClick={() => router.push("/home")}
                 className="text-white font-semibold text-base bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end py-3 px-4 rounded-[8px]"
               >
                 Start Exploring
