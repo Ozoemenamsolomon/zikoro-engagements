@@ -3,20 +3,23 @@
 import { Button } from "@/components/custom";
 import { useState } from "react";
 import { ThreeDotsVertical } from "styled-icons/bootstrap";
-import { ActivateQA, CopyQA, DeleteQA } from "./cardActions";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { TOrganizationQa } from "@/types/qa";
+import { DeleteForm, ActivateForm, CopyForm } from "./cardActions";
 
-export function QaCard({
-  qa,
+import { cn } from "@/lib/utils";
+import {  TOrganizationForm} from "@/types/form";
+
+export function FormCard({
+  form,
   refetch,
+  isNotAttendee,
 }: {
   refetch: () => Promise<any>;
-  qa: TOrganizationQa;
+  form: TOrganizationForm;
+  isNotAttendee: boolean;
 }) {
   const [isOpen, setOpen] = useState(false);
-  const router = useRouter();
+
 
   function onClose() {
     setOpen((prev) => !prev);
@@ -25,17 +28,23 @@ export function QaCard({
   return (
     <div
       onClick={() => {
-        window.open(`/e/${qa?.workspaceAlias}/qa/o/${qa?.QandAAlias}`, "_self");
+        window.open(
+            `/e/${form?.workspaceAlias}/form/o/${
+              (form as TOrganizationForm)?.formAlias
+            }/add-question`,
+            "_self"
+          );
+       
       }}
       role="button"
-      className="w-full h-full text-mobile  sm:text-sm bg-white rounded-md flex flex-col items-start justify-start"
+      className="w-full text-mobile  sm:text-sm bg-white rounded-md flex flex-col items-start justify-start"
     >
       <div className="w-full relative">
         <div className="absolute flex items-center justify-between inset-x-0 w-full  top-3 px-3">
           <p className="text-xs w-fit sm:text-sm rounded-3xl bg-basePrimary text-white px-3 py-1">
-            Q & A
+            form
           </p>
-          {
+          {isNotAttendee && (
             <Button
               onClick={(e) => {
                 e.stopPropagation();
@@ -45,20 +54,20 @@ export function QaCard({
             >
               <ThreeDotsVertical size={20} />
               {isOpen && (
-                <ActionModal refetch={refetch} close={onClose} qa={qa} />
+                <ActionModal refetch={refetch} close={onClose} form={form} />
               )}
             </Button>
-          }
+          )}
         </div>
 
-        {qa?.coverImage && (qa?.coverImage as string).startsWith("https://") ? (
+        {form?.coverImage &&
+        (form?.coverImage as string).startsWith("https://") ? (
           <Image
             className="w-full rounded-t-md h-48 2xl:h-56 object-cover"
-            alt="qa"
-            src={qa?.coverImage}
+            alt="quiz"
+            src={form?.coverImage}
             width={400}
             height={400}
-            
           />
         ) : (
           <div className="w-full rounded-t-md h-48 2xl:h-56  bg-gray-200">
@@ -66,17 +75,16 @@ export function QaCard({
           </div>
         )}
       </div>
-      <div className="w-full flex flex-col pb-3 rounded-b-md items-start justify-start gap-y-3 border-x border-b">
+      <div className="w-full flex flex-col rounded-b-md items-start justify-start gap-y-3 border-x border-b">
         <p className="font-medium px-3 pt-3 w-full line-clamp-2">
-          {qa?.coverTitle}
+          {form?.title}
         </p>
-        <div className="text-gray-500 invisible px-3 pb-3 text-xs ms:text-mobile flex items-center justify-between w-full">
-          {/* <p className="flex items-center gap-x-2">
+        <div className="text-gray-500 px-3 pb-3 text-xs ms:text-mobile flex items-center justify-between w-full">
+          <p className="flex items-center gap-x-2">
             <span className={cn(" pr-2 border-gray-500")}>{`${
               form?.questions?.length || 0
             } ${form?.questions?.length > 1 ? "Questions" : "Question"}`}</span>
-          </p> */}
-          <p className="w-1 h-1"></p>
+          </p>
         </div>
       </div>
     </div>
@@ -86,10 +94,10 @@ export function QaCard({
 function ActionModal({
   close,
   refetch,
-  qa,
+  form,
 }: {
   refetch: () => Promise<any>;
-  qa: TOrganizationQa;
+  form: TOrganizationForm;
   close: () => void;
 }) {
   return (
@@ -103,11 +111,11 @@ function ActionModal({
           }}
           className="flex relative z-[50]  flex-col  py-4 items-start justify-start bg-white rounded-lg w-full h-fit shadow-lg"
         >
-          <CopyQA qa={qa} refetch={refetch} />
+          <CopyForm form={form} refetch={refetch} />
 
-          <ActivateQA qa={qa} refetch={refetch} />
+          <ActivateForm form={form} refetch={refetch} />
 
-          <DeleteQA QandAAlias={qa?.QandAAlias} refetch={refetch} />
+          <DeleteForm formAlias={form?.formAlias} refetch={refetch} />
         </div>
       </div>
     </>

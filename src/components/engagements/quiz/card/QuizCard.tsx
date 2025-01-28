@@ -7,7 +7,7 @@ import { ActivateQuiz, CopyQuiz, DeleteQuiz } from "./cardActions";
 import Image from "next/image";
 import { QUsers } from "@/constants";
 import { useRouter } from "next/navigation";
-import { TQuiz, TQuestion, TOrganizationQuiz } from "@/types/quiz";
+import {  TOrganizationQuiz } from "@/types/quiz";
 import { cn } from "@/lib/utils";
 
 
@@ -49,7 +49,7 @@ export function QuizCard({
         );
       }}
       role="button"
-      className="w-full text-mobile  sm:text-sm bg-white rounded-md flex flex-col items-start justify-start"
+      className="w-full text-mobile h-full  sm:text-sm bg-white rounded-md flex flex-col items-start justify-start"
     >
       <div className="w-full relative">
         <div className="absolute flex items-center justify-between inset-x-0 w-full  top-3 px-3">

@@ -41,7 +41,10 @@ export function DeleteQuiz({
           loading={isLoading}
           asynAction={deletes}
           buttonText="Delete"
-          buttonColor="bg-red-600 text-white"
+          title="Quiz"
+          modalText="Delete Quiz"
+          buttonColor="text-white bg-red-500"
+   
         />
       )}
     </>
