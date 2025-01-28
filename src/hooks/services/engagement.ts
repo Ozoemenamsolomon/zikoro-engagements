@@ -6,32 +6,54 @@ import { useState, useEffect, useMemo } from "react";
 import { useGetData } from "./requests";
 import { TOrganizationQa, TQa } from "@/types/qa";
 import { TOrganizationQuiz } from "@/types/quiz";
+import { createClient } from "@/utils/supabase/client";
+import { useGetQas } from "./qa";
+import { useGetQuizzes } from "./quiz";
+
+const supabase = createClient();
 
 export function useGetUserOrganizations() {
   // const userData = getCookie("user");
   const { user: userData, setUser } = useUserStore();
+  const [orgLoading, setOrgLoading] = useState(false);
   const [userOrganizations, setUserOrganizatiions] = useState<TOrganization[]>(
     [] as TOrganization[]
   );
+  async function getOrganizations() {
+    try {
+      setOrgLoading(true);
+      const { data, error } = await supabase
+        .from("organizationTeamMembers_Engagement")
+        .select("*, organization(*)")
+        .eq("userId", userData?.id);
 
-  const {
-    data: organizations,
-    isLoading: orgLoading,
-    getData: getOrganizations,
-  } = useGetData<TOrganization[]>("organization");
-  // checking if thwe user is a team member of some organizations
-  useEffect(() => {
-    if (!orgLoading && organizations) {
-      const filteredOrganizations = organizations?.filter((organization) => {
-        return organization.teamMembers?.some(
-          ({ userEmail }) => userEmail === userData?.userEmail
-        );
-      });
+      if (error) {
+        throw error.message;
+      }
 
-      setUserOrganizatiions(filteredOrganizations);
+      if (Array.isArray(data) && data.length > 0) {
+        const result: TOrganization[] = data?.map((datum) => {
+          const { organization, created_at, ...restData } = datum;
+          return {
+            ...organization,
+            teamMembers: {
+              ...restData,
+            },
+          };
+        });
+
+        setUserOrganizatiions(result);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setOrgLoading(false);
     }
-  }, [organizations, userData]);
+  }
 
+  useEffect(() => {
+    getOrganizations()
+  },[userData])
   //return data
   return {
     organizations: userOrganizations,
@@ -43,29 +65,23 @@ export function useGetUserOrganizations() {
 export function useGetUserEngagements() {
   const [qas, setQas] = useState<TOrganizationQa[]>([]);
   const [quizzes, setQuizzes] = useState<TOrganizationQuiz[]>([]);
-  const { user: userData } = useUserStore();
-  const { data, isLoading: qaLoading , getData: getQas} =
-    useGetData<TOrganizationQa[]>("engagements/qa");
-  const { data: dataquizzes, isLoading: quizLoading, getData: getQuizzes } =
-    useGetData<TOrganizationQuiz[]>("engagements/quiz");
+  const {
+    qas: data,
+    isLoading: qaLoading,
+    getQas: getQas,
+  } = useGetQas();
+  const {
+    quizzes: dataquizzes,
+    isLoading: quizLoading,
+    getQuizzes: getQuizzes,
+  } = useGetQuizzes();
 
 
   useEffect(() => {
     if (!qaLoading && !quizLoading) {
-  
-
-      const matchingQas = data?.filter((qa) => {
-        return qa?.organization && qa?.organization.teamMembers?.some(
-          ({ userEmail }) => userEmail === userData?.userEmail
-        );
-      });
-      const matchingQuizzes = dataquizzes?.filter((quiz) => {
-        return quiz?.organization && quiz?.organization.teamMembers?.some(
-          ({ userEmail }) => userEmail === userData?.userEmail
-        );
-      });
-      setQas(matchingQas);
-      setQuizzes(matchingQuizzes);
+     
+      setQas(data);
+      setQuizzes(dataquizzes);
     }
   }, [qaLoading, data, quizLoading, dataquizzes]);
   //!qaLoading && !quizLoading
@@ -73,7 +89,7 @@ export function useGetUserEngagements() {
   return {
     qas,
     quizzes,
-    loading: qaLoading || quizLoading,
+     qaLoading, quizLoading,
     getQuizzes,
     getQas,
   };
@@ -97,7 +113,7 @@ export function useVerifyUserAccess(workspaceAlias: string) {
 
   return {
     isLoading,
-  
+
     isHaveAccess,
   };
 }

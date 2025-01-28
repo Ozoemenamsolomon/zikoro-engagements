@@ -133,10 +133,12 @@ export function CreateOrganization({
   const router = useRouter();
   const [isMonthly, setIsMonthly] = useState(true);
   const [discount, setDiscount] = useState<TZikoroDiscount | null>(null);
-  const { postData, isLoading } = usePostRequest<any>("organization");
+  const { postData } = usePostRequest<any>("organization");
+  const {postData: createTeamMember,} = usePostRequest<any>("organization/team")
   const [selectedPricing, setSelectedPricing] = useState<TPricingPlan | null>(
     null
   );
+  const [isLoading, setIsLoading] = useState(false)
   const form = useForm<z.infer<typeof organizationSchema>>({
     resolver: zodResolver(organizationSchema),
     defaultValues: {
@@ -194,10 +196,22 @@ export function CreateOrganization({
   }, [subPlanPrice, discount]);
 
   async function onSubmit(values: z.infer<typeof organizationSchema>) {
+    setIsLoading(true)
     if (values.subscriptionPlan === "Free") {
+   
+      const teamMember = {
+        userId: user?.id,
+      
+        userEmail: values?.userEmail,
+        userRole: "owner",
+        workspaceAlias: values?.organizationAlias
+        
+      }
+      
       await postData({
         payload: { ...values, userId: user?.id, expiryDate: null },
       });
+      await createTeamMember({payload: teamMember})
       if (refetch) refetch();
       close();
     } else {
@@ -219,7 +233,7 @@ export function CreateOrganization({
       const url = `/payment/create?data=${encodeURIComponent(
         JSON.stringify(data)
       )}`;
-
+      setIsLoading(false)
       router.push(url);
     }
   }
@@ -261,7 +275,7 @@ export function CreateOrganization({
     <div
       role="button"
       onClick={close}
-      className="w-full h-full fixed  overflow-y-auto no-scrollbar z-[100] inset-0 bg-black/50"
+      className="w-screen h-full fixed  overflow-y-auto no-scrollbar z-[200] inset-0 bg-black/50"
     >
       <div
         onClick={(e) => e.stopPropagation()}

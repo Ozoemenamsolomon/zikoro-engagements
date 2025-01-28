@@ -7,7 +7,7 @@ import {
   SProgress4,
   SProgress5,
 } from "@/constants";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useOnboarding, useGetUserId } from "@/hooks";
 import {
   useCreateUserOrganization,
@@ -377,6 +377,8 @@ export default function OnboardingForm({
     setFormData({ ...formData, [name]: value });
   };
   const { postData } = usePostRequest<any>("organization");
+  const { postData: createTeamMember } =
+    usePostRequest<any>("organization/team");
   const stages = ["stage1", "stage2", "stage3", "stage4", "stage5"];
 
   // State to track the current paragraph index
@@ -395,6 +397,10 @@ export default function OnboardingForm({
       setCurrentIndex(currentIndex - 1);
     }
   };
+
+  const alias = useMemo(() => {
+    return generateAlias();
+  }, []);
 
   //create user
   async function handleCreateUser(e: React.FormEvent, values: FormData) {
@@ -423,12 +429,20 @@ export default function OnboardingForm({
           userEmail: email,
           lastName: formData?.lastName,
           firstName: formData?.firstName,
-          organizationAlias: generateAlias(),
+          organizationAlias: alias,
           expiryDate: null,
           userId: newUser?.id,
         },
       });
 
+      const teamMember = {
+        userId: newUser?.id,
+
+        userEmail: email,
+        userRole: "owner",
+        workspaceAlias: alias,
+      };
+      await createTeamMember({ payload: teamMember });
       if (formData.organizationType === "Private") {
         setCurrentIndex(4);
       } else handleNext();

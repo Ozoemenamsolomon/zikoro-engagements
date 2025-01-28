@@ -72,6 +72,7 @@ export interface TOrganization {
     userId: string;
     userEmail: string;
     userRole: string;
+    workspaceAlias:string;
   };
   export interface TCertificateAsset {
     elements: string[];

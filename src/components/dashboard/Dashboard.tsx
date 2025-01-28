@@ -7,7 +7,7 @@ import useUserStore from "@/store/globalUserStore";
 import { useState } from "react";
 import { CreateEngagement } from "./_components/CreateEngagement";
 import { useGetUserEngagements } from "@/hooks/services/engagement";
-import { TOrganizationQa, } from "@/types/qa";
+import { TOrganizationQa } from "@/types/qa";
 import { cn } from "@/lib/utils";
 import { TOrganizationQuiz } from "@/types/quiz";
 import { QuizCard } from "../engagements/quiz/card/QuizCard";
@@ -117,7 +117,8 @@ export default function Dashboard() {
   const { user } = useUserStore();
   const [isOpen, setOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const { qas, loading, quizzes, getQas, getQuizzes } = useGetUserEngagements();
+  const { qas, qaLoading, quizLoading, quizzes, getQas, getQuizzes } =
+    useGetUserEngagements();
 
   function onClose() {
     setOpen((prev) => !prev);
@@ -155,12 +156,15 @@ export default function Dashboard() {
 
       <div className="w-full  bg-basePrimary-100 p-4 rounded-lg">
         <h2 className="font-medium mb-3 sm:mb-6">Engagements</h2>
-        {loading && <EngagementEmptyState />}
-        {qas?.length === 0 && (
-          <div className="w-full h-[200px] flex items-center justify-center">
-            <h2 className="font-medium text-lg">No Data</h2>
-          </div>
-        )}
+        {(qaLoading || quizLoading) && <EngagementEmptyState />}
+        {!qaLoading &&
+          !quizLoading &&
+          qas?.length === 0 &&
+          quizzes?.length === 0 && (
+            <div className="w-full h-[200px] flex items-center justify-center">
+              <h2 className="font-medium text-lg">No Data</h2>
+            </div>
+          )}
         <div className="w-full grid h-full grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {Array.isArray(quizzes) &&
             quizzes.map((quiz, index) => (
