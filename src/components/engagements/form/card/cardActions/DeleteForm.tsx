@@ -2,17 +2,18 @@
 
 import { Button } from "@/components/custom";
 import { useState } from "react";
+
 import { ActionModal } from "@/components/custom/ActionModal";
 import { useDeleteRequest } from "@/hooks/services/requests";
-export function DeleteQA({
-  QandAAlias,
+export function DeleteForm({
+  formAlias,
   refetch,
 }: {
   refetch: () => Promise<any>;
-  QandAAlias: string;
+  formAlias: string;
 }) {
   const { deleteData, isLoading } = useDeleteRequest(
-    `engagements/qa/${QandAAlias}/delete`
+    `/engagements/form/${formAlias}/delete`
   );
   const [isOpen, setOpen] = useState(false);
 
@@ -41,8 +42,8 @@ export function DeleteQA({
           loading={isLoading}
           asynAction={deletes}
           buttonText="Delete"
-          title="Q & A"
-          modalText="Delete Q & A"
+          title="Form"
+          modalText="Delete Form"
           buttonColor="text-white bg-red-500"
         />
       )}
