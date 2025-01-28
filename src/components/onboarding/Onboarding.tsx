@@ -12,6 +12,9 @@ import { useOnboarding } from "@/hooks";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import { usePostRequest } from "@/hooks/services/requests";
+import { generateAlias } from "@/utils";
+import { cn } from "@/lib/utils";
 
 const countryList = [
   "Afghanistan",
@@ -311,7 +314,9 @@ type FormData = {
   country: string;
   firstName: string;
   lastName: string;
-  industry: string;
+  industry?: string;
+  organizationName: string;
+  organizationType: string;
 };
 
 export function generateAlphanumericHash(length?: number): string {
@@ -334,7 +339,9 @@ export default function OnboardingForm({
   searchParams: SearchParamsType;
 }) {
   const [isReferralCode, setIsReferralCode] = useState<boolean>(false);
-  const { loading, registration } = useOnboarding();
+  const {registration, newUser } = useOnboarding();
+  const [loading, setLoading] = useState(false)
+
 
   const [formData, setFormData] = useState({
     referralCode: "",
@@ -345,6 +352,8 @@ export default function OnboardingForm({
     firstName: "",
     lastName: "",
     industry: "",
+    organizationName: "",
+    organizationType: "",
   });
 
   const router = useRouter();
@@ -352,6 +361,7 @@ export default function OnboardingForm({
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
+  const { postData,  } = usePostRequest<any>("organization");
   const stages = ["stage1", "stage2", "stage3", "stage4", "stage5"];
 
   // State to track the current paragraph index
@@ -374,8 +384,10 @@ export default function OnboardingForm({
   //create user
   async function handleCreateUser(e: React.FormEvent, values: FormData) {
     e.preventDefault();
+    
     const payload = {
       ...values,
+      industry: values?.organizationType === "Business" ? "" : values?.industry,
       phoneNumber: values.phoneNumber
         ? `+${values.phoneNumber.replace(/^(\+)?/, "")}`
         : "",
@@ -383,10 +395,29 @@ export default function OnboardingForm({
       referredBy: values.referredBy.toUpperCase(),
     };
     try {
+      setLoading(true)
       await registration(payload, email, createdAt);
+
+      // create organization
+      await postData({
+        payload: {
+          organizationName: formData.organizationName,
+          organizationType: formData.organizationType,
+          subscriptionPlan: "Free",
+          userEmail: email,
+          lastName: formData?.lastName,
+          firstName: formData?.firstName,
+          organizationAlias: generateAlias(),
+          expiryDate: null,
+          userId: newUser?.id,
+        },
+      });
       handleNext();
     } catch (error) {
       toast.error("Registration failed");
+    }
+    finally {
+      setLoading(false)
     }
   }
 
@@ -405,7 +436,7 @@ export default function OnboardingForm({
             {/* buttons */}
             <div className="w-full flex">
               <div className="flex gap-x-[8px] mt-8 mx-auto ">
-              <div
+                <div
                   className="flex flex-col cursor-pointer rounded-[8px] gap-y-[18px] pt-[11px] bg-white border-[1px] border-gray-200 hover:border-indigo-800 w-[100px] h-[100px]"
                   onClick={() => setIsReferralCode(false)}
                 >
@@ -490,7 +521,54 @@ export default function OnboardingForm({
             <div className="mt-6 lg:mt-[52px] ">
               {/* 1st input */}
               <div>
-                <p className="text-black text-[14px] ">Phone Nuber</p>
+                <p className="text-black text-[14px] ">Workspace</p>
+                <div className="flex gap-x-[10px] items-center border-[1px] border-gray-200 hover:border-indigo-600 w-full pl-[10px] py-4 rounded-[6px] mt-3">
+                  <p>+</p>
+                  <input
+                    type="text"
+                    placeholder="Workspace Name"
+                    className=" text-[#1f1f1f] placeholder-gray-500 bg-transparent outline-none "
+                    name="organizationName"
+                    id=""
+                    required
+                    value={formData.organizationName}
+                    onChange={handleChange}
+                    autoComplete="off"
+                  />
+                </div>
+              </div>
+
+              <div className="mt-[29px]">
+                <p className="text-black text-[14px] ">Workspace Type</p>
+                <div className=" border-[1px] border-gray-200 hover:border-indigo-600 w-full px-[9px] py-[16px] rounded-[6px] mt-3">
+                  <select
+                    name="organizationType"
+                    value={formData.organizationType}
+                    onChange={handleChange}
+                    id=""
+                    className="w-full  bg-transparent rounded-md border-[1px] text-gray-500 text-base border-none  outline-none "
+                  >
+                    <option
+                      disabled
+                      selected
+                      value=""
+                      className="bg-transparent text-gray-500"
+                    >
+                      Select Your Workspace Type
+                    </option>
+                    {["Private", "Business"].map((type) => (
+                      <option
+                        value={type}
+                        className="bg-transparent text-gray-500"
+                      >
+                        {type}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div className="mt-[29px]">
+                <p className="text-black text-[14px] ">Phone Number</p>
                 <div className="flex gap-x-[10px] items-center border-[1px] border-gray-200 hover:border-indigo-600 w-full pl-[10px] py-4 rounded-[6px] mt-3">
                   <p>+</p>
                   <input
@@ -670,7 +748,12 @@ export default function OnboardingForm({
             <div className="mt-6 lg:mt-[52px] ">
               {/* 1st input */}
 
-              <div className="mt-[29px]">
+              <div
+                className={cn(
+                  "mt-[29px] hidden",
+                  formData.organizationType === "Business" && "block"
+                )}
+              >
                 <p className="text-black text-[11px] lg:text-[14px] ">
                   Which of these options best describes your industry
                 </p>
