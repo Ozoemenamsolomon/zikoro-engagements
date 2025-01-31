@@ -213,11 +213,7 @@ export default function AddQuizQuestions({
           </Button>
           <Button
             onClick={() => {
-              /**
- router.push(
-              `/e/${workspaceAlias}/quiz/o/${quizId}/presentation?type=preview`
-            )
- */
+              router.push(`/e/${workspaceAlias}/quiz/o/${quizId}/analytics`);
             }}
             disabled={isDisabled}
             className="gap-x-2 bg-basePrimary-200  border-basePrimary border  rounded-xl h-9"

@@ -86,7 +86,7 @@ export function AddedQuestions({
   );
 }
 
-function SingleQuestionCard({
+export function SingleQuestionCard({
   isEditing,
   index,
   question,

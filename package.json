@@ -47,6 +47,7 @@
     "react-select": "^5.9.0",
     "react-toastify": "^10.0.6",
     "react-verification-input": "^4.2.0",
+    "recharts": "^2.15.1",
     "styled-icons": "^10.47.1",
     "swiper": "^11.1.15",
     "tailwind-merge": "^2.6.0",

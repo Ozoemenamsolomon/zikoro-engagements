@@ -54,6 +54,8 @@ export async function GET(
         engagement: number;
       }[] = [];
 
+      let answersQuiz: TAnswer[] = []
+
       if (data) {
         const {
           data: quizAnswers,
@@ -62,7 +64,7 @@ export async function GET(
         } = await supabase
           .from("quizAnswer")
           .select("*")
-          .eq("quizId", data?.quizAlias);
+          .eq("quizId", data?.id);
 
         const quiz: TQuiz<TQuestion[]> = data;
 
@@ -86,6 +88,7 @@ export async function GET(
 
         if (Array.isArray(quizAnswers)) {
           const answers: TAnswer[] = quizAnswers;
+          answersQuiz = answers;
 
           const {
             attemptedPercentage,
@@ -111,6 +114,7 @@ export async function GET(
             quiz: data,
             quizStatistics,
             quizEngagement,
+            quizAnswer: answersQuiz
           },
         },
         {

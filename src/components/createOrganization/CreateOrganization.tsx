@@ -24,6 +24,7 @@ import React from "react";
 import toast from "react-hot-toast";
 import { plansData } from "./_plansData";
 import { generateAlias } from "@/utils";
+import { Portal } from "../custom/Portal";
 const orgType = ["Private", "Business"];
 const pricingPlan = ["Free", "Lite", "Professional", "Enterprise"];
 
@@ -272,6 +273,7 @@ export function CreateOrganization({
   }, [selectedPricing]);
 
   return (
+    <Portal>
     <div
       role="button"
       onClick={close}
@@ -612,5 +614,6 @@ export function CreateOrganization({
         </Form>
       </div>
     </div>
+    </Portal>
   );
 }
