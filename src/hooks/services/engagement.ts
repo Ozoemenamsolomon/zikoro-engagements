@@ -84,7 +84,6 @@ export function useGetUserEngagements() {
       setQuizzes(dataquizzes);
     }
   }, [qaLoading, data, quizLoading, dataquizzes]);
-  //!qaLoading && !quizLoading
 
   return {
     qas,

@@ -1,3 +1,5 @@
+"use client";
+
 import { Link45deg } from "styled-icons/bootstrap";
 import { Minimize2 } from "styled-icons/feather";
 import { Button } from "@/components/custom";
@@ -6,6 +8,7 @@ import QRCode from "react-qr-code";
 import { cn } from "@/lib/utils";
 import copy from "copy-to-clipboard";
 import { toast } from "react-toastify";
+import { useSearchParams } from "next/navigation";
 export function Advert({
   quiz,
   isRightBox,
@@ -15,7 +18,7 @@ export function Advert({
   isAdvert,
   className,
   isLobby,
-  isQuizStarted
+  isQuizStarted,
 }: {
   quiz: TQuiz<TQuestion[]>;
   isLeftBox: boolean;
@@ -25,13 +28,16 @@ export function Advert({
   isAdvert?: boolean;
   className?: string;
   isLobby?: boolean;
-  isQuizStarted?:boolean;
+  isQuizStarted?: boolean;
 }) {
+  const query = useSearchParams();
+  const preview = query.get("type");
+
   // console.log("ileft", isLeftBox, isRightBox);
   const quizLink =
     quiz?.interactionType === "poll"
       ? `https://engagements.zikoro.com/e/${quiz?.workspaceAlias}/poll/a/${quiz?.quizAlias}/presentation`
-      : `https://engagements.zikoro.com/e/${quiz?.workspaceAlias}/quiz/a/${quiz?.quizAlias}/presentation`;
+      : `https://engagements.zikoro.com/e/${quiz?.workspaceAlias}/quiz/a/${quiz?.quizAlias}/presentation?type=${preview}`;
   return (
     <div
       className={cn(

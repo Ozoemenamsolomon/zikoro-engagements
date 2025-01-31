@@ -37,7 +37,7 @@ import { InlineIcon } from "@iconify/react/dist/iconify.js";
 
 // audio instance
 function createAudioInstance(music: string) {
-  console.log("music", music)
+  console.log("music", music);
   if (typeof window !== undefined) {
     const audio = new Audio(music);
     //  audio.src = "audio/AylexCinematic.mp3";
@@ -97,7 +97,8 @@ export default function QuizAttendeeView({
   });
   const query = params.get("redirect");
   const aId = params.get("id");
-  const [audio, setAudio] = useState<HTMLAudioElement | null>(null)
+  const type = params.get("type");
+  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
 
   // subscribe to quiz
   useEffect(() => {
@@ -183,12 +184,11 @@ export default function QuizAttendeeView({
   }, [supabase, quiz]);
 
   // memoized audio instance
- useMemo(() => {
+  useMemo(() => {
     if (quiz?.accessibility?.playMusic && quiz?.accessibility?.music) {
-    
       if (!audio || audio.paused) {
         setAudio(createAudioInstance(quiz?.accessibility?.music?.value));
-    }
+      }
     }
   }, [quiz]);
 
@@ -332,6 +332,11 @@ export default function QuizAttendeeView({
 
   return (
     <div className="w-full ">
+      {type === "preview" && (
+        <div className="w-[300px] bg-red-600 fixed z-[99999999] right-0 top-0 rotate-45 transform  p-2 flex items-center justify-center">
+          <span className="text-white font-semibold">Preview Mode</span>
+        </div>
+      )}
       {showScoreSheet ? (
         <>
           {isSendMailModal ? (
@@ -395,8 +400,8 @@ export default function QuizAttendeeView({
               goBack={() => setIsLobby(false)}
               quiz={quiz}
               close={() => {
-                setIsLobby(false)
-                setIsQuizStarted(true)
+                setIsLobby(false);
+                setIsQuizStarted(true);
               }}
               refetch={getData}
               isAttendee

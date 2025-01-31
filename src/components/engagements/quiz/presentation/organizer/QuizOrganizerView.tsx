@@ -98,6 +98,7 @@ export default function QuizOrganizerView({
     });
   const query = params.get("redirect");
   const aId = params.get("id");
+  const type = params.get("type");
   // const {liveQuizPlayers} = useGetLiveParticipant({quizId})
   const { deleteData: deleteQuizLobby } = useDeleteRequest<
     TLiveQuizParticipant[]
@@ -466,6 +467,11 @@ export default function QuizOrganizerView({
 
   return (
     <div style={{ backgroundColor: "#f7f8ff" }} className="w-full">
+      {type === "preview" && (
+        <div className="w-[300px] bg-red-600 fixed z-[99999999] right-0 top-0 rotate-45 transform  p-2 flex items-center justify-center">
+          <span className="text-white font-semibold">Preview Mode</span>
+        </div>
+      )}
       {showScoreSheet ? (
         <div className="w-full ">
           <ScoreBoard

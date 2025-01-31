@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  AnalyticsIcon,
   EmptyQuizQuestionIcon,
   PeopleIcon,
   PlayQuizIcon,
@@ -194,21 +195,40 @@ export default function AddQuizQuestions({
         </div>
       </div>
       <div className="w-full bg-white fixed bottom-0 border-t inset-x-0 z-50 px-4 sm:px-6 py-4 flex items-center justify-between">
-        <Button
-          onClick={() =>
-            router.push(
+        <div className="flex items-center gap-x-2">
+          <Button
+            onClick={() =>
+              router.push(
+                `/e/${workspaceAlias}/quiz/o/${quizId}/presentation?type=preview`
+              )
+            }
+            disabled={isDisabled}
+            className="gap-x-2 bg-basePrimary-200  border-basePrimary border  rounded-xl h-9"
+          >
+            <SmallPreviewIcon />
+            <p className="bg-basePrimary hidden sm:block  gradient-text">
+              {" "}
+              Preview Mode
+            </p>
+          </Button>
+          <Button
+            onClick={() => {
+              /**
+ router.push(
               `/e/${workspaceAlias}/quiz/o/${quizId}/presentation?type=preview`
             )
-          }
-          disabled={isDisabled}
-          className="gap-x-2 bg-basePrimary-200  border-basePrimary border  rounded-xl h-9"
-        >
-          <SmallPreviewIcon />
-          <p className="bg-basePrimary hidden sm:block  gradient-text">
-            {" "}
-            Preview Mode
-          </p>
-        </Button>
+ */
+            }}
+            disabled={isDisabled}
+            className="gap-x-2 bg-basePrimary-200  border-basePrimary border  rounded-xl h-9"
+          >
+            <AnalyticsIcon />
+            <p className="bg-basePrimary hidden sm:block  gradient-text">
+              {" "}
+              Analytics
+            </p>
+          </Button>
+        </div>
 
         <Button
           onClick={() =>

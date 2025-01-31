@@ -5,7 +5,7 @@ import { TLiveQuizParticipant, TQuestion, TQuiz } from "@/types/quiz";
 import { useRouter, useSearchParams } from "next/navigation";
 import { isAfter } from "date-fns";
 import Image from "next/image";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Plus } from "styled-icons/bootstrap";
@@ -63,6 +63,7 @@ export function AttendeeOnboarding({
   const params = useSearchParams();
   const query = params.get("redirect");
   const respAlias = params.get("responseAlias");
+  const type = params.get("preview");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { isLoading, postData: addLiveParticipant } =
@@ -128,7 +129,7 @@ export function AttendeeOnboarding({
   // player start quiz
   async function submit(e: any) {
     e.preventDefault();
-    console.log(playerDetail)
+    console.log(playerDetail);
     if (!playerDetail?.nickName) {
       toast.error("Pls add a nickName");
       return;
@@ -154,6 +155,10 @@ export function AttendeeOnboarding({
     if (quiz?.accessibility?.live) {
       const payload: TLiveQuizParticipant = {
         ...playerDetail,
+        nickName:
+          type === "preview"
+            ? playerDetail?.nickName + "@P"
+            : playerDetail?.nickName,
         quizAlias: quiz?.quizAlias,
         quizParticipantId: id,
 
@@ -171,6 +176,10 @@ export function AttendeeOnboarding({
               ...quiz?.quizParticipants,
               {
                 ...playerDetail,
+                nickName:
+                  type === "preview"
+                    ? playerDetail?.nickName + "@P"
+                    : playerDetail?.nickName,
                 id: id,
 
                 joinedAt: new Date().toISOString(),
@@ -204,8 +213,6 @@ export function AttendeeOnboarding({
     }
     setLoading(false);
   }
-
- 
 
   // useEffect(() => {
   //   if (!quiz?.liveMode?.startingAt) return;
@@ -276,7 +283,12 @@ export function AttendeeOnboarding({
             className="text-basePrimary rounded-lg h-16 w-16 flex items-center justify-center border flex-col"
           >
             {chosenAvatar ? (
-              <Avatar style={{borderRadius: "12px"}} shape="square" className="h-16 w-16 rounded-lg" {...chosenAvatar} />
+              <Avatar
+                style={{ borderRadius: "12px" }}
+                shape="square"
+                className="h-16 w-16 rounded-lg"
+                {...chosenAvatar}
+              />
             ) : (
               <>
                 <Plus size={24} className="" />

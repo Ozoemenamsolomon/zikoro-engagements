@@ -644,7 +644,7 @@ function AttendeeScore({
               />
               <AbouttAttendeeScore
                 type="Wrong"
-                metric={quiz?.questions?.length - correctAnswers ?? 0}
+                metric={quiz?.questions?.length - correctAnswers || 0}
                 Icon={
                   <InlineIcon
                     icon="line-md:close-circle-twotone"
