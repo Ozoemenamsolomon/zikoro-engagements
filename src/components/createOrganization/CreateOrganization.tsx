@@ -26,7 +26,9 @@ import { plansData } from "./_plansData";
 import { generateAlias } from "@/utils";
 import { Portal } from "../custom/Portal";
 const orgType = ["Private", "Business"];
-const pricingPlan = ["Free", "Lite", "Professional", "Enterprise"];
+const pricingPlan = ["Free"];
+
+//"Lite", "Professional", "Enterprise"
 
 type TPricingPlan = {
   amount: number | null;

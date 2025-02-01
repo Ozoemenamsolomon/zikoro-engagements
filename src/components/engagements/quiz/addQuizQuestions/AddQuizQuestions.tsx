@@ -101,7 +101,7 @@ export default function AddQuizQuestions({
     setIsShare((prev) => !prev);
   }
 
-  console.log({ accessibility: accessibility });
+  console.log(isAddNew);
 
   if (isLoading) {
     return <LoadingState />;
@@ -109,90 +109,91 @@ export default function AddQuizQuestions({
   return (
     <>
       <div className="w-screen min-h-screen fixed z-10 inset-0 sm:px-4  mx-auto ">
-        <div className="w-full h-full gap-4 sm:pt-4 items-start grid grid-cols-12">
-          {(isAddNew ||
-            question !== null ||
-            (Array.isArray(data?.questions) && data?.questions?.length > 0)) &&
-            data && (
-              <AddedQuestions
-                questions={data?.questions}
-                editQuestion={editQuestion}
-                editingQuestion={question}
-                addNewQuestion={() => {
-                  setIsAddNew(true);
-                  editQuestion(null);
-                }}
-                isAddNew={isAddNew}
-              />
-            )}
-
-          <div
-            className={cn(
-              "w-full col-span-9 h-full",
-              (!data?.questions ||
-                (Array.isArray(data?.questions) &&
-                  data?.questions?.length === 0)) &&
-                "col-span-full",
-              (isAddNew ||
-                question !== null ||
-                (Array.isArray(data?.questions) &&
-                  data?.questions?.length > 0)) &&
-                data &&
-                "col-span-9",
-              (question !== null || isAddNew) &&
-                "block col-span-full sm:col-span-9"
-            )}
-          >
-            <QuizLayout
-              className=" w-full vert-scroll overflow-y-auto pb-32"
-              parentClassName={cn(
-                "  relative px-0 h-full",
-                question === null && "hidden sm:block",
-                isAddNew && "block"
-              )}
-              LeadingWidget={
-                <LeadingHeadRoute
-                  onClick={() => {
-                    setIsAddNew(false);
+        {(!data?.questions ||
+          (Array.isArray(data?.questions) && data?.questions?.length === 0)) &&
+        !isAddNew ? (
+          <EmptyQuestion addNewQuestion={() => setIsAddNew(true)} />
+        ) : (
+          <div className="w-full h-full gap-4 sm:pt-4 items-start grid grid-cols-12">
+            {(isAddNew ||
+              question !== null ||
+              (Array.isArray(data?.questions) &&
+                data?.questions?.length > 0)) &&
+              data && (
+                <AddedQuestions
+                  questions={data?.questions}
+                  editQuestion={editQuestion}
+                  editingQuestion={question}
+                  addNewQuestion={() => {
+                    setIsAddNew(true);
                     editQuestion(null);
                   }}
-                  name={data?.coverTitle ?? ""}
-                  Icon={MdNavigateBefore}
+                  isAddNew={isAddNew}
                 />
-              }
-              TrailingWidget={
-                <TrailingHeadRoute
-                  as="button"
-                  Icon={SettingsIcon}
-                  title="Quiz Settings"
-                  onClick={toggleSetting}
-                />
-              }
+              )}
+
+            <div
+              className={cn(
+                "w-full col-span-9 h-full",
+                (!data?.questions ||
+                  (Array.isArray(data?.questions) &&
+                    data?.questions?.length === 0)) &&
+                  "col-span-full",
+                (isAddNew ||
+                  question !== null ||
+                  (Array.isArray(data?.questions) &&
+                    data?.questions?.length > 0)) &&
+                  data &&
+                  "col-span-9",
+                (question !== null || isAddNew) &&
+                  "block col-span-full sm:col-span-9"
+              )}
             >
-              {(isAddNew ||
-                question !== null ||
-                (Array.isArray(data?.questions) &&
-                  data?.questions?.length > 0)) &&
-                data && (
-                  <AddQuestion
-                    refetch={getData}
-                    editQuestion={editQuestion}
-                    question={question}
-                    quiz={data}
-                    interactionType="quiz"
-                    workspaceAlias={workspaceAlias}
-                    key={question?.id}
+              <QuizLayout
+                className=" w-full vert-scroll overflow-y-auto pb-32"
+                parentClassName={cn(
+                  "  relative px-0 h-full",
+                  question === null && "hidden sm:block",
+                  isAddNew && "block"
+                )}
+                LeadingWidget={
+                  <LeadingHeadRoute
+                    onClick={() => {
+                      setIsAddNew(false);
+                      editQuestion(null);
+                    }}
+                    name={data?.coverTitle ?? ""}
+                    Icon={MdNavigateBefore}
                   />
-                )}
-              {(!data?.questions ||
-                (Array.isArray(data?.questions) &&
-                  data?.questions?.length === 0)) &&
-                !isAddNew && (
-                  <EmptyQuestion addNewQuestion={() => setIsAddNew(true)} />
-                )}
-            </QuizLayout>
+                }
+                TrailingWidget={
+                  <TrailingHeadRoute
+                    as="button"
+                    Icon={SettingsIcon}
+                    title="Quiz Settings"
+                    onClick={toggleSetting}
+                  />
+                }
+              >
+                {(isAddNew ||
+                  question !== null ||
+                  (Array.isArray(data?.questions) &&
+                    data?.questions?.length > 0)) &&
+                  data && (
+                    <AddQuestion
+                      refetch={getData}
+                      editQuestion={editQuestion}
+                      question={question}
+                      quiz={data}
+                      interactionType="quiz"
+                      workspaceAlias={workspaceAlias}
+                      key={question?.id}
+                    />
+                  )}
+              </QuizLayout>
+            </div>
           </div>
-        </div>
+        )}
       </div>
       <div className="w-full bg-white fixed bottom-0 border-t inset-x-0 z-50 px-4 sm:px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-x-2">
@@ -311,7 +312,7 @@ export default function AddQuizQuestions({
 
 function EmptyQuestion({ addNewQuestion }: { addNewQuestion: () => void }) {
   return (
-    <div className="w-full min-h-screen flex items-center justify-center flex-col gap-5">
+    <div className="w-full min-h-screen bg-white rounded-lg p-4 sm:p-6 flex items-center justify-center flex-col gap-5">
       <EmptyQuizQuestionIcon />
       <h2 className="font-semibold text-base sm:text-lg mt-5">
         Your Quiz is Empty

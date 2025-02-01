@@ -8,7 +8,7 @@ import {
   SProgress5,
 } from "@/constants";
 import React, { useMemo, useState } from "react";
-import { useOnboarding, useGetUserId } from "@/hooks";
+import { useOnboarding, useGetUserId, getUser } from "@/hooks";
 import {
   useCreateUserOrganization,
   useUpdateOrganization,
@@ -356,7 +356,7 @@ export default function OnboardingForm({
   searchParams: SearchParamsType;
 }) {
   const [isReferralCode, setIsReferralCode] = useState<boolean>(false);
-  const { registration, newUser } = useOnboarding();
+  const { registration } = useOnboarding();
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -419,6 +419,7 @@ export default function OnboardingForm({
     try {
       setLoading(true);
       await registration(payload, email, createdAt);
+      const user = await getUser(email)
 
       // create organization
       await postData({
@@ -431,12 +432,12 @@ export default function OnboardingForm({
           firstName: formData?.firstName,
           organizationAlias: alias,
           expiryDate: null,
-          userId: newUser?.id,
+          userId: user?.id,
         },
       });
 
       const teamMember = {
-        userId: newUser?.id,
+        userId: user?.id,
 
         userEmail: email,
         userRole: "owner",

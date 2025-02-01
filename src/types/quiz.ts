@@ -129,7 +129,6 @@ export interface TExportedAnswer {
   maxDuration: number;
   attendeePoints: number;
   answerDuration: number;
-  quizAlias: string;
   selectedOption: string
   email: string;
   phone: string;

@@ -4,7 +4,13 @@ export function TopSection({changeDuration, points , duration, changePoint}: {ch
   return (
    
       <div className="w-full flex items-center justify-between">
-        <div className="flex flex-col items-center justify-start ">
+        <div
+         onClick={(e) => {
+          e.stopPropagation()
+          e.preventDefault()
+          changeDuration()
+      }}
+        className="flex flex-col items-center justify-start ">
           <div className="flex items-center gap-x-2">
             <div className="bg-basePrimary-200 h-12 justify-center px-3 rounded-3xl flex items-center gap-x-2">
               <TimerIcon />
@@ -12,23 +18,21 @@ export function TopSection({changeDuration, points , duration, changePoint}: {ch
             </div>
 
             <button
-            onClick={(e) => {
-                e.stopPropagation()
-                e.preventDefault()
-                changeDuration()
-            }}
+           
             className="text-basePrimary">Edit</button>
           </div>
           <p>Question Duration</p>
         </div>
-        <div className="flex flex-col items-center justify-center ">
+        <div
+          onClick={(e) => {
+            e.stopPropagation()
+            e.preventDefault()
+            changePoint()
+        }}
+        className="flex flex-col items-center justify-center ">
          <div className="flex items-center gap-x-2">
          <button
-            onClick={(e) => {
-                e.stopPropagation()
-                e.preventDefault()
-                changePoint()
-            }}
+          
             className="text-basePrimary">Edit</button>
          <div className="bg-basePrimary-200 h-12 justify-center px-3 rounded-3xl flex items-center gap-x-2">
          <PointIcon />

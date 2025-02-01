@@ -277,14 +277,14 @@ export const getUser = async (email: string | null) => {
   }
   // console.log(user);
   // saveCookie("user", user);
-  return user;
+  return user as TUser;
 };
 
 
 export function useOnboarding() {
   const [loading, setLoading] = useState(false);
   const { setUser } = useUserStore();
-  const [newUser, setNewUser]  = useState<TUser | null>(null)
+
 
   type CreateUser = {
     values: z.infer<typeof onboardingSchema>;
@@ -330,8 +330,8 @@ export function useOnboarding() {
         setLoading(false);
         toast.success("Profile Updated Successfully");
         const user = await getUser(email);
-        setNewUser(user)
-        setUser(user);
+        
+        setUser(user!);
       }
       return data;
     } catch (error: any) {
@@ -343,7 +343,7 @@ export function useOnboarding() {
   }
   return {
     registration,
-    newUser,
+   
     loading,
   };
 }

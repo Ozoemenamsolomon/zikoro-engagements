@@ -333,7 +333,7 @@ export default function QuizAttendeeView({
   return (
     <div className="w-full ">
       {type === "preview" && (
-        <div className="w-[300px] bg-red-600 fixed z-[99999999] right-0 top-0 rotate-45 transform  p-2 flex items-center justify-center">
+        <div className="w-[300px] bg-red-600 fixed z-[99999999] right-[-97px] top-[43px] rotate-45 transform  p-2 flex items-center justify-center">
           <span className="text-white font-semibold">Preview Mode</span>
         </div>
       )}
