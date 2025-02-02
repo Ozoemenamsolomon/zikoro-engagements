@@ -46,6 +46,7 @@ import { createClient } from "@/utils/supabase/client";
 import { ScoreBoard } from "../common/ScoreBoard";
 import { InlineIcon } from "@iconify/react/dist/iconify.js";
 import { ActionModal } from "@/components/custom/ActionModal";
+import PreviewDeletionGuard from "../common/PreviewDeleteGuard";
 
 // audio instance
 function createAudioInstance(music: string) {
@@ -116,7 +117,7 @@ export default function QuizOrganizerView({
     email: "",
     nickName: "",
   });
-  // const player = getCookie<TConnectedUser>("player");
+ 
 
   const [refinedQuizArray, setRefinedQuizArray] = useState<TQuiz<
     TRefinedQuestion[]
@@ -431,13 +432,7 @@ export default function QuizOrganizerView({
     setIsLoadingAttempt(false);
   }
 
-  // if (isLoading) {
-  //   return <></>;
-  // }
-
-  //console.log("left", isLeftBox, "right", isRightBox, "lobby", isLobby,"advert", isAdvert )
-
-  ///console.log(quiz)
+  
 
   async function handleFullScreen() {
     const element = document.getElementById("layout-container");
@@ -467,6 +462,7 @@ export default function QuizOrganizerView({
 
   return (
     <div style={{ backgroundColor: "#f7f8ff" }} className="w-full">
+      {type === "preview" && quiz && <PreviewDeletionGuard quiz={quiz}/>}
       {type === "preview" && (
         <div className="w-[300px] bg-red-600 fixed z-[99999999] right-[-97px] top-[43px] rotate-45 transform   p-2 flex items-center justify-center">
           <span className="text-white font-semibold">Preview Mode</span>
@@ -668,7 +664,7 @@ export default function QuizOrganizerView({
                   <NextQuestionIcon />
                 </Button>
               )}
-              <Button title="Play Music" className="px-0 w-fit h-fit">
+              <Button title="Volume Control" className="px-0 w-fit h-fit">
                 <SpeakerIcon />
               </Button>
               <Button onClick={handleFullScreen} className="px-0 w-fit h-fit">

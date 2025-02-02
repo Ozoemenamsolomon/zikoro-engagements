@@ -63,7 +63,7 @@ export function AttendeeOnboarding({
   const params = useSearchParams();
   const query = params.get("redirect");
   const respAlias = params.get("responseAlias");
-  const type = params.get("preview");
+  const type = params.get("type");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { isLoading, postData: addLiveParticipant } =
@@ -106,6 +106,7 @@ export function AttendeeOnboarding({
   //   }
   // }, [quiz]);
 
+
   function generateAvatars() {
     const avatars = Array.from({ length: 10 }).map((_, index) => {
       return {
@@ -129,7 +130,6 @@ export function AttendeeOnboarding({
   // player start quiz
   async function submit(e: any) {
     e.preventDefault();
-    console.log(playerDetail);
     if (!playerDetail?.nickName) {
       toast.error("Pls add a nickName");
       return;
@@ -190,6 +190,10 @@ export function AttendeeOnboarding({
           : [
               {
                 ...playerDetail,
+                nickName:
+                type === "preview"
+                  ? playerDetail?.nickName + "@P"
+                  : playerDetail?.nickName,
                 id: id,
 
                 joinedAt: new Date().toISOString(),
@@ -198,6 +202,8 @@ export function AttendeeOnboarding({
               },
             ],
       };
+
+    
       await updateQuiz({ payload });
     }
 

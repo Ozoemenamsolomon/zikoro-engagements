@@ -541,7 +541,7 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(
       <>
         <div
           className={cn(
-            "w-full h-full bg-white relative  mt-8 text-sm  border-x border-y  col-span-6",
+            "w-full h-full bg-white relative text-sm  border-x border-y  col-span-6",
             isLeftBox && isRightBox && !isAttendee && "col-span-6",
             !isLeftBox &&
               !isRightBox &&
@@ -552,7 +552,7 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(
             className
           )}
         >
-          <div className="w-full -top-6 h-1 rounded-3xl absolute inxet-x-0 bg-white overflow-hidden">
+          {/* <div className="w-full -top-6 h-1 rounded-3xl absolute inxet-x-0 bg-white overflow-hidden">
             <span
               style={{
                 width: `${(
@@ -562,7 +562,7 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(
               }}
               className="h-full bg-basePrimary inset-0 absolute"
             ></span>
-          </div>
+          </div> */}
           <div
             className={cn(
               "w-full overflow-y-auto no-scrollbar pt-4 px-6 space-y-3  h-[90%] pb-8 ",

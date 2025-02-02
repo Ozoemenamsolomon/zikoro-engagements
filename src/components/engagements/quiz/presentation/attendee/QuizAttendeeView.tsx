@@ -34,6 +34,7 @@ import { QuestionView } from "../organizer/_components";
 import { SendMailModal } from "./_components/SendMailModal";
 import { ScoreBoard } from "../common/ScoreBoard";
 import { InlineIcon } from "@iconify/react/dist/iconify.js";
+import PreviewDeletionGuard from "../common/PreviewDeleteGuard";
 
 // audio instance
 function createAudioInstance(music: string) {
@@ -332,6 +333,7 @@ export default function QuizAttendeeView({
 
   return (
     <div className="w-full ">
+      {type === "preview" && quiz && <PreviewDeletionGuard quiz={quiz} />}
       {type === "preview" && (
         <div className="w-[300px] bg-red-600 fixed z-[99999999] right-[-97px] top-[43px] rotate-45 transform  p-2 flex items-center justify-center">
           <span className="text-white font-semibold">Preview Mode</span>
