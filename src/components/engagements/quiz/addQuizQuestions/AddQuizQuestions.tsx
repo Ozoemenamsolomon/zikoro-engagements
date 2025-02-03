@@ -10,7 +10,7 @@ import {
   SmallPreviewIcon,
   SmallShareIcon,
 } from "@/constants";
-import { QuizLayout } from "../_components/QuizLayout";
+import { EngagementLayout } from "../../_components/EngagementLayout";
 import { Button } from "@/components/custom";
 import { LeadingHeadRoute, TrailingHeadRoute } from "../_components";
 import { useGetData, usePostRequest } from "@/hooks/services/requests";
@@ -101,7 +101,7 @@ export default function AddQuizQuestions({
     setIsShare((prev) => !prev);
   }
 
-  console.log(isAddNew);
+  //console.log(isAddNew);
 
   if (isLoading) {
     return <LoadingState />;
@@ -149,7 +149,7 @@ export default function AddQuizQuestions({
                   "block col-span-full sm:col-span-9"
               )}
             >
-              <QuizLayout
+              <EngagementLayout
                 className=" w-full vert-scroll overflow-y-auto pb-32"
                 parentClassName={cn(
                   "  relative px-0 h-full",
@@ -174,6 +174,14 @@ export default function AddQuizQuestions({
                     onClick={toggleSetting}
                   />
                 }
+                CenterWidget={
+                  <TrailingHeadRoute
+                    as="button"
+                    Icon={SettingsIcon}
+                    title="Quiz Settings"
+                    onClick={toggleSetting}
+                  />
+                }
               >
                 {(isAddNew ||
                   question !== null ||
@@ -190,7 +198,7 @@ export default function AddQuizQuestions({
                       key={question?.id}
                     />
                   )}
-              </QuizLayout>
+              </EngagementLayout>
             </div>
           </div>
         )}

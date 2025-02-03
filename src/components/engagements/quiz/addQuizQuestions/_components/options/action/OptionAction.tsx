@@ -43,37 +43,38 @@ export function OptionAction({
   remove: UseFieldArrayRemove;
   isDisabled: boolean;
 }) {
-
   const isAnswered = useWatch({
     control: form.control,
-    name: `options.${index-1}.isAnswer` as const,
+    name: `options.${index - 1}.isAnswer` as const,
   });
   return (
     <div className="w-full flex items-center justify-between mb-1">
       <button
-      onClick={(e) => {
-        e.stopPropagation()
-        e.preventDefault()
-       handleRadioChange(index-1)
-      }}
+        onClick={(e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          handleRadioChange(index - 1);
+        }}
         className={cn(
           "flex items-center gap-x-2",
           interactionType === "poll" && "hidden"
         )}
-       // htmlFor={`set-ans-${index}`}
+        // htmlFor={`set-ans-${index}`}
       >
-       {isAnswered === field.optionId ? <OptionCheckIcon/>  : <QuizUncheckIcon />}
+        {isAnswered === field.optionId ? (
+          <OptionCheckIcon />
+        ) : (
+          <QuizUncheckIcon />
+        )}
         <p>Option {index}</p>
-    
       </button>
 
       <button
-      
         onClick={(e) => {
           e.stopPropagation();
           e.preventDefault();
-          console.log("cliked", index)
-   if (!isDisabled)  remove(index-1);
+          console.log("cliked", index);
+          if (!isDisabled) remove(index - 1);
         }}
       >
         <InlineIcon
