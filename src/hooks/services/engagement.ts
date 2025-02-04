@@ -9,6 +9,8 @@ import { TOrganizationQuiz } from "@/types/quiz";
 import { createClient } from "@/utils/supabase/client";
 import { useGetQas } from "./qa";
 import { useGetQuizzes } from "./quiz";
+import { usegetForm } from "./forms";
+import { TOrganizationForm } from "@/types/form";
 
 const supabase = createClient();
 
@@ -52,8 +54,8 @@ export function useGetUserOrganizations() {
   }
 
   useEffect(() => {
-    getOrganizations()
-  },[userData])
+    getOrganizations();
+  }, [userData]);
   //return data
   return {
     organizations: userOrganizations,
@@ -64,33 +66,35 @@ export function useGetUserOrganizations() {
 
 export function useGetUserEngagements() {
   const [qas, setQas] = useState<TOrganizationQa[]>([]);
+  const [forms, setForms] = useState<TOrganizationForm[]>([]);
   const [quizzes, setQuizzes] = useState<TOrganizationQuiz[]>([]);
-  const {
-    qas: data,
-    isLoading: qaLoading,
-    getQas: getQas,
-  } = useGetQas();
+  const { qas: data, isLoading: qaLoading, getQas: getQas } = useGetQas();
   const {
     quizzes: dataquizzes,
     isLoading: quizLoading,
     getQuizzes: getQuizzes,
   } = useGetQuizzes();
 
+  const { forms: dataForms, isLoading: formLoading, getForm } = usegetForm();
 
   useEffect(() => {
     if (!qaLoading && !quizLoading) {
-     
       setQas(data);
       setQuizzes(dataquizzes);
+      setForms(dataForms);
     }
-  }, [qaLoading, data, quizLoading, dataquizzes]);
+  }, [qaLoading, data, quizLoading, dataquizzes, dataForms, formLoading]);
 
   return {
     qas,
     quizzes,
-     qaLoading, quizLoading,
+    forms,
+    formLoading,
+    qaLoading,
+    quizLoading,
     getQuizzes,
     getQas,
+    getForm,
   };
 }
 
