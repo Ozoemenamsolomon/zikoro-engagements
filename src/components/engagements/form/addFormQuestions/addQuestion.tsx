@@ -21,6 +21,7 @@ import { InlineIcon } from "@iconify/react/dist/iconify.js";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { usePostRequest } from "@/hooks/services/requests";
+import { generateAlias, uploadFile } from "@/utils";
 
 const options = [
   {
@@ -63,23 +64,42 @@ export function AddQuestion({
 }) {
   const form = useForm<z.infer<typeof formQuestion>>({
     resolver: zodResolver(formQuestion),
+    defaultValues:{
+      questionId: generateAlias()
+    }
   });
   const { postData } =
     usePostRequest<Partial<TEngagementFormQuestion>>("engagements/form");
   const [optionType, setOptionType] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  async function onSubmit(values: z.infer<typeof formQuestion>) {}
+  async function onSubmit(values: z.infer<typeof formQuestion>) {
+
+    
+        const image = await new Promise(async (resolve) => {
+          if (typeof values?.questionImage === "string") {
+            resolve(values?.questionImage);
+          } else if (values?.questionImage && values?.questionImage[0]) {
+            const img = await uploadFile(values?.questionImage[0], "image");
+            resolve(img);
+          } else {
+            resolve(null);
+          }
+        });
+        
+
+
+  }
 
   const questionImg = form.watch("questionImage");
-  const addedImage = useMemo(() => {
-    if (typeof questionImg === "string") {
-      return questionImg;
-    } else if (questionImg && questionImg[0]) {
-      return URL.createObjectURL(questionImg[0]);
-    } else {
-      return null;
-    }
-  }, [questionImg]);
+  // const addedImage = useMemo(() => {
+  //   if (typeof questionImg === "string") {
+  //     return questionImg;
+  //   } else if (questionImg && questionImg[0]) {
+  //     return URL.createObjectURL(questionImg[0]);
+  //   } else {
+  //     return null;
+  //   }
+  // }, [questionImg]);
 
   const questionValue = form.watch("question");
   const defaultQuestionValue = useMemo(() => {
@@ -102,21 +122,21 @@ export function AddQuestion({
     else return 1;
   }, [question, engagementForm]);
 
-  async function deleteQuestion() {
-    if (!question) return;
-    setLoading(true);
-    const filteredQuestion = engagementForm?.questions?.filter(
-      (q) => q.questionId !== question.questionId
-    );
-    const payload: Partial<TEngagementFormQuestion> = {
-      ...engagementForm,
-      questions: filteredQuestion,
-    };
+  // async function deleteQuestion() {
+  //   if (!question) return;
+  //   setLoading(true);
+  //   const filteredQuestion = engagementForm?.questions?.filter(
+  //     (q) => q.questionId !== question.questionId
+  //   );
+  //   const payload: Partial<TEngagementFormQuestion> = {
+  //     ...engagementForm,
+  //     questions: filteredQuestion,
+  //   };
 
-    await postData({ payload });
-    setLoading(false);
-    refetch();
-  }
+  //   await postData({ payload });
+  //   setLoading(false);
+  //   refetch();
+  // }
 
   return (
     <>
@@ -142,9 +162,7 @@ export function AddQuestion({
             /> */}
 
             <div className="my-6 flex flex-col items-start justify-start gap-3">
-              {optionType === null ? (
-                <p className="font-medium text-basePrimary">Add Option</p>
-              ) : (
+              {optionType !== null && 
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -160,13 +178,13 @@ export function AddQuestion({
                     icon="pepicons-print:repeat-circle-filled"
                     fontSize={16}
                   />
-                  <p>Change Option Type</p>
+                  <p>Change Question Type</p>
                 </button>
-              )}
+              }
               {optionType === null && (
                 <div className="border p-3 gap-4 rounded-lg flex flex-col">
                   <p className="text-center max-w-[60%] self-center">
-                    Choose option type for this question
+                    Choose question type for this form
                   </p>
 
                   <div className="w-full flex flex-wrap  items-center px-4 mx-auto max-w-[70%] gap-6 py-4 sm:py-8 justify-center">

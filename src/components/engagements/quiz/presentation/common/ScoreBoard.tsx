@@ -413,7 +413,7 @@ export function ScoreBoard({
                                 />
                                 <p>Delete Record</p>
                               </Button>
-                            </div>
+                      </div>
                           </div>
                         </div>
                       )}
