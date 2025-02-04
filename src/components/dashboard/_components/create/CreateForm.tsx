@@ -22,8 +22,9 @@ import { FormIcon } from "@/constants";
 import { generateInteractionAlias } from "@/utils";
 import { uploadFile } from "@/utils";
 import { TEngagementFormQuestion } from "@/types/form";
+import { TOrganization } from "@/types/home";
 
-export function CreateForm() {
+export function CreateForm({engagementForm, refetch, organization}:{engagementForm?:TEngagementFormQuestion; organization?: TOrganization; refetch?:() => Promise<any>}) {
   const [isOpen, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const { user } = useUserStore();
@@ -88,7 +89,7 @@ export function CreateForm() {
       });
       setLoading(false);
   
-      window.open(`/e/${values?.workspaceAlias}/form/o/${alias}`, "_self");
+    window.open(`/e/${values?.workspaceAlias}/form/o/${alias}/add-question`, "_self");
     }
 
     return (
@@ -106,13 +107,13 @@ export function CreateForm() {
           <UploadImage image={addedImage} name="coverImage" form={form} />
           <FormField
             control={form.control}
-            name="coverTitle"
+            name="title"
             render={({ field }) => (
               <InputOffsetLabel label="Form Title">
                 <Input
                   placeholder="Enter title"
                   type="text"
-                  {...form.register("coverTitle")}
+                  {...form.register("title")}
                   className="placeholder:text-sm h-11 text-gray-700"
                 />
               </InputOffsetLabel>

@@ -2,7 +2,7 @@ import * as z from "zod";
 
 export const formCreationSchema = z.object({
     description: z.any(),
-    coverTitle: z.string().min(3, { message: "Title is required" }),
+    title: z.string().min(3, { message: "Title is required" }),
     coverImage: z.any(),
     workspaceAlias: z.string().min(2, { message: "Organization is required" }),
   });

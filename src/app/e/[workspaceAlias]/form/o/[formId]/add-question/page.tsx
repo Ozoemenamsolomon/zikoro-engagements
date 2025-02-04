@@ -1,4 +1,4 @@
-
+import AddFormQuestions from "@/components/engagements/form/addFormQuestions/addFormQuestion";
 import AddQuizQuestions from "@/components/engagements/quiz/addQuizQuestions/AddQuizQuestions";
 import { Metadata } from "next";
 
@@ -31,10 +31,10 @@ import { Metadata } from "next";
 // };
 
 export default function Page({
-  params: { workspaceAlias, quizId },
+  params: { workspaceAlias, formId },
 }: {
-  params: { quizId: string; workspaceAlias:string; };
+  params: { formId: string; workspaceAlias: string };
 }) {
-    //quizId={quizId} workspaceAlias={workspaceAlias}
-  return <></>;
+  //quizId={quizId} workspaceAlias={workspaceAlias}
+  return <AddFormQuestions formId={formId} workspaceAlias={workspaceAlias} />;
 }

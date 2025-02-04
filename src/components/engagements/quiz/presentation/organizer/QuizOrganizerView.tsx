@@ -6,6 +6,7 @@ import {
   usePostRequest,
 } from "@/hooks/services/requests";
 import { TOrganization } from "@/types/home";
+import { HiSpeakerWave, HiSpeakerXMark } from "react-icons/hi2";
 import {
   TAnswer,
   TLiveQuizParticipant,
@@ -47,6 +48,7 @@ import { ScoreBoard } from "../common/ScoreBoard";
 import { InlineIcon } from "@iconify/react/dist/iconify.js";
 import { ActionModal } from "@/components/custom/ActionModal";
 import PreviewDeletionGuard from "../common/PreviewDeleteGuard";
+import { Slider } from "@mui/material";
 
 // audio instance
 function createAudioInstance(music: string) {
@@ -61,6 +63,79 @@ function createAudioInstance(music: string) {
 }
 
 const supabase = createClient();
+
+function VolumeModal({
+  close,
+  isAudioMuted,
+  volume,
+  handleVolume,
+  toggleAudio,
+}: {
+  volume: number;
+  isAudioMuted: boolean;
+  handleVolume: (n: number) => void;
+  close: () => void;
+  toggleAudio: () => void;
+}) {
+  return (
+    <div onClick={(e) => e.stopPropagation()} className="absolute   -top-10">
+      <div
+        onClick={close}
+        className="w-full z-[100] h-full fixed inset-0 bg-none"
+      ></div>
+
+      <div className="relative z-[200] flex gap-x-2 items-center bg-white p-2 rounded-lg shadow">
+        <Button
+          title={isAudioMuted ? "unmute" : "mute"}
+          onClick={toggleAudio}
+          className={cn("px-0 w-fit text-gray-500 h-fit ")}
+        >
+          {isAudioMuted ? (
+            <HiSpeakerXMark className="text-2xl" />
+          ) : (
+            <HiSpeakerWave className="text-2xl" />
+          )}
+        </Button>
+        <div className="w-[80px] ">
+          <Slider
+            min={0}
+            max={1}
+            step={0.1}
+            size="small"
+            value={volume}
+            className="w-full h-1"
+            onChange={(_, e) => {
+              handleVolume(e as number);
+            }}
+            sx={{
+              color: "#6b7280",
+              height: 4,
+              padding: 0,
+              "& .MuiSlider-thumb": {
+                width: 8,
+                height: 8,
+                transition: "0.3s cubic-bezier(.47,1.64,.41,.8)",
+                "&:before": {
+                  boxShadow: "0 2px 12px 0 rgba(0,0,0,0.4)",
+                },
+                "&:hover, &.Mui-focusVisible": {
+                  boxShadow: `0px 0px 0px 6px #6b7280`,
+                },
+
+              },
+              "& .MuiSlider-track": {
+                backgroundColor: "#001fcc",
+              },
+              "& .MuiSlider-rail": {
+                backgroundColor: "#6b7280",
+              },
+            }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function QuizOrganizerView({
   quizId,
@@ -93,6 +168,7 @@ export default function QuizOrganizerView({
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
   const divRef = useRef<HTMLDivElement | null>(null);
   const [isLoadingAttempt, setIsLoadingAttempt] = useState(false);
+  const [isVolumeControl, setIsVolumeControl] = useState(false);
   const { liveQuizPlayers, setLiveQuizPlayers, getLiveParticipant } =
     useGetLiveParticipant({
       quizId: quizId,
@@ -117,7 +193,6 @@ export default function QuizOrganizerView({
     email: "",
     nickName: "",
   });
- 
 
   const [refinedQuizArray, setRefinedQuizArray] = useState<TQuiz<
     TRefinedQuestion[]
@@ -432,8 +507,6 @@ export default function QuizOrganizerView({
     setIsLoadingAttempt(false);
   }
 
-  
-
   async function handleFullScreen() {
     const element = document.getElementById("layout-container");
 
@@ -462,7 +535,7 @@ export default function QuizOrganizerView({
 
   return (
     <div style={{ backgroundColor: "#f7f8ff" }} className="w-full">
-      {type === "preview" && quiz && <PreviewDeletionGuard quiz={quiz}/>}
+      {type === "preview" && quiz && <PreviewDeletionGuard quiz={quiz} />}
       {type === "preview" && (
         <div className="w-[300px] bg-red-600 fixed z-[99999999] right-[-97px] top-[43px] rotate-45 transform   p-2 flex items-center justify-center">
           <span className="text-white font-semibold">Preview Mode</span>
@@ -664,16 +737,36 @@ export default function QuizOrganizerView({
                   <NextQuestionIcon />
                 </Button>
               )}
-              <Button title="Volume Control" className="px-0 w-fit h-fit">
+              <Button
+                onClick={() => {
+                  setIsVolumeControl(true);
+                }}
+                title="Volume Control"
+                className="px-0 w-fit relative h-fit"
+              >
                 <SpeakerIcon />
+                {isVolumeControl && (
+                  <VolumeModal
+                    isAudioMuted={isAudioMuted}
+                    volume={volume}
+                    handleVolume={handleVolume}
+                    toggleAudio={toggleAudio}
+                    close={() => setIsVolumeControl(false)}
+                  />
+                )}
               </Button>
-              <Button onClick={handleFullScreen} className="px-0 w-fit h-fit">
+              <Button
+                onClick={handleFullScreen}
+                className="px-0 w-fit h-fit"
+              >
                 <FullScreenIcon />
+             
               </Button>
             </div>
           </div>
         </div>
       )}
+
       {isAttemptingToExit && (
         <ActionModal
           loading={isLoadingAttempt}
@@ -681,6 +774,7 @@ export default function QuizOrganizerView({
           close={() => setIsAttemptingToExit(false)}
           asynAction={exitQuiz}
           buttonText="Exit"
+          title="Exit Quiz"
           buttonColor="bg-basePrimary text-white"
         />
       )}

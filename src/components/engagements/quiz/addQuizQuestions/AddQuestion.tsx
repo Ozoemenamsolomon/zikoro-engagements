@@ -264,7 +264,7 @@ export function AddQuestion({
     else return 1;
   }, [question, quiz]);
 
-  console.log(form.formState.errors);
+ // console.log(form.formState.errors);
 
   return (
     <>
