@@ -174,14 +174,7 @@ export default function AddQuizQuestions({
                     onClick={toggleSetting}
                   />
                 }
-                CenterWidget={
-                  <TrailingHeadRoute
-                    as="button"
-                    Icon={SettingsIcon}
-                    title="Quiz Settings"
-                    onClick={toggleSetting}
-                  />
-                }
+          
               >
                 {(isAddNew ||
                   question !== null ||
