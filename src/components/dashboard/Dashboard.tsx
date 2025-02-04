@@ -155,14 +155,14 @@ export default function Dashboard() {
       </div>
 
       <div className="w-full  bg-basePrimary-100 p-4 rounded-lg">
-        <h2 className="font-medium mb-3 sm:mb-6">Engagements</h2>
+        {/* <h2 className="font-medium mb-3 sm:mb-6">Engagements</h2> */}
         {(qaLoading || quizLoading) && <EngagementEmptyState />}
         {!qaLoading &&
           !quizLoading &&
           qas?.length === 0 &&
           quizzes?.length === 0 && (
             <div className="w-full h-[200px] flex items-center justify-center">
-              <h2 className="font-medium text-lg">No Data</h2>
+              <h2 className="font-medium text-lg">No Engagement will appear here</h2>
             </div>
           )}
         <div className="w-full grid h-full grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">

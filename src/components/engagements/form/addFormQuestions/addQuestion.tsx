@@ -301,6 +301,18 @@ export function AddQuestion({
                       }}
                     />
                   )}
+                     {optionType === "PICTURE_CHOICE" && (
+                    <FormImageUploadType
+                      form={form}
+                      engagementForm={engagementForm}
+                      defaultQuestionValue={defaultQuestionValue}
+                      question={question}
+                      refetch={async () => {
+                        refetch();
+                        editQuestion(null);
+                      }}
+                    />
+                  )}
                 </div>
               )}
             </div>

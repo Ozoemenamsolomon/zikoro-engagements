@@ -4,7 +4,7 @@ import { UseFormReturn } from "react-hook-form";
 import { FormQuestionDescription } from "../formQuestionDescription";
 import { z } from "zod";
 import { formQuestion } from "@/schemas";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { nanoid } from "nanoid";
 import { FormQuestionField } from "../formQuestionField";
 import { TEngagementFormQuestion } from "@/types/form";
@@ -171,6 +171,13 @@ export function FormCheckBoxType({
       )
     );
   }
+
+   // form field
+   useEffect(() => {
+    if (options) {
+      form.setValue(`optionFields`, options);
+    }
+  }, [options]);
 
   const image = useMemo(() => {
     if (typeof addedImage === "string") {
