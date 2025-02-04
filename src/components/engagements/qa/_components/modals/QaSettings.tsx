@@ -282,12 +282,14 @@ export function QaSetting({
               <div className="flex flex-col items-start justify-start">
                 <p>Live Mode</p>
                 <p className="text-xs text-gray-500">
-                  {organization && organization?.subscriptionPlan.toLowerCase() === "free"
+                  Questions from your audience are visible to you in realtime
+                  {/* {organization && organization?.subscriptionPlan.toLowerCase() === "free"
                     ? `Upgrade to higher subscription to use this feature.`
-                    : `All  attendees will attempt at the same time.`}
+                    : `All  attendees will attempt at the same time.`} */}
                 </p>
               </div>
               <Switch
+              title="Upgrade to higher subscription to use this feature."
                 disabled={loading}
                 checked={accessibility?.live}
                 onClick={() =>
