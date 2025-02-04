@@ -72,7 +72,7 @@ function calculateOptionSelectionPercentage(
     }
   >();
 
-  // Step 1: Count how many times each option was selected
+  //  Count how many times each option was selected
   answers.forEach((answer) => {
     const { questionId, answeredQuestion, selectedOptionId, answerDuration } =
       answer;
@@ -83,7 +83,7 @@ function calculateOptionSelectionPercentage(
       questionMap.set(questionId, {
         questionText,
         totalResponses: 0,
-        duration: 0,
+        duration: answerDuration,
         optionsCount: new Map(),
         options: answeredQuestion.options,
       });
@@ -97,12 +97,9 @@ function calculateOptionSelectionPercentage(
       selectedOption,
       (questionData.optionsCount.get(selectedOption) || 0) + 1
     );
-
-    // summation of duration
-    questionData.duration += answerDuration;
   });
 
-  // Step 2: Transform into the expected output
+  // Transform
   return Array.from(questionMap.entries()).map(
     ([
       questionId,
@@ -272,11 +269,15 @@ function QuizEngagementInsight({
   const [activeAnalytics, setActiveAnalytics] =
     useState<TEngagementAnalytics | null>(analytics[0]);
   const [currentIndex, setCurrentIndex] = useState(1);
+
   const avgDuration = useMemo(() => {
-    if (Array.isArray(analytics) && analytics?.length === 0) {
-      return analytics?.reduce((acc, curr) => acc + curr?.duration, 0) / 1000;
+    if (Array.isArray(analytics) && analytics?.length > 0) {
+      return (
+        analytics?.reduce((acc, curr) => acc + curr?.duration, 0) /
+        (activeAnalytics?.duration || 0)
+      );
     } else return 0;
-  }, [analytics]);
+  }, [analytics, activeAnalytics]);
 
   const isImageOption = useMemo(() => {
     if (Array.isArray(activeAnalytics?.options)) {
@@ -368,7 +369,8 @@ function QuizEngagementInsight({
               <div
                 className={cn(
                   "w-full flex flex-col items-start justify-start gap-1",
-                  isImageOption && "flex-row flex-wrap gap-3"
+                  isImageOption &&
+                    "flex-row flex-wrap gap-3 justify-center items-center"
                 )}
               >
                 {activeAnalytics?.options?.map((option, index) => (
@@ -398,6 +400,8 @@ export default function QuizAnalytics({ quizId }: { quizId: string }) {
       return calculateOptionSelectionPercentage(data?.quizAnswer);
     } else return [];
   }, [data]);
+
+  console.log({ engagementInsight });
 
   if (isLoading) {
     return <LoadingState />;
@@ -507,6 +511,7 @@ export default function QuizAnalytics({ quizId }: { quizId: string }) {
 
       <QuizEngagementInsight
         analytics={engagementInsight}
+        key={engagementInsight.length}
         totalParticipants={data?.quizStatistics?.totalParticipants}
       />
     </div>
