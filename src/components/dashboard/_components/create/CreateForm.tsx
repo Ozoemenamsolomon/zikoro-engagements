@@ -84,6 +84,24 @@ export function CreateForm({engagementForm, refetch, organization}:{engagementFo
           createdBy: user?.id,
           coverImage: image as string,
           formAlias: alias,
+          formSettings: {
+            isConnectedToEngagement: false,
+            showForm: "beforeEngagement",
+            redirectUrl: "",
+            isCollectUserEmail: false,
+            isCoverScreen: true,
+            displayType: "listing",
+            questionPerSlides: "1",
+            titleFontSize: "36",
+            headingFontSize: "24",
+            backgroundColor: "#ffffff",
+            textColor: "#000000",
+            buttonColor: "#001FFC",
+            textFontSize: "14",
+            isCoverImage: true,
+            buttonText: "Submit",
+            startButtonText:"Start"
+          },
       
         },
       });

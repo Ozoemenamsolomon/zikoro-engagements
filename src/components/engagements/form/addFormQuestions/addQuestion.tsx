@@ -5,7 +5,7 @@ import { formQuestion } from "@/schemas";
 import { TEngagementFormQuestion } from "@/types/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
 import { z } from "zod";
@@ -38,15 +38,6 @@ const options = [
 ];
 // { name: "Likert", image: "/flikert.png" },
 
-const optionsType = [
-  { name: "Mutiple Choice", type: "INPUT_MULTIPLE_CHOICE" },
-  { name: "Text", type: "INPUT_TEXT" },
-  { name: "Date", type: "INPUT_DATE" },
-  { name: "CheckBox", type: "INPUT_CHECKBOX" },
-  { name: "Rating", type: "INPUT_RATING" },
-  { name: "Upload", type: "ATTACHMENT" },
-];
-
 export function AddQuestion({
   question,
   refetch,
@@ -64,42 +55,96 @@ export function AddQuestion({
 }) {
   const form = useForm<z.infer<typeof formQuestion>>({
     resolver: zodResolver(formQuestion),
-    defaultValues:{
-      questionId: generateAlias()
-    }
+    defaultValues: {
+      questionId: generateAlias(),
+      isRequired: false,
+    },
   });
+
   const { postData } =
     usePostRequest<Partial<TEngagementFormQuestion>>("engagements/form");
   const [optionType, setOptionType] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   async function onSubmit(values: z.infer<typeof formQuestion>) {
+    setLoading(true);
+    const image = await new Promise(async (resolve) => {
+      if (typeof values?.questionImage === "string") {
+        resolve(values?.questionImage);
+      } else if (values?.questionImage && values?.questionImage[0]) {
+        const img = await uploadFile(values?.questionImage[0], "image");
+        resolve(img);
+      } else {
+        resolve(null);
+      }
+    });
 
-    
-        const image = await new Promise(async (resolve) => {
-          if (typeof values?.questionImage === "string") {
-            resolve(values?.questionImage);
-          } else if (values?.questionImage && values?.questionImage[0]) {
-            const img = await uploadFile(values?.questionImage[0], "image");
-            resolve(img);
-          } else {
-            resolve(null);
+    // Process option fields if present
+    let processedOptionFields = values.optionFields;
+    if (values.optionFields && Array.isArray(values.optionFields)) {
+      processedOptionFields = await Promise.all(
+        values.optionFields.map(async (option: any) => {
+          if (typeof option.optionImage === "string") {
+            return { ...option };
+          } else if (option?.optionImage && option?.optionImage[0]) {
+            const optionImage = await uploadFile(
+              option.optionImage[0],
+              "image"
+            );
+            return { ...option, optionImage };
           }
-        });
-        
+
+          return option;
+        })
+      );
+    }
+
+    console.log(processedOptionFields);
+
+    console.log("processed", values?.optionFields);
 
 
+   // return setLoading(false)
+
+    const newQuestion = question?.questionId
+      ? {
+          ...values,
+          selectedType: optionType,
+          questionId: question?.questionId,
+          questionImage: image as string,
+          optionFields: processedOptionFields,
+        }
+      : {
+          ...values,
+          selectedType: optionType,
+          questionImage: image as string,
+          optionFields: processedOptionFields,
+        };
+
+    const payload: Partial<TEngagementFormQuestion> = question?.questionId
+      ? {
+          ...engagementForm,
+          questions: engagementForm?.questions?.map((quest) => {
+            if (quest?.questionId === question?.questionId) {
+              return { ...newQuestion };
+            }
+            return quest;
+          }),
+        }
+      : {
+          ...engagementForm,
+          questions: Array.isArray(engagementForm?.questions)
+            ? [...engagementForm.questions, newQuestion]
+            : [newQuestion],
+        };
+
+    // setLoading(false);
+    // return console.log("paylload", payload);
+    await postData({ payload });
+    setLoading(false);
+    refetch();
   }
 
   const questionImg = form.watch("questionImage");
-  // const addedImage = useMemo(() => {
-  //   if (typeof questionImg === "string") {
-  //     return questionImg;
-  //   } else if (questionImg && questionImg[0]) {
-  //     return URL.createObjectURL(questionImg[0]);
-  //   } else {
-  //     return null;
-  //   }
-  // }, [questionImg]);
 
   const questionValue = form.watch("question");
   const defaultQuestionValue = useMemo(() => {
@@ -122,21 +167,18 @@ export function AddQuestion({
     else return 1;
   }, [question, engagementForm]);
 
-  // async function deleteQuestion() {
-  //   if (!question) return;
-  //   setLoading(true);
-  //   const filteredQuestion = engagementForm?.questions?.filter(
-  //     (q) => q.questionId !== question.questionId
-  //   );
-  //   const payload: Partial<TEngagementFormQuestion> = {
-  //     ...engagementForm,
-  //     questions: filteredQuestion,
-  //   };
-
-  //   await postData({ payload });
-  //   setLoading(false);
-  //   refetch();
-  // }
+  useEffect(() => {
+    if (question) {
+      form.reset({
+        questionId: question?.questionId,
+        questionDescription: question?.questionDescription,
+        question: question?.question,
+        optionFields: question?.optionFields,
+        isRequired: question?.isRequired,
+      });
+      setOptionType(question?.selectedType);
+    }
+  }, [question]);
 
   return (
     <>
@@ -149,28 +191,15 @@ export function AddQuestion({
                 {questionIndex}
               </p>
             </div>
-            {/* <FormQuestionField
-              defaultQuestionValue={defaultQuestionValue}
-              question={question}
-              form={form}
-              addedImage={addedImage}
-              engagementForm={engagementForm}
-              refetch={async () => {
-                editQuestion(null);
-                refetch();
-              }}
-            /> */}
 
             <div className="my-6 flex flex-col items-start justify-start gap-3">
-              {optionType !== null && 
+              {optionType !== null && (
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     e.preventDefault();
                     setOptionType(null);
-                    // form.setValue("options", [
-                    //   { optionId: nanoid(), option: "", isAnswer: "" },
-                    // ]);
+                    form.reset({});
                   }}
                   className="flex items-center gap-x-1"
                 >
@@ -180,7 +209,7 @@ export function AddQuestion({
                   />
                   <p>Change Question Type</p>
                 </button>
-              }
+              )}
               {optionType === null && (
                 <div className="border p-3 gap-4 rounded-lg flex flex-col">
                   <p className="text-center max-w-[60%] self-center">
@@ -234,19 +263,19 @@ export function AddQuestion({
                       }}
                     />
                   )}
-                  {optionType === "INPUT_CHECKBOX" ||
-                    (optionType === "INPUT_MULTIPLE_CHOICE" && (
-                      <FormCheckBoxType
-                        form={form}
-                        engagementForm={engagementForm}
-                        defaultQuestionValue={defaultQuestionValue}
-                        question={question}
-                        refetch={async () => {
-                          refetch();
-                          editQuestion(null);
-                        }}
-                      />
-                    ))}
+                  {(optionType === "INPUT_CHECKBOX" ||
+                    optionType === "INPUT_MULTIPLE_CHOICE") && (
+                    <FormCheckBoxType
+                      form={form}
+                      engagementForm={engagementForm}
+                      defaultQuestionValue={defaultQuestionValue}
+                      question={question}
+                      refetch={async () => {
+                        refetch();
+                        editQuestion(null);
+                      }}
+                    />
+                  )}
 
                   {optionType === "INPUT_RATING" && (
                     <FormRatingType
@@ -278,7 +307,7 @@ export function AddQuestion({
 
             <div className="w-full my-10 flex gap-3 items-center justify-center">
               <Button className="h-11 bg-basePrimary rounded-lg gap-x-2 text-white font-medium">
-                {true && <LoaderAlt size={20} className="animate-spin" />}
+                {loading && <LoaderAlt size={20} className="animate-spin" />}
                 <p>Save Question</p>
               </Button>
             </div>

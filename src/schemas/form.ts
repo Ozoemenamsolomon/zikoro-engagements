@@ -12,7 +12,7 @@ export const formCreationSchema = z.object({
 export const formQuestion = z.object({
     question: z.string().min(3, { message: "Question is required" }),
     questionImage: z.any(),
-    selectedType: z.string(),
+    selectedType: z.string().optional(),
     optionFields: z.any(),
     isRequired: z.boolean(),
     questionId: z.string(),

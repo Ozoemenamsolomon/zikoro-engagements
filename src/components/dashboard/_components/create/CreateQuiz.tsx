@@ -20,13 +20,13 @@ import { LoaderAlt } from "styled-icons/boxicons-regular";
 import useUserStore from "@/store/globalUserStore";
 import { generateInteractionAlias, uploadFile } from "@/utils";
 import { TQuestion, TQuiz } from "@/types/quiz";
-import { LoadingState } from "@/components/composables/LoadingState";
 import { TOrganization } from "@/types/home";
 
 export function CreateQuiz({
   quiz,
   refetch,
   organization,
+  
 }: {
   quiz?: TQuiz<TQuestion[]>;
   refetch?: () => Promise<any>;

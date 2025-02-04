@@ -353,7 +353,7 @@ export function ScoreBoard({
                     <Button
                       onClick={() =>
                         router.push(
-                          `/e/${quiz?.workspaceAlias}/quiz/o/${quiz?.quizAlias}/analytics`
+                          `/e/${actualQuiz?.workspaceAlias}/quiz/o/${actualQuiz?.quizAlias}/analytics`
                         )
                       }
                       className="text-white h-10 gap-x-2 rounded-none border-r border-white"

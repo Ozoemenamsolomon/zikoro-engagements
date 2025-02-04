@@ -34,7 +34,7 @@ export function FormQuestionDescription({
               onClick={() => setIsFocused(true)}
               className="innerhtml w-full p-3 rounded-lg bg-basePrimary-100"
               dangerouslySetInnerHTML={{
-                __html: defaultDescriptionValue || "Enter Your Feedback",
+                __html: defaultDescriptionValue || "Enter Your Description",
               }}
             />
           )}

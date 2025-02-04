@@ -68,6 +68,7 @@ export function FormRatingType({
           question={question}
           refetch={refetch}
           type="Rating"
+          
         />
 
         <FormQuestionDescription

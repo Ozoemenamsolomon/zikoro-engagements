@@ -14,10 +14,11 @@ export interface TEngagementFormQuestion {
     questions: {
       question: string;
       questionImage?: string | any;
-      selectedType: string;
+      selectedType: string | null;
       isRequired: boolean;
       questionId: string;
       optionFields?: any;
+      questionDescription?:string;
     }[];
     formAlias: string;
     eventAlias: string;
