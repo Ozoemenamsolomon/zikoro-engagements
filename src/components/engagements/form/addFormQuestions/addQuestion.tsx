@@ -207,13 +207,13 @@ export function AddQuestion({
                     icon="pepicons-print:repeat-circle-filled"
                     fontSize={16}
                   />
-                  <p>Change Question Type</p>
+                  <p>Change Option Type</p>
                 </button>
               )}
               {optionType === null && (
                 <div className="border p-3 gap-4 rounded-lg flex flex-col">
                   <p className="text-center max-w-[60%] self-center">
-                    Choose question type for this form
+                    Choose option type for this question
                   </p>
 
                   <div className="w-full flex flex-wrap  items-center px-4 mx-auto max-w-[70%] gap-6 py-4 sm:py-8 justify-center">

@@ -442,7 +442,7 @@ export function ScoreBoard({
                             className="w-[5rem]  h-[5rem]"
                             {...board[1]?.image}
                           />
-                          {board[1].quizParticipantId === id ? (
+                          {board[1]?.quizParticipantId === id ? (
                             <p className="bg-basePrimary rounded-3xl text-white px-2 py-1 font-medium text-mobile">
                               You
                             </p>
@@ -682,7 +682,7 @@ function AttendeeScore({
               </p>
             </div>
 
-            <div className="w-full grid grid-cols-4 h-20 border-t">
+            <div className="w-full grid grid-cols-2 sm:grid-cols-4 h-fit sm:h-20 border-t">
               <AbouttAttendeeScore
                 type="Points"
                 metric={userScore ?? 0}

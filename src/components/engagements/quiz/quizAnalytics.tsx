@@ -277,6 +277,14 @@ function QuizEngagementInsight({
       return analytics?.reduce((acc, curr) => acc + curr?.duration, 0) / 1000;
     } else return 0;
   }, [analytics]);
+
+  const isImageOption = useMemo(() => {
+    if (Array.isArray(activeAnalytics?.options)) {
+      return activeAnalytics?.options?.some((s) =>
+        s.option.startsWith("https://")
+      );
+    } else return false;
+  }, [activeAnalytics]);
   return (
     <div className="w-full mt-10">
       <h2 className="font-semibold text-base sm:text-lg mb-3 text-start">
@@ -357,7 +365,12 @@ function QuizEngagementInsight({
                 }}
               />
 
-              <div className="w-full flex flex-col items-start justify-start gap-1">
+              <div
+                className={cn(
+                  "w-full flex flex-col items-start justify-start gap-1",
+                  isImageOption && "flex-row flex-wrap gap-3"
+                )}
+              >
                 {activeAnalytics?.options?.map((option, index) => (
                   <QuestOption key={index} index={index} option={option} />
                 ))}
