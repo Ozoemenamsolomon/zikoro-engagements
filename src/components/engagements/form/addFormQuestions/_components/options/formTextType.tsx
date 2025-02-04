@@ -54,6 +54,7 @@ export function FormTextType({
           question={question}
           refetch={refetch}
           type="Text"
+          
         />
 
         <FormQuestionDescription

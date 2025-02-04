@@ -20,6 +20,7 @@ import { AddQuestion } from "./addQuestion";
 import { LeadingHeadRoute, TrailingHeadRoute } from "../../quiz/_components";
 import { MdNavigateBefore } from "react-icons/md";
 import { FormSettings } from "../formSettings/FormSettings";
+import { LoadingState } from "@/components/composables/LoadingState";
 
 export default function AddFormQuestions({
   formId,
@@ -51,6 +52,10 @@ export default function AddFormQuestions({
 
   function toggleSetting() {
     setToggleSetting((prev) => !prev);
+  }
+
+  if (isLoading) {
+    return <LoadingState />;
   }
   return (
     <>

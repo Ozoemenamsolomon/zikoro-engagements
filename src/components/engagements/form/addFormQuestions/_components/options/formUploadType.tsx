@@ -58,6 +58,7 @@ export function FormUploadType({
           question={question}
           refetch={refetch}
           type="Upload"
+          
         />
 
         <FormQuestionDescription

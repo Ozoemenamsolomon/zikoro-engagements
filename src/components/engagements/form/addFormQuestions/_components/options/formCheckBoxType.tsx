@@ -55,8 +55,8 @@ function OptionItem({
           />
         </button>
       </div>
-      <div className="w-full grid h-full grid-cols-12">
-        <div className={cn("col-span-11", option.optionImage && "col-span-8")}>
+      <div className="w-full flex h-full gap-3 items-center ">
+        <div className={cn("w-[97%]", option.optionImage && "w-[70%]")}>
           {isFocused ? (
             <div className="w-full">
               <TextEditor
@@ -79,7 +79,7 @@ function OptionItem({
             />
           )}
         </div>
-        <div className={cn("col-span-1", option.optionImage && "col-span-4")}>
+        <div className={cn("w-[3%]", option.optionImage && "w-[30%]")}>
           {option.optionImage ? (
             <div className="w-full h-full relative">
               <Image
@@ -95,9 +95,9 @@ function OptionItem({
                   e.preventDefault();
                   removeImage(option.id);
                 }}
-                className="absolute px-0 top-[-1rem] h-10 w-10 rounded-full bg-[#001FCC19] right-[-0.4rem]"
+                className="absolute px-0 top-[-1rem] h-6 w-6 rounded-full bg-[#001FCC19] right-[-0.4rem]"
               >
-                <MdClose size={24} />
+                <MdClose size={16} />
               </Button>
             </div>
           ) : (
@@ -200,11 +200,13 @@ export function FormCheckBoxType({
         question={question}
         refetch={refetch}
         type="CheckBox"
+     
       />
 
       <FormQuestionDescription
         defaultDescriptionValue={defaultDescriptionValue}
         form={form}
+         
       />
 
       <div className="w-full flex flex-col items-start justify-start gap-3">

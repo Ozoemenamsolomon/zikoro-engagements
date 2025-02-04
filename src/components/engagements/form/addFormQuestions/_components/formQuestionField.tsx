@@ -1,5 +1,6 @@
 import { TextEditor } from "@/components/custom";
 import { ActionModal } from "@/components/custom/ActionModal";
+import { Switch } from "@/components/ui/switch";
 import { AddQuizImageIcon } from "@/constants";
 import { usePostRequest } from "@/hooks/services/requests";
 import { formQuestion } from "@/schemas";
@@ -7,7 +8,7 @@ import { TEngagementFormQuestion } from "@/types/form";
 import { InlineIcon } from "@iconify/react/dist/iconify.js";
 import Image from "next/image";
 import { useState } from "react";
-import { UseFormReturn } from "react-hook-form";
+import { UseFormReturn, useWatch } from "react-hook-form";
 import * as z from "zod";
 
 export function FormQuestionField({
@@ -17,15 +18,15 @@ export function FormQuestionField({
   form,
   engagementForm,
   refetch,
-  type
+  type,
 }: {
   defaultQuestionValue: string;
-  question: TEngagementFormQuestion['questions'][number] | null;
+  question: TEngagementFormQuestion["questions"][number] | null;
   form: UseFormReturn<z.infer<typeof formQuestion>>;
   addedImage: string | null;
   engagementForm: TEngagementFormQuestion;
   refetch: () => Promise<any>;
-  type:string;
+  type: string;
 }) {
   const { postData } =
     usePostRequest<Partial<TEngagementFormQuestion>>("engagements/form");
@@ -37,6 +38,11 @@ export function FormQuestionField({
   const {
     formState: { errors },
   } = form;
+
+  const isRequired = useWatch({
+    control: form.control,
+    name: `isRequired` as const,
+  });
 
   async function deleteQuestion() {
     if (!question) return;
@@ -57,24 +63,40 @@ export function FormQuestionField({
   function showDeletModal() {
     setIsDelete((prev) => !prev);
   }
+// engagementQuestionValue , question
   return (
     <div className="w-full ">
       <div className="w-full flex items-center justify-between">
         <p>Question ({type})</p>
-        {question !== null && (
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              e.preventDefault();
-              showDeletModal();
-            }}
-          >
-            <InlineIcon icon="icon-park-twotone:delete" fontSize={22} />
-          </button>
-        )}
+        <div className="flex items-center gap-x-2">
+          <div className="flex items-center gap-x-1">
+            <p className="text-mobile">Required</p>
+            <Switch
+              checked={isRequired}
+              onCheckedChange={(checked) => {
+                form.setValue("isRequired", checked);
+              }}
+              className=""
+            />
+          </div>
+          {question !== null && (
+            <button
+              className="flex items-center gap-x-1"
+              title="Delete"
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                showDeletModal();
+              }}
+            >
+              <p className="text-mobile">Delete</p>
+              <InlineIcon icon="icon-park-twotone:delete" fontSize={22} />
+            </button>
+          )}
+        </div>
       </div>
       <div className="w-full mt-3  flex items-center gap-x-3">
-        {(defaultQuestionValue || !question) && (
+        {
           <div className="w-full">
             <TextEditor
               defaultValue={defaultQuestionValue}
@@ -83,11 +105,11 @@ export function FormQuestionField({
               error={errors?.question ? errors?.question?.message : ""}
             />
           </div>
-        )}
+        }
         <label htmlFor="form-question-img">
           <input
             hidden
-            id="quiz-img"
+            id="form-question-img"
             type="file"
             accept="image/*"
             {...form.register("questionImage")}
@@ -96,7 +118,7 @@ export function FormQuestionField({
         </label>
       </div>
       {addedImage && (
-        <div className="w-full flex items-center justify-center">
+        <div className="w-full flex mt-3 items-center justify-center">
           <Image
             src={addedImage}
             alt=""

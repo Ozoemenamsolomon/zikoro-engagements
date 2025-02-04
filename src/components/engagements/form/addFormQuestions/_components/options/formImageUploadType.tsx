@@ -162,11 +162,13 @@ export function FormImageUploadType({
           question={question}
           refetch={refetch}
           type="Image Upload"
+          
         />
 
         <FormQuestionDescription
           defaultDescriptionValue={defaultDescriptionValue}
           form={form}
+         
         />
 
         <div className="w-full flex flex-wrao items-center gap-3">
