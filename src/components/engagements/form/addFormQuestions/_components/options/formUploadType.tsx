@@ -39,6 +39,8 @@ export function FormUploadType({
     }
   }, [addedImage]);
 
+  
+
   const defaultDescriptionValue = useMemo(() => {
     if (typeof addedDescription === "string" && addedDescription?.length > 0) {
       return addedDescription;
