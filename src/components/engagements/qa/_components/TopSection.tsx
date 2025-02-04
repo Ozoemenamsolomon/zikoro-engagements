@@ -24,7 +24,7 @@ type TopSectionProp = {
   filterValue: string;
   qa?: TQa;
   workspaceAlias: string;
-  refetch?: (t?:boolean) => Promise<any>;
+  refetch?: (t?: boolean) => Promise<any>;
   setFilterValue: React.Dispatch<React.SetStateAction<string>>;
 };
 
@@ -39,7 +39,7 @@ export function TopSection({
   setFilterValue,
   qa,
   workspaceAlias,
-  refetch
+  refetch,
 }: TopSectionProp) {
   const [isOpen, setOpen] = useState(false);
   const [isShowSelectMobile, setShowSelectMobile] = useState(false);
@@ -54,6 +54,11 @@ export function TopSection({
 
   return (
     <div className="w-full  sticky z-10 top-0">
+      {qa?.accessibility?.cannotAskQuestion && (
+        <div className="w-full text-white font-semibold bg-red-600 p-2 flex items-center justify-center">
+          <p>You cannot longer ask questions</p>
+        </div>
+      )}
       <div
         className={cn(
           " w-full bg-white px-4 sm:px-6 flex items-center text-sm justify-between sm:justify-center gap-2 sm:gap-8 md:gap-16",

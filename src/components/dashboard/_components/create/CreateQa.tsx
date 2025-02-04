@@ -79,6 +79,18 @@ export function CreateQa() {
         coverImage: image as string,
         QandAAlias: alias,
         lastUpdated_at: new Date().toISOString(),
+        accessibility: {
+          visible: false,
+          disable: false,
+          live: false,
+          allowAnonymous: false,
+          mustReviewQuestion: true,
+          cannotAskQuestion: false,
+          canRespond: true,
+          canPin: false,
+          indicateAnsweredQuestions: false,
+          canTag: false,
+        }
       },
     });
     setLoading(false);
