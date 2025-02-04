@@ -12,11 +12,9 @@ import {  TOrganizationForm} from "@/types/form";
 export function FormCard({
   form,
   refetch,
-  isNotAttendee,
 }: {
   refetch: () => Promise<any>;
   form: TOrganizationForm;
-  isNotAttendee: boolean;
 }) {
   const [isOpen, setOpen] = useState(false);
 
@@ -44,7 +42,7 @@ export function FormCard({
           <p className="text-xs w-fit sm:text-sm rounded-3xl bg-basePrimary text-white px-3 py-1">
             form
           </p>
-          {isNotAttendee && (
+         
             <Button
               onClick={(e) => {
                 e.stopPropagation();
@@ -57,7 +55,7 @@ export function FormCard({
                 <ActionModal refetch={refetch} close={onClose} form={form} />
               )}
             </Button>
-          )}
+    
         </div>
 
         {form?.coverImage &&

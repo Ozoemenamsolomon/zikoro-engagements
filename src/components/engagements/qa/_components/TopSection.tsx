@@ -56,7 +56,7 @@ export function TopSection({
     <div className="w-full  sticky z-10 top-0">
       {qa?.accessibility?.cannotAskQuestion && (
         <div className="w-full text-white font-semibold bg-red-600 p-2 flex items-center justify-center">
-          <p>You cannot longer ask questions</p>
+          <p>Questions are no longer accepted</p>
         </div>
       )}
       <div
