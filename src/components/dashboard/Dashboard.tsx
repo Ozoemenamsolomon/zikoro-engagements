@@ -159,7 +159,7 @@ export default function Dashboard() {
         {/* <h2 className="font-medium mb-3 sm:mb-6">Engagements</h2> */}
         {(qaLoading || quizLoading) && <EngagementEmptyState />}
         {!qaLoading &&
-          !quizLoading &&
+          !quizLoading && !formLoading && forms?.length === 0 &&
           qas?.length === 0 &&
           quizzes?.length === 0 && (
             <div className="w-full h-[200px] flex items-center justify-center">
