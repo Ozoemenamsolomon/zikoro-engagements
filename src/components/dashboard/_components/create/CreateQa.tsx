@@ -90,6 +90,9 @@ export function CreateQa() {
           canPin: false,
           indicateAnsweredQuestions: false,
           canTag: false,
+          eventAlias:"",
+          canCollectEmail: false,
+          connectEvent: false
         }
       },
     });

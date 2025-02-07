@@ -13,6 +13,8 @@ import { Form, FormField } from "@/components/ui/form";
 import InputOffsetLabel from "@/components/InputOffsetLabel";
 import { PlusCircle } from "styled-icons/bootstrap";
 import { CreateOrganization } from "@/components/createOrganization/CreateOrganization";
+import { useGetOrganizationEvents } from "@/hooks/services/engagement";
+import { toast } from "react-toastify";
 export function QuizIntegration({
   quiz,
   refetch,
@@ -33,6 +35,7 @@ export function QuizIntegration({
   const { postData, isLoading } =
     usePostRequest<Partial<TQuiz<TQuestion[]>>>("engagements/quiz");
   const [accessibility, setAccessibility] = useState(quiz?.accessibility);
+  const { getEvents, events } = useGetOrganizationEvents();
   const [isOpen, setOpen] = useState(false);
   const form = useForm({});
   useEffect(() => {
@@ -45,14 +48,25 @@ export function QuizIntegration({
   }, [quiz]);
   const formattedList = useMemo(() => {
     const restructuredList = organizationList?.map(
-      ({ organizationAlias, organizationName }) => {
-        return { value: organizationAlias, label: organizationName };
+      ({ id, organizationName }) => {
+        return { value: id.toString(), label: organizationName };
       }
     );
     return _.uniqBy(restructuredList, "value");
   }, [organizationList]);
 
-  async function onSubmit() {
+  const workAlias = form.watch("workspaceAlias");
+  const eventAlias = form.watch("eventAlias");
+  useEffect(() => {
+    (async () => {
+      if (workAlias) {
+        await getEvents(workAlias);
+      }
+    })();
+  }, [workAlias]);
+
+  async function onSubmit(values: any) {
+    if (!values?.eventAlias) return toast.error("You did not add an event")
     setLoading(true);
     await postData({
       payload: {
@@ -60,6 +74,7 @@ export function QuizIntegration({
         accessibility: {
           ...accessibility,
           isCollectEmail: accessibility.visible ? true : false,
+          eventAlias: values?.eventAlias ?? ""
         },
       },
     });
@@ -70,11 +85,37 @@ export function QuizIntegration({
     setOpen((prev) => !prev);
   }
 
+  const formattedEvents = useMemo(() => {
+    if (Array.isArray(events) && events?.length > 0) {
+      return events?.map((e) => {
+        return {
+          value: e?.eventAlias,
+          label: e?.eventTitle,
+        };
+      });
+    } else return [];
+  }, [events]);
+
+  const prevEvents = useMemo(() => {
+    if (events?.length > 0 && eventAlias) {
+      const singEvent = events?.find((e) => e.eventAlias === eventAlias);
+      return {
+        value: singEvent?.eventAlias,
+        label: singEvent?.eventTitle,
+      };
+    } else return "";
+  }, [events, eventAlias]);
+
+  
+
   return (
     <>
       <div className="w-full">
         <Form {...form}>
-          <form className="w-full flex flex-col items-center gap-4">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="w-full flex flex-col items-center gap-6"
+          >
             <div className="flex w-full text-mobile sm:text-sm items-center justify-between">
               <div className="flex flex-col items-start justify-start">
                 <p>Connect {isQuiz ? " Quiz " : " Poll "} to an Event</p>
@@ -98,14 +139,13 @@ export function QuizIntegration({
               />
             </div>
 
-            <div className="w-full mx-auto max-w-lg flex items-end gap-x-2">
+          {accessibility?.visible && <>  <div className="w-full mx-auto max-w-lg flex items-end gap-x-2">
               <FormField
                 control={form.control}
                 name="workspaceAlias"
                 render={({ field }) => (
-                  <InputOffsetLabel label="Organization">
+                  <InputOffsetLabel label="">
                     <ReactSelect
-                      // defaultValue={prevOrg}
                       {...field}
                       placeHolder="Select a Workspace"
                       options={formattedList}
@@ -125,6 +165,36 @@ export function QuizIntegration({
                 <p className="text-sm">Workspace</p>
               </Button>
             </div>
+
+            <div className="w-full mx-auto max-w-lg flex items-end gap-x-2">
+              <FormField
+                control={form.control}
+                name="eventAlias"
+                render={({ field }) => (
+                  <InputOffsetLabel label="">
+                    <ReactSelect
+                      defaultValue={prevEvents}
+                      {...field}
+                      placeHolder="Select an Event"
+                      options={formattedEvents}
+                      key={prevEvents?.toString()}
+                    />
+                  </InputOffsetLabel>
+                )}
+              />
+              <Button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  window.open("https://zikoro.com/create");
+                }}
+                className="hover:bg-basePrimary text-basePrimary  rounded-md border border-basePrimary hover:text-gray-50 gap-x-2 h-11 font-medium"
+              >
+                <PlusCircle size={20} />
+                <p className="text-sm">Event</p>
+              </Button>
+            </div>
+            </>}
 
             <Button
               onClick={onSubmit}

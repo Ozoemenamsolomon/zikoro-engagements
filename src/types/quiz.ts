@@ -65,6 +65,7 @@ export interface TQuiz<T> {
     playMusic: boolean,
     musicList: {label:string, value:string}[] | null,
     music: {label:string, value:string} | null,
+    eventAlias: string;
   };
 }
 

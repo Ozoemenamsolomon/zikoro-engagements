@@ -15,7 +15,7 @@ import { usePostRequest } from "@/hooks/services/requests";
 import { generateAlias } from "@/utils";
 
 import { LoaderAlt } from "styled-icons/boxicons-regular";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 import { TQa, TQAQuestion } from "@/types/qa";
 import { TUserAccess } from "@/types/user";
 

@@ -182,7 +182,7 @@ function calculateQuizStats(answers: TAnswer[], quiz: TQuiz<TQuestion[]>) {
     totalAnswers += attemptedQuestions;
   });
 
-  const attemptedPercentage = (attemptedCount / totalParticipants) * 100;
+  const attemptedPercentage = attemptedCount ;
   const completedPercentage = (completedCount / totalParticipants) * 100;
   const avgCompletionTime = completedCount
     ? totalCompletionTime / completedCount
