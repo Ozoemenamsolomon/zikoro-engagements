@@ -24,11 +24,7 @@ import { usePostRequest } from "@/hooks/services/requests";
 import { generateAlias, uploadFile } from "@/utils";
 
 const options = [
-  {
-    name: "Mutiple Choice",
-    image: "/fmultiplechoice.png",
-    type: "INPUT_MULTIPLE_CHOICE",
-  },
+ 
   { name: "Text", image: "/ftext.png", type: "INPUT_TEXT" },
   { name: "Date", image: "/fdate.png", type: "INPUT_DATE" },
   { name: "CheckBox", image: "/fcheckbox.png", type: "INPUT_CHECKBOX" },
@@ -273,6 +269,10 @@ export function AddQuestion({
                       refetch={async () => {
                         refetch();
                         editQuestion(null);
+                      }}
+                      optionType={optionType}
+                      setOption={(value: string) => {
+                          setOptionType(value)
                       }}
                     />
                   )}

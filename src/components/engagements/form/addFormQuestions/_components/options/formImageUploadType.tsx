@@ -12,6 +12,7 @@ import { InlineIcon } from "@iconify/react/dist/iconify.js";
 import { cn } from "@/lib/utils";
 import { QuizUncheckIcon } from "@/constants";
 import { nanoid } from "nanoid";
+import { Button } from "@/components/custom";
 
 type UploadOptionItemsType = {
   id: string;
@@ -30,7 +31,7 @@ function UploadOptionItem({
   removeOption: (id: string) => void;
 }) {
   return (
-    <div className="w-full ">
+    <div className="w-[200px] ">
       <div className="flex items-center justify-between w-full mb-2">
         <button
           onClick={(e) => {
@@ -140,6 +141,7 @@ export function FormImageUploadType({
   }, [addedDescription]);
 
   function removeOption(id: string) {
+    if (options?.length === 1) return;
     setOptions(options.filter((option) => option.id !== id));
   }
 
@@ -171,7 +173,7 @@ export function FormImageUploadType({
          
         />
 
-        <div className="w-full flex flex-wrao items-center gap-3">
+        <div className="w-full flex flex-wrap justify-center items-center gap-3">
           {options?.map((option, index) => (
             <UploadOptionItem
               option={option}
@@ -181,6 +183,20 @@ export function FormImageUploadType({
             />
           ))}
         </div>
+
+        <Button
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            setOptions([
+              ...options,
+              { id: nanoid(),  image: "" },
+            ]);
+          }}
+          className="w-fit h-fit px-0 mt-3 text-basePrimary text-sm underline"
+        >
+          Add New Option
+        </Button>
       </div>
     </>
   );

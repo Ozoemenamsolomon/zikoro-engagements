@@ -26,7 +26,6 @@ export interface TEngagementFormQuestion {
       isConnectedToEngagement: boolean;
       showForm: string;
       redirectUrl?: string;
-      isCollectUserEmail: boolean;
       isCoverScreen: boolean;
       displayType: string;
       questionPerSlides?: string;
@@ -39,6 +38,10 @@ export interface TEngagementFormQuestion {
       isCoverImage: boolean;
       buttonText: string;
       startButtonText: string;
+      isCollectEmail:boolean;
+      isCollectPhone:boolean;
+      connectToEvent:boolean;
+      showResult:boolean;
     };
   }
   

@@ -54,8 +54,12 @@ type QuestionOption = {
 export type TEngagementAnalytics = {
   questionId: string;
   questionText: string;
-  duration: number;
+  totalDuration: number;
   options: QuestionOption[];
+  averageAnswerTimePerAttendee: {
+    attendeeName: string;
+    averageAnswerTime: number;
+  }[];
 };
 
 function calculateOptionSelectionPercentage(
@@ -67,15 +71,15 @@ function calculateOptionSelectionPercentage(
       questionText: string;
       optionsCount: Map<string, number>;
       totalResponses: number;
-      duration: number;
+      totalDuration: number;
       options: TRefinedQuestion["options"];
+      attendeeDurations: Map<string, number[]>;
     }
   >();
 
-  //  Count how many times each option was selected
+  // Process each answer
   answers.forEach((answer) => {
-    const { questionId, answeredQuestion, selectedOptionId, answerDuration } =
-      answer;
+    const { questionId, answeredQuestion, selectedOptionId, answerDuration, attendeeName } = answer;
     const questionText = answeredQuestion.question;
     const selectedOption = selectedOptionId.optionId;
 
@@ -83,31 +87,39 @@ function calculateOptionSelectionPercentage(
       questionMap.set(questionId, {
         questionText,
         totalResponses: 0,
-        duration: answerDuration,
+        totalDuration: 0,
         optionsCount: new Map(),
         options: answeredQuestion.options,
+        attendeeDurations: new Map(),
       });
     }
 
     const questionData = questionMap.get(questionId)!;
     questionData.totalResponses++;
+    questionData.totalDuration += answerDuration;
 
     // Increment the count for the selected option
     questionData.optionsCount.set(
       selectedOption,
       (questionData.optionsCount.get(selectedOption) || 0) + 1
     );
+
+    // Track each attendee's response duration
+    if (!questionData.attendeeDurations.has(attendeeName)) {
+      questionData.attendeeDurations.set(attendeeName, []);
+    }
+    questionData.attendeeDurations.get(attendeeName)!.push(answerDuration);
   });
 
-  // Transform
+  // Transform into output format
   return Array.from(questionMap.entries()).map(
     ([
       questionId,
-      { questionText, optionsCount, totalResponses, options, duration },
+      { questionText, optionsCount, totalResponses, totalDuration, options, attendeeDurations },
     ]) => ({
       questionId,
       questionText,
-      duration,
+      totalDuration,
       options: options.map((option) => ({
         ...option,
         selectionPercentage:
@@ -115,9 +127,20 @@ function calculateOptionSelectionPercentage(
             ? ((optionsCount.get(option.optionId) || 0) / totalResponses) * 100
             : 0,
       })),
+      averageAnswerTimePerAttendee: Array.from(attendeeDurations.entries()).map(
+        ([attendeeName, durations]) => ({
+          attendeeName,
+          averageAnswerTime:
+            durations.length > 0
+              ? durations.reduce((sum, time) => sum + time, 0) / durations.length
+              : 0,
+        })
+      ),
     })
   );
 }
+
+
 
 function MetricCard({
   metric,
@@ -270,15 +293,6 @@ function QuizEngagementInsight({
     useState<TEngagementAnalytics | null>(analytics[0]);
   const [currentIndex, setCurrentIndex] = useState(1);
 
-  const avgDuration = useMemo(() => {
-    if (Array.isArray(analytics) && analytics?.length > 0) {
-      return (
-        analytics?.reduce((acc, curr) => acc + curr?.duration, 0) /
-        (activeAnalytics?.duration || 0)
-      );
-    } else return 0;
-  }, [analytics, activeAnalytics]);
-
   const isImageOption = useMemo(() => {
     if (Array.isArray(activeAnalytics?.options)) {
       return activeAnalytics?.options?.some((s) =>
@@ -286,6 +300,11 @@ function QuizEngagementInsight({
       );
     } else return false;
   }, [activeAnalytics]);
+
+  const avg = useMemo(() => {
+    if (activeAnalytics) return (activeAnalytics?.totalDuration/(1000  * activeAnalytics?.averageAnswerTimePerAttendee?.length)).toFixed(0);
+    else return 0
+  },[activeAnalytics])
   return (
     <div className="w-full mt-10">
       <h2 className="font-semibold text-base sm:text-lg mb-3 text-start">
@@ -310,31 +329,35 @@ function QuizEngagementInsight({
             </div>
 
             <div className="w-full flex flex-col items-start justify-start gap-3">
-              {analytics?.map((analytic, index) => (
-                <div
-                  onClick={() => {
-                    setActiveAnalytics(analytic);
-                    setCurrentIndex(index + 1);
-                  }}
-                  key={index}
-                  className={cn(
-                    "w-full flex items-center rounded-lg p-3 border h-36  flex-col gap-6",
-                    analytic?.questionId === activeAnalytics?.questionId &&
-                      " border-basePrimary"
-                  )}
-                >
-                  <p className="w-10 h-10 flex text-lg items-center bg-basePrimary-100 justify-center rounded-full border border-basePrimary">
-                    {index + 1}
-                  </p>
+              {Array.isArray(analytics) &&
+                analytics?.map((analytic, index) => {
+                  
+                  return (
+                    <div
+                      onClick={() => {
+                        setActiveAnalytics(analytic);
+                        setCurrentIndex(index + 1);
+                      }}
+                      key={index}
+                      className={cn(
+                        "w-full flex items-center rounded-lg p-3 border h-36  flex-col gap-6",
+                        analytic?.questionId === activeAnalytics?.questionId &&
+                          " border-basePrimary"
+                      )}
+                    >
+                      <p className="w-10 h-10 flex text-lg items-center bg-basePrimary-100 justify-center rounded-full border border-basePrimary">
+                        {index + 1}
+                      </p>
 
-                  <div
-                    className="innerhtml items-center text-sm w-full line-clamp-3"
-                    dangerouslySetInnerHTML={{
-                      __html: analytic?.questionText ?? "",
-                    }}
-                  />
-                </div>
-              ))}
+                      <div
+                        className="innerhtml items-center text-sm w-full line-clamp-3"
+                        dangerouslySetInnerHTML={{
+                          __html: analytic?.questionText ?? "",
+                        }}
+                      />
+                    </div>
+                  );
+                })}
             </div>
           </div>
           <div className="w-full col-span-9 overflow-y-auto vert-scroll p-4 sm:p-6">
@@ -349,7 +372,7 @@ function QuizEngagementInsight({
               </div>
               <div className="flex flex-col items-center justify-center ">
                 <p className="font-semibold text-lg gradient-text bg-basePrimary">
-                  {avgDuration} Secs
+                  {avg} Secs
                 </p>
                 <p>Avg. Answer Time</p>
               </div>

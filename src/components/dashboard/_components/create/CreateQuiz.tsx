@@ -119,6 +119,7 @@ export function CreateQuiz({
             isForm: false,
             showAnswer: true,
             showResult: true,
+            eventAlias: ""
           },
           branding: {
             eventName: true,

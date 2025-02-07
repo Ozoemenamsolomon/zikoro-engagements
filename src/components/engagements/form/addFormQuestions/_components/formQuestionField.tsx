@@ -3,11 +3,12 @@ import { ActionModal } from "@/components/custom/ActionModal";
 import { Switch } from "@/components/ui/switch";
 import { AddQuizImageIcon } from "@/constants";
 import { usePostRequest } from "@/hooks/services/requests";
+import { cn } from "@/lib/utils";
 import { formQuestion } from "@/schemas";
 import { TEngagementFormQuestion } from "@/types/form";
 import { InlineIcon } from "@iconify/react/dist/iconify.js";
 import Image from "next/image";
-import { useState } from "react";
+import React, { ReactNode, useState } from "react";
 import { UseFormReturn, useWatch } from "react-hook-form";
 import * as z from "zod";
 
@@ -19,6 +20,9 @@ export function FormQuestionField({
   engagementForm,
   refetch,
   type,
+  SettingWidget,
+  isNotOverflow,
+  isText
 }: {
   defaultQuestionValue: string;
   question: TEngagementFormQuestion["questions"][number] | null;
@@ -27,11 +31,16 @@ export function FormQuestionField({
   engagementForm: TEngagementFormQuestion;
   refetch: () => Promise<any>;
   type: string;
+  isNotOverflow?: boolean;
+  SettingWidget?: ReactNode;
+  isText?:boolean;
 }) {
   const { postData } =
     usePostRequest<Partial<TEngagementFormQuestion>>("engagements/form");
+
   const [isLoading, setIsLoading] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
+  const [isSettings, setShowSettings] = useState(false);
   function onChange(v: string) {
     form.setValue("question", v);
   }
@@ -63,37 +72,25 @@ export function FormQuestionField({
   function showDeletModal() {
     setIsDelete((prev) => !prev);
   }
-// engagementQuestionValue , question
+  // engagementQuestionValue , question
   return (
     <div className="w-full ">
       <div className="w-full flex items-center justify-between">
         <p>Question ({type})</p>
-        <div className="flex items-center gap-x-2">
-          <div className="flex items-center gap-x-1">
-            <p className="text-mobile">Required</p>
-            <Switch
-              checked={isRequired}
-              onCheckedChange={(checked) => {
-                form.setValue("isRequired", checked);
-              }}
-              className=""
-            />
-          </div>
-          {question !== null && (
-            <button
-              className="flex items-center gap-x-1"
-              title="Delete"
-              onClick={(e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                showDeletModal();
-              }}
-            >
-              <p className="text-mobile">Delete</p>
-              <InlineIcon icon="icon-park-twotone:delete" fontSize={22} />
-            </button>
-          )}
-        </div>
+
+        {question !== null && (
+          <button
+            className="flex items-center gap-x-1"
+            title="Delete"
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              showDeletModal();
+            }}
+          >
+            <InlineIcon icon="icon-park-twotone:delete" fontSize={22} />
+          </button>
+        )}
       </div>
       <div className="w-full mt-3  flex items-center gap-x-3">
         {
@@ -106,16 +103,71 @@ export function FormQuestionField({
             />
           </div>
         }
-        <label htmlFor="form-question-img">
-          <input
-            hidden
-            id="form-question-img"
-            type="file"
-            accept="image/*"
-            {...form.register("questionImage")}
-          />
-          <AddQuizImageIcon />
-        </label>
+        <div className="flex flex-col items-start justify-start gap-2">
+          <label htmlFor="form-question-img">
+            <input
+              hidden
+              id="form-question-img"
+              type="file"
+              accept="image/*"
+              {...form.register("questionImage")}
+            />
+            <AddQuizImageIcon />
+          </label>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              setShowSettings(true);
+            }}
+            className="relative"
+            title="setting"
+          >
+            <InlineIcon icon="duo-icons:settings" fontSize={22} />
+            {isSettings && (
+              <div
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                }}
+                className="absolute right-[4px] top-5"
+
+              >
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    setShowSettings(false);
+                  }}
+                  className="w-full h-full inset-0 fixed z-[100]"
+                ></div>
+                <div
+                  className={cn(
+                    "w-[180px] relative z-[200] max-h-[250px] overflow-y-auto vert-scroll bg-white shadow rounded-lg py-4 h-fit",
+                    isNotOverflow && "max-h-fit  overflow-y-visible",
+                    isText && "w-[230px]"
+                  )}
+                >
+                  <div className="flex px-3 mb-3 items-center gap-x-2">
+                    <Switch
+                      checked={isRequired}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                      }}
+                      onCheckedChange={(checked) => {
+                        form.setValue("isRequired", checked);
+                      }}
+                      className=""
+                    />
+                    <p className="text-mobile">Required</p>
+                  </div>
+                  {SettingWidget}
+                </div>
+              </div>
+            )}
+          </button>
+        </div>
       </div>
       {addedImage && (
         <div className="w-full flex mt-3 items-center justify-center">

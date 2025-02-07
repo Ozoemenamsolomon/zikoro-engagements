@@ -7,7 +7,6 @@ import {
   TQuiz,
   TRefinedQuestion,
   TQuestion,
-  TConnectedUser,
   TLiveQuizParticipant,
   TExportedAnswer,
 } from "@/types/quiz";
@@ -226,7 +225,6 @@ export function ScoreBoard({
     }
   }, [board]);
 
-
   // handle delete lobby
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
@@ -300,7 +298,16 @@ export function ScoreBoard({
       };
     });
 
-    const filteredResult = exportedAnswer?.filter(Boolean);
+    const filteredResult = exportedAnswer?.map((obj) =>
+      Object.fromEntries(
+        Object.entries(obj).filter(
+          ([_, value]) => value !== null && value !== undefined && value !== ""
+        )
+      )
+    );
+    
+
+    console.log({filteredResult, exportedAnswer})
 
     const worksheet = XLSX.utils.json_to_sheet(filteredResult);
     const workbook = XLSX.utils.book_new();
@@ -413,7 +420,7 @@ export function ScoreBoard({
                                 />
                                 <p>Delete Record</p>
                               </Button>
-                      </div>
+                            </div>
                           </div>
                         </div>
                       )}
@@ -436,21 +443,21 @@ export function ScoreBoard({
                         )}
                       >
                         <div className="flex flex-col mr-11 items-center justify-center gap-y-2">
+                          {board[1]?.quizParticipantId === id && (
+                            <p className="bg-basePrimary rounded-3xl text-white px-2 py-1 font-medium text-mobile">
+                              You
+                            </p>
+                          )}
                           <Avatar
                             shape="square"
                             style={{ borderRadius: "12px" }}
                             className="w-[5rem]  h-[5rem]"
                             {...board[1]?.image}
                           />
-                          {board[1]?.quizParticipantId === id ? (
-                            <p className="bg-basePrimary rounded-3xl text-white px-2 py-1 font-medium text-mobile">
-                              You
-                            </p>
-                          ) : (
-                            <p className="text-zinc-700 text-sm font-medium">
-                              {board[1]?.attendeeName ?? ""}
-                            </p>
-                          )}
+
+                          <p className="text-zinc-700 text-sm font-medium">
+                            {board[1]?.attendeeName ?? ""}
+                          </p>
                         </div>
 
                         <div className="w-[11.2rem]  relative h-fit">
@@ -476,21 +483,21 @@ export function ScoreBoard({
                         )}
                       >
                         <div className="flex flex-col items-center justify-center gap-y-2">
+                          {board[0]?.quizParticipantId === id && (
+                            <p className="bg-basePrimary text-white rounded-3xl px-2 py-1 font-medium text-mobile">
+                              You
+                            </p>
+                          )}
                           <Avatar
                             shape="square"
                             style={{ borderRadius: "12px" }}
                             className="w-[5rem] h-[5rem]"
                             {...board[0]?.image}
                           />
-                          {board[0]?.quizParticipantId === id ? (
-                            <p className="bg-basePrimary text-white rounded-3xl px-2 py-1 font-medium text-mobile">
-                              You
-                            </p>
-                          ) : (
-                            <p className="text-zinc-700 font-medium text-sm">
-                              {board[0]?.attendeeName ?? ""}
-                            </p>
-                          )}
+
+                          <p className="text-zinc-700 font-medium text-sm">
+                            {board[0]?.attendeeName ?? ""}
+                          </p>
                         </div>
 
                         <div className="w-[11.2rem]  relative h-fit">
@@ -516,21 +523,21 @@ export function ScoreBoard({
                         )}
                       >
                         <div className="flex flex-col ml-11 items-center justify-center gap-y-2">
+                          {board[2]?.quizParticipantId === id && (
+                            <p className="bg-basePrimary rounded-3xl text-white px-2 py-1 font-medium text-mobile">
+                              You
+                            </p>
+                          )}
                           <Avatar
                             shape="square"
                             style={{ borderRadius: "12px" }}
                             className="w-[5rem] h-[5rem]"
                             {...board[2]?.image}
                           />
-                          {board[2]?.quizParticipantId === id ? (
-                            <p className="bg-basePrimary rounded-3xl text-white px-2 py-1 font-medium text-mobile">
-                              You
-                            </p>
-                          ) : (
-                            <p className="text-zinc-700 text-sm font-medium">
-                              {board[2]?.attendeeName ?? ""}
-                            </p>
-                          )}
+
+                          <p className="text-zinc-700 text-sm font-medium">
+                            {board[2]?.attendeeName ?? ""}
+                          </p>
                         </div>
 
                         <div className="w-[11.2rem] relative h-fit">
@@ -798,11 +805,6 @@ function AnswerSheet({
   userAvatar: Required<AvatarFullConfig> | undefined;
   className?: string;
 }) {
-  // const [showExplanation, setShowExplanation] = useState(false);
-
-  // function toggleExplanationVisibility() {
-  //   setShowExplanation((prev) => !prev);
-  // }
   const optionLetter = ["A", "B", "C", "D"];
 
   return (
@@ -831,38 +833,9 @@ function AnswerSheet({
       <div className="W-full max-w-2xl mx-auto mt-8 flex gap-y-3 flex-col items-start justify-start">
         {Array.isArray(quiz?.questions) &&
           quiz?.questions?.map((question, index) => {
-            // // correct answer index
-            // const correctAnswerIndex = question?.options?.findIndex(
-            //   ({ isAnswer }) => isAnswer !== ""
-            // );
-            // // chosen answer index
-            // const chosenAsnwerIndex = question?.options?.findIndex(
-            //   ({ isCorrect }) => typeof isCorrect === "boolean"
-            // );
-            // // chosen answer
-            // const chosenAnswer = question?.options?.find(
-            //   ({ isCorrect }) => typeof isCorrect === "boolean"
-            // );
-
-            // // correct answer
-            // const correctAnswer = question?.options?.find(
-            //   ({ isAnswer }) => isAnswer !== ""
-            // );
-
-            // const isImageOption = question?.options?.some((opt) =>
-            //   (opt?.option as string)?.startsWith("https://")
-            // );
-
-            // const correctOption = () => {
-            //   const i = answer?.filter((ans) => {
-            //     return (
-            //       question?.options[correctAnswerIndex].optionId ===
-            //       ans?.selectedOptionId?.optionId
-            //     );
-            //   });
-
-            //   return i?.length || 0;
-            // };
+            const isImageOption = question?.options?.some((option) =>
+              (option?.option as string)?.startsWith("https://")
+            );
 
             return (
               <div className="w-full space-y-4 bg-basePrimary-200 rounded-lg p-4  ">
@@ -885,10 +858,6 @@ function AnswerSheet({
                 )}
 
                 {question?.options?.map((option, index) => {
-                  const isImageOption = (option?.option as string)?.startsWith(
-                    "https://"
-                  );
-
                   const chosedOption = () => {
                     const i = answer?.filter((ans) => {
                       return (
@@ -914,7 +883,13 @@ function AnswerSheet({
                                 "bg-red-500 text-white"
                             )}
                           >
-                            <div className={cn("w-full flex justify-center items-center", typeof option?.isCorrect === "boolean" && "items-end justify-between" )}>
+                            <div
+                              className={cn(
+                                "w-full flex justify-center items-center",
+                                typeof option?.isCorrect === "boolean" &&
+                                  "items-end justify-between"
+                              )}
+                            >
                               <p className="w-1 h-1"></p>
                               <span
                                 className={cn(
@@ -979,55 +954,6 @@ function AnswerSheet({
                               className="w-28 rounded-lg object-cover h-32"
                             />
                           </div>
-                          {/* 
-                    <div
-                      className={cn(
-                        "w-fit  text-white gap-3 flex flex-col bg-green-500 items-center p-2 h-fit rounded-lg "
-                      )}
-                    >
-                      <span
-                        className={cn(
-                          "rounded-lg h-9 flex items-center text-green-500 justify-center font-medium w-9 bg-white border border-gray-700"
-                        )}
-                      >
-                        {optionLetter[correctAnswerIndex]}
-                      </span>
-                      <div className="w-full flex items-center justify-between">
-                        <div className="w-11/12 relative h-2 ring-1 ring-white rounded-3xl bg-gray-200">
-                          <span
-                            style={{
-                              width: correctOption()
-                                ? `${(
-                                    (correctOption() / answer?.length) *
-                                    100
-                                  ).toFixed(0)}%`
-                                : "0%",
-                            }}
-                            className={cn(
-                              "absolute rounded-3xl bg-green-500 inset-0  h-full"
-                            )}
-                          ></span>
-                        </div>
-
-                        <div className="text-mobile">
-                          <span>
-                            {correctOption
-                              ? `${(
-                                  (correctOption() / answer?.length) *
-                                  100
-                                ).toFixed(0)}%`
-                              : "0%"}
-                          </span>
-                        </div>
-                      </div>
-                      <Image
-                        src={correctAnswer?.option}
-                        alt=""
-                        width={400}
-                        height={400}
-                        className="w-28 rounded-lg object-cover h-32"
-                      />
-                    </div> */}
                         </div>
                       ) : (
                         <div className="w-full ">

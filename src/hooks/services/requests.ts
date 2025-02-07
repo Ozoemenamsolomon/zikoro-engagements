@@ -44,7 +44,7 @@ export const useGetData = <TData>(
       }
 
       setData(responseData.data);
-      console.log(responseData.data);
+     // console.log(responseData.data);
 
       return responseData.data;
     } catch (error) {

@@ -185,14 +185,14 @@ export function LeaderBoard({
   close,
   answers,
   quiz,
-  id
+  id,
 }: {
   isLeftBox: boolean;
   isRightBox: boolean;
   close: () => void;
   answers: TAnswer[];
   quiz: TQuiz<TQuestion[]>;
-  id?:string
+  id?: string;
 }) {
   //console.log(answers);
   const [recentAnime, setRecentAnime] = useState(false);
@@ -248,6 +248,8 @@ export function LeaderBoard({
       return [];
     }
   }, [answers, quiz]);
+
+  console.log("ewfwe", restructuredScores, answers);
 
   function onToggleBoardVisibility() {
     close();
@@ -337,127 +339,124 @@ export function LeaderBoard({
         </div>
 
         {Array.isArray(board) && board?.length > 0 && (
-                <div className=" flex w-full items-center justify-center text-sm">
-                  <div
-                    className={cn(
-                      "flex invisible flex-col relative left-11  mt-[1rem] gap-y-2 justify-center",
-                      board[1]?.attendeeName && "visible"
-                    )}
-                  >
-                    <div className="flex quiz-player-animation flex-col mr-11 items-center justify-center gap-y-2">
-                 
-                      <Avatar
-                        shape="square"
-                        style={{borderRadius:"12px"}}
-                        className="w-[4rem]  h-[4rem]"
-                        {...board[1]?.image}
-                      />
-                      <p className="text-sm text-zinc-700 font-medium">
-                        {board[1]?.attendeeName ?? ""}
-                      </p>
-                    </div>
-
-                    <div className="w-[8rem]  relative h-fit">
-                      <Image
-                        src="/secondp.png"
-                        className="w-[8rem]  object-cover"
-                        alt=""
-                        width={150}
-                        height={500}
-                      />
-                      <div className="absolute mr-11 inset-x-0 top-10 text-white mx-auto flex flex-col items-center justify-center">
-                        <p className="font-semibold text-lg">2</p>
-                        <p className=" bg-white text-basePrimary font-medium rounded-3xl px-3 py-1">{`${
-                          board[1]?.totalScore?.toFixed(0) ?? 0
-                        }p`}</p>
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    className={cn(
-                      "flex flex-col relative z-30 gap-y-2 mt-[-4rem] justify-center invisible",
-                      board[0]?.attendeeName && "visible"
-                    )}
-                  >
-                    <div className="flex quiz-player-animation  flex-col items-center justify-center gap-y-2">
-                   
-                      <Avatar
-                        shape="circle"
-                        style={{borderRadius:"12px"}}
-                        className="w-[4rem] h-[4rem]"
-                        {...board[0]?.image}
-                      />
-                      <p className=" text-sm text-zinc-700 font-medium">
-                        {board[0]?.attendeeName ?? ""}
-                      </p>
-                    </div>
-
-                    <div className="w-[8rem]  relative h-fit">
-                      <Image
-                        src="/firstp.png"
-                        className="w-[8rem] object-cover"
-                        alt=""
-                        width={150}
-                        height={500}
-                      />
-                      <div className="absolute inset-x-0 top-10 text-white mx-auto flex flex-col items-center justify-center">
-                        <p className="font-semibold text-lg">1</p>
-                        <p className=" bg-white text-basePrimary font-medium rounded-3xl px-3 py-1">{`${
-                          board[0]?.totalScore.toFixed(0) ?? 0
-                        }p`}</p>
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    className={cn(
-                      "flex flex-col relative right-11 mt-[1.5rem] gap-y-2 justify-center invisible",
-                      board[2]?.attendeeName && "visible"
-                    )}
-                  >
-                    <div className="flex quiz-player-animation flex-col ml-11 items-center justify-center gap-y-2">
-                   
-                      <Avatar
-                      style={{borderRadius:"12px"}}
-                        shape="circle"
-                        className="w-[4rem] h-[4rem]"
-                        {...board[2]?.image}
-                      />
-                      <p className=" text-sm text-zinc-700 font-medium">
-                        {board[2]?.attendeeName ?? ""}
-                      </p>
-                    </div>
-
-                    <div className="w-[8rem] relative h-fit">
-                      <Image
-                        src="/thirdp.png"
-                        className="w-[8rem] object-cover"
-                        alt=""
-                        width={150}
-                        height={500}
-                      />
-                      <div className="absolute inset-x-0 ml-11 top-10 text-white mx-auto flex flex-col items-center justify-center">
-                        <p className="font-semibold text-lg">3</p>
-                        <p className=" bg-white text-basePrimary font-medium rounded-3xl px-3 py-1">{`${
-                          board[2]?.totalScore.toFixed(0) ?? 0
-                        }p`}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+          <div className=" flex w-full items-center justify-center text-sm">
+            <div
+              className={cn(
+                "flex invisible flex-col relative left-11  mt-[1rem] gap-y-2 justify-center",
+                board[1]?.attendeeName && "visible"
               )}
+            >
+              <div className="flex quiz-player-animation flex-col mr-11 items-center justify-center gap-y-2">
+                <Avatar
+                  shape="square"
+                  style={{ borderRadius: "12px" }}
+                  className="w-[4rem]  h-[4rem]"
+                  {...board[1]?.image}
+                />
+                <p className="text-sm text-zinc-700 font-medium">
+                  {board[1]?.attendeeName ?? ""}
+                </p>
+              </div>
+
+              <div className="w-[8rem]  relative h-fit">
+                <Image
+                  src="/secondp.png"
+                  className="w-[8rem]  object-cover"
+                  alt=""
+                  width={150}
+                  height={500}
+                />
+                <div className="absolute mr-11 inset-x-0 top-10 text-white mx-auto flex flex-col items-center justify-center">
+                  <p className="font-semibold text-lg">2</p>
+                  <p className=" bg-white text-basePrimary font-medium rounded-3xl px-3 py-1">{`${
+                    board[1]?.totalScore?.toFixed(0) ?? 0
+                  }p`}</p>
+                </div>
+              </div>
+            </div>
+            <div
+              className={cn(
+                "flex flex-col relative z-30 gap-y-2 mt-[-4rem] justify-center invisible",
+                board[0]?.attendeeName && "visible"
+              )}
+            >
+              <div className="flex quiz-player-animation  flex-col items-center justify-center gap-y-2">
+                <Avatar
+                  shape="circle"
+                  style={{ borderRadius: "12px" }}
+                  className="w-[4rem] h-[4rem]"
+                  {...board[0]?.image}
+                />
+                <p className=" text-sm text-zinc-700 font-medium">
+                  {board[0]?.attendeeName ?? ""}
+                </p>
+              </div>
+
+              <div className="w-[8rem]  relative h-fit">
+                <Image
+                  src="/firstp.png"
+                  className="w-[8rem] object-cover"
+                  alt=""
+                  width={150}
+                  height={500}
+                />
+                <div className="absolute inset-x-0 top-10 text-white mx-auto flex flex-col items-center justify-center">
+                  <p className="font-semibold text-lg">1</p>
+                  <p className=" bg-white text-basePrimary font-medium rounded-3xl px-3 py-1">{`${
+                    board[0]?.totalScore.toFixed(0) ?? 0
+                  }p`}</p>
+                </div>
+              </div>
+            </div>
+            <div
+              className={cn(
+                "flex flex-col relative right-11 mt-[1.5rem] gap-y-2 justify-center invisible",
+                board[2]?.attendeeName && "visible"
+              )}
+            >
+              <div className="flex quiz-player-animation flex-col ml-11 items-center justify-center gap-y-2">
+                <Avatar
+                  style={{ borderRadius: "12px" }}
+                  shape="circle"
+                  className="w-[4rem] h-[4rem]"
+                  {...board[2]?.image}
+                />
+                <p className=" text-sm text-zinc-700 font-medium">
+                  {board[2]?.attendeeName ?? ""}
+                </p>
+              </div>
+
+              <div className="w-[8rem] relative h-fit">
+                <Image
+                  src="/thirdp.png"
+                  className="w-[8rem] object-cover"
+                  alt=""
+                  width={150}
+                  height={500}
+                />
+                <div className="absolute inset-x-0 ml-11 top-10 text-white mx-auto flex flex-col items-center justify-center">
+                  <p className="font-semibold text-lg">3</p>
+                  <p className=" bg-white text-basePrimary font-medium rounded-3xl px-3 py-1">{`${
+                    board[2]?.totalScore.toFixed(0) ?? 0
+                  }p`}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="w-full overflow-y-auto no-scrollbar absolute inset-x-0 z-50 top-[22rem] space-y-2">
-       {board.slice(3, board?.length).length > 0 && <div className="w-full text-xs sm:text-sm px-3 py-2 grid grid-cols-4">
-          <div className="w-full col-span-2 flex items-center gap-x-2">
-            <p>Rank</p>
-            <p className="flex items-center gap-x-1">Participants  </p>
+        {board.slice(3, board?.length).length > 0 && (
+          <div className="w-full text-xs sm:text-sm px-3 py-2 grid grid-cols-4">
+            <div className="w-full col-span-2 flex items-center gap-x-2">
+              <p>Rank</p>
+              <p className="flex items-center gap-x-1">Participants </p>
+            </div>
+            <p className="w-1 h-1"></p>
+            <div className="">Points</div>
           </div>
-          <p className="w-1 h-1"></p>
-          <div className="">
-            Points
-          </div>
-        </div>}
+        )}
         <Reorder.Group values={board} onReorder={setBoard}>
           {Array.isArray(board) &&
             board.slice(3, board?.length)?.map((attendee, index) => (

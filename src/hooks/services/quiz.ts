@@ -5,6 +5,7 @@ import { TQAQuestion } from "@/types/qa";
 import { TAnswer, TLiveQuizParticipant, TOrganizationQuiz, TQuestion, TQuiz } from "@/types/quiz";
 import { getRequest } from "@/utils/api";
 import { createClient } from "@/utils/supabase/client";
+import _ from "lodash";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -124,7 +125,7 @@ export const useGetQuizAnswer = () => {
     if (status !== 200) return;
 
     //
-    return setAnswers(data.data);
+    return setAnswers(_.uniqBy(data.data, "id"));
   };
 
   return { answers, isLoading, getAnswers, setAnswers };

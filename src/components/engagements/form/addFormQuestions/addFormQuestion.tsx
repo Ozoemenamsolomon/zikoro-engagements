@@ -121,14 +121,16 @@ export default function AddFormQuestions({
                     as="button"
                     Icon={SettingsIcon}
                     title="Form Settings"
-                    onClick={() => {}}
+                    onClick={() => {
+                      setToggleSetting(true)
+                    }}
                   />
                 }
                 CenterWidget={
                   <TrailingHeadRoute
                     as="button"
                     Icon={SettingsIcon}
-                    title="Form Results"
+                    title="Form Response"
                     onClick={() => {}}
                   />
                 }
@@ -208,7 +210,7 @@ export default function AddFormQuestions({
       {isToggleSetting && data && organization && (
         <FormSettings
           close={toggleSetting}
-          form={data}
+          engagementForm={data}
           refetch={getData}
           organization={organization}
         />
