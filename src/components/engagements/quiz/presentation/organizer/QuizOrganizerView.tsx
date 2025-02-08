@@ -31,7 +31,6 @@ import {
   useGetQuiz,
   useGetQuizAnswer,
 } from "@/hooks/services/quiz";
-import { LoadingState } from "@/components/composables/LoadingState";
 import { QuizLobby, QuizLobbyRef } from "../common";
 import { calculateAndSetWindowHeight, generateAlias } from "@/utils";
 import { AvatarFullConfig } from "react-nice-avatar";
@@ -49,6 +48,7 @@ import { InlineIcon } from "@iconify/react/dist/iconify.js";
 import { ActionModal } from "@/components/custom/ActionModal";
 import PreviewDeletionGuard from "../common/PreviewDeleteGuard";
 import { Slider } from "@mui/material";
+import _ from "lodash";
 
 // audio instance
 function createAudioInstance(music: string) {
@@ -271,20 +271,40 @@ export default function QuizOrganizerView({
   useEffect(() => {
     if (!quiz?.accessibility?.live) return;
     const channel = supabase
-      .channel("live-answer")
-      .on(
+      .channel("live-answer");
+
+
+      // channel.on(
+      //   "postgres_changes",
+      //   {
+      //     event: "UPDATE",
+      //     schema: "public",
+      //     table: "quizAnswer",
+      //     filter: `quizId=eq.${quiz?.id}`,
+      //   },
+      //   (payload) => {
+      //     console.log("new answer data", payload.new)
+      //     setAnswers((prev) => [...prev, payload.new as TAnswer]);
+      //   }
+      // )
+
+      channel.on(
         "postgres_changes",
         {
-          event: "UPDATE",
+          event: "INSERT",
           schema: "public",
           table: "quizAnswer",
           filter: `quizId=eq.${quiz?.id}`,
         },
         (payload) => {
-          setAnswers((prev) => [...prev, payload.new as TAnswer]);
+        //  console.log("new answer data", payload.new)
+          setAnswers((prev) => _.uniqBy([...prev, payload.new as TAnswer], "id"));
+          
         }
       )
-      .subscribe((status) => {
+
+
+      channel.subscribe((status) => {
         console.log("Subscription status: ANSWR", status);
       });
 
@@ -685,6 +705,7 @@ export default function QuizOrganizerView({
                     close={onToggle}
                     quiz={quiz}
                     answers={answers}
+                    key={answer?.length}
                   />
                 )}
               </div>

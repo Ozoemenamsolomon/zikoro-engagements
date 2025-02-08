@@ -341,3 +341,53 @@
   outline: 2px solid #6d28d9; /* Purple outline on focus */
 
 }
+
+/* DatePicker.css */
+.react-datepicker {
+  font-family: Arial, sans-serif;
+}
+
+/* .react-datepicker__header {
+  background-color: #7c4dff; /* Set header background color to a lighter shade of indigo */
+
+.react-datepicker__day--selected {
+  background-color: #7c4dff !important; /* Set selected day background color to a lighter shade of indigo */
+  color: white !important; /* Set selected day text color to white */
+}
+
+.react-datepicker__day--keyboard-selected {
+  background-color: #7c4dff !important; /* Set keyboard selected day background color to a lighter shade of indigo */
+}
+
+.react-datepicker__day:hover {
+  background-color: rgba(
+    0,
+    0,
+    0,
+    0.04
+  ); /* Set hover background color to a light gray */
+}
+
+/* .react-datepicker__current-month {
+  color: #7c4dff; /* Set current month text color to a lighter shade of indigo */
+
+/* .react-datepicker__day-name,
+.react-datepicker__day {
+  color: #7c4dff; /* Set day name and day text color to a lighter shade of indigo */
+
+/* .react-datepicker__navigation--previous,
+.react-datepicker__navigation--next {
+  border-color: #7c4dff; /* Set navigation button border color to a lighter shade of indigo */
+
+.react-datepicker__navigation--previous:hover,
+.react-datepicker__navigation--next:hover {
+  border-color: #7c4dff; /* Set navigation button border color to a lighter shade of indigo on hover */
+}
+
+.react-datepicker__time-container
+  .react-datepicker__time
+  .react-datepicker__time-box
+  ul.react-datepicker__time-list
+  li.react-datepicker__time-list-item--selected {
+  background-color: #7c4dff !important;
+}

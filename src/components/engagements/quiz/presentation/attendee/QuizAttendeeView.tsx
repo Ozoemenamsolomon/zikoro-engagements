@@ -35,6 +35,7 @@ import { SendMailModal } from "./_components/SendMailModal";
 import { ScoreBoard } from "../common/ScoreBoard";
 import { InlineIcon } from "@iconify/react/dist/iconify.js";
 import PreviewDeletionGuard from "../common/PreviewDeleteGuard";
+import _ from "lodash";
 
 // audio instance
 function createAudioInstance(music: string) {
@@ -161,21 +162,37 @@ export default function QuizAttendeeView({
   // subscribe to answers
   useEffect(() => {
     if (!quiz?.accessibility?.live) return;
-    const channel = supabase
-      .channel("live-answer")
-      .on(
+    const channel = supabase.channel("live-answer");
+
+      // channel.on(
+      //   "postgres_changes",
+      //   {
+      //     event: "UPDATE",
+      //     schema: "public",
+      //     table: "quizAnswer",
+      //     filter: `quizId=eq.${quiz?.id}`,
+      //   },
+      //   (payload) => {
+      //     setAnswers((prev) => [...prev, payload.new as TAnswer]);
+      //   }
+      // )
+
+      channel.on(
         "postgres_changes",
         {
-          event: "UPDATE",
+          event: "INSERT",
           schema: "public",
           table: "quizAnswer",
           filter: `quizId=eq.${quiz?.id}`,
         },
         (payload) => {
-          setAnswers((prev) => [...prev, payload.new as TAnswer]);
+        //  console.log("new answer data", payload.new)
+        setAnswers((prev) => _.uniqBy([...prev, payload.new as TAnswer], "id"));
+          
         }
       )
-      .subscribe((status) => {
+
+      channel.subscribe((status) => {
         console.log("Subscription status: ANSWER", status);
       });
 

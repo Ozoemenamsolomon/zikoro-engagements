@@ -7,7 +7,6 @@ import {
   TQuiz,
   TRefinedQuestion,
   TQuestion,
-  TConnectedUser,
   TLiveQuizParticipant,
   TExportedAnswer,
 } from "@/types/quiz";
@@ -299,7 +298,16 @@ export function ScoreBoard({
       };
     });
 
-    const filteredResult = exportedAnswer?.filter(Boolean);
+    const filteredResult = exportedAnswer?.map((obj) =>
+      Object.fromEntries(
+        Object.entries(obj).filter(
+          ([_, value]) => value !== null && value !== undefined && value !== ""
+        )
+      )
+    );
+    
+
+    console.log({filteredResult, exportedAnswer})
 
     const worksheet = XLSX.utils.json_to_sheet(filteredResult);
     const workbook = XLSX.utils.book_new();
@@ -435,21 +443,21 @@ export function ScoreBoard({
                         )}
                       >
                         <div className="flex flex-col mr-11 items-center justify-center gap-y-2">
+                          {board[1]?.quizParticipantId === id && (
+                            <p className="bg-basePrimary rounded-3xl text-white px-2 py-1 font-medium text-mobile">
+                              You
+                            </p>
+                          )}
                           <Avatar
                             shape="square"
                             style={{ borderRadius: "12px" }}
                             className="w-[5rem]  h-[5rem]"
                             {...board[1]?.image}
                           />
-                          {board[1]?.quizParticipantId === id ? (
-                            <p className="bg-basePrimary rounded-3xl text-white px-2 py-1 font-medium text-mobile">
-                              You
-                            </p>
-                          ) : (
-                            <p className="text-zinc-700 text-sm font-medium">
-                              {board[1]?.attendeeName ?? ""}
-                            </p>
-                          )}
+
+                          <p className="text-zinc-700 text-sm font-medium">
+                            {board[1]?.attendeeName ?? ""}
+                          </p>
                         </div>
 
                         <div className="w-[11.2rem]  relative h-fit">
@@ -475,21 +483,21 @@ export function ScoreBoard({
                         )}
                       >
                         <div className="flex flex-col items-center justify-center gap-y-2">
+                          {board[0]?.quizParticipantId === id && (
+                            <p className="bg-basePrimary text-white rounded-3xl px-2 py-1 font-medium text-mobile">
+                              You
+                            </p>
+                          )}
                           <Avatar
                             shape="square"
                             style={{ borderRadius: "12px" }}
                             className="w-[5rem] h-[5rem]"
                             {...board[0]?.image}
                           />
-                          {board[0]?.quizParticipantId === id ? (
-                            <p className="bg-basePrimary text-white rounded-3xl px-2 py-1 font-medium text-mobile">
-                              You
-                            </p>
-                          ) : (
-                            <p className="text-zinc-700 font-medium text-sm">
-                              {board[0]?.attendeeName ?? ""}
-                            </p>
-                          )}
+
+                          <p className="text-zinc-700 font-medium text-sm">
+                            {board[0]?.attendeeName ?? ""}
+                          </p>
                         </div>
 
                         <div className="w-[11.2rem]  relative h-fit">
@@ -515,21 +523,21 @@ export function ScoreBoard({
                         )}
                       >
                         <div className="flex flex-col ml-11 items-center justify-center gap-y-2">
+                          {board[2]?.quizParticipantId === id && (
+                            <p className="bg-basePrimary rounded-3xl text-white px-2 py-1 font-medium text-mobile">
+                              You
+                            </p>
+                          )}
                           <Avatar
                             shape="square"
                             style={{ borderRadius: "12px" }}
                             className="w-[5rem] h-[5rem]"
                             {...board[2]?.image}
                           />
-                          {board[2]?.quizParticipantId === id ? (
-                            <p className="bg-basePrimary rounded-3xl text-white px-2 py-1 font-medium text-mobile">
-                              You
-                            </p>
-                          ) : (
-                            <p className="text-zinc-700 text-sm font-medium">
-                              {board[2]?.attendeeName ?? ""}
-                            </p>
-                          )}
+
+                          <p className="text-zinc-700 text-sm font-medium">
+                            {board[2]?.attendeeName ?? ""}
+                          </p>
                         </div>
 
                         <div className="w-[11.2rem] relative h-fit">

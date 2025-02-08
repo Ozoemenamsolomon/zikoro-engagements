@@ -39,8 +39,6 @@ export function FormUploadType({
     }
   }, [addedImage]);
 
-  
-
   const defaultDescriptionValue = useMemo(() => {
     if (typeof addedDescription === "string" && addedDescription?.length > 0) {
       return addedDescription;
@@ -48,6 +46,8 @@ export function FormUploadType({
       return "";
     }
   }, [addedDescription]);
+
+  
 
   return (
     <>
@@ -60,42 +60,43 @@ export function FormUploadType({
           question={question}
           refetch={refetch}
           type="Upload"
-          
+          SettingWidget={
+            <div className="w-full flex px-3 flex-col items-start justify-start">
+              <p className="font-medium my-2">File Type</p>
+              <div className="flex flex-col items-start justify-start gap-3 w-full">
+                {["Image", "Video", "Pdf", "Docx", "Excel", "PPT", "All"].map(
+                  (value) => (
+                    <label className="flex items-center gap-x-1">
+                      <input
+                        onChange={(e) => {
+                          console.log(e.target.checked);
+                          const updatedValue = e.target.checked
+                            ? [...(selectedOptions || []), { option: value }]
+                            : selectedOptions?.filter(
+                                (v: any) => v?.option !== value
+                              );
+                          form.setValue(`optionFields`, updatedValue);
+                        }}
+                        value={value}
+                        type="checkbox"
+                        checked={selectedOptions.some(
+                          (v: any) => v?.option === value
+                        )}
+                        className="h-[20px] pt-3 w-[20px] rounded-full mr-2 accent-basePrimary"
+                      />
+                      <span className="capitalize">{value}</span>
+                    </label>
+                  )
+                )}
+              </div>
+            </div>
+          }
         />
 
         <FormQuestionDescription
           defaultDescriptionValue={defaultDescriptionValue}
           form={form}
         />
-
-        <div className="w-full ">
-          <p className="font-medium my-3">File Type</p>
-          <div className="flex flex-wrap items-center justify-start gap-6 w-full">
-            {["Image", "Video", "Pdf", "Docx", "Excel", "PPT", "All"].map(
-              (value) => (
-                <label className="flex items-center gap-x-1">
-                  <input
-                    onChange={(e) => {
-                      const updatedValue = e.target.checked
-                        ? [...(selectedOptions || []), value]
-                        : selectedOptions?.filter(
-                            (v: any) => v?.selectedOption !== value
-                          );
-                      form.setValue(`optionFields`, updatedValue);
-                    }}
-                    value={value}
-                    type="checkbox"
-                    checked={selectedOptions.some(
-                      (v: any) => v?.option === value
-                    )}
-                    className="h-[20px] pt-3 w-[20px] rounded-full mr-2 accent-basePrimary"
-                  />
-                  <span className="capitalize">{value}</span>
-                </label>
-              )
-            )}
-          </div>
-        </div>
       </div>
     </>
   );

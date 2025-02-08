@@ -130,18 +130,57 @@ function OptionItem({
   );
 }
 
+function CheckBoxSettings({
+  optionType,
+  setOption,
+}: {
+  optionType: string;
+  setOption: (value: string) => void;
+}) {
+  const options = [
+    {
+      name: "Mutiple Choice",
+      image: "/fmultiplechoice.png",
+      type: "INPUT_MULTIPLE_CHOICE",
+    },
+    { name: "CheckBox", image: "/fcheckbox.png", type: "INPUT_CHECKBOX" },
+  ];
+  return (
+    <div className="flex w-full flex-col items-start justify-start">
+      {options.map((option) => (
+        <label className="flex p-2 items-center gap-x-1">
+          <input
+            onChange={(e) => {
+              setOption(option.type);
+            }}
+            value={option.type}
+            type="checkbox"
+            checked={optionType === option.type}
+            className="h-[18px] pt-3 w-[18px] rounded-full mr-2 accent-basePrimary"
+          />
+          <span className="capitalize text-mobile">{option.name}</span>
+        </label>
+      ))}
+    </div>
+  );
+}
+
 export function FormCheckBoxType({
   form,
   defaultQuestionValue,
   question,
   engagementForm,
   refetch,
+  setOption,
+  optionType,
 }: {
   form: UseFormReturn<z.infer<typeof formQuestion>>;
   question: TEngagementFormQuestion["questions"][number] | null;
   engagementForm: TEngagementFormQuestion;
   defaultQuestionValue: string;
   refetch: () => Promise<any>;
+  setOption: (value: string) => void;
+  optionType: string;
 }) {
   const addedImage = form.watch("questionImage");
   const addedDescription = form.watch("questionDescription");
@@ -151,6 +190,7 @@ export function FormCheckBoxType({
   );
 
   function removeOption(id: string) {
+    if (options?.length === 1) return;
     setOptions(options.filter((option) => option.id !== id));
   }
 
@@ -172,8 +212,8 @@ export function FormCheckBoxType({
     );
   }
 
-   // form field
-   useEffect(() => {
+  // form field
+  useEffect(() => {
     if (options) {
       form.setValue(`optionFields`, options);
     }
@@ -207,13 +247,14 @@ export function FormCheckBoxType({
         question={question}
         refetch={refetch}
         type="CheckBox"
-     
+        SettingWidget={
+          <CheckBoxSettings optionType={optionType} setOption={setOption} />
+        }
       />
 
       <FormQuestionDescription
         defaultDescriptionValue={defaultDescriptionValue}
         form={form}
-         
       />
 
       <div className="w-full flex flex-col items-start justify-start gap-3">
