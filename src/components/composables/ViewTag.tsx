@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { CheckCircleFill } from "styled-icons/bootstrap";
 import { CloseOutline } from "styled-icons/evaicons-outline";
 
-export function ViewTag({ color, name, remove, className }: {className?:string; remove?:() => Promise<void>; color?: string; name: string }) {
+export function ViewTag({isQaTag, color, name, remove, className }: {isQaTag?:boolean;className?:string; remove?:() => Promise<void>; color?: string; name: string }) {
     const rgba = useMemo(
       (alpha = 0.1) => {
       if (color) {
@@ -25,7 +25,7 @@ export function ViewTag({ color, name, remove, className }: {className?:string; 
           e.preventDefault();
         }}
         className={cn(
-          `relative  rounded-none bg-opacity-20  `,
+          `relative  rounded-none group bg-opacity-20  `,
           "" === name && "border-basePrimary border",
           className
         )}
@@ -50,8 +50,8 @@ export function ViewTag({ color, name, remove, className }: {className?:string; 
           ) : (
             <button 
             onClick={remove}
-            className={cn("rounded-full p-1 bg-gray-100 flex items-center justify-center", remove === undefined && 'hidden')}>
-              <CloseOutline className="text-[#717171]" size={16} />
+            className={cn("rounded-full p-1 bg-gray-100 flex items-center justify-center", remove === undefined && 'hidden', isQaTag && 'block sm:hidden group-hover:block')}>
+              <CloseOutline className="text-[#717171]" size={14} />
             </button>
           )}
         </div>

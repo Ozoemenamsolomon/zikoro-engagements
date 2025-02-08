@@ -22,6 +22,7 @@ import { TOrganization } from "@/types/home";
 import { AnalyticsIcon, PlayQuizIcon, SmallShareIcon } from "@/constants";
 import { InlineIcon } from "@iconify/react/dist/iconify.js";
 import { ActionModal } from "@/components/custom/ActionModal";
+import { ShareEngagement } from "../../_components/ShareEngagement";
 
 const supabase = createClient();
 export default function QaOrganizerView({
@@ -38,11 +39,12 @@ export default function QaOrganizerView({
   const [isOpen, setIsOpen] = useState(false);
   const [isRightBox, setIsRightBox] = useState(true);
   const [isLeftBox, setIsLeftBox] = useState(true);
+  const [isShare, setIsShare] = useState(false);
   const [isStopQuestion, setIsStopQuestion] = useState(false);
   const [isStopping, setIsStopping] = useState(false);
   const { user } = useUserStore();
   const [filterValue, setFilterValue] = useState("Recent");
-  const [tagValue, setTagValue] = useState("")
+  const [tagValue, setTagValue] = useState("");
   const { postData } = usePostRequest<Partial<TQa>>("/engagements/qa");
   const { data: qa, getData } = useGetData<TQa>(
     `/engagements/qa/${qaId}`,
@@ -213,7 +215,7 @@ export default function QaOrganizerView({
     };
     await postData({ payload });
     setIsStopping(false);
-    getData()
+    getData();
   }
 
   if (!organization && isLoading) {
@@ -385,7 +387,10 @@ export default function QaOrganizerView({
                       : "Stop Question"}
                   </p>
                 </Button>
-                <Button className="gap-x-2 bg-basePrimary-200 border-basePrimary border  rounded-xl h-9">
+                <Button
+                  onClick={() => setIsShare((prev) => prev)}
+                  className="gap-x-2 bg-basePrimary-200 border-basePrimary border  rounded-xl h-9"
+                >
                   <SmallShareIcon />
                   <p className="bg-basePrimary hidden sm:block gradient-text">
                     Share
@@ -422,10 +427,17 @@ export default function QaOrganizerView({
           buttonText={qa?.accessibility?.cannotAskQuestion ? "Start" : "Stop"}
           title={
             qa?.accessibility?.cannotAskQuestion
-              ? "Start Question"
-              : "Stop Question"
+              ? "Ask Question"
+              : "Close Question"
           }
           buttonColor="bg-basePrimary text-white"
+        />
+      )}
+      {isShare && (
+        <ShareEngagement
+          urlLink={`https://engagements.zikoro.com/e/${qa?.workspaceAlias}/a/${qa?.QandAAlias}`}
+          title={qa?.coverTitle}
+          close={() => setIsShare((prev) => prev)}
         />
       )}
     </>

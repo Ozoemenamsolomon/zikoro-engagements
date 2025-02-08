@@ -95,6 +95,17 @@ export function AskandReplyCard({
     refetch?.();
   }
 
+  async function removeTag(id: number) {
+    const filtered  = tag?.filter((_, index) => index != id)
+    setTag(filtered);
+    const payload = {
+      ...qaQuestion,
+      tags: filtered
+    }
+    await postData({ payload });
+    refetch?.();
+  }
+
   /**
     if (responseId && originalQuestion) {
       return formatReviewNumber(originalQuestion?.vote);
@@ -334,8 +345,10 @@ export function AskandReplyCard({
                     <ViewTag
                       key={index}
                       name={t?.name}
-                      className="rounded-lg text-tiny  sm:text-sm h-6 sm:h-9"
+                      className="rounded-lg text-tiny  sm:text-mobile h-6 sm:h-7"
                       color={t?.color}
+                      remove={ async() => removeTag(index)}
+                      isQaTag
                     />
                   ))}
                 </div>

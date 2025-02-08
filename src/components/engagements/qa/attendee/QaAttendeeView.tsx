@@ -218,7 +218,7 @@ export default function QaAttendeeView({
     } else return true;
   }, [attendeeEmail, attendee]);
 
-  if (isLoading || qaLoading || loading) {
+  if (loading) {
     return (
       <div className="w-full h-[300px] flex items-center justify-center">
         <LoaderAlt size={30} className="animate-spin" />

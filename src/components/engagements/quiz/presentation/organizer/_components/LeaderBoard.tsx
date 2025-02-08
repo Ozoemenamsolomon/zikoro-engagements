@@ -447,16 +447,7 @@ export function LeaderBoard({
       </div>
 
       <div className="w-full overflow-y-auto no-scrollbar absolute inset-x-0 z-50 top-[22rem] space-y-2">
-        {board.slice(3, board?.length).length > 0 && (
-          <div className="w-full text-xs sm:text-sm px-3 py-2 grid grid-cols-4">
-            <div className="w-full col-span-2 flex items-center gap-x-2">
-              <p>Rank</p>
-              <p className="flex items-center gap-x-1">Participants </p>
-            </div>
-            <p className="w-1 h-1"></p>
-            <div className="">Points</div>
-          </div>
-        )}
+      
         <Reorder.Group values={board} onReorder={setBoard}>
           {Array.isArray(board) &&
             board.slice(3, board?.length)?.map((attendee, index) => (

@@ -2,9 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 import {
   TQuiz,
-  TQuizParticipant,
   TQuestion,
-  TRefinedQuestion,
   TAnswer,
 } from "@/types/quiz";
 
@@ -161,7 +159,7 @@ function calculateQuizStats(answers: TAnswer[], quiz: TQuiz<TQuestion[]>) {
   Object.values(participantAnswers).forEach((participantAnswer) => {
     const attemptedQuestions = participantAnswer.length;
     const totalDuration = participantAnswer.reduce(
-      (sum, ans) => sum + ans.answerDuration,
+      (sum, ans) => sum + ((ans.maxDuration * 1000)- ans.answerDuration),
       0
     );
     const totalParticipantPoints = participantAnswer.reduce(

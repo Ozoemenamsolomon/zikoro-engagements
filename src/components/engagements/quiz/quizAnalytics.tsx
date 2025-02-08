@@ -6,9 +6,7 @@ import {
   Line,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
 } from "recharts";
 import { useGetData } from "@/hooks/services/requests";
@@ -79,7 +77,7 @@ function calculateOptionSelectionPercentage(
 
   // Process each answer
   answers.forEach((answer) => {
-    const { questionId, answeredQuestion, selectedOptionId, answerDuration, attendeeName } = answer;
+    const { questionId, answeredQuestion, selectedOptionId, answerDuration, attendeeName, maxDuration } = answer;
     const questionText = answeredQuestion.question;
     const selectedOption = selectedOptionId.optionId;
 
@@ -96,7 +94,9 @@ function calculateOptionSelectionPercentage(
 
     const questionData = questionMap.get(questionId)!;
     questionData.totalResponses++;
-    questionData.totalDuration += answerDuration;
+    // there is inconsistency in the data - maxDuration is in Sec, while answerDuration is in MilliSec
+    questionData.totalDuration += ((maxDuration * 1000)-answerDuration);
+    console.log((maxDuration * 1000)- answerDuration)
 
     // Increment the count for the selected option
     questionData.optionsCount.set(
@@ -108,7 +108,7 @@ function calculateOptionSelectionPercentage(
     if (!questionData.attendeeDurations.has(attendeeName)) {
       questionData.attendeeDurations.set(attendeeName, []);
     }
-    questionData.attendeeDurations.get(attendeeName)!.push(answerDuration);
+    questionData.attendeeDurations.get(attendeeName)!.push((maxDuration * 1000)-answerDuration);
   });
 
   // Transform into output format
