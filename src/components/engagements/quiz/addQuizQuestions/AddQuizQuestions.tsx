@@ -25,7 +25,7 @@ import { QuizSettings } from "../quizSettings/QuizSettings";
 import { MdNavigateBefore } from "react-icons/md";
 import { useRouter } from "next/navigation";
 import { Switch } from "@/components/ui/switch";
-import { ShareQuiz } from "./_components";
+import { ShareEngagement } from "./_components";
 
 export default function AddQuizQuestions({
   quizId,
@@ -306,7 +306,9 @@ export default function AddQuizQuestions({
         />
       )}
 
-      {isShare && data && <ShareQuiz quiz={data} close={onShare} />}
+      {isShare && data && <ShareEngagement title={data?.coverTitle} urlLink={data?.interactionType === "poll"
+      ? `https://engagements.zikoro.com/e/${data?.workspaceAlias}/poll/a/${data?.quizAlias}/presentation`
+      : `https://engagements.zikoro.com/e/${data?.workspaceAlias}/quiz/a/${data?.quizAlias}/presentation`} close={onShare} />}
     </>
   );
 }

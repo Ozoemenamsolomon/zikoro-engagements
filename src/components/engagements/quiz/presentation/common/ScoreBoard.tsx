@@ -111,7 +111,7 @@ export function ScoreBoard({
 }) {
   const [isAdminAction, setIsAdminAction] = useState(false);
   const { deleteData } = useDeleteRequest(
-    `engagements/quiz/answer/${actualQuiz?.quizAlias}`
+    `engagements/quiz/answer/${actualQuiz?.id}`
   );
   const [isExport, setIsExport] = useState(false);
   const router = useRouter();
@@ -273,6 +273,7 @@ export function ScoreBoard({
 
     setIsLoadingClear(false);
     onToggleClear();
+    router.back()
   }
 
   async function exportAsCSV() {
@@ -560,15 +561,7 @@ export function ScoreBoard({
                   )}
 
                   <div className="w-full overflow-y-auto pb-20 no-scrollbar z-50 bg-white absolute inset-x-0 h-full top-80 rounded-t-lg py-6 ">
-                    {board.slice(3, board?.length).length > 0 && (
-                      <div className="w-full px-8 text-sm pb-2 grid grid-cols-3">
-                        <p>Rank</p>
-                        <p>
-                          Participants ({board.slice(3, board?.length).length})
-                        </p>
-                        <p className="text-end">Points</p>
-                      </div>
-                    )}
+                  
                     <div className="w-full flex flex-col items-start justify-start">
                       {Array.isArray(board) &&
                         board

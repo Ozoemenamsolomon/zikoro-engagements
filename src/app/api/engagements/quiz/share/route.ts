@@ -1,4 +1,3 @@
-
 import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   if (req.method === "POST") {
@@ -37,6 +36,8 @@ export async function POST(req: NextRequest) {
             `,
         });
       });
+
+      return NextResponse.json({ data: "success" }, { status: 200 });
     } catch (error) {
       console.log(error);
       NextResponse.json({ error: error }, { status: 400 });

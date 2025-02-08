@@ -138,13 +138,7 @@ function SocialWidget({
   );
 }
 
-function EmailAction({
-  link,
-  quiz,
-}: {
-  link: string;
-  quiz: TQuiz<TQuestion[]>;
-}) {
+function EmailAction({ link, title }: { link: string; title: string }) {
   const { postData } = usePostRequest("engagements/quiz/share");
   const schema = z.object({
     emails: z.string().min(1, { message: "Email is required" }),
@@ -161,7 +155,7 @@ function EmailAction({
     const payload = {
       message: value.message,
       emails: value.emails.split(","),
-      title: quiz?.coverTitle,
+      title,
     };
     await postData({ payload: payload });
   }
@@ -177,7 +171,7 @@ function EmailAction({
             control={form.control}
             name="emails"
             render={({ field }) => (
-              <InputOffsetLabel label="Recipeints Email Address">
+              <InputOffsetLabel label="Recipients Email Address">
                 <Input
                   placeholder="Enter comma separated email address"
                   type="text"
@@ -213,12 +207,14 @@ function EmailAction({
   );
 }
 
-export function ShareQuiz({
+export function ShareEngagement({
   close,
-  quiz,
+  urlLink,
+  title,
 }: {
-  quiz: TQuiz<TQuestion[]>;
+  urlLink: string;
   close: () => void;
+  title: string;
 }) {
   const [active, setActive] = useState<ShareType>(ShareType.link);
 
@@ -231,10 +227,7 @@ export function ShareQuiz({
       type: ShareType.socials,
     },
   ];
-  const quizLink =
-    quiz?.interactionType === "poll"
-      ? `https://engagements.zikoro.com/e/${quiz?.workspaceAlias}/poll/a/${quiz?.quizAlias}/presentation`
-      : `https://engagements.zikoro.com/e/${quiz?.workspaceAlias}/quiz/a/${quiz?.quizAlias}/presentation`;
+
   return (
     <div
       onClick={close}
@@ -274,10 +267,10 @@ export function ShareQuiz({
           ))}
         </div>
 
-        {active === ShareType.link && <LinkAction link={quizLink} />}
-        {active === ShareType.socials && <SocialAction link={quizLink} />}
+        {active === ShareType.link && <LinkAction link={urlLink} />}
+        {active === ShareType.socials && <SocialAction link={urlLink} />}
         {active === ShareType.email && (
-          <EmailAction link={quizLink} quiz={quiz} />
+          <EmailAction link={urlLink} title={title} />
         )}
       </div>
     </div>

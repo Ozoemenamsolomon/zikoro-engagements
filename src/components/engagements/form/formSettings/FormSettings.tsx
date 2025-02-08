@@ -15,6 +15,7 @@ import { z } from "zod";
 import { FormAccessibility, FormIntegration } from "./_components";
 import FormAppearance from "./_components/FormAppearance";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
+import { usePostRequest } from "@/hooks/services/requests";
 
 export enum FormSettingType {
   details,
@@ -34,10 +35,12 @@ export function FormSettings({
   refetch: () => Promise<any>;
   organization: TOrganization;
 }) {
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   const [active, setActive] = useState<FormSettingType>(
     FormSettingType.details
   );
+  const { postData } =
+    usePostRequest<Partial<TEngagementFormQuestion>>("engagements/form");
   const form = useForm<z.infer<typeof formSettingSchema>>({
     resolver: zodResolver(formSettingSchema),
     defaultValues: {
@@ -51,7 +54,13 @@ export function FormSettings({
   });
 
   async function onSubmit(values: z.infer<typeof formSettingSchema>) {
-
+    setLoading(true);
+    const payload: Partial<TEngagementFormQuestion> = {
+      ...engagementForm,
+      ...values,
+    };
+    await postData({ payload });
+    setLoading(false);
   }
   return (
     <div
@@ -102,7 +111,10 @@ export function FormSettings({
 
           {active > FormSettingType.details && (
             <Form {...form}>
-              <form className="w-full flex flex-col items-start justify-start ">
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="w-full flex flex-col items-start justify-start "
+              >
                 {FormSettingType.accessibility === active && (
                   <FormAccessibility form={form} />
                 )}
@@ -113,13 +125,13 @@ export function FormSettings({
                   <FormIntegration form={form} />
                 )}
 
-<Button
-            disabled={loading}
-            className="text-white h-11 gap-x-2 font-medium bg-basePrimary w-full max-w-xs mt-4"
-          >
-            {loading && <LoaderAlt size={20} className="animate-spin" />}
-            <p> Update</p>
-          </Button>
+                <Button
+                  disabled={loading}
+                  className="text-white h-11 gap-x-2 font-medium bg-basePrimary w-full max-w-xs mt-4"
+                >
+                  {loading && <LoaderAlt size={20} className="animate-spin" />}
+                  <p> Update</p>
+                </Button>
               </form>
             </Form>
           )}
