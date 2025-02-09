@@ -230,9 +230,7 @@ export default function AddFormQuestions({
                 </p>
               </Button> */}
               <Button
-                onClick={() => {
-                  router.push(`/e/${workspaceAlias}/quiz/o/${formId}/analytics`);
-                }}
+                onClick={() => setActive(1)}
                 
                 className="gap-x-2 bg-basePrimary-200  border-basePrimary border  rounded-xl h-9"
               >
