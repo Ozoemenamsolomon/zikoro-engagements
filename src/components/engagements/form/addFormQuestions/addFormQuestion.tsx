@@ -214,7 +214,7 @@ export default function AddFormQuestions({
           </div>
           <div className="w-full bg-white fixed bottom-0 border-t inset-x-0 z-50 px-4 sm:px-6 py-4 flex items-center justify-between">
             <div className="flex items-center gap-x-2">
-              <Button
+              {/* <Button
                 // onClick={() =>
                 //   router.push(
                 //     `/e/${workspaceAlias}/quiz/o/${quizId}/presentation?type=preview`
@@ -228,18 +228,18 @@ export default function AddFormQuestions({
                   {" "}
                   Preview Mode
                 </p>
-              </Button>
+              </Button> */}
               <Button
-                // onClick={() => {
-                //   router.push(`/e/${workspaceAlias}/quiz/o/${quizId}/analytics`);
-                // }}
-                // disabled={isDisabled}
+                onClick={() => {
+                  router.push(`/e/${workspaceAlias}/quiz/o/${formId}/analytics`);
+                }}
+                
                 className="gap-x-2 bg-basePrimary-200  border-basePrimary border  rounded-xl h-9"
               >
                 <AnalyticsIcon />
                 <p className="bg-basePrimary hidden sm:block  gradient-text">
                   {" "}
-                  Analytics
+                 Form Response
                 </p>
               </Button>
             </div>
