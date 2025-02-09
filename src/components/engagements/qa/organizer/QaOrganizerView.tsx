@@ -23,6 +23,7 @@ import { AnalyticsIcon, PlayQuizIcon, SmallShareIcon } from "@/constants";
 import { InlineIcon } from "@iconify/react/dist/iconify.js";
 import { ActionModal } from "@/components/custom/ActionModal";
 import { ShareEngagement } from "../../_components/ShareEngagement";
+import { useRouter } from "next/navigation";
 
 const supabase = createClient();
 export default function QaOrganizerView({
@@ -45,6 +46,7 @@ export default function QaOrganizerView({
   const { user } = useUserStore();
   const [filterValue, setFilterValue] = useState("Recent");
   const [tagValue, setTagValue] = useState("");
+  const router = useRouter()
   const { postData } = usePostRequest<Partial<TQa>>("/engagements/qa");
   const { data: qa, getData } = useGetData<TQa>(
     `/engagements/qa/${qaId}`,
@@ -351,7 +353,9 @@ export default function QaOrganizerView({
             )}
             <div className="w-full flex items-center fixed bottom-0 sm:sticky justify-center bg-white px-6 h-[8vh]">
               <div className="w-full h-full flex items-center justify-between">
-                <Button className="gap-x-2 bg-basePrimary-200  border-basePrimary border  rounded-xl h-9">
+                <Button
+                onClick={() => router.push(`/e/${workspaceAlias}/qa/o/${qaId}/analytics`)}
+                className="gap-x-2 bg-basePrimary-200  border-basePrimary border  rounded-xl h-9">
                   <AnalyticsIcon />
                   <p className="bg-basePrimary hidden sm:block  gradient-text">
                     Analytics

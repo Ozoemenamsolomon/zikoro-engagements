@@ -12,11 +12,12 @@ import {
 import { useGetData } from "@/hooks/services/requests";
 import { TQuiz, TQuestion, TAnswer, TRefinedQuestion } from "@/types/quiz";
 import { LoadingState } from "@/components/composables/LoadingState";
-import { MdNavigateBefore } from "react-icons/md";
+import { InlineIcon } from "@iconify/react/dist/iconify.js";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { EmptyQuizQuestionIcon, PeopleIcon } from "@/constants";
 import { formatReviewNumber } from "@/utils";
+import { MetricCard } from "../_components";
 
 type TQuizStatistics = {
   totalParticipants: number;
@@ -142,27 +143,6 @@ function calculateOptionSelectionPercentage(
 
 
 
-function MetricCard({
-  metric,
-  title,
-  subTitle,
-}: {
-  metric: string;
-  title: string;
-  subTitle: string;
-}) {
-  return (
-    <div className="w-full px-4 py-6 h-24 flex items-center justify-start gap-3 bg-white border rounded-lg">
-      <p className="font-semibold gradient-text bg-basePrimary text-lg sm:text-2xl">
-        {metric}
-      </p>
-      <div className="flex flex-col items-start justify-start gap-2">
-        <p className="font-semibold text-base sm:text-lg">{title}</p>
-        <p className="text-xs">{subTitle}</p>
-      </div>
-    </div>
-  );
-}
 
 function QuestOption({
   option,
@@ -437,7 +417,7 @@ export default function QuizAnalytics({ quizId }: { quizId: string }) {
           className="flex items-center gap-x-2"
           onClick={() => router.back()}
         >
-          <MdNavigateBefore size={22} />
+             <InlineIcon icon="material-symbols:arrow-back-rounded" fontSize={22}/>
           <p className="text-sm hidden sm:block">{data?.quiz?.coverTitle}</p>
         </button>
         <h2 className="font-semibold text-lg sm:text-base">Analytics</h2>

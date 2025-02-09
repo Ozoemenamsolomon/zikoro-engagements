@@ -101,7 +101,7 @@ function HomeEngagementCard({
   );
 }
 
-function EngagementEmptyState() {
+export function EngagementEmptyState() {
   return (
     <div className="w-full grid h-full grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
       {[1, 2, 3, 4, 5, 6].map((_) => (
@@ -163,7 +163,7 @@ export default function Dashboard() {
           qas?.length === 0 &&
           quizzes?.length === 0 && (
             <div className="w-full h-[200px] flex items-center justify-center">
-              <h2 className="font-medium text-lg">No Engagement will appear here</h2>
+              <h2 className="font-medium text-lg">Your Engagements will appear here</h2>
             </div>
           )}
         <div className="w-full grid h-full grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
