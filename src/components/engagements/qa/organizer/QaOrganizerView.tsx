@@ -388,8 +388,8 @@ export default function QaOrganizerView({
                     )}
                   >
                     {qa?.accessibility?.cannotAskQuestion
-                      ? "Ask Question"
-                      : "Stop Question"}
+                      ? "Open Q&A"
+                      : "Close Q&A"}
                   </p>
                 </Button>
                 <Button
