@@ -1,7 +1,6 @@
 
 import AddQuizQuestions from "@/components/engagements/quiz/addQuizQuestions/AddQuizQuestions";
-import { Metadata } from "next";
-import { deploymentUrl } from "@/utils";
+
 // export const generateMetadata = async ({
 //   params,
 // }: {
