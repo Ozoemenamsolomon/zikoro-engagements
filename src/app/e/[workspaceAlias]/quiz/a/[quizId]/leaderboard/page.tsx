@@ -7,7 +7,7 @@ import ScoreBoardPage from "@/components/engagements/quiz/presentation/attendee/
 //   const quizId = (await params).quizId;
 
 //   const response = fetch(
-//     `${deploymentUrl}/api/engagements/quiz/${quizId}`,
+//     `https://engagements.zikoro.com/api/engagements/quiz/${quizId}`,
 //     {
 //       method: "GET",
 //       headers: {

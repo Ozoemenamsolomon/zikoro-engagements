@@ -440,7 +440,7 @@ export default function QaOrganizerView({
       )}
       {isShare && (
         <ShareEngagement
-          urlLink={`${deploymentUrl}/e/${qa?.workspaceAlias}/a/${qa?.QandAAlias}`}
+          urlLink={`https://engagements.zikoro.com/e/${qa?.workspaceAlias}/a/${qa?.QandAAlias}`}
           title={qa?.coverTitle}
           close={() => setIsShare((prev) => prev)}
         />
