@@ -51,24 +51,25 @@ export function ImageUploadTypeAnswer({
         isRequired={isRequired}
       />
 
-      <div className="w-full flex flex-col items-start justify-start gap-y-4">
+      <div className="w-full flex flex-wrap items-center justify-center gap-4">
         {Array.isArray(optionFields) &&
           optionFields.map((value) => {
             const isSelected = response?.selectedOption === value?.image;
             return (
               <>
                 <label
+                // htmlFor={`image-upload-${index}`}
                    style={{
                     backgroundColor: isSelected ? bgColor : rgba,
                   }}
                   className={cn(
-                    "w-full h-fit rounded-lg  px-4 py-6 relative",
+                    "w-28 h-fit rounded-lg flex-col flex gap-3 items-center justify-center px-4 py-6 relative",
                     isSelected && " text-white"
                   )}
                 >
                   <input
                     type="radio"
-                    hidden
+                    // id={`image-upload-${index}`}
                     onChange={(e) => {
                       e.target.checked
                         ? form.setValue(`responses.${index}.response`, {
@@ -82,11 +83,13 @@ export function ImageUploadTypeAnswer({
                         `responses.${index}.questionId`,
                         questionId
                       );
+                      console.log(form.watch(`responses.${index}.response`))
+                      console.log(form.watch('responses'))
                     }}
                     checked={response?.selectedOption === value?.image}
                     value={value?.image}
                     required={isRequired}
-                    className="absolute inset-0 w-full h-full z-10"
+                    className="absolute invisible inset-0 w-full h-full z-10"
                   />
                   <span
                      style={{

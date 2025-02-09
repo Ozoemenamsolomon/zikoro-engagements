@@ -126,7 +126,7 @@ export function FormSettings({
                 )}
                 <Button
                   disabled={loading}
-                  className="text-white h-11 gap-x-2 font-medium bg-basePrimary w-full max-w-xs mt-4"
+                  className="text-white h-11 gap-x-2 font-medium mx-auto bg-basePrimary w-full max-w-xs mt-4"
                 >
                   {loading && <LoaderAlt size={20} className="animate-spin" />}
                   <p> Update</p>

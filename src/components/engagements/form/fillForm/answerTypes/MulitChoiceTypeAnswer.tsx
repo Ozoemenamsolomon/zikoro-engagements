@@ -53,7 +53,7 @@ export function MultiChoiceTypeAnswer({
 
       <div className="w-full flex flex-col items-start justify-start gap-y-4">
         {Array.isArray(optionFields) &&
-          optionFields.map((value) => {
+          optionFields.map((value, id) => {
             const isSelected = responseOption.some(
               (v: any) =>
                 v?.selectedOption === (value?.option || value?.optionImage)
@@ -61,6 +61,7 @@ export function MultiChoiceTypeAnswer({
             return (
               <>
                 <label
+                key={id}
                      style={{
                       backgroundColor: isSelected ? bgColor : rgba,
                     }}
@@ -71,6 +72,7 @@ export function MultiChoiceTypeAnswer({
                 >
                
                   <input
+                 
                     type="checkbox"
                     checked={responseOption.some(
                       (v: any) =>
@@ -106,10 +108,10 @@ export function MultiChoiceTypeAnswer({
                     }}
                     value={value?.option || value?.optionImage}
                     required={isRequired}
-                    className="absolute inset-0 w-full h-full z-10"
+                    className="absolute invisible inset-0 w-full h-full z-10"
                   />
                   <div className="w-full grid grid-cols-1 sm:grid-cols-5 items-center">
-                    <div className="w-full flex items-start gap-x-2 col-span-full sm:col-span-3">
+                    <div className="w-full flex items-center gap-x-3 col-span-full sm:col-span-3">
                       <span
                          style={{
                           color: isSelected ? bgColor : "",

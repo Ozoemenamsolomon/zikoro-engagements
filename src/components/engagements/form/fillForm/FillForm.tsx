@@ -33,7 +33,7 @@ function SubmittedModal() {
     <div className="w-full h-full inset-0 fixed bg-white">
       <div className="w-[95%] max-w-xl border rounded-lg bg-gradient-to-b gap-y-6 from-white  to-basePrimary/20  h-[400px] flex flex-col items-center justify-center shadow absolute inset-0 m-auto">
         <Image
-          src="/images/facheck.png"
+          src="/facheck.png"
           alt=""
           className="w-fit h-fit"
           width={48}
@@ -200,15 +200,17 @@ function FillFormComp({
   const rgba = useMemo(
     (alpha = 0.1) => {
       if (data) {
-        const color = data?.formSettings?.backgroundColor || "#001fcc";
-        const r = parseInt(color.slice(1, 3), 12);
-        const g = parseInt(color.slice(3, 5), 12);
-        const b = parseInt(color.slice(5, 7), 12);
+        const color = data?.formSettings?.buttonColor || "#001fcc";
+        const r = parseInt(color.slice(1, 3), 16);
+        const g = parseInt(color.slice(3, 5), 16);
+        const b = parseInt(color.slice(5, 7), 16);
         return `rgba(${r}, ${g}, ${b}, ${alpha})`;
       }
     },
-    [data, data?.formSettings?.backgroundColor]
+    [data, data?.formSettings?.buttonColor]
   );
+
+  console.log(currentQuestions)
 
   if (isLoading || attendeeLoading) {
     return (
@@ -249,7 +251,7 @@ function FillFormComp({
           </div>
         )}
       {isView && !isLoading && data?.formSettings?.isCoverImage && (
-        <div className="w-full min-h-screen justify-center inset-0 fixed z-[100] flex flex-col items-center gap-y-8">
+        <div className="w-full min-h-screen bg-white justify-center inset-0 fixed z-[100] flex flex-col items-center gap-y-8">
           {data?.coverImage &&
           (data?.coverImage as string).startsWith("https") ? (
             <Image
@@ -306,7 +308,7 @@ function FillFormComp({
           style={{
             backgroundColor: data?.formSettings?.backgroundColor || "",
           }}
-          className="w-full max-w--7xl h-full sm:h-[calc(100vh-150px)] absolute m-auto inset-0  rounded-lg p-4 sm:p-6"
+          className="w-full max-w--7xl h-full sm:h-[calc(100vh-150px)] overflow-y-auto vert-scroll absolute m-auto inset-0  rounded-lg p-4 sm:p-6"
         >
           <div className="w-full my-10 pb-20 sm:my-20 mx-auto max-w-3xl ">
             <Form {...form}>
@@ -314,10 +316,12 @@ function FillFormComp({
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="w-full flex flex-col items-start mt-3 justify-start gap-y-4 sm:gap-y-6 2xl:gap-y-8"
               >
-                {currentQuestions?.map((field, index) => (
-                  <div
+                {currentQuestions?.map((field, index) => {
+
+                  return (
+                    <div
                     className="w-full"
-                    key={`${field.id}-${JSON.stringify(field)}`}
+                    key={`${field.id}`}
                   >
                     {field.selectedType === "INPUT_TEXT" && (
                       <TextTypeAnswer
@@ -325,7 +329,7 @@ function FillFormComp({
                         index={index + currentIndexes}
                         rgba={rgba || "#F7F8FF"}
                         bgColor={
-                            data?.formSettings?.backgroundColor || "#001fcc"
+                            data?.formSettings?.buttonColor || "#001fcc"
                           }
                       />
                     )}
@@ -335,7 +339,7 @@ function FillFormComp({
                         index={index + currentIndexes}
                         rgba={rgba || "#F7F8FF"}
                         bgColor={
-                            data?.formSettings?.backgroundColor || "#001fcc"
+                            data?.formSettings?.buttonColor || "#001fcc"
                           }
                       />
                     )}
@@ -344,7 +348,7 @@ function FillFormComp({
                         form={form}
                         index={index + currentIndexes}
                         bgColor={
-                          data?.formSettings?.backgroundColor || "#001fcc"
+                          data?.formSettings?.buttonColor || "#001fcc"
                         }
                         rgba={rgba || "#F7F8FF"}
                       />
@@ -354,7 +358,7 @@ function FillFormComp({
                         form={form}
                         index={index + currentIndexes}
                         bgColor={
-                          data?.formSettings?.backgroundColor || "#001fcc"
+                          data?.formSettings?.buttonColor || "#001fcc"
                         }
                         rgba={rgba || "#F7F8FF"}
                       />
@@ -364,7 +368,7 @@ function FillFormComp({
                         form={form}
                         index={index + currentIndexes}
                         bgColor={
-                          data?.formSettings?.backgroundColor || "#001fcc"
+                          data?.formSettings?.buttonColor || "#001fcc"
                         }
                         rgba={rgba || "#F7F8FF"}
                       />
@@ -374,7 +378,7 @@ function FillFormComp({
                         form={form}
                         index={index + currentIndexes}
                         bgColor={
-                          data?.formSettings?.backgroundColor || "#001fcc"
+                          data?.formSettings?.buttonColor || "#001fcc"
                         }
                         rgba={rgba || "#F7F8FF"}
                       />
@@ -384,13 +388,14 @@ function FillFormComp({
                         form={form}
                         index={index + currentIndexes}
                         bgColor={
-                          data?.formSettings?.backgroundColor || "#001fcc"
+                          data?.formSettings?.buttonColor || "#001fcc"
                         }
                         rgba={rgba || "#F7F8FF"}
                       />
                     )}
                   </div>
-                ))}
+                  )
+                })}
 
                 {data?.formSettings?.displayType === "slide" && (
                   <div className="w-full flex items-center justify-between">

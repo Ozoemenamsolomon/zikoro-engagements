@@ -1,7 +1,7 @@
 "use client";
 
 import { formQuestion } from "@/schemas";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { FormQuestionDescription } from "../formQuestionDescription";
@@ -42,7 +42,7 @@ function UploadOptionItem({
        
         >
           <QuizUncheckIcon />
-          <p>Option {index}</p>
+          <p>Option {index + 1}</p>
         </button>
 
         <button
@@ -152,6 +152,13 @@ export function FormImageUploadType({
       )
     );
   }
+
+    // form field
+    useEffect(() => {
+      if (options) {
+        form.setValue(`optionFields`, options);
+      }
+    }, [options]);
 
   return (
     <>

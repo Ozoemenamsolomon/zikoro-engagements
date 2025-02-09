@@ -15,7 +15,7 @@ export function FillFormQuestion({
   isRequired: boolean;
 }) {
   return (
-    <div className="w-full flex flex-col items-center gap-4">
+    <div className="w-full flex flex-col mb-4 items-center gap-4">
       <div className="flex items-start">
         <p className="w-10 h-10 flex text-lg items-center bg-basePrimary-100 justify-center rounded-full border border-basePrimary">
           {currentIndex}

@@ -26,6 +26,8 @@ import { MdNavigateBefore } from "react-icons/md";
 import { FormSettings } from "../formSettings/FormSettings";
 import { LoadingState } from "@/components/composables/LoadingState";
 import FormResponses from "../formResponse/FormResponse";
+import { ShareEngagement } from "../../_components/ShareEngagement";
+import { deploymentUrl } from "@/utils";
 
 export default function AddFormQuestions({
   formId,
@@ -38,6 +40,7 @@ export default function AddFormQuestions({
   const { data, isLoading, getData } = useGetData<TEngagementFormQuestion>(
     `engagements/form/${formId}`
   );
+  const [isShare, setIsShare]  = useState(false)
   const [flattenedResponse, setFlattenedResponse] = useState<
     TFormattedEngagementFormAnswer[]
   >([]);
@@ -251,8 +254,7 @@ export default function AddFormQuestions({
               <p className="bg-basePrimary  gradient-text">Present</p>
             </Button> */}
               <Button
-                //   onClick={onShare}
-                //   disabled={isDisabled}
+              onClick={() => setIsShare(true)}
                 className="gap-x-2 bg-basePrimary-200 border-basePrimary border  rounded-xl h-9"
               >
                 <SmallShareIcon />
@@ -279,6 +281,13 @@ export default function AddFormQuestions({
           flattenedResponse={flattenedResponse}
           setActive={setActive}
           coverTitle={data?.title}
+        />
+      )}
+       {isShare && (
+        <ShareEngagement
+          urlLink={`${deploymentUrl}/e/${data?.workspaceAlias}/form/a/${data?.formAlias}`}
+          title={data?.title}
+          close={() => setIsShare(false)}
         />
       )}
     </>

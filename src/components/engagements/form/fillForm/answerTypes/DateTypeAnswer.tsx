@@ -60,7 +60,12 @@ export function DateTypeAnswer({
           placeholder="YYYY MM DD"
         />
         <button
-          onClick={() => setDatePanel((prev) => !prev)}
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault()
+            setDatePanel((prev) => !prev)
+          }}
+         
           className="absolute h-full inset-y-0 left-2"
         >
           <DateRange size={20} />
@@ -68,16 +73,24 @@ export function DateTypeAnswer({
             <div
               onClick={(e) => {
                 e.stopPropagation();
+                e.preventDefault()
               }}
               className="absolute top-8 right-[-95px] md:right-0"
             >
               <button
-                onClick={() => setDatePanel((prev) => !prev)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                e.preventDefault()
+                  setDatePanel((prev) => !prev)
+                }}
                 className="w-full h-full fixed inset-0 z-[150] "
               ></button>
               <div
                 role="button"
-                onClick={(e) => e.stopPropagation()}
+                onClick={(e) =>{
+                  e.stopPropagation() 
+                  e.preventDefault()
+                }}
                 className="relative z-[300]"
               >
                 <DatePicker
