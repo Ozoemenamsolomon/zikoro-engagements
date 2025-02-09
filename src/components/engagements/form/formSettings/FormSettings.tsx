@@ -124,7 +124,6 @@ export function FormSettings({
                 {FormSettingType.integration === active && (
                   <FormIntegration form={form} />
                 )}
-
                 <Button
                   disabled={loading}
                   className="text-white h-11 gap-x-2 font-medium bg-basePrimary w-full max-w-xs mt-4"

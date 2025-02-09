@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import copy from "copy-to-clipboard";
 import { toast } from "react-toastify";
 import { useSearchParams } from "next/navigation";
+import { deploymentUrl } from "@/utils";
 export function Advert({
   quiz,
   isRightBox,
@@ -36,8 +37,8 @@ export function Advert({
   // console.log("ileft", isLeftBox, isRightBox);
   const quizLink =
     quiz?.interactionType === "poll"
-      ? `https://engagements.zikoro.com/e/${quiz?.workspaceAlias}/poll/a/${quiz?.quizAlias}/presentation`
-      : `https://engagements.zikoro.com/e/${quiz?.workspaceAlias}/quiz/a/${quiz?.quizAlias}/presentation?type=${preview}`;
+      ? `${deploymentUrl}/e/${quiz?.workspaceAlias}/poll/a/${quiz?.quizAlias}/presentation`
+      : `${deploymentUrl}/e/${quiz?.workspaceAlias}/quiz/a/${quiz?.quizAlias}/presentation?type=${preview}`;
   return (
     <div
       className={cn(

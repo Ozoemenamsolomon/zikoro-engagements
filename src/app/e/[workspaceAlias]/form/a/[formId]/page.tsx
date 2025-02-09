@@ -1,5 +1,5 @@
-import AddFormQuestions from "@/components/engagements/form/addFormQuestions/addFormQuestion";
-import AddQuizQuestions from "@/components/engagements/quiz/addQuizQuestions/AddQuizQuestions";
+import FillForm from "@/components/engagements/form/fillForm/FillForm";
+
 import { Metadata } from "next";
 
 // export const generateMetadata = async ({
@@ -35,6 +35,5 @@ export default function Page({
 }: {
   params: { formId: string; workspaceAlias: string };
 }) {
- 
-  return <AddFormQuestions formId={formId} workspaceAlias={workspaceAlias} />;
+  return <FillForm formId={formId} workspaceAlias={workspaceAlias} />;
 }

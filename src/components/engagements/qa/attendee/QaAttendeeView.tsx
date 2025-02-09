@@ -92,7 +92,7 @@ export default function QaAttendeeView({
             replyQuestion !== null &&
             replyQuestion?.questionAlias === updated.questionAlias
           ) {
-            console.log("over  here at reply");
+          //  console.log("over  here at reply");
             setReplyQuestion(updated);
           }
         }
@@ -243,7 +243,7 @@ export default function QaAttendeeView({
               <Button
                 onClick={() => {
                   window.open(
-                    `https://zikoro.com/live-events/${workspaceAlias}`
+                    `https://zikoro.com/live-events/${attendee?.eventAlias}`
                   );
                 }}
                 className="bg-basePrimary h-12 text-white font-medium"

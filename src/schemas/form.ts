@@ -10,7 +10,7 @@ export const formCreationSchema = z.object({
 export const formQuestion = z.object({
   question: z.string().min(3, { message: "Question is required" }),
   questionImage: z.any(),
-  selectedType: z.string().optional(),
+  selectedType: z.string().nullable(),
   optionFields: z.any(),
   isRequired: z.boolean(),
   questionId: z.string(),
@@ -53,7 +53,6 @@ export const formSettingSchema = z.object({
 
 export const formAnswerSchema = z.object({
   attendeeEmail: z.any(),
-  eventAlias: z.string(),
   formResponseAlias: z.string(),
   formAlias: z.string(),
   questions: z.array(formQuestion),

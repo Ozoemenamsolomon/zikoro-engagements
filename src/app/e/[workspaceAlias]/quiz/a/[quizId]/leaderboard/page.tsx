@@ -1,6 +1,6 @@
 import ScoreBoardPage from "@/components/engagements/quiz/presentation/attendee/ScoreBoardPage";
 import { Metadata } from "next";
-
+import { deploymentUrl } from "@/utils";
 export const generateMetadata = async ({
   params,
 }: {
@@ -9,7 +9,7 @@ export const generateMetadata = async ({
   const quizId = (await params).quizId;
 
   const response = fetch(
-    `https://engagements.zikoro.com/api/engagements/quiz/${quizId}`,
+    `${deploymentUrl}/api/engagements/quiz/${quizId}`,
     {
       method: "GET",
       headers: {
