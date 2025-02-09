@@ -152,12 +152,11 @@ export function FormQuestionField({
                     <Switch
                       checked={isRequired}
                       onClick={(e) => {
-                        e.stopPropagation();
+                 
                         e.preventDefault();
+                        form.setValue("isRequired", !isRequired);
                       }}
-                      onCheckedChange={(checked) => {
-                        form.setValue("isRequired", checked);
-                      }}
+                  
                       className=""
                     />
                     <p className="text-mobile">Required</p>

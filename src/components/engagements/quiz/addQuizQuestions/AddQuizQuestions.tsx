@@ -10,6 +10,7 @@ import {
   SmallPreviewIcon,
   SmallShareIcon,
 } from "@/constants";
+import { deploymentUrl } from "@/utils";
 import { EngagementLayout } from "../../_components/EngagementLayout";
 import { Button } from "@/components/custom";
 import { LeadingHeadRoute, TrailingHeadRoute } from "../_components";
@@ -307,8 +308,8 @@ export default function AddQuizQuestions({
       )}
 
       {isShare && data && <ShareEngagement title={data?.coverTitle} urlLink={data?.interactionType === "poll"
-      ? `https://engagements.zikoro.com/e/${data?.workspaceAlias}/poll/a/${data?.quizAlias}/presentation`
-      : `https://engagements.zikoro.com/e/${data?.workspaceAlias}/quiz/a/${data?.quizAlias}/presentation`} close={onShare} />}
+      ? `${deploymentUrl}/e/${data?.workspaceAlias}/poll/a/${data?.quizAlias}/presentation`
+      : `${deploymentUrl}/e/${data?.workspaceAlias}/quiz/a/${data?.quizAlias}/presentation`} close={onShare} />}
     </>
   );
 }

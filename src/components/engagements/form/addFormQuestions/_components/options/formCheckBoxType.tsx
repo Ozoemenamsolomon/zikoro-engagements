@@ -83,7 +83,7 @@ function OptionItem({
           {option.optionImage ? (
             <div className="w-full h-full relative">
               <Image
-                className="w-full h-full rounded-lg object-cover"
+                className="w-full h-[10rem] rounded-lg object-cover"
                 src={option.optionImage}
                 width={600}
                 height={600}

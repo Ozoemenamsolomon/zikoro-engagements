@@ -9,7 +9,7 @@ import {
   FormItem,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-
+import { deploymentUrl } from "@/utils";
 import { useForm } from "react-hook-form";
 import { Navigation } from "styled-icons/feather";
 import * as z from "zod";
@@ -56,8 +56,8 @@ export function SendMailModal<T>({
   const [isShow, showSuccess] = useState(false);
   const url =
     quiz?.interactionType !== "poll"
-      ? `https://engagements.zikoro.com/e/${quiz?.workspaceAlias}/poll/a/${quiz?.quizAlias}/presentation`
-      : `https://engagements.zikoro.com/e/${quiz?.workspaceAlias}/quiz/a/${quiz?.quizAlias}/presentation`;
+      ? `${deploymentUrl}/e/${quiz?.workspaceAlias}/poll/a/${quiz?.quizAlias}/presentation`
+      : `${deploymentUrl}/e/${quiz?.workspaceAlias}/quiz/a/${quiz?.quizAlias}/presentation`;
   function copyLink() {
     copy(url);
     showSuccess(true);

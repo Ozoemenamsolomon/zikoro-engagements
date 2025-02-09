@@ -315,7 +315,7 @@ export default function FormAppearance({
   });
   return (
     <div className="w-full flex flex-col items-start justify-start gap-y-4 sm:gap-y-6">
-      <div className="w-full flex items-start gap-x-4">
+      <div className="w-full flex items-center justify-between gap-x-4">
         <div className="flex flex-col items-start justify-start">
           <p className="font-medium text-mobile sm:text-sm">Cover Image</p>
           <p className="text-xs sm:text-mobile text-gray-500">
@@ -329,7 +329,7 @@ export default function FormAppearance({
           onCheckedChange={(checked) => {
             form.setValue("formSettings.isCoverImage", checked);
           }}
-          onClick={() => {}}
+        
           
         />
       </div>

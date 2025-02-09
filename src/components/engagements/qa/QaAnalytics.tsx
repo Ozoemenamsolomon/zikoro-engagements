@@ -94,7 +94,10 @@ export default function QaAnalytics({ qaId }: { qaId: string }) {
 
   const topUpvotedQuestions = useMemo(() => {
     if (Array.isArray(eventQAQuestions)) {
-      return eventQAQuestions?.sort((a, b) => a.vote - b.vote).slice(0, 5);
+      return eventQAQuestions
+        ?.filter((v) => v?.vote > 0)
+        ?.sort((a, b) => a.vote - b.vote)
+        .slice(0, 5);
     } else return [];
   }, [eventQAQuestions]);
 
@@ -163,7 +166,7 @@ export default function QaAnalytics({ qaId }: { qaId: string }) {
               <div className="w-full p-2 text-sm mb-2 border-b font-semibold grid grid-cols-4 gap-2">
                 <p>S/N</p>
 
-                <p>Question</p>
+                <p className="col-span-2">Question</p>
                 <p>Upvotes</p>
               </div>
               {topUpvotedQuestions?.map((question, index) => (

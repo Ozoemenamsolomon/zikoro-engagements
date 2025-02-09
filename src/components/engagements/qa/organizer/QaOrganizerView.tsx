@@ -1,5 +1,6 @@
 "use client";
 
+import { deploymentUrl } from "@/utils";
 import { Button } from "@/components/custom/Button";
 import {
   AllQuestions,
@@ -80,7 +81,7 @@ export default function QaOrganizerView({
         if (Array.isArray(eventQAQuestions)) {
           // console.log("over  here at questz");
           const updatedQuestions = eventQAQuestions.map((item) => {
-            console.log("rre", item.questionAlias === updated.questionAlias);
+          //  console.log("rre", item.questionAlias === updated.questionAlias);
             if (item.questionAlias === updated.questionAlias) {
               return { ...updated };
             }
@@ -184,7 +185,7 @@ export default function QaOrganizerView({
   const myQuestions = useMemo(() => {
     if (Array.isArray(filteredEventQaQuestions) && user) {
       return filteredEventQaQuestions?.filter(
-        (qa) => qa?.userId === String(user?.id)
+        (qa) => qa?.userId === workspaceAlias
       );
     } else {
       return [];
@@ -283,7 +284,7 @@ export default function QaOrganizerView({
                   }
                   qaQuestions={filteredEventQaQuestions || []}
                   userDetail={{
-                    userId: String(user?.id),
+                    userId: workspaceAlias,
                     userNickName: `${user?.firstName ?? ""} ${
                       user?.lastName ?? ""
                     }`,
@@ -302,7 +303,7 @@ export default function QaOrganizerView({
                   qa={qa}
                   myQuestions={myQuestions}
                   userDetail={{
-                    userId: String(user?.id),
+                    userId: workspaceAlias,
                     userNickName: `${user?.firstName ?? ""} ${
                       user?.lastName ?? ""
                     }`,
@@ -408,7 +409,7 @@ export default function QaOrganizerView({
       {isOpen && organization && (
         <AskandReplyModal
           userDetail={{
-            userId: String(user?.id),
+            userId: workspaceAlias,
             userNickName: `${user?.firstName ?? ""} ${user?.lastName ?? ""}`,
             userImage: `${user?.firstName ?? ""} ${user?.lastName ?? ""}`,
           }}
@@ -439,7 +440,7 @@ export default function QaOrganizerView({
       )}
       {isShare && (
         <ShareEngagement
-          urlLink={`https://engagements.zikoro.com/e/${qa?.workspaceAlias}/a/${qa?.QandAAlias}`}
+          urlLink={`${deploymentUrl}/e/${qa?.workspaceAlias}/a/${qa?.QandAAlias}`}
           title={qa?.coverTitle}
           close={() => setIsShare((prev) => prev)}
         />

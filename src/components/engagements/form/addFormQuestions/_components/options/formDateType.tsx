@@ -90,11 +90,17 @@ export function FormDateType({
                 <div
                   onClick={(e) => {
                     e.stopPropagation();
+                    e.preventDefault()
+                    
                   }}
                   className="absolute top-8 right-[-95px] md:right-0"
                 >
                   <button
-                    onClick={() => setDatePanel((prev) => !prev)}
+                    onClick={(e) =>{
+                      e.preventDefault()
+                      e.stopPropagation();
+                      setDatePanel((prev) => !prev)
+                    }}
                     className="w-full h-full fixed inset-0 z-[150] "
                   ></button>
                   <div

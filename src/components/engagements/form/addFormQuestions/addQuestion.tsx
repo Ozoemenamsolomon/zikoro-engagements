@@ -96,7 +96,7 @@ export function AddQuestion({
 
     console.log(processedOptionFields);
 
-    console.log("processed", values?.optionFields);
+   // console.log("processed", values?.optionFields);
 
 
    // return setLoading(false)
@@ -175,6 +175,12 @@ export function AddQuestion({
       setOptionType(question?.selectedType);
     }
   }, [question]);
+
+  console.log(form.formState.errors)
+
+  useEffect(() => {
+
+  },[optionType])
 
   return (
     <>
@@ -317,12 +323,12 @@ export function AddQuestion({
               )}
             </div>
 
-            <div className="w-full my-10 flex gap-3 items-center justify-center">
+         {optionType !== null &&   <div className="w-full my-10 flex gap-3 items-center justify-center">
               <Button className="h-11 bg-basePrimary rounded-lg gap-x-2 text-white font-medium">
                 {loading && <LoaderAlt size={20} className="animate-spin" />}
                 <p>Save Question</p>
               </Button>
-            </div>
+            </div>}
             <p className="w-1 h-1"></p>
           </div>
         </form>

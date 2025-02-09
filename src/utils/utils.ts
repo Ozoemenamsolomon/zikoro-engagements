@@ -1,3 +1,4 @@
+import { parseISO, format } from "date-fns";
 import {nanoid} from "nanoid"
 export async function isImageValid(url: string): Promise<boolean> {
     try {
@@ -109,3 +110,12 @@ export function calculateAndSetWindowHeight(
     const suffix = suffixes[position % 10] || suffixes[0];
     return `${position}${suffix}`;
   }
+
+
+  export function formateJSDate(date: Date): string {
+    
+  
+    const parsedDate = typeof date === "string" ? parseISO(date) : date;
+    return format(parsedDate, "MM/dd/yyyy h:mm aa");
+  }
+  
