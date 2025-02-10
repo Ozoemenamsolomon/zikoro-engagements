@@ -230,10 +230,10 @@ export default function AddFormQuestions({
                 </p>
               </Button>
               <Button
-                // onClick={() => {
-                //   router.push(`/e/${workspaceAlias}/quiz/o/${quizId}/analytics`);
-                // }}
-                // disabled={isDisabled}
+                onClick={() => {
+                  router.push(`/e/${workspaceAlias}/quiz/o/${formId}/analytics`);
+                }}
+                
                 className="gap-x-2 bg-basePrimary-200  border-basePrimary border  rounded-xl h-9"
               >
                 <AnalyticsIcon />
