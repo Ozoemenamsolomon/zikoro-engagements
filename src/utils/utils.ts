@@ -96,7 +96,7 @@ export function calculateAndSetWindowHeight(
     return shortValue + suffixes[suffixNum];
   };
 
-  export const deploymentUrl = "https://enagagements.zikoro.com"
+  export const deploymentUrl = "https://engagements.zikoro.com"
 
   export function formatPosition(position: number): string {
     const suffixes = ['th', 'st', 'nd', 'rd'];
