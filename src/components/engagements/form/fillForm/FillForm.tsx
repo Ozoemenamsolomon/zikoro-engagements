@@ -170,7 +170,7 @@ function FillFormComp({
         currentIndexes,
         currentIndexes + questionPerSlide
       );
-      console.log(currentIndexes, currentIndexes + questionPerSlide);
+    //  console.log(currentIndexes, currentIndexes + questionPerSlide);
       setCurrentQuestion(slicedQuestion);
     } else {
       setCurrentQuestion(fields);
@@ -201,9 +201,9 @@ function FillFormComp({
     (alpha = 0.1) => {
       if (data) {
         const color = data?.formSettings?.buttonColor || "#001fcc";
-        const r = parseInt(color.slice(1, 3), 16);
-        const g = parseInt(color.slice(3, 5), 16);
-        const b = parseInt(color.slice(5, 7), 16);
+        const r = parseInt(color.slice(1, 3), 12);
+        const g = parseInt(color.slice(3, 5), 12);
+        const b = parseInt(color.slice(5, 7), 12);
         return `rgba(${r}, ${g}, ${b}, ${alpha})`;
       }
     },
@@ -320,7 +320,7 @@ function FillFormComp({
 
                   return (
                     <div
-                    className="w-full"
+                    className={cn("w-full", data?.formSettings?.displayType === "slide" && "border rounded-lg")}
                     key={`${field.id}`}
                   >
                     {field.selectedType === "INPUT_TEXT" && (
