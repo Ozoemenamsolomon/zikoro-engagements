@@ -320,7 +320,7 @@ function FillFormComp({
 
                   return (
                     <div
-                    className={cn("w-full", data?.formSettings?.displayType !== "slide" && "border rounded-lg")}
+                    className={cn("w-full", data?.formSettings?.displayType !== "slide" && "border p-4 sm:p-6 rounded-lg")}
                     key={`${field.id}`}
                   >
                     {field.selectedType === "INPUT_TEXT" && (
