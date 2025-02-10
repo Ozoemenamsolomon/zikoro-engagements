@@ -262,7 +262,7 @@ function FillFormComp({
               className="w-[15rem] h-[15rem] sm:h-[15rem] object-cover rounded-lg"
             />
           ) : (
-            <div className="w-[15rem] h-[15rem] sm:h-[15rem] rounded-lg animate-pulse bg-gray-200"></div>
+            <div></div>
           )}
           <h2
             style={{
