@@ -308,7 +308,7 @@ function FillFormComp({
           style={{
             backgroundColor: data?.formSettings?.backgroundColor || "",
           }}
-          className="w-full max-w--7xl h-full sm:h-[calc(100vh-150px)] overflow-y-auto vert-scroll absolute m-auto inset-0  rounded-lg p-4 sm:p-6"
+          className="w-full h-full overflow-y-auto vert-scroll absolute m-auto inset-0  rounded-lg p-4 sm:p-6"
         >
           <div className="w-full my-10 pb-20 sm:my-20 mx-auto max-w-3xl ">
             <Form {...form}>
@@ -320,7 +320,7 @@ function FillFormComp({
 
                   return (
                     <div
-                    className={cn("w-full", data?.formSettings?.displayType === "slide" && "border rounded-lg")}
+                    className={cn("w-full", data?.formSettings?.displayType !== "slide" && "border rounded-lg")}
                     key={`${field.id}`}
                   >
                     {field.selectedType === "INPUT_TEXT" && (
