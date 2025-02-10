@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   FooterMail,
   FooterMenu,
@@ -12,12 +12,41 @@ import { useRouter } from "next/navigation";
 export default function Footer() {
   const router = useRouter();
   const [isPreviewUp, setIsPreviewUp] = useState<boolean>(false);
+  const previewRef = useRef<HTMLDivElement>(null);
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      previewRef.current &&
+      !previewRef.current.contains(event.target as Node)
+    ) {
+      setIsPreviewUp(false);
+    }
+  };
+
+  const togglePreview = () => {
+    setIsPreviewUp((prev) => !prev);
+  };
+
+  useEffect(() => {
+    if (isPreviewUp) {
+      document.addEventListener("click", handleClickOutside);
+    } else {
+      document.removeEventListener("click", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [isPreviewUp]);
 
   return (
     <div className=" bg-gradient-to-tr from-custom-bg-gradient-start to-custom-bg-gradient-end max-w-full mx-auto relative  border-t-[1px] border-dotted border-violet-500">
       {/* small screens Preview */}
       {isPreviewUp && (
-        <div className="absolute block bottom-28 right-3 lg:hidden bg-white cursor-pointer rounded-[10px] p-3">
+        <div
+          className="absolute block bottom-28 right-3 lg:hidden bg-white cursor-pointer rounded-[10px] p-3"
+          ref={previewRef}
+        >
           {/* 1st app */}
           <div className="w-full flex items-center gap-x-4">
             {/* left */}
@@ -42,7 +71,7 @@ export default function Footer() {
           </div>
 
           {/* 2nd app */}
-          <div className="w-full flex items-center gap-x-4">
+          <div className="w-full flex items-center gap-x-4 mt-6">
             {/* left */}
             <div>
               <p className="bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end gradient-text font-semibold">
@@ -64,7 +93,7 @@ export default function Footer() {
           </div>
 
           {/* 3rd app */}
-          <div className="w-full flex items-center gap-x-4">
+          <div className="w-full flex items-center gap-x-4 mt-6">
             {/* left */}
             <div>
               <p className="bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end gradient-text font-semibold">
@@ -91,7 +120,10 @@ export default function Footer() {
 
       {/* big screens Preview */}
       {isPreviewUp && (
-        <div className="absolute bottom-32 right-64 hidden lg:flex flex-col cursor-pointer bg-white  rounded-[10px] p-3">
+        <div
+          className="absolute bottom-32 right-64 hidden lg:flex flex-col cursor-pointer bg-white gap-y-6  rounded-[10px] p-3"
+          ref={previewRef}
+        >
           {/* 2nd app */}
           <div className="w-full flex items-center gap-x-4">
             {/* left */}
@@ -180,7 +212,7 @@ export default function Footer() {
           {/* First List Item */}
           <li
             className="flex flex-col gap-y-2 cursor-pointer justify-center items-center"
-            onClick={() => setIsPreviewUp(!isPreviewUp)}
+            onClick={togglePreview}
           >
             <FooterMenu />
             <span className="text-[10px] lg:text-base font-normal lg:font-medium">
