@@ -116,6 +116,6 @@ export function calculateAndSetWindowHeight(
     
   
     const parsedDate = typeof date === "string" ? parseISO(date) : date;
-    return format(parsedDate, "MM/dd/yyyy h:mm aa");
+    return format(parsedDate, "MM/dd/yyyy");
   }
   
