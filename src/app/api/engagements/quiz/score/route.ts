@@ -178,7 +178,7 @@ export async function PATCH(req: NextRequest) {
               text-align:center;
               width:fit-content;
              "
-             href="${deploymentUrl}${mailto?.leaderboard}"
+             href="https://engagements.zikoro.com${mailto?.leaderboard}"
             >
               <button
             style="
@@ -235,7 +235,7 @@ export async function PATCH(req: NextRequest) {
 
              "
 
-              href="${deploymentUrl}/create"
+              href="https://engagements.zikoro.com/create"
               >
                  <button
             style="

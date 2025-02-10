@@ -26,7 +26,7 @@ export function QaAdvert({
   closeMobile:() => void;
 }) {
  // console.log("ileft", isLeftBox, isRightBox);
-  const qaLink = `${deploymentUrl}/e/${qa?.workspaceAlias}/qa/a/${qa?.QandAAlias}`
+  const qaLink = `https://engagements.zikoro.com/e/${qa?.workspaceAlias}/qa/a/${qa?.QandAAlias}`
   const [isCopy, setCopy] = useState(false)
   return (
     <div

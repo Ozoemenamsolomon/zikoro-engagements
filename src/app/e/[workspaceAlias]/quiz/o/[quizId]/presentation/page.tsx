@@ -10,7 +10,7 @@ export const generateMetadata = async ({
 }): Promise<Metadata> => {
   const quizId = (await params).quizId;
 
-  const response = fetch(`${deploymentUrl}/api/engagements/quiz/${quizId}`, {
+  const response = fetch(`https://engagements.zikoro.com/api/engagements/quiz/${quizId}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

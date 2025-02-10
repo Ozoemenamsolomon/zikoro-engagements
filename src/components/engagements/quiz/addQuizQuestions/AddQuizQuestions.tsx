@@ -308,8 +308,8 @@ export default function AddQuizQuestions({
       )}
 
       {isShare && data && <ShareEngagement title={data?.coverTitle} urlLink={data?.interactionType === "poll"
-      ? `${deploymentUrl}/e/${data?.workspaceAlias}/poll/a/${data?.quizAlias}/presentation`
-      : `${deploymentUrl}/e/${data?.workspaceAlias}/quiz/a/${data?.quizAlias}/presentation`} close={onShare} />}
+      ? `https://engagements.zikoro.com/e/${data?.workspaceAlias}/poll/a/${data?.quizAlias}/presentation`
+      : `https://engagements.zikoro.com/e/${data?.workspaceAlias}/quiz/a/${data?.quizAlias}/presentation`} close={onShare} />}
     </>
   );
 }
