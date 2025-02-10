@@ -4,4 +4,4 @@ export * from "./modals/RangeModal"
 export * from "./options/ImageOptions"
 export * from "./options/TextOptions"
 export * from "./options/action/OptionAction"
-export * from "./modals/ShareQuiz";
+export * from "../../../_components/ShareEngagement";

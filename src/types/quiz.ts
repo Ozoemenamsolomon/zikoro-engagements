@@ -65,6 +65,7 @@ export interface TQuiz<T> {
     playMusic: boolean,
     musicList: {label:string, value:string}[] | null,
     music: {label:string, value:string} | null,
+    eventAlias: string;
   };
 }
 
@@ -129,7 +130,6 @@ export interface TExportedAnswer {
   maxDuration: number;
   attendeePoints: number;
   answerDuration: number;
-  quizAlias: string;
   selectedOption: string
   email: string;
   phone: string;

@@ -110,6 +110,9 @@ export function QuestionField({
           close={showDeletModal}
           asynAction={deleteQuestion}
           buttonText="Delete"
+          title="Question"
+          modalTitle="Delete Question"
+          titleColor="text-red-500"
           buttonColor="bg-red-500 text-white"
           loading={isLoading}
         />

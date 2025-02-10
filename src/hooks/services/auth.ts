@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { postRequest } from "@/utils/api";
 import useUserStore from "@/store/globalUserStore";
 import { createClient } from "@/utils/supabase/client";
+import { TUser } from "@/types/user";
 
 const supabase = createClient();
 
@@ -276,13 +277,14 @@ export const getUser = async (email: string | null) => {
   }
   // console.log(user);
   // saveCookie("user", user);
-  return user;
+  return user as TUser;
 };
 
 
 export function useOnboarding() {
   const [loading, setLoading] = useState(false);
   const { setUser } = useUserStore();
+
 
   type CreateUser = {
     values: z.infer<typeof onboardingSchema>;
@@ -296,7 +298,7 @@ export function useOnboarding() {
     country: string;
     firstName: string;
     lastName: string;
-    industry: string;
+    industry?: string;
   };
 
   async function registration(
@@ -328,7 +330,8 @@ export function useOnboarding() {
         setLoading(false);
         toast.success("Profile Updated Successfully");
         const user = await getUser(email);
-        setUser(user);
+        
+        setUser(user!);
       }
       return data;
     } catch (error: any) {
@@ -340,6 +343,7 @@ export function useOnboarding() {
   }
   return {
     registration,
+   
     loading,
   };
 }

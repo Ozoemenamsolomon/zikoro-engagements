@@ -1,3 +1,4 @@
+import { parseISO, format } from "date-fns";
 import {nanoid} from "nanoid"
 export async function isImageValid(url: string): Promise<boolean> {
     try {
@@ -95,7 +96,7 @@ export function calculateAndSetWindowHeight(
     return shortValue + suffixes[suffixNum];
   };
 
-  export const deploymentUrl = "https://enagagement.zikoro.com"
+  export const deploymentUrl = "https://engagements.zikoro.com"
 
   export function formatPosition(position: number): string {
     const suffixes = ['th', 'st', 'nd', 'rd'];
@@ -109,3 +110,12 @@ export function calculateAndSetWindowHeight(
     const suffix = suffixes[position % 10] || suffixes[0];
     return `${position}${suffix}`;
   }
+
+
+  export function formateJSDate(date: Date): string {
+    
+  
+    const parsedDate = typeof date === "string" ? parseISO(date) : date;
+    return format(parsedDate, "MM/dd/yyyy h:mm aa");
+  }
+  

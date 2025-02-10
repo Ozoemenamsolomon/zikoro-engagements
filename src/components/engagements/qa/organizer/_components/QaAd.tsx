@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { useState } from "react";
 import copy from "copy-to-clipboard";
 import { TQa } from "@/types/qa";
+import { deploymentUrl } from "@/utils";
 export function QaAdvert({
   isRightBox,
   close,
@@ -25,7 +26,7 @@ export function QaAdvert({
   closeMobile:() => void;
 }) {
  // console.log("ileft", isLeftBox, isRightBox);
-  const qaLink = `https://zikoro.engagement.com/e/${qa?.workspaceAlias}/qa/a/${qa?.QandAAlias}`
+  const qaLink = `https://engagements.zikoro.com/e/${qa?.workspaceAlias}/qa/a/${qa?.QandAAlias}`
   const [isCopy, setCopy] = useState(false)
   return (
     <div

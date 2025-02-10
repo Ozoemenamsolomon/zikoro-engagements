@@ -1,34 +1,34 @@
 
 import QaAttendeeView from "@/components/engagements/qa/attendee/QaAttendeeView";
-import { Metadata } from "next";
 
-export const generateMetadata = async ({
-  params,
-}: {
-  params: Promise<{ qaId: string }>;
-}): Promise<Metadata> => {
-  const qaId = (await params).qaId;
 
-  const response = fetch(`https://zikoro.com/api/engagements/qa/${qaId}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  }).then((res) => res.json());
+// export const generateMetadata = async ({
+//   params,
+// }: {
+//   params: Promise<{ qaId: string }>;
+// }): Promise<Metadata> => {
+//   const qaId = (await params).qaId;
 
-  const qaDetail = await response;
+//   const response = fetch(`https://zikoro.com/api/engagements/qa/${qaId}`, {
+//     method: "GET",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//   }).then((res) => res.json());
 
-  return {
-    title: `${qaDetail?.data?.coverTitle || "Zikoro Q&A"} `,
-    description: `${qaDetail?.data?.description ?? ""}`,
+//   const qaDetail = await response;
 
-    openGraph: {
-      images: [
-     `${qaDetail?.data?.coverImage}` || ""
-      ],
-    },
-  };
-};
+//   return {
+//     title: `${qaDetail?.data?.coverTitle || "Zikoro Q&A"} `,
+//     description: `${qaDetail?.data?.description ?? ""}`,
+
+//     openGraph: {
+//       images: [
+//      `${qaDetail?.data?.coverImage}` || ""
+//       ],
+//     },
+//   };
+// };
 
 export default function Page({
   params: { workspaceAlias, qaId },

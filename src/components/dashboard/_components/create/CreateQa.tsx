@@ -19,7 +19,7 @@ import { usePostRequest } from "@/hooks/services/requests";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
 import useUserStore from "@/store/globalUserStore";
 import { TQa } from "@/types/qa";
-import { generateAlias, generateInteractionAlias, uploadFile } from "@/utils";
+import { generateInteractionAlias, uploadFile } from "@/utils";
 export function CreateQa() {
   const [isOpen, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -79,6 +79,21 @@ export function CreateQa() {
         coverImage: image as string,
         QandAAlias: alias,
         lastUpdated_at: new Date().toISOString(),
+        accessibility: {
+          visible: false,
+          disable: false,
+          live: false,
+          allowAnonymous: false,
+          mustReviewQuestion: true,
+          cannotAskQuestion: false,
+          canRespond: true,
+          canPin: false,
+          indicateAnsweredQuestions: false,
+          canTag: false,
+          eventAlias:"",
+          canCollectEmail: false,
+          connectEvent: false
+        }
       },
     });
     setLoading(false);

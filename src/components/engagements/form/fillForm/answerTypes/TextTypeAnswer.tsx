@@ -1,0 +1,59 @@
+"use client";
+
+import { formAnswerSchema } from "@/schemas";
+import { UseFormReturn } from "react-hook-form";
+import * as z from "zod";
+import { FillFormQuestion } from "../common";
+import { Input } from "@/components/ui/input";
+
+export function TextTypeAnswer({
+  form,
+  index,
+  rgba,
+  bgColor
+}: {
+  form: UseFormReturn<z.infer<typeof formAnswerSchema>, any, any>;
+  index: number;
+  bgColor:string;
+  rgba:string;
+}) {
+  const question = form.watch(`questions.${index}.question`);
+  const isRequired = form.watch(`questions.${index}.isRequired`);
+  const questionImage = form.watch(`questions.${index}.questionImage`);
+  const selectedType = form.watch(`questions.${index}.selectedType`);
+  const optionFields = form.watch(`questions.${index}.optionFields`);
+  const questionId = form.watch(`questions.${index}.questionId`);
+  const questionDescription = form.watch(
+    `questions.${index}.questionDescription`
+  );
+  return (
+    <>
+      <FillFormQuestion
+        currentIndex={index + 1}
+        questionImage={questionImage}
+        currentQuestion={question}
+        description={questionDescription}
+        isRequired={isRequired}
+      />
+
+      <div className="w-full">
+        <Input
+         style={{
+            backgroundColor: rgba
+        }}
+          name={`responses.${index}.response`}
+          value={form.getValues(`responses.${index}.response`)}
+          onChange={(e) => {
+            form.setValue(`responses.${index}.response`, e.target.value);
+            form.setValue(`responses.${index}.type`, selectedType!);
+            form.setValue(`responses.${index}.questionId`, questionId);
+          }}
+          maxLength={optionFields}
+          required={isRequired}
+          className="w-full h-11 sm:h-12 rounded-md  px-2 placeholder:text-gray-500 placeholder-gray-500"
+          placeholder="Enter Answer"
+        />
+      </div>
+    </>
+  );
+}

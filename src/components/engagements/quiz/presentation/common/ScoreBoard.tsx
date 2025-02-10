@@ -7,11 +7,10 @@ import {
   TQuiz,
   TRefinedQuestion,
   TQuestion,
-  TConnectedUser,
   TLiveQuizParticipant,
   TExportedAnswer,
 } from "@/types/quiz";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import Avatar, { AvatarFullConfig } from "react-nice-avatar";
 import * as XLSX from "xlsx";
@@ -19,6 +18,7 @@ import { useDeleteRequest, usePostRequest } from "@/hooks/services/requests";
 import { InlineIcon } from "@iconify/react/dist/iconify.js";
 import { formatPosition } from "@/utils";
 import { ActionModal } from "@/components/custom/ActionModal";
+import { useRouter } from "next/navigation";
 
 type TLeaderBoard = {
   quizParticipantId: string;
@@ -44,12 +44,12 @@ function PlayerRankWidget({
   id,
   isSelected,
   className,
-  position
+  position,
 }: {
   id?: string;
   player: TLeaderBoard;
   isSelected?: boolean;
-  position:string;
+  position: string;
   className?: string;
 }) {
   return (
@@ -109,10 +109,12 @@ export function ScoreBoard({
   isQuizResult?: boolean;
   setIsQuizResult?: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
+  const [isAdminAction, setIsAdminAction] = useState(false);
   const { deleteData } = useDeleteRequest(
-    `engagements/quiz/answer/${actualQuiz?.quizAlias}`
+    `engagements/quiz/answer/${actualQuiz?.id}`
   );
   const [isExport, setIsExport] = useState(false);
+  const router = useRouter();
   const [isViewIndResult, setIsViewIndResult] = useState(false);
   const { postData: updateQuiz, isLoading } =
     usePostRequest<Partial<TQuiz<TQuestion[]>>>("engagements/quiz");
@@ -223,26 +225,32 @@ export function ScoreBoard({
     }
   }, [board]);
 
-  async function endLiveQuiz() {
-    if (actualQuiz) {
-      const payload = {
-        ...actualQuiz,
-        liveMode: {
-          isEnded: null,
-        },
-      };
-      await updateQuiz({ payload });
-      await deleteQuizLobby();
+  // handle delete lobby
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      if (actualQuiz) {
+        const payload = {
+          ...actualQuiz,
+          liveMode: {
+            isEnded: null,
+          },
+        };
+        const blob = new Blob([JSON.stringify(payload)], {
+          type: "application/json",
+        });
+        navigator.sendBeacon("/api/engagements/quiz", blob);
+        navigator.sendBeacon(
+          `/api/engagements/quiz/participant/${actualQuiz?.quizAlias}`
+        );
+      }
+    };
 
-      close();
-    }
-    window.open(
-      `/e/${actualQuiz?.workspaceAlias}/quiz/${isAttendee ? "a" : "o"}/${
-        actualQuiz?.quizAlias
-      }/presentation`
-    );
-    // window.location.reload();
-  }
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [quiz]);
 
   function onToggleClear() {
     setIsToClear((prev) => !prev);
@@ -264,7 +272,8 @@ export function ScoreBoard({
     });
 
     setIsLoadingClear(false);
-    onToggleClear()
+    onToggleClear();
+    router.back()
   }
 
   async function exportAsCSV() {
@@ -275,6 +284,7 @@ export function ScoreBoard({
         avatar,
         correctOptionId,
         selectedOptionId,
+        quizAlias,
         ...rest
       } = answer;
       const actualQuestion = actualQuiz?.questions?.find(
@@ -289,7 +299,18 @@ export function ScoreBoard({
       };
     });
 
-    const worksheet = XLSX.utils.json_to_sheet(exportedAnswer);
+    const filteredResult = exportedAnswer?.map((obj) =>
+      Object.fromEntries(
+        Object.entries(obj).filter(
+          ([_, value]) => value !== null && value !== undefined && value !== ""
+        )
+      )
+    );
+    
+
+    console.log({filteredResult, exportedAnswer})
+
+    const worksheet = XLSX.utils.json_to_sheet(filteredResult);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Quiz Data");
     XLSX.writeFile(workbook, "quiz-answer.xlsx");
@@ -316,7 +337,7 @@ export function ScoreBoard({
             <div className="w-full inset-0 fixed overflow-x-auto h-full ">
               {!isAttendee ? (
                 <div className="w-full flex items-center p-3 justify-between">
-                  <Button className="rounded-lg border border-basePrimary gap-x-2 bg-basePrimary-200">
+                  <Button className=" gap-x-2 ">
                     <InlineIcon
                       fontSize={22}
                       icon="iconoir:leaderboard-star"
@@ -325,10 +346,10 @@ export function ScoreBoard({
                     <p className="gradient-text bg-basePrimary">LeaderBoard</p>
                   </Button>
 
-                  <div className="flex items-center gap-x-[1px]">
+                  <div className="flex items-center rounded-lg  bg-basePrimary ">
                     <Button
                       onClick={onToggleIndResult}
-                      className="flex items-center text-white bg-basePrimary h-10 rounded-none rounded-l-lg gap-x-2"
+                      className="flex items-center text-white  h-10 rounded-none border-r border-white gap-x-2"
                     >
                       <InlineIcon
                         icon="mdi:eye-outline"
@@ -338,26 +359,72 @@ export function ScoreBoard({
                       <p>View Individual Quiz Result</p>
                     </Button>
                     <Button
-                      onClick={toggleIExport}
-                      className="flex items-center rounded-none bg-basePrimary h-10 text-white  gap-x-2"
+                      onClick={() =>
+                        router.push(
+                          `/e/${actualQuiz?.workspaceAlias}/quiz/o/${actualQuiz?.quizAlias}/analytics`
+                        )
+                      }
+                      className="text-white h-10 gap-x-2 rounded-none border-r border-white"
                     >
                       <InlineIcon
-                        icon="carbon:export"
+                        icon="tabler:brand-google-analytics"
                         fontSize={18}
                         color="#ffffff"
                       />
-                      <p>Export as CSV</p>
+                      <p>Analytics</p>
                     </Button>
                     <Button
-                      onClick={onToggleClear}
-                      className="flex items-center rounded-none h-10  bg-red-500 text-white rounded-r-lg gap-x-2"
+                      onClick={() => setIsAdminAction(true)}
+                      className="h-10 relative"
                     >
                       <InlineIcon
-                        icon="mingcute:delete-line"
+                        icon="mdi:dots-vertical"
                         fontSize={18}
                         color="#ffffff"
                       />
-                      <p>Delete Record</p>
+                      {isAdminAction && (
+                        <div
+                          onClick={(e) => e.stopPropagation()}
+                          className="absolute top-[3rem] left-[-8rem]"
+                        >
+                          <div
+                            onClick={() => setIsAdminAction(false)}
+                            className="w-screen h-screen fixed inset-0 bg-transparent"
+                          ></div>
+                          <div className="relative animate-float-in shadow h-fit bg-white w-fit py-3 rounded-lg ">
+                            <div className="w-full flex flex-col items-start justify-start gap-2">
+                              <Button
+                                onClick={() => {
+                                  toggleIExport();
+                                  setIsAdminAction(false);
+                                }}
+                                className="flex items-center w-full rounded-none  h-10  gap-x-2"
+                              >
+                                <InlineIcon
+                                  icon="carbon:export"
+                                  fontSize={18}
+                                  color="#000000"
+                                />
+                                <p>Export as CSV</p>
+                              </Button>
+                              <Button
+                                onClick={() => {
+                                  onToggleClear();
+                                  setIsAdminAction(false);
+                                }}
+                                className="flex w-full items-center rounded-none h-10  gap-x-2"
+                              >
+                                <InlineIcon
+                                  icon="mingcute:delete-line"
+                                  fontSize={18}
+                                  color="#000000"
+                                />
+                                <p>Delete Record</p>
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </Button>
                   </div>
                 </div>
@@ -373,16 +440,22 @@ export function ScoreBoard({
                       <div
                         className={cn(
                           "flex invisible flex-col relative left-11  mt-8 gap-y-4 justify-center",
-                          board[1]?.attendeeName && "visible"
+                          board[1] && "visible"
                         )}
                       >
                         <div className="flex flex-col mr-11 items-center justify-center gap-y-2">
+                          {board[1]?.quizParticipantId === id && (
+                            <p className="bg-basePrimary rounded-3xl text-white px-2 py-1 font-medium text-mobile">
+                              You
+                            </p>
+                          )}
                           <Avatar
                             shape="square"
                             style={{ borderRadius: "12px" }}
                             className="w-[5rem]  h-[5rem]"
                             {...board[1]?.image}
                           />
+
                           <p className="text-zinc-700 text-sm font-medium">
                             {board[1]?.attendeeName ?? ""}
                           </p>
@@ -407,16 +480,22 @@ export function ScoreBoard({
                       <div
                         className={cn(
                           "flex flex-col relative z-30 gap-y-4 mt-[-6rem] justify-center invisible",
-                          board[0]?.attendeeName && "visible"
+                          board[0] && "visible"
                         )}
                       >
                         <div className="flex flex-col items-center justify-center gap-y-2">
+                          {board[0]?.quizParticipantId === id && (
+                            <p className="bg-basePrimary text-white rounded-3xl px-2 py-1 font-medium text-mobile">
+                              You
+                            </p>
+                          )}
                           <Avatar
                             shape="square"
                             style={{ borderRadius: "12px" }}
                             className="w-[5rem] h-[5rem]"
                             {...board[0]?.image}
                           />
+
                           <p className="text-zinc-700 font-medium text-sm">
                             {board[0]?.attendeeName ?? ""}
                           </p>
@@ -441,16 +520,22 @@ export function ScoreBoard({
                       <div
                         className={cn(
                           "flex flex-col relative right-11 mt-10 gap-y-4 justify-center invisible",
-                          board[2]?.attendeeName && "visible"
+                          board[2] && "visible"
                         )}
                       >
                         <div className="flex flex-col ml-11 items-center justify-center gap-y-2">
+                          {board[2]?.quizParticipantId === id && (
+                            <p className="bg-basePrimary rounded-3xl text-white px-2 py-1 font-medium text-mobile">
+                              You
+                            </p>
+                          )}
                           <Avatar
                             shape="square"
                             style={{ borderRadius: "12px" }}
                             className="w-[5rem] h-[5rem]"
                             {...board[2]?.image}
                           />
+
                           <p className="text-zinc-700 text-sm font-medium">
                             {board[2]?.attendeeName ?? ""}
                           </p>
@@ -476,15 +561,7 @@ export function ScoreBoard({
                   )}
 
                   <div className="w-full overflow-y-auto pb-20 no-scrollbar z-50 bg-white absolute inset-x-0 h-full top-80 rounded-t-lg py-6 ">
-                    {board.slice(3, board?.length).length > 0 && (
-                      <div className="w-full px-8 text-sm pb-2 grid grid-cols-3">
-                        <p>Rank</p>
-                        <p>
-                          Participants ({board.slice(3, board?.length).length})
-                        </p>
-                        <p className="text-end">Points</p>
-                      </div>
-                    )}
+                  
                     <div className="w-full flex flex-col items-start justify-start">
                       {Array.isArray(board) &&
                         board
@@ -523,7 +600,6 @@ export function ScoreBoard({
           modalTitle="Export to CSV"
           modalText="Are you sure you want to continue?"
           asynAction={exportAsCSV}
-          
           buttonText="Export"
           buttonColor="bg-basePrimary text-white"
         />
@@ -606,7 +682,7 @@ function AttendeeScore({
               </p>
             </div>
 
-            <div className="w-full grid grid-cols-4 h-20 border-t">
+            <div className="w-full grid grid-cols-2 sm:grid-cols-4 h-fit sm:h-20 border-t">
               <AbouttAttendeeScore
                 type="Points"
                 metric={userScore ?? 0}
@@ -644,7 +720,7 @@ function AttendeeScore({
               />
               <AbouttAttendeeScore
                 type="Wrong"
-                metric={quiz?.questions?.length - correctAnswers ?? 0}
+                metric={quiz?.questions?.length - correctAnswers || 0}
                 Icon={
                   <InlineIcon
                     icon="line-md:close-circle-twotone"
@@ -722,12 +798,7 @@ function AnswerSheet({
   userAvatar: Required<AvatarFullConfig> | undefined;
   className?: string;
 }) {
-  // const [showExplanation, setShowExplanation] = useState(false);
-
-  // function toggleExplanationVisibility() {
-  //   setShowExplanation((prev) => !prev);
-  // }
-  const optionLetter = ["1", "2", "3", "4"];
+  const optionLetter = ["A", "B", "C", "D"];
 
   return (
     <div
@@ -755,48 +826,9 @@ function AnswerSheet({
       <div className="W-full max-w-2xl mx-auto mt-8 flex gap-y-3 flex-col items-start justify-start">
         {Array.isArray(quiz?.questions) &&
           quiz?.questions?.map((question, index) => {
-            // correct answer index
-            const correctAnswerIndex = question?.options?.findIndex(
-              ({ isAnswer }) => isAnswer !== ""
+            const isImageOption = question?.options?.some((option) =>
+              (option?.option as string)?.startsWith("https://")
             );
-            // chosen answer index
-            const chosenAsnwerIndex = question?.options?.findIndex(
-              ({ isCorrect }) => typeof isCorrect === "boolean"
-            );
-            // chosen answer
-            const chosenAnswer = question?.options?.find(
-              ({ isCorrect }) => typeof isCorrect === "boolean"
-            );
-
-            // correct answer
-            const correctAnswer = question?.options?.find(
-              ({ isAnswer }) => isAnswer !== ""
-            );
-
-            const isImageOption = question?.options?.some((opt) =>
-              (opt?.option as string)?.startsWith("https://")
-            );
-            const chosedOption = () => {
-              const i = answer?.filter((ans) => {
-                return (
-                  question?.options[chosenAsnwerIndex].optionId ===
-                  ans?.selectedOptionId?.optionId
-                );
-              });
-
-              return i?.length || 0;
-            };
-
-            const correctOption = () => {
-              const i = answer?.filter((ans) => {
-                return (
-                  question?.options[correctAnswerIndex].optionId ===
-                  ans?.selectedOptionId?.optionId
-                );
-              });
-
-              return i?.length || 0;
-            };
 
             return (
               <div className="w-full space-y-4 bg-basePrimary-200 rounded-lg p-4  ">
@@ -818,191 +850,183 @@ function AnswerSheet({
                   />
                 )}
 
-                {isImageOption ? (
-                  <div className="flex flex-wrap items-center justify-center gap-3 w-full">
-                    <div
-                      className={cn(
-                        "w-fit  text-white gap-3 flex flex-col bg-red-500 items-center p-2 h-fit rounded-lg ",
-                        typeof chosenAnswer?.isCorrect === "boolean" &&
-                          chosenAnswer?.isCorrect &&
-                          "bg-green-500"
-                      )}
-                    >
-                      <div className="w-full flex items-end justify-between">
-                        <p className="w-1 h-1"></p>
-                        <span
-                          className={cn(
-                            "rounded-lg h-9 flex items-center text-red-500 justify-center font-medium w-9 bg-white border border-gray-700",
-                            typeof chosenAnswer?.isCorrect === "boolean" &&
-                              chosenAnswer?.isCorrect &&
-                              "text-green-500"
-                          )}
-                        >
-                          {optionLetter[chosenAsnwerIndex]}
-                        </span>
-                        <Avatar
-                          {...userAvatar}
-                          shape="circle"
-                          className="w-7 h-7 rounded-full"
-                        />
-                      </div>
-                      <div className="w-full flex items-center justify-between">
-                        <div className="w-11/12 relative h-2 ring-1 rounded-3xl bg-gray-200">
-                          <span
-                            style={{
-                              width: chosedOption()
-                                ? `${(
-                                    (chosedOption() / answer?.length) *
-                                    100
-                                  ).toFixed(0)}%`
-                                : "0%",
-                            }}
-                            className={cn(
-                              "absolute rounded-3xl bg-red-500 inset-0  h-full",
-                              typeof chosenAnswer?.isCorrect === "boolean" &&
-                                chosenAnswer?.isCorrect &&
-                                "bg-green-500"
-                            )}
-                          ></span>
-                        </div>
+                {question?.options?.map((option, index) => {
+                  const chosedOption = () => {
+                    const i = answer?.filter((ans) => {
+                      return (
+                        option.optionId === ans?.selectedOptionId?.optionId
+                      );
+                    });
 
-                        <div className="text-mobile">
-                          <span>
-                            {chosedOption
-                              ? `${(
-                                  (chosedOption() / answer?.length) *
-                                  100
-                                ).toFixed(0)}%`
-                              : "0%"}
-                          </span>
-                        </div>
-                      </div>
-                      <Image
-                        src={chosenAnswer?.option}
-                        alt=""
-                        width={400}
-                        height={400}
-                        className="w-28 rounded-lg object-cover h-32"
-                      />
-                    </div>
+                    return i?.length || 0;
+                  };
 
-                    <div
-                      className={cn(
-                        "w-fit  text-white gap-3 flex flex-col bg-green-500 items-center p-2 h-fit rounded-lg "
-                      )}
-                    >
-                      <span
-                        className={cn(
-                          "rounded-lg h-9 flex items-center text-green-500 justify-center font-medium w-9 bg-white border border-gray-700"
-                        )}
-                      >
-                        {optionLetter[correctAnswerIndex]}
-                      </span>
-                      <div className="w-full flex items-center justify-between">
-                        <div className="w-11/12 relative h-2 ring-1 rounded-3xl bg-gray-200">
-                          <span
-                            style={{
-                              width: correctOption()
-                                ? `${(
-                                    (correctOption() / answer?.length) *
-                                    100
-                                  ).toFixed(0)}%`
-                                : "0%",
-                            }}
+                  return (
+                    <>
+                      {isImageOption ? (
+                        <div className="flex flex-wrap items-center justify-center gap-3 w-full">
+                          <div
                             className={cn(
-                              "absolute rounded-3xl bg-green-500 inset-0  h-full"
-                            )}
-                          ></span>
-                        </div>
-
-                        <div className="text-mobile">
-                          <span>
-                            {correctOption
-                              ? `${(
-                                  (correctOption() / answer?.length) *
-                                  100
-                                ).toFixed(0)}%`
-                              : "0%"}
-                          </span>
-                        </div>
-                      </div>
-                      <Image
-                        src={correctAnswer?.option}
-                        alt=""
-                        width={400}
-                        height={400}
-                        className="w-28 rounded-lg object-cover h-32"
-                      />
-                    </div>
-                  </div>
-                ) : (
-                  <div className="w-full ">
-                    <div className="w-[95%] flex flex-col gap-y-2 items-start justify-start">
-                      <div
-                        className={cn(
-                          "text-white rounded-lg font-medium relative bg-red-500 w-full px-2 py-3 flex flex-col items-start justify-start",
-                          typeof chosenAnswer?.isCorrect === "boolean" &&
-                            chosenAnswer?.isCorrect &&
-                            "bg-green-500"
-                        )}
-                      >
-                        <div className="w-full flex items-center gap-x-2">
-                          <span
-                            className={cn(
-                              "rounded-lg h-10 flex items-center justify-center text-red-500 font-medium w-10 bg-white border border-gray-700",
-                              typeof chosenAnswer?.isCorrect === "boolean" &&
-                                chosenAnswer?.isCorrect &&
-                                "text-green-500"
+                              "w-fit   gap-3 bg-basePrimary-100 flex flex-col  items-center p-2 h-fit rounded-lg ",
+                              typeof option.isCorrect === "boolean" &&
+                                option?.isCorrect &&
+                                "bg-green-500 text-white",
+                              typeof option?.isCorrect === "boolean" &&
+                                !option?.isCorrect &&
+                                "bg-red-500 text-white"
                             )}
                           >
-                            {optionLetter[chosenAsnwerIndex]}
-                          </span>
-                          <p
-                            className="innerhtml text-white"
-                            dangerouslySetInnerHTML={{
-                              __html: chosenAnswer?.option ?? "",
-                            }}
-                          />
-                        </div>
-                        <div className="w-full flex mt-2 items-center justify-between">
-                          <div className="w-11/12 relative h-2 ring-1 rounded-3xl bg-gray-200">
-                            <span
-                              style={{
-                                width: chosedOption()
-                                  ? `${(
-                                      (chosedOption() / answer?.length) *
-                                      100
-                                    ).toFixed(0)}%`
-                                  : "0%",
-                              }}
+                            <div
                               className={cn(
-                                "absolute rounded-3xl bg-red-500 inset-0  h-full",
-                                typeof chosenAnswer?.isCorrect === "boolean" &&
-                                  chosenAnswer?.isCorrect &&
-                                  "bg-green-500"
+                                "w-full flex justify-center items-center",
+                                typeof option?.isCorrect === "boolean" &&
+                                  "items-end justify-between"
                               )}
-                            ></span>
-                          </div>
+                            >
+                              <p className="w-1 h-1"></p>
+                              <span
+                                className={cn(
+                                  "rounded-lg h-9 flex items-center  justify-center font-medium w-9 bg-white border border-gray-700",
+                                  typeof option?.isCorrect === "boolean" &&
+                                    option?.isCorrect &&
+                                    "text-green-500",
+                                  typeof option?.isCorrect === "boolean" &&
+                                    !option?.isCorrect &&
+                                    "text-red-500"
+                                )}
+                              >
+                                {optionLetter[index]}
+                              </span>
+                              {typeof option?.isCorrect === "boolean" && (
+                                <Avatar
+                                  {...userAvatar}
+                                  shape="circle"
+                                  className="w-7 h-7 rounded-full"
+                                />
+                              )}
+                            </div>
+                            <div className="w-full flex items-center justify-between">
+                              <div className="w-11/12 relative h-2  ring-1 ring-white rounded-3xl bg-gray-200">
+                                <span
+                                  style={{
+                                    width: chosedOption()
+                                      ? `${(
+                                          (chosedOption() / answer?.length) *
+                                          100
+                                        ).toFixed(0)}%`
+                                      : "0%",
+                                  }}
+                                  className={cn(
+                                    "absolute rounded-3xl bg-[#001fcc]  inset-0  h-full",
+                                    typeof option?.isCorrect === "boolean" &&
+                                      option?.isCorrect &&
+                                      "bg-green-500",
+                                    typeof option?.isCorrect === "boolean" &&
+                                      !option?.isCorrect &&
+                                      "bg-red-500"
+                                  )}
+                                ></span>
+                              </div>
 
-                          <div className="text-mobile">
-                            <span>
-                              {chosedOption()
-                                ? `${(
-                                    (chosedOption() / answer?.length) *
-                                    100
-                                  ).toFixed(0)}%`
-                                : "0%"}
-                            </span>
+                              <div className="text-mobile">
+                                <span>
+                                  {chosedOption
+                                    ? `${(
+                                        (chosedOption() / answer?.length) *
+                                        100
+                                      ).toFixed(0)}%`
+                                    : "0%"}
+                                </span>
+                              </div>
+                            </div>
+                            <Image
+                              src={option?.option}
+                              alt=""
+                              width={400}
+                              height={400}
+                              className="w-28 rounded-lg object-cover h-32"
+                            />
                           </div>
                         </div>
+                      ) : (
+                        <div className="w-full ">
+                          <div className="w-[95%] flex flex-col gap-y-2 items-start justify-start">
+                            <div
+                              className={cn(
+                                " rounded-lg font-medium relative bg-basePrimary-100 w-full px-2 py-3 flex flex-col items-start justify-start",
+                                typeof option?.isCorrect === "boolean" &&
+                                  option?.isCorrect &&
+                                  "bg-green-500 text-white",
+                                typeof option?.isCorrect === "boolean" &&
+                                  !option?.isCorrect &&
+                                  "bg-red-500 text-white"
+                              )}
+                            >
+                              <div className="w-full flex items-center gap-x-2">
+                                <span
+                                  className={cn(
+                                    "rounded-lg h-10 flex items-center justify-center  font-medium w-10 bg-white border border-gray-700",
+                                    typeof option?.isCorrect === "boolean" &&
+                                      option?.isCorrect &&
+                                      "text-green-500",
+                                    typeof option?.isCorrect === "boolean" &&
+                                      !option?.isCorrect &&
+                                      "text-red-500"
+                                  )}
+                                >
+                                  {optionLetter[index]}
+                                </span>
+                                <p
+                                  className="innerhtml "
+                                  dangerouslySetInnerHTML={{
+                                    __html: option?.option ?? "",
+                                  }}
+                                />
+                              </div>
+                              <div className="w-full flex mt-2 items-center justify-between">
+                                <div className="w-11/12 relative h-2 ring-1 ring-white rounded-3xl bg-gray-200">
+                                  <span
+                                    style={{
+                                      width: chosedOption()
+                                        ? `${(
+                                            (chosedOption() / answer?.length) *
+                                            100
+                                          ).toFixed(0)}%`
+                                        : "0%",
+                                    }}
+                                    className={cn(
+                                      "absolute rounded-3xl bg-[#001fcc] inset-0  h-full",
+                                      typeof option?.isCorrect === "boolean" &&
+                                        option?.isCorrect &&
+                                        "bg-green-500",
+                                      typeof option?.isCorrect === "boolean" &&
+                                        !option?.isCorrect &&
+                                        "bg-red-500"
+                                    )}
+                                  ></span>
+                                </div>
 
-                        <Avatar
-                          {...userAvatar}
-                          shape="circle"
-                          className="w-8 h-8 absolute top-[35%] right-[-40px] rounded-full"
-                        />
-                      </div>
-                      <div className="text-white rounded-lg font-medium bg-green-500 w-full px-2 py-3 flex flex-col items-start justify-start">
+                                <div className="text-mobile">
+                                  <span>
+                                    {chosedOption()
+                                      ? `${(
+                                          (chosedOption() / answer?.length) *
+                                          100
+                                        ).toFixed(0)}%`
+                                      : "0%"}
+                                  </span>
+                                </div>
+                              </div>
+
+                              {typeof option?.isCorrect === "boolean" && (
+                                <Avatar
+                                  {...userAvatar}
+                                  shape="circle"
+                                  className="w-8 h-8 absolute top-[35%] right-[-40px] rounded-full"
+                                />
+                              )}
+                            </div>
+                            {/* <div className="text-white rounded-lg font-medium bg-green-500 w-full px-2 py-3 flex flex-col items-start justify-start">
                         <div className="w-full flex items-center gap-x-2">
                           <span
                             className={cn(
@@ -1021,7 +1045,7 @@ function AnswerSheet({
                         </div>
 
                         <div className="w-full flex items-center justify-between">
-                          <div className="w-11/12 relative h-2 ring-1 rounded-3xl bg-gray-200">
+                          <div className="w-11/12 relative h-2 ring-1 ring-white rounded-3xl bg-gray-200">
                             <span
                               style={{
                                 width: correctOption()
@@ -1048,10 +1072,13 @@ function AnswerSheet({
                             </span>
                           </div>
                         </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
+                      </div> */}
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  );
+                })}
 
                 {/* {showExplanation && (
                   <p className="mb-3 text-xs sm:text-sm text-gray-500">
@@ -1097,7 +1124,7 @@ function OrganizerSheet({
   );
   const [isOpen, setIsOpen] = useState(false);
 
-  console.log( refinedQuiz)
+  console.log(refinedQuiz);
   const userAvatar = useMemo(() => {
     if (selectedPlayer) {
       const playerId = selectedPlayer?.player.quizParticipantId;
@@ -1132,8 +1159,7 @@ function OrganizerSheet({
           {selectedPlayer ? (
             <PlayerRankWidget
               player={selectedPlayer.player}
-              
-              position={formatPosition(selectedPlayer.playerIndex+ 1)}
+              position={formatPosition(selectedPlayer.playerIndex + 1)}
               isSelected
               className="border-b px-4"
             />
@@ -1219,7 +1245,10 @@ function OrganizerPlayerDropDown({
               )}
               key={index}
             >
-              <PlayerRankWidget player={player} position={formatPosition(index + 1)} />
+              <PlayerRankWidget
+                player={player}
+                position={formatPosition(index + 1)}
+              />
             </button>
           ))}
         </div>

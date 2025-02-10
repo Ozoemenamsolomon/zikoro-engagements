@@ -24,8 +24,10 @@ type TopSectionProp = {
   filterValue: string;
   qa?: TQa;
   workspaceAlias: string;
-  refetch?: (t?:boolean) => Promise<any>;
+  refetch?: (t?: boolean) => Promise<any>;
   setFilterValue: React.Dispatch<React.SetStateAction<string>>;
+  setTagValue: React.Dispatch<React.SetStateAction<string>>;
+  tagValue: string;
 };
 
 export function TopSection({
@@ -39,7 +41,9 @@ export function TopSection({
   setFilterValue,
   qa,
   workspaceAlias,
-  refetch
+  tagValue,
+  setTagValue,
+  refetch,
 }: TopSectionProp) {
   const [isOpen, setOpen] = useState(false);
   const [isShowSelectMobile, setShowSelectMobile] = useState(false);
@@ -54,6 +58,11 @@ export function TopSection({
 
   return (
     <div className="w-full  sticky z-10 top-0">
+      {isAttendee && qa?.accessibility?.cannotAskQuestion && (
+        <div className="w-full text-white font-semibold bg-red-600 p-2 flex items-center justify-center">
+          <p>Questions are no longer accepted</p>
+        </div>
+      )}
       <div
         className={cn(
           " w-full bg-white px-4 sm:px-6 flex items-center text-sm justify-between sm:justify-center gap-2 sm:gap-8 md:gap-16",
@@ -146,6 +155,32 @@ export function TopSection({
                       </SelectGroup>
                     </SelectContent>
                   </Select>
+                  {Array.isArray(qa?.tags) && (
+                    <Select
+                      onValueChange={(value) => {
+                        setTagValue(value);
+                        setShowSelectMobile(false);
+                      }}
+                      defaultValue={tagValue}
+                    >
+                      <SelectTrigger className="h-11 w-[180px]">
+                        <SelectValue placeholder="Select Tag" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white">
+                        <SelectGroup>
+                          {qa?.tags.map(({ name }, index) => (
+                            <SelectItem
+                              key={index}
+                              className="h-12 items-center justify-start focus:bg-gray-100"
+                              value={name}
+                            >
+                              {name}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  )}
                   {!isAttendee && (
                     <button
                       className="flex sm:hidden text-mobile items-center gap-x-2"
@@ -185,6 +220,31 @@ export function TopSection({
               </SelectContent>
             </Select>
           </div>
+          {Array.isArray(qa?.tags) && (
+            <div className="hidden sm:block">
+              <Select
+                onValueChange={(value) => setTagValue(value)}
+                defaultValue={tagValue}
+              >
+                <SelectTrigger className="h-11 w-[180px]">
+                  <SelectValue placeholder="Select Tag" />
+                </SelectTrigger>
+                <SelectContent className="bg-white">
+                  <SelectGroup>
+                    {qa?.tags.map(({ name }, index) => (
+                      <SelectItem
+                        key={index}
+                        className="h-12 items-center justify-start focus:bg-gray-100"
+                        value={name}
+                      >
+                        {name}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
         </div>
       </div>
 

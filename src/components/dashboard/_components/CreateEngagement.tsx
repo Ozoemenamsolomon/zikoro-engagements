@@ -3,7 +3,7 @@ import { InlineIcon } from "@iconify/react/dist/iconify.js";
 import { CreateQa } from "./create/CreateQa";
 import { CreateType } from "@/types/home";
 import { CreateQuiz } from "./create/CreateQuiz";
-
+import { CreateForm } from "./create/CreateForm";
 
 export function CreateEngagement({
   close,
@@ -35,9 +35,11 @@ export function CreateEngagement({
 function RenderCreateEngagement({ type }: { type: number }) {
   switch (type) {
     case CreateType.qa:
-      return <CreateQa/>;
-      case CreateType.quiz:
-        return <CreateQuiz/>;  
+      return <CreateQa />;
+    case CreateType.quiz:
+      return <CreateQuiz />;
+    case CreateType.form:
+      return <CreateForm />;
     default:
       return <></>;
   }

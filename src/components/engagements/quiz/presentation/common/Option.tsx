@@ -223,7 +223,7 @@ export function Option({
                     : "0%",
                 }}
                 className={cn(
-                  "absolute rounded-3xl inset-0 bg-[#001fcc] h-full",
+                  "absolute rounded-3xl ring-1 ring-white inset-0 bg-[#001fcc] h-full",
                   option?.isCorrect !== "default" &&
                     !option?.isCorrect &&
                     "bg-red-500",

@@ -4,8 +4,16 @@ import { Button } from "@/components/custom";
 import { useState } from "react";
 import { ActionModal } from "@/components/custom/ActionModal";
 import { useDeleteRequest } from "@/hooks/services/requests";
-export function DeleteQA({ QandAAlias, refetch }: {refetch: () =>Promise<any>; QandAAlias: string }) {
-  const {deleteData, isLoading} = useDeleteRequest(`engagements/qa/${QandAAlias}/delete`)
+export function DeleteQA({
+  QandAAlias,
+  refetch,
+}: {
+  refetch: () => Promise<any>;
+  QandAAlias: string;
+}) {
+  const { deleteData, isLoading } = useDeleteRequest(
+    `engagements/qa/${QandAAlias}/delete`
+  );
   const [isOpen, setOpen] = useState(false);
 
   function onClose() {
@@ -13,8 +21,8 @@ export function DeleteQA({ QandAAlias, refetch }: {refetch: () =>Promise<any>; Q
   }
   async function deletes() {
     await deleteData();
-    refetch()
-    onClose()
+    refetch();
+    onClose();
   }
 
   return (
@@ -33,7 +41,9 @@ export function DeleteQA({ QandAAlias, refetch }: {refetch: () =>Promise<any>; Q
           loading={isLoading}
           asynAction={deletes}
           buttonText="Delete"
-          buttonColor="bg-red-500 text-white"
+          title="Q & A"
+          modalText="Delete Q & A"
+          buttonColor="text-white bg-red-500"
         />
       )}
     </>

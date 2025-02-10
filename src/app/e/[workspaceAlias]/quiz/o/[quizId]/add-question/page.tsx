@@ -1,6 +1,5 @@
 
 import AddQuizQuestions from "@/components/engagements/quiz/addQuizQuestions/AddQuizQuestions";
-import { Metadata } from "next";
 
 // export const generateMetadata = async ({
 //   params,
@@ -9,7 +8,7 @@ import { Metadata } from "next";
 // }): Promise<Metadata> => {
 //   const quizId = (await params).quizId;
 
-//   const response = fetch(`https://zikoro.com/api/engagements/quiz/${quizId}`, {
+//   const response = fetch(`https://engagements.zikoro.com/api/engagements/quiz/${quizId}`, {
 //     method: "GET",
 //     headers: {
 //       "Content-Type": "application/json",

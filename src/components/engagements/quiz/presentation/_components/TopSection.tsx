@@ -30,7 +30,7 @@ export function TopSection({
   
 }) {
   return (
-    <div className="w-full flex items-start text-sm justify-between">
+    <div className="w-full flex items-start pt-6 text-sm justify-between">
       <div className="flex flex-col items-start justify-start ">
         <div
           onClick={toggleJoiningAttempt}

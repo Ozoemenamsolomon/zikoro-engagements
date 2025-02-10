@@ -11,6 +11,7 @@ import {
   QuizBranding,
   QuizIntegration,
 } from "./_components";
+import { useGetUserOrganizations } from "@/hooks/services/engagement";
 
 export enum QuizSettingType {
   details,
@@ -33,6 +34,11 @@ export function QuizSettings({
   const [active, setActive] = useState<QuizSettingType>(
     QuizSettingType.details
   );
+  const {
+    organizations: organizationList,
+    getOrganizations,
+    loading: isLoading,
+  } = useGetUserOrganizations();
   return (
     <div
       onClick={close}
@@ -77,6 +83,8 @@ export function QuizSettings({
               quiz={quiz}
               refetch={refetch}
               organization={organization}
+           
+             
             />
           )}
           {QuizSettingType.accessibility === active && (
@@ -94,6 +102,10 @@ export function QuizSettings({
               organization={organization}
               refetch={refetch}
               quiz={quiz}
+              organizationList={organizationList}
+              getOrganizations={getOrganizations}
+              orgloading={isLoading}
+              
             />
           )}
         </div>

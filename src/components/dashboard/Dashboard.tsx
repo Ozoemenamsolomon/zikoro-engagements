@@ -7,80 +7,12 @@ import useUserStore from "@/store/globalUserStore";
 import { useState } from "react";
 import { CreateEngagement } from "./_components/CreateEngagement";
 import { useGetUserEngagements } from "@/hooks/services/engagement";
-import { TOrganizationQa, TQa } from "@/types/qa";
-import { LoaderAlt } from "styled-icons/boxicons-regular";
+import { TOrganizationQa } from "@/types/qa";
 import { cn } from "@/lib/utils";
 import { TOrganizationQuiz } from "@/types/quiz";
 import { QuizCard } from "../engagements/quiz/card/QuizCard";
 import { QaCard } from "../engagements/qa/card/QaCard";
-
-export default function Dashboard() {
-  const { user } = useUserStore();
-  const [isOpen, setOpen] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const { qas, loading, quizzes, getQas, getQuizzes } = useGetUserEngagements();
-
-  function onClose() {
-    setOpen((prev) => !prev);
-  }
-  function showModal(type: number) {
-    setOpen(true);
-    setCurrentIndex(type);
-  }
-  return (
-    <div className="w-full mt-8 sm:mt-10 ">
-      <div className="flex flex-col items-start gap-y-2 mb-4 sm:mb-6 justify-start">
-        <p className="text-sm sm:text-desktop">
-          Hello{" "}
-          <span className="font-medium text-base sm:text-xl capitalize">
-            {user?.firstName ?? ""}
-          </span>
-        </p>
-        <p>What engagement feature will you be using today?</p>
-      </div>
-      <div className="w-full py-4  mb-4 sm:mb-6 ">
-        <ScrollableCards>
-          {engagementHomeLinks.map((nav, index) => (
-            <ActionCard
-              key={index}
-              index={index}
-              Icon={nav.Icon}
-              name={nav.name}
-              href={nav.link}
-              showCreate={showModal}
-              currentIndex={currentIndex}
-            />
-          ))}
-        </ScrollableCards>
-      </div>
-
-      <div className="w-full  bg-basePrimary-100 p-4 rounded-lg">
-        <h2 className="font-medium mb-3 sm:mb-6">Engagements</h2>
-        {loading && (
-          <div className="w-full h-[200px] flex items-center justify-center">
-            <LoaderAlt className="animate-spin" size={30} />
-          </div>
-        )}
-        {qas?.length === 0 && (
-          <div className="w-full h-[200px] flex items-center justify-center">
-            <h2 className="font-medium text-lg">No Data</h2>
-          </div>
-        )}
-        <div className="w-full grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {Array.isArray(quizzes) &&
-            quizzes.map((quiz, index) => (
-              <QuizCard refetch={getQuizzes} key={index} quiz={quiz}  />
-            ))}
-          {Array.isArray(qas) &&
-            qas.map((qa, index) => (
-              <QaCard key={index} qa={qa} refetch={getQas}  />
-            ))}
-        </div>
-      </div>
-      {isOpen && <CreateEngagement close={onClose} type={currentIndex} />}
-    </div>
-  );
-}
+import { FormCard } from "../engagements/form/card/FormCard";
 
 function ActionCard({
   Icon,
@@ -165,6 +97,91 @@ function HomeEngagementCard({
           {type === "qa" ? "Q&A" : "Quiz"}
         </p>
       </div>
+    </div>
+  );
+}
+
+export function EngagementEmptyState() {
+  return (
+    <div className="w-full grid h-full grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      {[1, 2, 3, 4, 5, 6].map((_) => (
+        <div
+          key={_}
+          className="w-full h-52 bg-basePrimary-200 rounded-lg animate-pulse 2xl:h-64 "
+        ></div>
+      ))}
+    </div>
+  );
+}
+
+export default function Dashboard() {
+  const { user } = useUserStore();
+  const [isOpen, setOpen] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const { qas, qaLoading, quizLoading, quizzes, getQas, getQuizzes, getForm, forms, formLoading } =
+    useGetUserEngagements();
+
+  function onClose() {
+    setOpen((prev) => !prev);
+  }
+  function showModal(type: number) {
+    setOpen(true);
+    setCurrentIndex(type);
+  }
+  return (
+    <div className="w-full mt-8 sm:mt-10 ">
+      <div className="flex flex-col items-start gap-y-2 mb-4 sm:mb-6 justify-start">
+        <p className="text-sm sm:text-desktop">
+          Hello{" "}
+          <span className="font-medium text-base sm:text-xl capitalize">
+            {user?.firstName ?? ""}
+          </span>
+        </p>
+        <p>What engagement feature will you be using today?</p>
+      </div>
+      <div className="w-full py-4  mb-4 sm:mb-6 ">
+        <ScrollableCards>
+          {engagementHomeLinks.map((nav, index) => (
+            <ActionCard
+              key={index}
+              index={index}
+              Icon={nav.Icon}
+              name={nav.name}
+              href={nav.link}
+              showCreate={showModal}
+              currentIndex={currentIndex}
+            />
+          ))}
+        </ScrollableCards>
+      </div>
+
+      <div className="w-full  bg-basePrimary-100 p-4 rounded-lg">
+        {/* <h2 className="font-medium mb-3 sm:mb-6">Engagements</h2> */}
+        {(qaLoading || quizLoading) && <EngagementEmptyState />}
+        {!qaLoading &&
+          !quizLoading && !formLoading && forms?.length === 0 &&
+          qas?.length === 0 &&
+          quizzes?.length === 0 && (
+            <div className="w-full h-[200px] flex items-center justify-center">
+              <h2 className="font-medium text-lg">Your Engagements will appear here</h2>
+            </div>
+          )}
+        <div className="w-full grid h-full grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {Array.isArray(quizzes) &&
+            quizzes.map((quiz, index) => (
+              <QuizCard refetch={getQuizzes} key={index} quiz={quiz} />
+            ))}
+          {Array.isArray(qas) &&
+            qas.map((qa, index) => (
+              <QaCard key={index} qa={qa} refetch={getQas} />
+            ))}
+            {Array.isArray(forms) &&
+            forms.map((form, index) => (
+              <FormCard key={index} form={form} refetch={getForm} />
+            ))}
+        </div>
+      </div>
+      {isOpen && <CreateEngagement close={onClose} type={currentIndex} />}
     </div>
   );
 }

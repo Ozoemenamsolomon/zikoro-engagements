@@ -4,7 +4,7 @@ import { TQa, TQAQuestion, TQaTag } from "@/types/qa";
 import { TUserAccess } from "@/types/user";
 import { InlineIcon } from "@iconify/react";
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toZonedTime } from "date-fns-tz";
 import { format, isToday, isYesterday } from "date-fns";
 import { formatReviewNumber, generateAlias } from "@/utils";
@@ -45,7 +45,7 @@ export function AskandReplyCard({
   const [isLiked, setLiked] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isAddTag, showAddTag] = useState(false);
-  const [tag, setTag] = useState<TQaTag | null | undefined>(qaQuestion?.tags);
+  const [tag, setTag] = useState<TQaTag[] | null | undefined>(qaQuestion?.tags);
 
   const formattedTime = useMemo(() => {
     const utcDate = new Date(qaQuestion?.created_at as string);
@@ -80,11 +80,28 @@ export function AskandReplyCard({
   }, [qaQuestion, responseId]);
 
   async function selectTag(data: TQaTag) {
-    setTag(data);
+    if (Array.isArray(tag)) {
+      setTag((prev) => [...prev!, data]);
+    } else {
+      setTag([data]);
+    }
     const payload = {
       ...qaQuestion,
-      tags: data,
+      tags: Array.isArray(qaQuestion?.tags)
+        ? [...qaQuestion?.tags, data]
+        : [data],
     };
+    await postData({ payload });
+    refetch?.();
+  }
+
+  async function removeTag(id: number) {
+    const filtered  = tag?.filter((_, index) => index != id)
+    setTag(filtered);
+    const payload = {
+      ...qaQuestion,
+      tags: filtered
+    }
     await postData({ payload });
     refetch?.();
   }
@@ -115,7 +132,7 @@ export function AskandReplyCard({
         qaQuestion?.voters?.some((c) => c?.userId === userDetail?.userId)
       );
     }
-  }, [responseId, qaQuestion, originalQuestion]);
+  }, [responseId, qaQuestion, originalQuestion, userDetail]);
 
   async function voteFn() {
     setLiked(true);
@@ -219,14 +236,13 @@ export function AskandReplyCard({
     } else return "A";
   }, [qaQuestion]);
 
-  useMemo(() => {
-    if (
-      userDetail &&
-      qaQuestion?.voters?.some((qa) => qa?.userId === userDetail?.userId)
-    ) {
-      setLiked(true);
+  useEffect(() => {
+    if (userDetail) {
+      if (qaQuestion?.voters?.some((qa) => qa?.userId === userDetail?.userId))
+        setLiked(true);
+      else setLiked(false);
     }
-  }, [userDetail, qaQuestion]);
+  }, [userDetail, qaQuestion, qa]);
 
   async function toggleIsAnswered() {
     const payload: Partial<TQAQuestion> = qaQuestion?.isAnswered
@@ -283,8 +299,7 @@ export function AskandReplyCard({
         className={cn(
           "w-full flex h-fit flex-col items-start p-3 relative rounded-lg justify-start gap-y-3 sm:gap-y-4",
           className,
-          qaQuestion?.isAnswered &&
-            " bg-basePrimary-100"
+          qaQuestion?.isAnswered && " bg-basePrimary-100"
         )}
       >
         <div className={cn("flex w-full items-center justify-between")}>
@@ -324,12 +339,19 @@ export function AskandReplyCard({
           )}
           {!isAttendee && (
             <div className="absolute flex items-center gap-x-2 top-2 right-3">
-              {tag && (
-                <ViewTag
-                  name={tag?.name}
-                  className="rounded-lg text-sm h-9"
-                  color={tag?.color}
-                />
+              {Array.isArray(tag) && (
+                <div className="flex-row-reverse flex items-center gap-x-2">
+                  {tag?.map((t, index) => (
+                    <ViewTag
+                      key={index}
+                      name={t?.name}
+                      className="rounded-lg text-tiny  sm:text-mobile h-6 sm:h-7"
+                      color={t?.color}
+                      remove={ async() => removeTag(index)}
+                      isQaTag
+                    />
+                  ))}
+                </div>
               )}
               {!isMyQuestion && qa?.accessibility?.canTag && (
                 <button onClick={() => showAddTag(true)} className="relative">
@@ -339,6 +361,7 @@ export function AskandReplyCard({
                     <AddTag
                       close={() => showAddTag(false)}
                       tags={qa?.tags}
+                      addedTags={tag}
                       selectTag={selectTag}
                     />
                   )}
@@ -391,7 +414,11 @@ export function AskandReplyCard({
                 voteFn();
               }
             }}
-            disabled={isLoading}
+            disabled={
+              isLoading ||
+              isMyQuestion ||
+              qaQuestion?.userId === userDetail?.userId
+            }
             className="rounded-3xl  bg-basePrimary-100 gap-x-2 px-2 py-1 h-fit"
           >
             <span className="text-mobile">{formatVotesCount}</span>
@@ -464,10 +491,12 @@ function AddTag({
   close,
   tags,
   selectTag,
+  addedTags,
 }: {
   tags: TQaTag[] | null;
   selectTag: (t: TQaTag) => void;
   close: () => void;
+  addedTags: TQaTag[] | null | undefined;
 }) {
   return (
     <div
@@ -480,8 +509,11 @@ function AddTag({
       ></div>
       <div className="relative w-[120px] z-[450] shadow bg-white py-3">
         <div className="w-full flex flex-col items-start justify-start">
-          {tags?.map((item, index) => (
+          {tags?.map((item, index) => {
+            const isPresent = addedTags?.find((d) => d?.name === item?.name)
+         return (
             <button
+            disabled={isPresent !== undefined}
               onClick={() => {
                 selectTag(item);
                 close();
@@ -491,7 +523,7 @@ function AddTag({
             >
               {item?.name}
             </button>
-          ))}
+ )} )}
         </div>
       </div>
     </div>

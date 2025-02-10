@@ -34,10 +34,12 @@ import { QuestionView } from "../organizer/_components";
 import { SendMailModal } from "./_components/SendMailModal";
 import { ScoreBoard } from "../common/ScoreBoard";
 import { InlineIcon } from "@iconify/react/dist/iconify.js";
+import PreviewDeletionGuard from "../common/PreviewDeleteGuard";
+import _ from "lodash";
 
 // audio instance
 function createAudioInstance(music: string) {
-  console.log("music", music)
+  console.log("music", music);
   if (typeof window !== undefined) {
     const audio = new Audio(music);
     //  audio.src = "audio/AylexCinematic.mp3";
@@ -97,7 +99,8 @@ export default function QuizAttendeeView({
   });
   const query = params.get("redirect");
   const aId = params.get("id");
-  const [audio, setAudio] = useState<HTMLAudioElement | null>(null)
+  const type = params.get("type");
+  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
 
   // subscribe to quiz
   useEffect(() => {
@@ -159,21 +162,37 @@ export default function QuizAttendeeView({
   // subscribe to answers
   useEffect(() => {
     if (!quiz?.accessibility?.live) return;
-    const channel = supabase
-      .channel("live-answer")
-      .on(
+    const channel = supabase.channel("live-answer");
+
+      // channel.on(
+      //   "postgres_changes",
+      //   {
+      //     event: "UPDATE",
+      //     schema: "public",
+      //     table: "quizAnswer",
+      //     filter: `quizId=eq.${quiz?.id}`,
+      //   },
+      //   (payload) => {
+      //     setAnswers((prev) => [...prev, payload.new as TAnswer]);
+      //   }
+      // )
+
+      channel.on(
         "postgres_changes",
         {
-          event: "UPDATE",
+          event: "INSERT",
           schema: "public",
           table: "quizAnswer",
           filter: `quizId=eq.${quiz?.id}`,
         },
         (payload) => {
-          setAnswers((prev) => [...prev, payload.new as TAnswer]);
+        //  console.log("new answer data", payload.new)
+        setAnswers((prev) => _.uniqBy([...prev, payload.new as TAnswer], "id"));
+          
         }
       )
-      .subscribe((status) => {
+
+      channel.subscribe((status) => {
         console.log("Subscription status: ANSWER", status);
       });
 
@@ -183,12 +202,11 @@ export default function QuizAttendeeView({
   }, [supabase, quiz]);
 
   // memoized audio instance
- useMemo(() => {
+  useMemo(() => {
     if (quiz?.accessibility?.playMusic && quiz?.accessibility?.music) {
-    
       if (!audio || audio.paused) {
         setAudio(createAudioInstance(quiz?.accessibility?.music?.value));
-    }
+      }
     }
   }, [quiz]);
 
@@ -332,6 +350,12 @@ export default function QuizAttendeeView({
 
   return (
     <div className="w-full ">
+      {type === "preview" && quiz && <PreviewDeletionGuard quiz={quiz} />}
+      {type === "preview" && (
+        <div className="w-[300px] bg-red-600 fixed z-[99999999] right-[-97px] top-[43px] rotate-45 transform  p-2 flex items-center justify-center">
+          <span className="text-white font-semibold">Preview Mode</span>
+        </div>
+      )}
       {showScoreSheet ? (
         <>
           {isSendMailModal ? (
@@ -395,8 +419,8 @@ export default function QuizAttendeeView({
               goBack={() => setIsLobby(false)}
               quiz={quiz}
               close={() => {
-                setIsLobby(false)
-                setIsQuizStarted(true)
+                setIsLobby(false);
+                setIsQuizStarted(true);
               }}
               refetch={getData}
               isAttendee

@@ -7,7 +7,7 @@ import { Button } from "@/components/custom";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { TQa, TQAQuestion,  } from "@/types/qa";
+import { TQa, TQAQuestion } from "@/types/qa";
 import { TUserAccess } from "@/types/user";
 
 import toast from "react-hot-toast";
@@ -156,18 +156,21 @@ export function AllQuestions({
       {!replyQuestion ? (
         <div className="w-full flex flex-col items-start justify-start gap-3 sm:gap-4">
           {Array.isArray(qaQuestions) &&
-            qaQuestions.map((quest, index) => (
-              <AskandReplyCard
-                key={quest.questionAlias}
-                qaQuestion={quest}
-                className="bg-white border"
-                showReply={initiateReply}
-                isAttendee={isAttendee}
-                refetch={refetch}
-                userDetail={userDetail}
-                qa={qa}
-              />
-            ))}
+            qaQuestions.map((quest, index) => {
+             
+              return (
+                <AskandReplyCard
+                  key={quest.questionAlias}
+                  qaQuestion={quest}
+                  className="bg-white border"
+                  showReply={initiateReply}
+                  isAttendee={isAttendee}
+                  refetch={refetch}
+                  userDetail={userDetail}
+                  qa={qa}
+                />
+              );
+            })}
         </div>
       ) : (
         <div className="w-full flex flex-col items-start justify-start gap-4 ">

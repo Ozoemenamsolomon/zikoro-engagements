@@ -30,6 +30,9 @@ export interface TQaTag {
       canPin:boolean;
       indicateAnsweredQuestions:boolean;
       canTag:boolean;
+      eventAlias:string;
+      canCollectEmail:boolean;
+      connectEvent:boolean;
     };
   }
 
@@ -61,6 +64,6 @@ export interface TQaTag {
     isPinned: boolean;
     moderationDetails: JSON;
     created_at: string;
-    tags: TQaTag | null
+    tags: TQaTag[] | null
   }
   

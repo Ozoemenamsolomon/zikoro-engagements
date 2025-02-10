@@ -51,7 +51,6 @@ export function TextEditor({
         [{ list: "ordered" }, { list: "bullet" }],
         [{ script: "sub" }, { script: "super" }],
         [{ indent: "-1" }, { indent: "+1" }],
-        //   [{ direction: "rtl" }],
         [{ header: [1, 2, 3, 4, 5, 6, false] }],
         [{ color: [] }, { background: [] }],
         [
@@ -59,12 +58,9 @@ export function TextEditor({
             font: [],
           },
         ],
-        //  [{ align: [] }],
         ["link"], //  "video"
         ["clean"],
         ["undo", "redo"],
-
-        // ["imageResize", "imageTextAlternative"],
       ],
     },
     history: {
@@ -86,7 +82,6 @@ export function TextEditor({
     "bullet",
     "link",
     "image",
-    // "align",
     "color",
     "code-block",
     "undo",
@@ -100,6 +95,7 @@ export function TextEditor({
     "background",
     "indent",
     "list",
+    "script"
   ];
 
   const [content, setContent] = useState(defaultValue);

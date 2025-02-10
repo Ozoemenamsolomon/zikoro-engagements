@@ -1,5 +1,6 @@
 "use client";
 
+import { deploymentUrl } from "@/utils";
 import { Button } from "@/components/custom/Button";
 import {
   AllQuestions,
@@ -12,41 +13,49 @@ import { Plus } from "styled-icons/bootstrap";
 import { Minimize2 } from "styled-icons/feather";
 import { AwaitingReview, QaAdvert } from "./_components";
 import { cn } from "@/lib/utils";
-import {
-  useGetQAQuestions,
-  useQARealtimePresence,
-} from "@/hooks/services/qa";
+import { useGetQAQuestions, useQARealtimePresence } from "@/hooks/services/qa";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
 import { createClient } from "@/utils/supabase/client";
 import { TQa, TQAQuestion } from "@/types/qa";
-import { useGetData } from "@/hooks/services/requests";
+import { useGetData, usePostRequest } from "@/hooks/services/requests";
 import useUserStore from "@/store/globalUserStore";
 import { TOrganization } from "@/types/home";
+import { AnalyticsIcon, PlayQuizIcon, SmallShareIcon } from "@/constants";
+import { InlineIcon } from "@iconify/react/dist/iconify.js";
+import { ActionModal } from "@/components/custom/ActionModal";
+import { ShareEngagement } from "../../_components/ShareEngagement";
+import { useRouter } from "next/navigation";
 
 const supabase = createClient();
 export default function QaOrganizerView({
-    workspaceAlias,
+  workspaceAlias,
   qaId,
 }: {
-    workspaceAlias: string;
+  workspaceAlias: string;
   qaId: string;
 }) {
   const [active, setActive] = useState(1);
-  const {data: organization} =  useGetData<TOrganization>(`organization/${workspaceAlias}`)
+  const { data: organization } = useGetData<TOrganization>(
+    `organization/${workspaceAlias}`
+  );
   const [isOpen, setIsOpen] = useState(false);
   const [isRightBox, setIsRightBox] = useState(true);
   const [isLeftBox, setIsLeftBox] = useState(true);
+  const [isShare, setIsShare] = useState(false);
+  const [isStopQuestion, setIsStopQuestion] = useState(false);
+  const [isStopping, setIsStopping] = useState(false);
   const { user } = useUserStore();
   const [filterValue, setFilterValue] = useState("Recent");
+  const [tagValue, setTagValue] = useState("");
+  const router = useRouter()
+  const { postData } = usePostRequest<Partial<TQa>>("/engagements/qa");
   const { data: qa, getData } = useGetData<TQa>(
     `/engagements/qa/${qaId}`,
     true,
     null,
     true
   );
-  const [replyQuestion, setReplyQuestion] = useState<TQAQuestion | null>(
-    null
-  );
+  const [replyQuestion, setReplyQuestion] = useState<TQAQuestion | null>(null);
   const { eventQAQuestions, setEventQAQuestions, isLoading, getQAQUestions } =
     useGetQAQuestions({ qaId });
   useQARealtimePresence(qa?.accessibility?.live);
@@ -72,7 +81,7 @@ export default function QaOrganizerView({
         if (Array.isArray(eventQAQuestions)) {
           // console.log("over  here at questz");
           const updatedQuestions = eventQAQuestions.map((item) => {
-            console.log("rre", item.questionAlias === updated.questionAlias)
+          //  console.log("rre", item.questionAlias === updated.questionAlias);
             if (item.questionAlias === updated.questionAlias) {
               return { ...updated };
             }
@@ -140,7 +149,14 @@ export default function QaOrganizerView({
               new Date(b.created_at).getTime() -
               new Date(a.created_at).getTime()
           )
-          .filter((v) => v?.questionStatus !== "pending");
+          .filter((v) => {
+            const isPresent =
+              Array.isArray(v?.tags) && tagValue
+                ? v?.tags?.some((t) => t?.name === tagValue)
+                : true;
+
+            return v?.questionStatus !== "pending" && isPresent;
+          });
 
         const pinnedQuestion = filtered.filter((q) => q?.isPinned);
         const unpinnedQuestion = filtered?.filter((q) => !q?.isPinned);
@@ -149,7 +165,14 @@ export default function QaOrganizerView({
       } else if (filterValue === "Top Liked") {
         const filtered = eventQAQuestions
           .sort((a, b) => b.vote - a.vote)
-          .filter((v) => v?.questionStatus !== "pending");
+          .filter((v) => {
+            const isPresent =
+              Array.isArray(v?.tags) && tagValue
+                ? v?.tags?.some((t) => t?.name === tagValue)
+                : true;
+
+            return v?.questionStatus !== "pending" && isPresent;
+          });
 
         const pinnedQuestion = filtered.filter((q) => q?.isPinned);
         const unpinnedQuestion = filtered?.filter((q) => !q?.isPinned);
@@ -157,12 +180,12 @@ export default function QaOrganizerView({
         return [...pinnedQuestion, ...unpinnedQuestion];
       }
     } else return [];
-  }, [eventQAQuestions, filterValue, qa]);
+  }, [eventQAQuestions, filterValue, qa, tagValue]);
 
   const myQuestions = useMemo(() => {
     if (Array.isArray(filteredEventQaQuestions) && user) {
       return filteredEventQaQuestions?.filter(
-        (qa) => qa?.userId === String(user?.id)
+        (qa) => qa?.userId === workspaceAlias
       );
     } else {
       return [];
@@ -184,9 +207,19 @@ export default function QaOrganizerView({
     setReplyQuestion(null);
   }
 
-//   console.log("evv", eventQAQuestions);
-
-//   console.log("reply", replyQuestion)
+  async function stopAskingQuestion() {
+    setIsStopping(true);
+    const payload: Partial<TQa> = {
+      ...qa,
+      accessibility: {
+        ...qa?.accessibility,
+        cannotAskQuestion: true,
+      },
+    };
+    await postData({ payload });
+    setIsStopping(false);
+    getData();
+  }
 
   if (!organization && isLoading) {
     return (
@@ -220,7 +253,9 @@ export default function QaOrganizerView({
           <div
             className={cn(
               "w-full h-[100vh] col-span-full md:col-span-6 relative rounded-lg bg-[#F9FAFF]",
-              !isLeftBox && isRightBox && "col-span-full md:col-span-full block",
+              !isLeftBox &&
+                isRightBox &&
+                "col-span-full md:col-span-full block",
               !isRightBox && "hidden"
             )}
           >
@@ -234,9 +269,11 @@ export default function QaOrganizerView({
               awaitingReviewCount={awaitingReview?.length || 0}
               qa={qa}
               workspaceAlias={workspaceAlias}
+              tagValue={tagValue}
+              setTagValue={setTagValue}
               refetch={getData}
             />
-            <div className="w-full pt-6 bg-[#F9FAFF] px-4">
+            <div className="w-full pt-6 h-[87vh] bg-[#F9FAFF] px-4">
               {active === 1 && (
                 <AllQuestions
                   initiateReply={initiateReply}
@@ -247,7 +284,7 @@ export default function QaOrganizerView({
                   }
                   qaQuestions={filteredEventQaQuestions || []}
                   userDetail={{
-                    userId: String(user?.id),
+                    userId: workspaceAlias,
                     userNickName: `${user?.firstName ?? ""} ${
                       user?.lastName ?? ""
                     }`,
@@ -266,7 +303,7 @@ export default function QaOrganizerView({
                   qa={qa}
                   myQuestions={myQuestions}
                   userDetail={{
-                    userId: String(user?.id),
+                    userId: workspaceAlias,
                     userNickName: `${user?.firstName ?? ""} ${
                       user?.lastName ?? ""
                     }`,
@@ -315,13 +352,64 @@ export default function QaOrganizerView({
                 <Plus size={40} className="text-white" />
               </Button>
             )}
+            <div className="w-full flex items-center fixed bottom-0 sm:sticky justify-center bg-white px-6 h-[8vh]">
+              <div className="w-full h-full flex items-center justify-between">
+                <Button
+                onClick={() => router.push(`/e/${workspaceAlias}/qa/o/${qaId}/analytics`)}
+                className="gap-x-2 bg-basePrimary-200  border-basePrimary border  rounded-xl h-9">
+                  <AnalyticsIcon />
+                  <p className="bg-basePrimary hidden sm:block  gradient-text">
+                    Analytics
+                  </p>
+                </Button>
+
+                <Button
+                  onClick={() => setIsStopQuestion(true)}
+                  className={cn(
+                    "rounded-[3rem] h-fit bg-basePrimary-200 px-2 border border-basePrimary gap-x-2",
+                    !qa?.accessibility?.cannotAskQuestion &&
+                      "border-red-500 bg-red-100"
+                  )}
+                >
+                  {!qa?.accessibility?.cannotAskQuestion ? (
+                    <InlineIcon
+                      fontSize={52}
+                      color="#ef4444"
+                      icon="solar:stop-circle-bold-duotone"
+                    />
+                  ) : (
+                    <PlayQuizIcon />
+                  )}
+                  <p
+                    className={cn(
+                      "text-red-500 hidden sm:block text-sm sm:text-base ",
+                      qa?.accessibility?.cannotAskQuestion &&
+                        "gradient-text bg-basePrimary"
+                    )}
+                  >
+                    {qa?.accessibility?.cannotAskQuestion
+                      ? "Open Q&A"
+                      : "Close Q&A"}
+                  </p>
+                </Button>
+                <Button
+                  onClick={() => setIsShare((prev) => prev)}
+                  className="gap-x-2 bg-basePrimary-200 border-basePrimary border  rounded-xl h-9"
+                >
+                  <SmallShareIcon />
+                  <p className="bg-basePrimary hidden sm:block gradient-text">
+                    Share
+                  </p>
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
       {isOpen && organization && (
         <AskandReplyModal
           userDetail={{
-            userId: String(user?.id),
+            userId: workspaceAlias,
             userNickName: `${user?.firstName ?? ""} ${user?.lastName ?? ""}`,
             userImage: `${user?.firstName ?? ""} ${user?.lastName ?? ""}`,
           }}
@@ -329,6 +417,32 @@ export default function QaOrganizerView({
           QandAAlias={qaId}
           refetch={qa?.accessibility?.live ? async () => {} : getQAQUestions}
           close={onShowQuestionModal}
+        />
+      )}
+      {isStopQuestion && (
+        <ActionModal
+          loading={isStopping}
+          modalText={
+            qa?.accessibility?.cannotAskQuestion
+              ? "Are you sure you want attendee to start asking question?"
+              : "Are you sure you want to stop attendee from asking question?"
+          }
+          close={() => setIsStopQuestion(false)}
+          asynAction={stopAskingQuestion}
+          buttonText={qa?.accessibility?.cannotAskQuestion ? "Start" : "Stop"}
+          title={
+            qa?.accessibility?.cannotAskQuestion
+              ? "Ask Question"
+              : "Close Question"
+          }
+          buttonColor="bg-basePrimary text-white"
+        />
+      )}
+      {isShare && (
+        <ShareEngagement
+          urlLink={`https://engagements.zikoro.com/e/${qa?.workspaceAlias}/a/${qa?.QandAAlias}`}
+          title={qa?.coverTitle}
+          close={() => setIsShare((prev) => prev)}
         />
       )}
     </>

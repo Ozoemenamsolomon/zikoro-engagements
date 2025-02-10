@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  AnalyticsIcon,
   EmptyQuizQuestionIcon,
   PeopleIcon,
   PlayQuizIcon,
@@ -9,7 +10,8 @@ import {
   SmallPreviewIcon,
   SmallShareIcon,
 } from "@/constants";
-import { QuizLayout } from "../_components/QuizLayout";
+import { deploymentUrl } from "@/utils";
+import { EngagementLayout } from "../../_components/EngagementLayout";
 import { Button } from "@/components/custom";
 import { LeadingHeadRoute, TrailingHeadRoute } from "../_components";
 import { useGetData, usePostRequest } from "@/hooks/services/requests";
@@ -24,7 +26,7 @@ import { QuizSettings } from "../quizSettings/QuizSettings";
 import { MdNavigateBefore } from "react-icons/md";
 import { useRouter } from "next/navigation";
 import { Switch } from "@/components/ui/switch";
-import { ShareQuiz } from "./_components";
+import { ShareEngagement } from "./_components";
 
 export default function AddQuizQuestions({
   quizId,
@@ -100,7 +102,7 @@ export default function AddQuizQuestions({
     setIsShare((prev) => !prev);
   }
 
-  console.log({ accessibility: accessibility });
+  //console.log(isAddNew);
 
   if (isLoading) {
     return <LoadingState />;
@@ -108,107 +110,124 @@ export default function AddQuizQuestions({
   return (
     <>
       <div className="w-screen min-h-screen fixed z-10 inset-0 sm:px-4  mx-auto ">
-        <div className="w-full h-full gap-4 sm:pt-4 items-start grid grid-cols-12">
-          {(isAddNew ||
-            question !== null ||
-            (Array.isArray(data?.questions) && data?.questions?.length > 0)) &&
-            data && (
-              <AddedQuestions
-                questions={data?.questions}
-                editQuestion={editQuestion}
-                editingQuestion={question}
-                addNewQuestion={() => {
-                  setIsAddNew(true);
-                  editQuestion(null);
-                }}
-                isAddNew={isAddNew}
-              />
-            )}
-
-          <div
-            className={cn(
-              "w-full col-span-9 h-full",
-              (!data?.questions ||
-                (Array.isArray(data?.questions) &&
-                  data?.questions?.length === 0)) &&
-                "col-span-full",
-              (isAddNew ||
-                question !== null ||
-                (Array.isArray(data?.questions) &&
-                  data?.questions?.length > 0)) &&
-                data &&
-                "col-span-9",
-              (question !== null || isAddNew) &&
-                "block col-span-full sm:col-span-9"
-            )}
-          >
-            <QuizLayout
-              className=" w-full vert-scroll overflow-y-auto pb-32"
-              parentClassName={cn(
-                "  relative px-0 h-full",
-                question === null && "hidden sm:block",
-                isAddNew && "block"
-              )}
-              LeadingWidget={
-                <LeadingHeadRoute
-                  onClick={() => {
-                    setIsAddNew(false);
+        {(!data?.questions ||
+          (Array.isArray(data?.questions) && data?.questions?.length === 0)) &&
+        !isAddNew ? (
+          <EmptyQuestion addNewQuestion={() => setIsAddNew(true)} />
+        ) : (
+          <div className="w-full h-full gap-4 sm:pt-4 items-start grid grid-cols-12">
+            {(isAddNew ||
+              question !== null ||
+              (Array.isArray(data?.questions) &&
+                data?.questions?.length > 0)) &&
+              data && (
+                <AddedQuestions
+                  questions={data?.questions}
+                  editQuestion={editQuestion}
+                  editingQuestion={question}
+                  addNewQuestion={() => {
+                    setIsAddNew(true);
                     editQuestion(null);
                   }}
-                  name={data?.coverTitle ?? ""}
-                  Icon={MdNavigateBefore}
+                  isAddNew={isAddNew}
                 />
-              }
-              TrailingWidget={
-                <TrailingHeadRoute
-                  as="button"
-                  Icon={SettingsIcon}
-                  title="Quiz Settings"
-                  onClick={toggleSetting}
-                />
-              }
+              )}
+
+            <div
+              className={cn(
+                "w-full col-span-9 h-full",
+                (!data?.questions ||
+                  (Array.isArray(data?.questions) &&
+                    data?.questions?.length === 0)) &&
+                  "col-span-full",
+                (isAddNew ||
+                  question !== null ||
+                  (Array.isArray(data?.questions) &&
+                    data?.questions?.length > 0)) &&
+                  data &&
+                  "col-span-9",
+                (question !== null || isAddNew) &&
+                  "block col-span-full sm:col-span-9"
+              )}
             >
-              {(isAddNew ||
-                question !== null ||
-                (Array.isArray(data?.questions) &&
-                  data?.questions?.length > 0)) &&
-                data && (
-                  <AddQuestion
-                    refetch={getData}
-                    editQuestion={editQuestion}
-                    question={question}
-                    quiz={data}
-                    interactionType="quiz"
-                    workspaceAlias={workspaceAlias}
-                    key={question?.id}
+              <EngagementLayout
+                className=" w-full vert-scroll overflow-y-auto pb-32"
+                parentClassName={cn(
+                  "  relative px-0 h-full",
+                  question === null && "hidden sm:block",
+                  isAddNew && "block"
+                )}
+                LeadingWidget={
+                  <LeadingHeadRoute
+                    onClick={() => {
+                      setIsAddNew(false);
+                      editQuestion(null);
+                    }}
+                    name={data?.coverTitle ?? ""}
+                    Icon={MdNavigateBefore}
                   />
-                )}
-              {(!data?.questions ||
-                (Array.isArray(data?.questions) &&
-                  data?.questions?.length === 0)) &&
-                !isAddNew && (
-                  <EmptyQuestion addNewQuestion={() => setIsAddNew(true)} />
-                )}
-            </QuizLayout>
+                }
+                TrailingWidget={
+                  <TrailingHeadRoute
+                    as="button"
+                    Icon={SettingsIcon}
+                    title="Quiz Settings"
+                    onClick={toggleSetting}
+                  />
+                }
+          
+              >
+                {(isAddNew ||
+                  question !== null ||
+                  (Array.isArray(data?.questions) &&
+                    data?.questions?.length > 0)) &&
+                  data && (
+                    <AddQuestion
+                      refetch={getData}
+                      editQuestion={editQuestion}
+                      question={question}
+                      quiz={data}
+                      interactionType="quiz"
+                      workspaceAlias={workspaceAlias}
+                      key={question?.id}
+                    />
+                  )}
+              </EngagementLayout>
+            </div>
           </div>
-        </div>
+        )}
       </div>
       <div className="w-full bg-white fixed bottom-0 border-t inset-x-0 z-50 px-4 sm:px-6 py-4 flex items-center justify-between">
-        <Button
-          onClick={() =>
-            router.push(
-              `/e/${workspaceAlias}/quiz/o/${quizId}/presentation?type=preview`
-            )
-          }
-          disabled={isDisabled}
-          className="gap-x-2 bg-basePrimary-200  border-basePrimary border  rounded-xl h-9"
-        >
-          <SmallPreviewIcon />
-          <p className="bg-basePrimary hidden sm:block  gradient-text">
-            {" "}
-            Preview Mode
-          </p>
-        </Button>
+        <div className="flex items-center gap-x-2">
+          <Button
+            onClick={() =>
+              router.push(
+                `/e/${workspaceAlias}/quiz/o/${quizId}/presentation?type=preview`
+              )
+            }
+            disabled={isDisabled}
+            className="gap-x-2 bg-basePrimary-200  border-basePrimary border  rounded-xl h-9"
+          >
+            <SmallPreviewIcon />
+            <p className="bg-basePrimary hidden sm:block  gradient-text">
+              {" "}
+              Preview Mode
+            </p>
+          </Button>
+          <Button
+            onClick={() => {
+              router.push(`/e/${workspaceAlias}/quiz/o/${quizId}/analytics`);
+            }}
+            disabled={isDisabled}
+            className="gap-x-2 bg-basePrimary-200  border-basePrimary border  rounded-xl h-9"
+          >
+            <AnalyticsIcon />
+            <p className="bg-basePrimary hidden sm:block  gradient-text">
+              {" "}
+              Analytics
+            </p>
+          </Button>
+        </div>
 
         <Button
           onClick={() =>
@@ -227,7 +246,7 @@ export default function AddQuizQuestions({
           <Button
             onClick={() => {
               router.push(
-                `/e/${workspaceAlias}/quiz/o/${quizId}/leaderboard?type=o`
+                `/e/${workspaceAlias}/quiz/a/${quizId}/leaderboard?type=o`
               );
             }}
             disabled={isDisabled}
@@ -288,14 +307,16 @@ export default function AddQuizQuestions({
         />
       )}
 
-      {isShare && data && <ShareQuiz quiz={data} close={onShare} />}
+      {isShare && data && <ShareEngagement title={data?.coverTitle} urlLink={data?.interactionType === "poll"
+      ? `https://engagements.zikoro.com/e/${data?.workspaceAlias}/poll/a/${data?.quizAlias}/presentation`
+      : `https://engagements.zikoro.com/e/${data?.workspaceAlias}/quiz/a/${data?.quizAlias}/presentation`} close={onShare} />}
     </>
   );
 }
 
 function EmptyQuestion({ addNewQuestion }: { addNewQuestion: () => void }) {
   return (
-    <div className="w-full min-h-screen flex items-center justify-center flex-col gap-5">
+    <div className="w-full min-h-screen bg-white rounded-lg p-4 sm:p-6 flex items-center justify-center flex-col gap-5">
       <EmptyQuizQuestionIcon />
       <h2 className="font-semibold text-base sm:text-lg mt-5">
         Your Quiz is Empty

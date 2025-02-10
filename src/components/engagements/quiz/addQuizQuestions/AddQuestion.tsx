@@ -15,7 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm, UseFormReturn } from "react-hook-form";
 import { quizQuestionSchema } from "@/schemas/quiz";
 import { nanoid } from "nanoid";
-import toast from "react-hot-toast";
+import {toast} from "react-toastify";
 import { uploadFile } from "@/utils";
 import { usePostRequest } from "@/hooks/services/requests";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
@@ -264,7 +264,7 @@ export function AddQuestion({
     else return 1;
   }, [question, quiz]);
 
-  console.log(form.formState.errors);
+ // console.log(form.formState.errors);
 
   return (
     <>

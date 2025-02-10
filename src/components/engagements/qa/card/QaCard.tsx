@@ -28,7 +28,7 @@ export function QaCard({
         window.open(`/e/${qa?.workspaceAlias}/qa/o/${qa?.QandAAlias}`, "_self");
       }}
       role="button"
-      className="w-full text-mobile  sm:text-sm bg-white rounded-md flex flex-col items-start justify-start"
+      className="w-full h-full text-mobile  sm:text-sm bg-white rounded-md flex flex-col items-start justify-start"
     >
       <div className="w-full relative">
         <div className="absolute flex items-center justify-between inset-x-0 w-full  top-3 px-3">
@@ -70,13 +70,14 @@ export function QaCard({
         <p className="font-medium px-3 pt-3 w-full line-clamp-2">
           {qa?.coverTitle}
         </p>
-        {/* <div className="text-gray-500 px-3 pb-3 text-xs ms:text-mobile flex items-center justify-between w-full">
-          <p className="flex items-center gap-x-2">
+        <div className="text-gray-500 invisible px-3 pb-3 text-xs ms:text-mobile flex items-center justify-between w-full">
+          {/* <p className="flex items-center gap-x-2">
             <span className={cn(" pr-2 border-gray-500")}>{`${
               form?.questions?.length || 0
             } ${form?.questions?.length > 1 ? "Questions" : "Question"}`}</span>
-          </p>
-        </div> */}
+          </p> */}
+          <p className="w-1 h-1"></p>
+        </div>
       </div>
     </div>
   );

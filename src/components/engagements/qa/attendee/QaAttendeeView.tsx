@@ -15,11 +15,14 @@ import { TQa, TQAQuestion } from "@/types/qa";
 import { useMemo } from "react";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
 import { useGetData } from "@/hooks/services/requests";
-import { useVerifyUserAccess } from "@/hooks/services/engagement";
+import {
+  useVerifyAttendee,
+} from "@/hooks/services/engagement";
 import useAccessStore from "@/store/globalAccessStore";
 import { InlineIcon } from "@iconify/react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { useSearchParams } from "next/navigation";
 
 const supabase = createClient();
 export default function QaAttendeeView({
@@ -32,16 +35,20 @@ export default function QaAttendeeView({
   const [active, setActive] = useState(1);
   const [isOpen, setIsOpen] = useState(false);
   const [filterValue, setFilterValue] = useState("Recent");
+  const [tagValue, setTagValue] = useState("");
   const { data: qa, isLoading: qaLoading } = useGetData<TQa>(
     `/engagements/qa/${qaId}`
   );
   const { userAccess, setUserAccess } = useAccessStore();
+  const params = useSearchParams();
 
-  const { isHaveAccess, isLoading: loading } =
-    useVerifyUserAccess(workspaceAlias);
+  // const { isHaveAccess, isLoading: loading } =
+  //   useVerifyUserAccess(workspaceAlias);
   const [replyQuestion, setReplyQuestion] = useState<TQAQuestion | null>(null);
   const { eventQAQuestions, setEventQAQuestions, isLoading, getQAQUestions } =
     useGetQAQuestions({ qaId });
+  const attendeeEmail = params.get("attendeeEmail");
+  const { attendee, getAttendee, loading } = useVerifyAttendee();
   useQARealtimePresence(qa?.accessibility?.live);
 
   function setActiveState(n: number) {
@@ -85,7 +92,7 @@ export default function QaAttendeeView({
             replyQuestion !== null &&
             replyQuestion?.questionAlias === updated.questionAlias
           ) {
-            console.log("over  here at reply");
+          //  console.log("over  here at reply");
             setReplyQuestion(updated);
           }
         }
@@ -134,7 +141,14 @@ export default function QaAttendeeView({
               new Date(b.created_at).getTime() -
               new Date(a.created_at).getTime()
           )
-          .filter((v) => v?.questionStatus !== "pending");
+          .filter((v) => {
+            const isPresent =
+              Array.isArray(v?.tags) && tagValue
+                ? v?.tags?.some((t) => t?.name === tagValue)
+                : true;
+
+            return v?.questionStatus !== "pending" && isPresent;
+          });
 
         const pinnedQuestion = filtered.filter((q) => q?.isPinned);
         const unpinnedQuestion = filtered?.filter((q) => !q?.isPinned);
@@ -143,7 +157,14 @@ export default function QaAttendeeView({
       } else if (filterValue === "Top Liked") {
         const filtered = eventQAQuestions
           .sort((a, b) => b.vote - a.vote)
-          .filter((v) => v?.questionStatus !== "pending");
+          .filter((v) => {
+            const isPresent =
+              Array.isArray(v?.tags) && tagValue
+                ? v?.tags?.some((t) => t?.name === tagValue)
+                : true;
+
+            return v?.questionStatus !== "pending" && isPresent;
+          });
 
         const pinnedQuestion = filtered.filter((q) => q?.isPinned);
         const unpinnedQuestion = filtered?.filter((q) => !q?.isPinned);
@@ -151,7 +172,7 @@ export default function QaAttendeeView({
         return [...pinnedQuestion, ...unpinnedQuestion];
       }
     } else return [];
-  }, [eventQAQuestions, filterValue, qa]);
+  }, [eventQAQuestions, filterValue, qa, tagValue]);
 
   const myQuestions = useMemo(() => {
     if (Array.isArray(eventQAQuestions)) {
@@ -162,14 +183,18 @@ export default function QaAttendeeView({
               new Date(b.created_at).getTime() -
               new Date(a.created_at).getTime()
           )
-          .filter((qa) => qa?.userId === userAccess?.userId);
+          .filter((qa) => {
+            return qa?.userId === userAccess?.userId;
+          });
       } else if (filterValue === "Top Liked") {
         return eventQAQuestions
           .sort((a, b) => b.vote - a.vote)
-          .filter((qa) => qa?.userId === userAccess?.userId);
+          .filter((qa) => {
+            return qa?.userId === userAccess?.userId;
+          });
       } else return [];
     } else return [];
-  }, [eventQAQuestions, userAccess, filterValue, qa]);
+  }, [eventQAQuestions, userAccess, filterValue, qa, tagValue]);
 
   function initiateReply(question: TQAQuestion | null) {
     setReplyQuestion(question);
@@ -179,7 +204,21 @@ export default function QaAttendeeView({
     setReplyQuestion(null);
   }
 
-  if (isLoading || loading || qaLoading) {
+  useEffect(() => {
+    (async () => {
+      if (attendeeEmail) {
+        await getAttendee(workspaceAlias, attendeeEmail);
+      }
+    })();
+  }, [attendeeEmail]);
+
+  const isHaveAccess = useMemo(() => {
+    if (!loading && attendeeEmail) {
+      return attendee !== null;
+    } else return true;
+  }, [attendeeEmail, attendee]);
+
+  if (loading) {
     return (
       <div className="w-full h-[300px] flex items-center justify-center">
         <LoaderAlt size={30} className="animate-spin" />
@@ -190,33 +229,31 @@ export default function QaAttendeeView({
   return (
     <>
       {/* {!isSignedIn && <JoinQA joined={toggleJoin} addUser={addUser} />} */}
-      {/* {!loading &&
-        !isHaveAccess &&
-        !qa?.accessibility?.visible && (
-          <div className="w-full h-full inset-0 fixed z-[100] bg-white">
-            <div className="w-[95%] max-w-xl border rounded-lg bg-gradient-to-b gap-y-6 from-white  to-basePrimary/20  h-[400px] flex flex-col items-center justify-center shadow absolute inset-0 m-auto">
-              <InlineIcon
-                icon="fluent:emoji-sad-20-regular"
-                fontSize={60}
-                color="#001fcc"
-              />
-              <div className="w-fit flex flex-col items-center justify-center gap-y-3">
-                <p>You are not a registered attendee for this event</p>
+      {!loading && !isHaveAccess && !qa?.accessibility?.connectEvent && (
+        <div className="w-full h-full inset-0 fixed z-[100] bg-white">
+          <div className="w-[95%] max-w-xl border rounded-lg bg-gradient-to-b gap-y-6 from-white  to-basePrimary/20  h-[400px] flex flex-col items-center justify-center shadow absolute inset-0 m-auto">
+            <InlineIcon
+              icon="fluent:emoji-sad-20-regular"
+              fontSize={60}
+              color="#001fcc"
+            />
+            <div className="w-fit flex flex-col items-center justify-center gap-y-3">
+              <p>You are not a registered attendee for this event</p>
 
-                <Button
-                  onClick={() => {
-                    window.open(
-                      `${window.location.origin}/live-events/${workspaceAlias}`
-                    );
-                  }}
-                  className="bg-basePrimary h-12 text-white font-medium"
-                >
-                  Register for the event
-                </Button>
-              </div>
+              <Button
+                onClick={() => {
+                  window.open(
+                    `https://zikoro.com/live-events/${attendee?.eventAlias}`
+                  );
+                }}
+                className="bg-basePrimary h-12 text-white font-medium"
+              >
+                Register for the event
+              </Button>
             </div>
           </div>
-        )} */}
+        </div>
+      )}
 
       <div className="w-full  bg-[#F9FAFF] h-full">
         <TopSection
@@ -228,6 +265,9 @@ export default function QaAttendeeView({
           filterValue={filterValue}
           setFilterValue={setFilterValue}
           workspaceAlias={workspaceAlias}
+          tagValue={tagValue}
+          setTagValue={setTagValue}
+          qa={qa}
         />
 
         <div className="w-full  h-full rounded-lg pt-5 sm:pt-6 bg-[#F9FAFF]">
