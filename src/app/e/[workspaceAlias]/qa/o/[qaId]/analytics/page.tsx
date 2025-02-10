@@ -1,6 +1,5 @@
-import QaOrganizerView from "@/components/engagements/qa/organizer/QaOrganizerView";
+
 import QaAnalytics from "@/components/engagements/qa/QaAnalytics";
-import { Metadata } from "next";
 
 // export const generateMetadata = async ({
 //   params,

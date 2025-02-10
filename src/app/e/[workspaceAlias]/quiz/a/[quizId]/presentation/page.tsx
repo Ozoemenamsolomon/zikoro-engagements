@@ -1,8 +1,7 @@
 
 
 import QuizAttendeeView from "@/components/engagements/quiz/presentation/attendee/QuizAttendeeView";
-import { Metadata } from "next";
-import { deploymentUrl } from "@/utils";
+
 // export const generateMetadata = async ({
 //   params,
 // }: {

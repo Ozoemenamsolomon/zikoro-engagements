@@ -1,6 +1,6 @@
 
 import QaAttendeeView from "@/components/engagements/qa/attendee/QaAttendeeView";
-import { Metadata } from "next";
+
 
 // export const generateMetadata = async ({
 //   params,

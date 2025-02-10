@@ -1,6 +1,4 @@
 import ScoreBoardPage from "@/components/engagements/quiz/presentation/attendee/ScoreBoardPage";
-import { Metadata } from "next";
-import { deploymentUrl } from "@/utils";
 // export const generateMetadata = async ({
 //   params,
 // }: {

@@ -257,7 +257,7 @@ export default function AddFormQuestions({
               >
                 <SmallShareIcon />
                 <p className="bg-basePrimary hidden sm:block gradient-text">
-                  Share
+                  Collect Responses
                 </p>
               </Button>
             </div>
