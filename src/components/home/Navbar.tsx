@@ -17,8 +17,14 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isPreviewShowing, setIsPreviewShowing] = useState<boolean>(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const previewRef = useRef<HTMLDivElement>(null);
+
   const toggleMenu = () => {
     setIsOpen(!isOpen);
+  };
+
+  const togglePreview = () => {
+    setIsPreviewShowing(!isPreviewShowing);
   };
 
   useEffect(() => {
@@ -31,6 +37,15 @@ const Navbar = () => {
       }
     };
 
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        previewRef.current &&
+        !previewRef.current.contains(event.target as Node)
+      ) {
+        setIsPreviewShowing(false);
+      }
+    };
+
     // Trigger handleScroll on scroll and when the browser regains focus
     const handleVisibilityChange = () => {
       if (!document.hidden) {
@@ -40,6 +55,7 @@ const Navbar = () => {
 
     window.addEventListener("scroll", handleScroll);
     document.addEventListener("visibilitychange", handleVisibilityChange);
+    document.addEventListener("mousedown", handleClickOutside);
 
     // Initial check on mount
     handleScroll();
@@ -47,6 +63,7 @@ const Navbar = () => {
     return () => {
       window.removeEventListener("scroll", handleScroll);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
   return (
@@ -95,7 +112,10 @@ const Navbar = () => {
 
       {/* preview modal */}
       {isPreviewShowing && (
-        <div className="absolute bg-white  hidden lg:flex flex-col mt-3 gap-y-6 p-3 left-1/2 transform -translate-x-1/2  rounded-[10px]  ">
+        <div
+          className="absolute bg-white  hidden lg:flex flex-col mt-3 gap-y-6 p-3 left-1/2 transform -translate-x-1/2  rounded-[10px]"
+          ref={previewRef}
+        >
           {/* 2nd app */}
           <div className="w-full flex items-center gap-x-4">
             {/* left */}
@@ -175,7 +195,10 @@ const Navbar = () => {
             >
               Other Products <ChevronDown size={20} />{" "}
               {isPreviewShowing && (
-                <div className="bg-white flex flex-col mt-3 gap-y-6 p-3 lg:hidden rounded-[10px] w-fit">
+                <div
+                  className="bg-white flex flex-col mt-3 gap-y-6 p-3 lg:hidden rounded-[10px] w-fit"
+                  ref={previewRef}
+                >
                   {/* 1st div */}
                   <div className="w-full flex items-center gap-x-4">
                     {/* left */}
