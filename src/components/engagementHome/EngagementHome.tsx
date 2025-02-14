@@ -49,8 +49,10 @@ export default function EngagementHome() {
 
   const org = form.watch("workspaceAlias");
 
+  console.log("org", org)
+
   const filteredData = useMemo(() => {
-    if (org) {
+    if (org && org !== undefined && !qaLoading && !quizLoading && !formLoading) {
       return {
         forms: Array.isArray(forms)
           ? forms?.filter((v) => v?.workspaceAlias === org)
@@ -68,7 +70,8 @@ export default function EngagementHome() {
         qas,
         quizzes,
       };
-  }, [form, org]);
+  }, [form, org, qaLoading, quizLoading, formLoading, forms, quizzes, qas]);
+
   return (
     <>
       <div className="w-full mx-auto max-w-7xl ">
@@ -76,20 +79,22 @@ export default function EngagementHome() {
           <h2 className="font-semibold text-base sm:text-lg">Engagements</h2>
 
           <Form {...form}>
-            <form className="w-[60%] sm:w-[180px] flex items-end gap-x-2">
-              <FormField
+            <form className="w-[60%] sm:w-[300px] grid grid-cols-7 items-end gap-x-2">
+             <div className="w-full col-span-4">
+             <FormField
                 control={form.control}
                 name="workspaceAlias"
                 render={({ field }) => (
-                  <InputOffsetLabel label="Organization">
+                  <InputOffsetLabel label="">
                     <ReactSelect
                       {...field}
-                      placeHolder="Select a Workspace"
+                      placeHolder="Select "
                       options={formattedList}
                     />
                   </InputOffsetLabel>
                 )}
               />
+             </div>
 
               <Button
                 onClick={(e) => {
@@ -97,10 +102,10 @@ export default function EngagementHome() {
                   e.preventDefault();
                   onClose();
                 }}
-                className="hover:bg-basePrimary  text-basePrimary  rounded-md border border-basePrimary hover:text-gray-50 gap-x-2 h-11 font-medium"
+                className="hover:bg-basePrimary w-full col-span-3   text-basePrimary  rounded-md border border-basePrimary hover:text-gray-50 gap-x-2 h-10 px-2 font-medium"
               >
                 <PlusCircle size={20} />
-                <p className="text-sm">Workspace</p>
+                <p className="text-xs">Workspace</p>
               </Button>
             </form>
           </Form>
@@ -116,8 +121,8 @@ export default function EngagementHome() {
               forms?.length === 0 &&
               qas?.length === 0 &&
               quizzes?.length === 0 && (
-                <div className="w-full h-[200px] flex items-center justify-center">
-                  <h2 className="font-medium text-lg">
+                <div className="w-full h-[200px] col-span-full flex items-center justify-center">
+                  <h2 className="text-center font-medium text-lg">
                     Your Engagements will appear here
                   </h2>
                 </div>
