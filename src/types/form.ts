@@ -42,6 +42,9 @@ export interface TEngagementFormQuestion {
       isCollectPhone:boolean;
       connectToEvent:boolean;
       showResult:boolean;
+      isRedirectUrl:boolean;
+      engagementId?:string;
+      engagementType?:string;
     };
   }
   

@@ -47,7 +47,10 @@ export const formSettingSchema = z.object({
     isCollectEmail: z.boolean(),
     isCollectPhone: z.boolean(),
     connectToEvent: z.boolean(),
+    isRedirectUrl: z.boolean(),
     showResult: z.boolean(),
+    engagementId: z.string().optional(),
+    engagementType: z.string().optional()
   }),
 });
 

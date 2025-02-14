@@ -1,8 +1,5 @@
 "use client";
-import { useEffect, useMemo, useState, useRef } from "react";
-import { InlineIcon } from "@iconify/react/dist/iconify.js";
-import { Button } from "@/components/custom";
-import { cn } from "@/lib/utils";
+
 import { FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import InputOffsetLabel from "@/components/InputOffsetLabel";
@@ -15,14 +12,11 @@ export function FormAccessibility({
 }: {
   form: UseFormReturn<z.infer<typeof formSettingSchema>, any, any>;
 }) {
-  const isConnectedToEngagement = useWatch({
+  const isRedirectUrl = useWatch({
     control: form.control,
-    name: "formSettings.isConnectedToEngagement",
+    name: "formSettings.isRedirectUrl",
   });
-  const showForm = useWatch({
-    control: form.control,
-    name: "formSettings.showForm",
-  });
+
   const connectToEvent = useWatch({
     control: form.control,
     name: "formSettings.connectToEvent",
@@ -104,13 +98,13 @@ export function FormAccessibility({
 
         <Switch
           // disabled={loading}
-          checked={isConnectedToEngagement}
+          checked={isRedirectUrl}
           onCheckedChange={(checked) => {
-            form.setValue("formSettings.isConnectedToEngagement", checked);
+            form.setValue("formSettings.isRedirectUrl", checked);
           }}
         />
       </div>
-      {isConnectedToEngagement && (
+      {isRedirectUrl && (
         <div className="flex flex-col w-full max-w-[350px] items-start justify-start gap-y-3">
           <FormField
             control={form.control}

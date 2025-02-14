@@ -114,7 +114,10 @@ export function CreateForm({
               isCollectEmail: false,
               isCollectPhone: false,
               connectToEvent:false,
-              showResult:false
+              showResult:false,
+              isRedirectUrl:false,
+              engagementId:'',
+              engagementType:''
             },
           },
     });
