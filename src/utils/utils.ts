@@ -119,3 +119,10 @@ export function calculateAndSetWindowHeight(
     return format(parsedDate, "MM/dd/yyyy");
   }
   
+
+  export function formatText(text: string): string {
+    return text
+      .replace(/([a-z])([A-Z])/g, "$1 $2") 
+      .replace(/_/g, " ")
+      .trim(); 
+  }

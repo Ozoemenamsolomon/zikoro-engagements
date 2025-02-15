@@ -12,6 +12,7 @@ export const formQuestion = z.object({
   questionImage: z.any(),
   selectedType: z.string().optional().nullable(),
   optionFields: z.any(),
+  questionSettings: z.any(),
   isRequired: z.boolean(),
   questionId: z.string(),
   questionDescription: z.string().optional(),

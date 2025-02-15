@@ -19,6 +19,7 @@ export interface TEngagementFormQuestion {
       questionId: string;
       optionFields?: any;
       questionDescription?:string;
+      questionSettings?: any;
     }[];
     formAlias: string;
     eventAlias: string;

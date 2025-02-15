@@ -22,7 +22,9 @@ export function FormQuestionField({
   type,
   SettingWidget,
   isNotOverflow,
-  isText
+  isText,
+  isTemplateType,
+  togggleRequired
 }: {
   defaultQuestionValue: string;
   question: TEngagementFormQuestion["questions"][number] | null;
@@ -34,6 +36,8 @@ export function FormQuestionField({
   isNotOverflow?: boolean;
   SettingWidget?: ReactNode;
   isText?:boolean;
+  isTemplateType?:boolean;
+  togggleRequired?:(t:boolean) => void;
 }) {
   const { postData } =
     usePostRequest<Partial<TEngagementFormQuestion>>("engagements/form");
@@ -143,23 +147,25 @@ export function FormQuestionField({
                 ></div>
                 <div
                   className={cn(
-                    "w-[180px] relative z-[200] max-h-[250px] overflow-y-auto vert-scroll bg-white shadow rounded-lg py-4 h-fit",
+                    "w-[280px] relative z-[200] max-h-[250px] overflow-y-auto vert-scroll bg-white shadow rounded-lg py-4 h-fit",
                     isNotOverflow && "max-h-fit  overflow-y-visible",
-                    isText && "w-[230px]"
+                    isText && "w-[250px]"
                   )}
                 >
-                  <div className="flex px-3 mb-3 items-center gap-x-2">
+                  <div className="flex w-full px-3 mb-4 items-center justify-between">
+                  <p className="text-mobile">{isTemplateType ? "Required All" :"Required"}</p>
                     <Switch
                       checked={isRequired}
                       onClick={(e) => {
                  
                         e.preventDefault();
                         form.setValue("isRequired", !isRequired);
+                        togggleRequired?.(!isRequired)
                       }}
                   
                       className=""
                     />
-                    <p className="text-mobile">Required</p>
+                  
                   </div>
                   {SettingWidget}
                 </div>

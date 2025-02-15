@@ -16,23 +16,32 @@ import {
   FormTextType,
   FormUploadType,
   FormImageUploadType,
+  FormAddressType,
+  FormContactType,
+  FormYesNoType,
 } from "./_components";
 import { InlineIcon } from "@iconify/react/dist/iconify.js";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { usePostRequest } from "@/hooks/services/requests";
 import { generateAlias, uploadFile } from "@/utils";
+import { FormBasicType } from "./_components/options/formBasicType";
 
 const options = [
- 
   { name: "Text", image: "/ftext.png", type: "INPUT_TEXT" },
   { name: "Date", image: "/fdate.png", type: "INPUT_DATE" },
   { name: "CheckBox", image: "/fcheckbox.png", type: "INPUT_CHECKBOX" },
   { name: "Rating", image: "/fstarr.png", type: "INPUT_RATING" },
   { name: "Upload", image: "/fattachment.png", type: "ATTACHMENT" },
   { name: "Picture Choice", image: "/fpicture.png", type: "PICTURE_CHOICE" },
+  { name: "Email", image: "/femail.svg", type: "INPUT_EMAIL" },
+  { name: "Yes/No", image: "/fyes.svg", type: "YES_OR_NO" },
+  { name: "Website", image: "/flink.svg", type: "WEBSITE" },
+  { name: "Address", image: "/faddress.svg", type: "INPUT_ADDRESS" },
+  { name: "Phone Number", image: "/fphone.svg", type: "PHONE_NUMBER" },
+  { name: "Contact", image: "/fcontact.svg", type: "CONTACT" },
+
 ];
-// { name: "Likert", image: "/flikert.png" },
 
 export function AddQuestion({
   question,
@@ -96,10 +105,9 @@ export function AddQuestion({
 
     console.log(processedOptionFields);
 
-   // console.log("processed", values?.optionFields);
+    // console.log("processed", values?.optionFields);
 
-
-   // return setLoading(false)
+    // return setLoading(false)
 
     const newQuestion = question?.questionId
       ? {
@@ -170,17 +178,14 @@ export function AddQuestion({
         questionDescription: question?.questionDescription,
         question: question?.question,
         optionFields: question?.optionFields,
+        questionSettings: question?.questionSettings,
         isRequired: question?.isRequired,
       });
       setOptionType(question?.selectedType);
     }
   }, [question]);
 
-  console.log(form.formState.errors)
-
-  useEffect(() => {
-
-  },[optionType])
+  useEffect(() => {}, [optionType]);
 
   return (
     <>
@@ -266,7 +271,7 @@ export function AddQuestion({
                     />
                   )}
                   {(optionType === "INPUT_CHECKBOX" ||
-                    optionType === "INPUT_MULTIPLE_CHOICE") && (
+                    optionType === "INPUT_MULTIPLE_CHOICE" || optionType === "DROPDOWN") && (
                     <FormCheckBoxType
                       form={form}
                       engagementForm={engagementForm}
@@ -278,7 +283,7 @@ export function AddQuestion({
                       }}
                       optionType={optionType}
                       setOption={(value: string) => {
-                          setOptionType(value)
+                        setOptionType(value);
                       }}
                     />
                   )}
@@ -307,7 +312,7 @@ export function AddQuestion({
                       }}
                     />
                   )}
-                     {optionType === "PICTURE_CHOICE" && (
+                  {optionType === "PICTURE_CHOICE" && (
                     <FormImageUploadType
                       form={form}
                       engagementForm={engagementForm}
@@ -319,16 +324,79 @@ export function AddQuestion({
                       }}
                     />
                   )}
+
+                  {optionType === "INPUT_ADDRESS" && (
+                    <FormAddressType
+                      form={form}
+                      engagementForm={engagementForm}
+                      defaultQuestionValue={defaultQuestionValue}
+                      question={question}
+                      refetch={async () => {
+                        refetch();
+                        editQuestion(null);
+                      }}
+                    />
+                  )}
+
+                  {optionType === "CONTACT" && (
+                    <FormContactType
+                      form={form}
+                      engagementForm={engagementForm}
+                      defaultQuestionValue={defaultQuestionValue}
+                      question={question}
+                      refetch={async () => {
+                        refetch();
+                        editQuestion(null);
+                      }}
+                    />
+                  )}
+
+                  {optionType === "YES_OR_NO" && (
+                    <FormYesNoType
+                      form={form}
+                      engagementForm={engagementForm}
+                      defaultQuestionValue={defaultQuestionValue}
+                      question={question}
+                      refetch={async () => {
+                        refetch();
+                        editQuestion(null);
+                      }}
+                    />
+                  )}
+
+                  {(optionType === "INPUT_EMAIL" ||
+                    optionType === "PHONE_NUMBER" ||
+                    optionType === "WEBSITE") && (
+                    <FormBasicType
+                      form={form}
+                      engagementForm={engagementForm}
+                      defaultQuestionValue={defaultQuestionValue}
+                      question={question}
+                      refetch={async () => {
+                        refetch();
+                        editQuestion(null);
+                      }}
+                      type={
+                        optionType === "INPUT_EMAIL"
+                          ? "Email"
+                          : optionType === "WEBSITE"
+                          ? "Website"
+                          : "Phone Number"
+                      }
+                    />
+                  )}
                 </div>
               )}
             </div>
 
-         {optionType !== null &&   <div className="w-full my-10 flex gap-3 items-center justify-center">
-              <Button className="h-11 bg-basePrimary rounded-lg gap-x-2 text-white font-medium">
-                {loading && <LoaderAlt size={20} className="animate-spin" />}
-                <p>Save Question</p>
-              </Button>
-            </div>}
+            {optionType !== null && (
+              <div className="w-full my-10 flex gap-3 items-center justify-center">
+                <Button className="h-11 bg-basePrimary rounded-lg gap-x-2 text-white font-medium">
+                  {loading && <LoaderAlt size={20} className="animate-spin" />}
+                  <p>Save Question</p>
+                </Button>
+              </div>
+            )}
             <p className="w-1 h-1"></p>
           </div>
         </form>

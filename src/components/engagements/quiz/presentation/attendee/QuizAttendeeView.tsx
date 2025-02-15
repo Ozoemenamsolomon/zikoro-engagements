@@ -411,6 +411,7 @@ export default function QuizAttendeeView({
               refetchLobby={getLiveParticipant}
               organization={organization}
               quiz={quiz}
+              
             />
           )}
 

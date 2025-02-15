@@ -29,7 +29,7 @@ export function FormDateType({
   const [isDatePanel, setDatePanel] = useState(false);
   const selectedOptions = useWatch({
     control: form.control,
-    name: `optionFields` as const,
+    name: `questionSettings` as const,
   });
   const [startDate, setStartDate] = useState<Date | null>(
     selectedOptions ? selectedOptions?.start : null
@@ -63,7 +63,7 @@ export function FormDateType({
 
   useEffect(() => {
     if (startDate !== null && endDate !== null) {
-      form.setValue("optionFields", { start: startDate, end: endDate });
+      form.setValue("questionSettings", { start: startDate, end: endDate });
     }
   }, [startDate, endDate]);
 
