@@ -8,12 +8,11 @@ import { FormQuestionDescription } from "../formQuestionDescription";
 import { TEngagementFormQuestion } from "@/types/form";
 import { FormQuestionField } from "../formQuestionField";
 import { InlineIcon } from "@iconify/react/dist/iconify.js";
-import { Key } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { formatText } from "@/utils";
 
-type ContactType = {
+export type ContactType = {
   firstName: boolean;
   lastName: boolean;
   phoneNumber: boolean;
@@ -36,13 +35,10 @@ export function FormContactType({
 }) {
   const addedImage = form.watch("questionImage");
   const addedDescription = form.watch("questionDescription");
+
   const selectedOptions = useWatch({
     control: form.control,
     name: `questionSettings` as const,
-  });
-  const isRequired = useWatch({
-    control: form.control,
-    name: "isRequired",
   });
   const [selectedType, setSelectedType] = useState<ContactType>(
     selectedOptions || {
@@ -149,6 +145,9 @@ export function FormContactType({
                     onClick={(e) => {
                       e.stopPropagation();
                       e.preventDefault();
+                      if (selectedType[key as keyof ContactType]) {
+                        form.setValue('isRequired', false)
+                      }
 
                       setSelectedType((prev) => ({
                         ...prev,

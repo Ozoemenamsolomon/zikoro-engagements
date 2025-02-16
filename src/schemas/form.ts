@@ -51,7 +51,7 @@ export const formSettingSchema = z.object({
     isRedirectUrl: z.boolean(),
     showResult: z.boolean(),
     engagementId: z.string().optional(),
-    engagementType: z.string().optional()
+    engagementType: z.string().optional(),
   }),
 });
 
@@ -59,6 +59,7 @@ export const formAnswerSchema = z.object({
   attendeeEmail: z.any(),
   formResponseAlias: z.string(),
   formAlias: z.string(),
+  startedAt: z.string(),
   questions: z.array(formQuestion),
   responses: z.array(
     z.object({

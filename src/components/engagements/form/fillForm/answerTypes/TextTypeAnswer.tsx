@@ -6,26 +6,37 @@ import * as z from "zod";
 import { FillFormQuestion } from "../common";
 import { Input } from "@/components/ui/input";
 
+enum TextType {
+  email = "Email",
+  website = "Website",
+  phone = "Phone Number",
+  text = "Answer",
+}
+
 export function TextTypeAnswer({
   form,
   index,
   rgba,
-  bgColor
+  bgColor,
+  selectedType,
 }: {
   form: UseFormReturn<z.infer<typeof formAnswerSchema>, any, any>;
   index: number;
-  bgColor:string;
-  rgba:string;
+  bgColor: string;
+  rgba: string;
+  selectedType: string;
 }) {
   const question = form.watch(`questions.${index}.question`);
   const isRequired = form.watch(`questions.${index}.isRequired`);
   const questionImage = form.watch(`questions.${index}.questionImage`);
-  const selectedType = form.watch(`questions.${index}.selectedType`);
-  const optionFields = form.watch(`questions.${index}.optionFields`);
+  const settings = form.watch(`questions.${index}.questionSettings`);
   const questionId = form.watch(`questions.${index}.questionId`);
   const questionDescription = form.watch(
     `questions.${index}.questionDescription`
   );
+
+ 
+
   return (
     <>
       <FillFormQuestion
@@ -36,11 +47,20 @@ export function TextTypeAnswer({
         isRequired={isRequired}
       />
 
-      <div className="w-full">
+      <div className="flex flex-col items-start gap-y-2 justify-start w-full">
+        <label>
+          {selectedType === "INPUT_EMAIL"
+            ? TextType.email
+            : selectedType === "PHONE_NUMBER"
+            ? TextType.phone
+            : selectedType === "INPUT_TEXT"
+            ? "Answer"
+            : TextType.website}
+        </label>
         <Input
-         style={{
-            backgroundColor: rgba
-        }}
+          style={{
+            backgroundColor: rgba,
+          }}
           name={`responses.${index}.response`}
           value={form.getValues(`responses.${index}.response`)}
           onChange={(e) => {
@@ -48,7 +68,14 @@ export function TextTypeAnswer({
             form.setValue(`responses.${index}.type`, selectedType!);
             form.setValue(`responses.${index}.questionId`, questionId);
           }}
-          maxLength={optionFields}
+          type={
+            selectedType === "INPUT_EMAIL"
+              ? "email"
+              : selectedType === "PHONE_NUMBER"
+              ? "tel"
+              : "text"
+          }
+          maxLength={selectedType === "INPUT_TEXT" ? settings : null}
           required={isRequired}
           className="w-full h-11 sm:h-12 rounded-md  px-2 placeholder:text-gray-500 placeholder-gray-500"
           placeholder="Enter Answer"

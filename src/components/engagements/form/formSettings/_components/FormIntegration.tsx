@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { useGetUserEngagements } from "@/hooks/services/engagement";
 import { useMemo, useState } from "react";
 import { Switch } from "@/components/ui/switch";
-import { Button } from "@/components/custom";
+
 
 type EngagementList = {
   value: string;
@@ -29,10 +29,10 @@ function AddEngagement({
   });
 
   const selectedName = useMemo(() => {
-    return (
-      engagementList.find((e) => e.value === selectedEngagement)?.label ?? null
-    );
-  }, [selectedEngagement]);
+    if (selectedEngagement) {
+      return engagementList.find((e) => e.value === selectedEngagement)?.label;
+    } else return null;
+  }, [selectedEngagement, engagementList]);
 
   return (
     <div
@@ -103,14 +103,8 @@ export function FormIntegration({
 }: {
   form: UseFormReturn<z.infer<typeof formSettingSchema>, any, any>;
 }) {
-  const {
-    qas,
-    qaLoading,
-    quizLoading,
-    quizzes,
-    forms,
-    formLoading,
-  } = useGetUserEngagements();
+  const { qas, qaLoading, quizLoading, quizzes, forms, formLoading } =
+    useGetUserEngagements();
 
   const filteredData = useMemo(() => {
     if (!qaLoading && !quizLoading && !formLoading) {
@@ -171,7 +165,7 @@ export function FormIntegration({
           engagementList={filteredData as EngagementList[]}
         />
       )}
-
+      {/* 
       {isConnectedToEngagement && (
         <div className="flex flex-col items-start justify-start gap-y-3">
           <p className="font-medium text-mobile sm:text-sm">
@@ -206,7 +200,7 @@ export function FormIntegration({
             </Button>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }

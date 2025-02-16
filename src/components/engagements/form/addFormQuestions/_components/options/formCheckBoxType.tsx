@@ -147,9 +147,10 @@ function CheckBoxSettings({
     { name: "CheckBox", image: "/fcheckbox.png", type: "INPUT_CHECKBOX" },
     { name: "Dropdown", image: "/fcontact.svg", type: "DROPDOWN" },
   ];
-  console.log(optionType)
+
   return (
     <div className="flex w-full flex-col items-start justify-start">
+      <p className="mb-4 px-3 font-medium underline">Option Types</p>
       {options.map((option) => (
         <label className="flex p-2 items-center gap-x-1">
           <input
@@ -189,7 +190,7 @@ export function FormCheckBoxType({
   const addedDescription = form.watch("questionDescription");
   const prevSelectedOptions = form.watch(`optionFields`);
   const settings = form.watch("questionSettings");
-  const [order, setOrder] = useState(settings || { inOrder: false });
+  const [order, setOrder] = useState(settings || { inOrder: true });
   const [options, setOptions] = useState<OptionItemsType[]>(
     prevSelectedOptions || [{ id: nanoid(), option: "", optionImage: "" }]
   );
@@ -280,7 +281,7 @@ export function FormCheckBoxType({
                 className=""
               />
             </div>
-            <CheckBoxSettings optionType={optionType} setOption={setOption} />
+            <CheckBoxSettings key={optionType} optionType={optionType} setOption={setOption} />
           </>
         }
       />

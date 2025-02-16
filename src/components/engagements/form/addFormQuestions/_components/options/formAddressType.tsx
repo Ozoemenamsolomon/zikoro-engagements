@@ -12,7 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { formatText } from "@/utils";
 
-type ContactType = {
+export type AddressType = {
   address_1: boolean;
   address_2: boolean;
   city: boolean;
@@ -44,7 +44,7 @@ export function FormAddressType({
     control: form.control,
     name: "isRequired",
   });
-  const [selectedType, setSelectedType] = useState<ContactType>(
+  const [selectedType, setSelectedType] = useState<AddressType>(
     selectedOptions || {
       address_1: false,
       address_2: false,
@@ -140,7 +140,7 @@ export function FormAddressType({
                   className="w-full flex items-center justify-between"
                 >
                   <p className="flex items-center gap-x-2">
-                    {selectedType[key as keyof ContactType] ? (
+                    {selectedType[key as keyof AddressType] ? (
                       <InlineIcon icon="famicons:eye" fontSize={18} />
                     ) : (
                       <InlineIcon
@@ -152,7 +152,7 @@ export function FormAddressType({
                     <span
                       className={cn(
                         "capitalize",
-                        !selectedType[key as keyof ContactType] &&
+                        !selectedType[key as keyof AddressType] &&
                           "text-gray-400"
                       )}
                     >
@@ -160,14 +160,17 @@ export function FormAddressType({
                     </span>
                   </p>
                   <Switch
-                    checked={selectedType[key as keyof ContactType]}
+                    checked={selectedType[key as keyof AddressType]}
                     onClick={(e) => {
                         e.stopPropagation();
                         e.preventDefault();
+                        if (selectedType[key as keyof AddressType]) {
+                          form.setValue('isRequired', false)
+                        }
     
                         setSelectedType((prev) => ({
                           ...prev,
-                          [key]: !prev[key as keyof ContactType],
+                          [key]: !prev[key as keyof AddressType],
                         }));
                       }}
                     className=""

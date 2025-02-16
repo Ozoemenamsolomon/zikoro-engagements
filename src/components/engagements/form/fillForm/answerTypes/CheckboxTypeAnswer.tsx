@@ -7,6 +7,8 @@ import { FillFormQuestion } from "../common";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
+import { shuffleArray } from "@/utils";
 
 type OptionItemsType = {
   id: string;
@@ -29,8 +31,9 @@ export function CheckboxTypeAnswer({
   const isRequired = form.watch(`questions.${index}.isRequired`);
   const questionImage = form.watch(`questions.${index}.questionImage`);
   const selectedType = form.watch(`questions.${index}.selectedType`);
-
+  const [options, setOptions] = useState<OptionItemsType[]>([]);
   const questionId = form.watch(`questions.${index}.questionId`);
+  const settings = form.watch(`questions.${index}.questionSettings`);
   const questionDescription = form.watch(
     `questions.${index}.questionDescription`
   );
@@ -43,7 +46,18 @@ export function CheckboxTypeAnswer({
       name: `responses.${index}.response` as const,
     }) || "";
 
-    console.log(response?.selectedOption)
+  console.log(response?.selectedOption);
+  useEffect(() => {
+    if (settings) {
+      const inOrder = settings?.inOrder;
+      if (!inOrder) {
+        const randomizedArray = shuffleArray(optionFields);
+        setOptions(randomizedArray);
+      } else {
+        setOptions(optionFields);
+      }
+    }
+  }, [settings]);
   return (
     <>
       <FillFormQuestion
@@ -55,16 +69,16 @@ export function CheckboxTypeAnswer({
       />
 
       <div className="w-full flex flex-col items-start justify-start gap-y-4">
-        {Array.isArray(optionFields) &&
-          optionFields.map((value, id) => {
+        {Array.isArray(options) &&
+          options.map((value, id) => {
             const isSelected =
               response?.selectedOption ===
               (value?.option || value?.optionImage);
             return (
               <>
                 <label
-                key={id}
-                // htmlFor={`checkbox-${index}`}
+                  key={id}
+                  // htmlFor={`checkbox-${index}`}
                   style={{
                     backgroundColor: isSelected ? bgColor : rgba,
                   }}
@@ -75,7 +89,7 @@ export function CheckboxTypeAnswer({
                 >
                   <input
                     type="radio"
-                   // id={`checkbox-${index}`}
+                    // id={`checkbox-${index}`}
                     onChange={(e) => {
                       e.target.checked
                         ? form.setValue(`responses.${index}.response`, {
@@ -83,7 +97,7 @@ export function CheckboxTypeAnswer({
                             selectedOption: e.target.value,
                           })
                         : form.setValue(`responses.${index}.response`, "");
-                         console.log("erfefr")   
+                      console.log("erfefr");
                       form.setValue(`responses.${index}.type`, selectedType!);
                       form.setValue(
                         `responses.${index}.questionId`,

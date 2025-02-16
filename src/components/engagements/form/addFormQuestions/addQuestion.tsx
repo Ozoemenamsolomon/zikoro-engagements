@@ -26,6 +26,7 @@ import { cn } from "@/lib/utils";
 import { usePostRequest } from "@/hooks/services/requests";
 import { generateAlias, uploadFile } from "@/utils";
 import { FormBasicType } from "./_components/options/formBasicType";
+import { toast } from "react-toastify";
 
 const options = [
   { name: "Text", image: "/ftext.png", type: "INPUT_TEXT" },
@@ -40,7 +41,6 @@ const options = [
   { name: "Address", image: "/faddress.svg", type: "INPUT_ADDRESS" },
   { name: "Phone Number", image: "/fphone.svg", type: "PHONE_NUMBER" },
   { name: "Contact", image: "/fcontact.svg", type: "CONTACT" },
-
 ];
 
 export function AddQuestion({
@@ -82,6 +82,14 @@ export function AddQuestion({
         resolve(null);
       }
     });
+
+    if (
+      values.selectedType === "DROPDOWN" &&
+      values.optionFields?.some((v: any) => v?.optionImage)
+    ) {
+      toast.error("A dropdown cannot have an image option");
+      return;
+    }
 
     // Process option fields if present
     let processedOptionFields = values.optionFields;
@@ -202,6 +210,7 @@ export function AddQuestion({
             <div className="my-6 flex flex-col items-start justify-start gap-3">
               {optionType !== null && (
                 <button
+
                   onClick={(e) => {
                     e.stopPropagation();
                     e.preventDefault();
@@ -226,6 +235,7 @@ export function AddQuestion({
                   <div className="w-full flex flex-wrap  items-center px-4 mx-auto max-w-[70%] gap-6 py-4 sm:py-8 justify-center">
                     {options?.map((item) => (
                       <button
+                      key={item.type}
                         onClick={() => setOptionType(item?.type)}
                         className={cn(
                           "w-full max-w-[170px] min-w-[170px] flex border hover:border-basePrimary border-gray-300 items-center gap-x-3 p-2 rounded-lg  sm:p-3"
@@ -271,7 +281,8 @@ export function AddQuestion({
                     />
                   )}
                   {(optionType === "INPUT_CHECKBOX" ||
-                    optionType === "INPUT_MULTIPLE_CHOICE" || optionType === "DROPDOWN") && (
+                    optionType === "INPUT_MULTIPLE_CHOICE" ||
+                    optionType === "DROPDOWN") && (
                     <FormCheckBoxType
                       form={form}
                       engagementForm={engagementForm}
