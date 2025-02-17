@@ -6,7 +6,7 @@ export function DateTypeResponse({
   response: TFormattedEngagementFormAnswer;
 }) {
   return (
-    <div className="w-full mb-2">
+    <div className="w-fit bg-basePrimary-100 rounded-lg  mb-2">
       <p className="p-3 text-center">{response?.response ?? ""}</p>
     </div>
   );

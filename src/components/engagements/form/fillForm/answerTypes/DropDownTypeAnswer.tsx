@@ -108,7 +108,7 @@ export function DropDownTypeAnswer({
                   options.map((value, id) => {
                     const isSelected =
                       response?.selectedOption === value?.option;
-                    console.log(isSelected, value?.option);
+                  //  console.log(isSelected, value?.option);
                     return (
                       <>
                         <div

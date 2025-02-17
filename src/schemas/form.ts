@@ -60,6 +60,7 @@ export const formAnswerSchema = z.object({
   formResponseAlias: z.string(),
   formAlias: z.string(),
   startedAt: z.string(),
+  viewed: z.number(),
   questions: z.array(formQuestion),
   responses: z.array(
     z.object({

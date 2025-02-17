@@ -129,6 +129,8 @@ function FillFormComp({
       formAlias: formId,
       questions: data?.questions,
       startedAt: new Date().toISOString(),
+      viewed: 1,
+
     },
   });
 
@@ -173,6 +175,7 @@ function FillFormComp({
       attendeeEmail: attendee?.email || "",
       responses,
       submittedAt: new Date().toISOString(),
+      submitted: 1
     };
 
     // console.log(payload)
