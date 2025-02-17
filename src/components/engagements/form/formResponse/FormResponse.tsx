@@ -18,6 +18,7 @@ import { useDeleteRequest } from "@/hooks/services/requests";
 import * as XLSX from "xlsx";
 import { ActionModal } from "@/components/custom/ActionModal";
 import {
+  IndividualMultiInputType,
   IndividualOtherType,
   IndividualSelectType,
   IndividualTextType,
@@ -379,7 +380,7 @@ export default function FormResponses({
             Individual Response
           </button>
         </div>
-        <div className="w-full">
+        <div className={cn("w-full hidden", isSummary && 'block')}>
           <div className="w-full grid h-[150px] grid-cols-4 gap-6">
             <div className="flex flex-col h-full w-full items-center justify-center gap-5">
               <p className="text-lg sm:text-xl">Total Views</p>
@@ -797,6 +798,8 @@ export default function FormResponses({
             })}
         </div>
       </div>
+
+      {!isSummary && <IndividualResponse responses={flattenedResponse}/>}
     </>
   );
 }
@@ -879,7 +882,7 @@ function IndividualResponse({
   }, [responses]);
 
   return (
-    <div className="w-full">
+    <div className="w-full max-w-7xl mx-auto">
       <div className="w-full grid h-[150px] grid-cols-3 gap-6">
         <div className="flex flex-col h-full w-full items-center justify-center gap-5">
           <p className="text-lg sm:text-xl">Date Taken</p>
@@ -918,7 +921,7 @@ function IndividualResponse({
                 <p>{attendeeResponse?.length}</p>
               </div>
               <button
-                disabled={currentIndex === attendeeResponse?.length}
+                disabled={currentIndex === attendeeResponse?.length-1}
                 onClick={() => setCurrentIndex((prev) => prev + 1)}
               >
                 <InlineIcon icon="iconoir:nav-arrow-right" fontSize={22} />
@@ -928,11 +931,11 @@ function IndividualResponse({
 
           {attendeeResponse[currentIndex].responses.map((item, index) => {
             return (
-              <div className="w-full border-b ">
+              <div className="w-full  py-6 mx-auto max-w-xl border-b ">
                 {item.type === "INPUT_TEXT" && (
                   <IndividualTextType
                     response={item}
-                    questionIndex={index + 1}
+                    questionIndex={index}
                   />
                 )}
                 {(item.type === "INPUT_DATE" ||
@@ -944,19 +947,19 @@ function IndividualResponse({
                 {item.type === "ATTACHMENT" && (
                   <IndividualUploadType
                     response={item}
-                    questionIndex={index + 1}
+                    questionIndex={index}
                   />
                 )}
                 {item.type === "YES_OR_NO" && (
                   <IndividualYesNoType
                     response={item}
-                    questionIndex={index + 1}
+                    questionIndex={index}
                   />
                 )}
                 {(item.type === "INPUT_ADDRESS" || item.type === "CONTACT") && (
-                  <IndividualYesNoType
+                  <IndividualMultiInputType
                     response={item}
-                    questionIndex={index + 1}
+                    questionIndex={index}
                   />
                 )}
 
@@ -964,13 +967,13 @@ function IndividualResponse({
                   item.type === "DROPDOWN") && (
                   <IndividualSelectType
                     response={item}
-                    questionIndex={index + 1}
+                    questionIndex={index}
                   />
                 )}
                 {item.type === "INPUT_MULTIPLE_CHOICE" && (
                   <IndividualSelectType
                     response={item}
-                    questionIndex={index + 1}
+                    questionIndex={index}
                   />
                 )}
               </div>
