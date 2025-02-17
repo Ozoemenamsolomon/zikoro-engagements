@@ -32,6 +32,11 @@ const options = [
   { name: "Phone Number", image: "/fphone.svg", type: "PHONE_NUMBER" },
   { name: "Contact", image: "/fcontact.svg", type: "CONTACT" },
   { name: "Dropdown", image: "/fcontact.svg", type: "DROPDOWN" },
+  {
+    name: "Mutiple Choice",
+    image: "/fmultiplechoice.png",
+    type: "INPUT_MULTIPLE_CHOICE",
+  },
 ];
 
 export function getQuestionType(selectType: string) {
