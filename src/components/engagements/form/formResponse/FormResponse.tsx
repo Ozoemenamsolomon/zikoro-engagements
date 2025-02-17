@@ -17,6 +17,13 @@ import { useMemo, useState } from "react";
 import { useDeleteRequest } from "@/hooks/services/requests";
 import * as XLSX from "xlsx";
 import { ActionModal } from "@/components/custom/ActionModal";
+import {
+  IndividualOtherType,
+  IndividualSelectType,
+  IndividualTextType,
+  IndividualUploadType,
+  IndividualYesNoType,
+} from "./responseTypes/individual/IndividualResponseType";
 
 const options = [
   { name: "Text", image: "/ftext.png", type: "INPUT_TEXT" },
@@ -285,8 +292,6 @@ export default function FormResponses({
   function toggleModal() {
     setIsDownload((p) => !p);
   }
-
-
 
   const numberOfViewed =
     flattenedResponse?.reduce((acc, curr) => acc + curr?.viewed, 0) || 0;
@@ -801,14 +806,20 @@ export interface GroupedAttendeeResponse {
   submitted: number;
   submittedAt?: string;
   startedAt: string;
-  responses: Array<{ questionId: string; question: string; response?: any, type:string, questionImage?:string; }>;
+  responses: Array<{
+    questionId: string;
+    question: string;
+    response?: any;
+    type: string;
+    questionImage?: string;
+    optionFields?: any;
+  }>;
 }
 function IndividualResponse({
   responses,
 }: {
   responses: TFormattedEngagementFormAnswer[];
 }) {
-
   const [currentIndex, setCurrentIndex] = useState(0);
 
   function groupByAttendee(
@@ -830,7 +841,7 @@ function IndividualResponse({
           submitted: entry.submitted,
           submittedAt: entry.submittedAt,
           startedAt: entry.startedAt,
-        
+
           responses: [],
         };
       } else {
@@ -843,7 +854,8 @@ function IndividualResponse({
         question: entry.question,
         response: entry.response,
         type: entry.type,
-        questionImage: entry.questionImage
+        questionImage: entry.questionImage,
+        optionFields: entry?.optionFields,
       });
     }
 
@@ -909,13 +921,56 @@ function IndividualResponse({
             </div>
           </div>
 
-          {attendeeResponse[currentIndex].responses.map((item) => {
-
+          {attendeeResponse[currentIndex].responses.map((item, index) => {
             return (
-<></>
-            )
-          })}
+              <div className="w-full border-b ">
+                {item.type === "INPUT_TEXT" && (
+                  <IndividualTextType
+                    response={item}
+                    questionIndex={index + 1}
+                  />
+                )}
+                {(item.type === "INPUT_DATE" ||
+                  item.type === "INPUT_EMAIL" ||
+                  item.type === "PHONE_NUMBER" ||
+                  item.type === "WEBSITE") && (
+                  <IndividualOtherType response={item} questionIndex={index} />
+                )}
+                {item.type === "ATTACHMENT" && (
+                  <IndividualUploadType
+                    response={item}
+                    questionIndex={index + 1}
+                  />
+                )}
+                {item.type === "YES_OR_NO" && (
+                  <IndividualYesNoType
+                    response={item}
+                    questionIndex={index + 1}
+                  />
+                )}
+                {(item.type === "INPUT_ADDRESS" || item.type === "CONTACT") && (
+                  <IndividualYesNoType
+                    response={item}
+                    questionIndex={index + 1}
+                  />
+                )}
 
+                {(item.type === "INPUT_CHECKBOX" ||
+                  item.type === "DROPDOWN") && (
+                  <IndividualSelectType
+                    response={item}
+                    questionIndex={index + 1}
+                  />
+                )}
+                {item.type === "INPUT_MULTIPLE_CHOICE" && (
+                  <IndividualSelectType
+                    response={item}
+                    questionIndex={index + 1}
+                  />
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
