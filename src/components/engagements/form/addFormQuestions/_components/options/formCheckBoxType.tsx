@@ -14,6 +14,7 @@ import Image from "next/image";
 import { Button, TextEditor } from "@/components/custom";
 import { AddQuizImageIcon } from "@/constants";
 import { MdClose } from "react-icons/md";
+import { Switch } from "@/components/ui/switch";
 
 type OptionItemsType = {
   id: string;
@@ -144,9 +145,12 @@ function CheckBoxSettings({
       type: "INPUT_MULTIPLE_CHOICE",
     },
     { name: "CheckBox", image: "/fcheckbox.png", type: "INPUT_CHECKBOX" },
+    { name: "Dropdown", image: "/fcontact.svg", type: "DROPDOWN" },
   ];
+
   return (
     <div className="flex w-full flex-col items-start justify-start">
+      <p className="mb-4 px-3 font-medium underline">Option Types</p>
       {options.map((option) => (
         <label className="flex p-2 items-center gap-x-1">
           <input
@@ -185,6 +189,8 @@ export function FormCheckBoxType({
   const addedImage = form.watch("questionImage");
   const addedDescription = form.watch("questionDescription");
   const prevSelectedOptions = form.watch(`optionFields`);
+  const settings = form.watch("questionSettings");
+  const [order, setOrder] = useState(settings || { inOrder: true });
   const [options, setOptions] = useState<OptionItemsType[]>(
     prevSelectedOptions || [{ id: nanoid(), option: "", optionImage: "" }]
   );
@@ -219,6 +225,10 @@ export function FormCheckBoxType({
     }
   }, [options]);
 
+  useEffect(() => {
+    form.setValue("questionSettings", order);
+  }, [order]);
+
   const image = useMemo(() => {
     if (typeof addedImage === "string") {
       return addedImage;
@@ -248,7 +258,31 @@ export function FormCheckBoxType({
         refetch={refetch}
         type="CheckBox"
         SettingWidget={
-          <CheckBoxSettings optionType={optionType} setOption={setOption} />
+          <>
+            <div className="flex w-full px-3 mb-4 items-center justify-between">
+              <p className="text-mobile">Alphabetical Order</p>
+              <Switch
+                checked={order.inOrder}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setOrder({ inOrder: !order.inOrder });
+                }}
+                className=""
+              />
+            </div>
+            <div className="flex w-full px-3 mb-4 items-center justify-between">
+              <p className="text-mobile">Randomized</p>
+              <Switch
+                checked={!order.inOrder}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setOrder({ inOrder: !order.inOrder });
+                }}
+                className=""
+              />
+            </div>
+            <CheckBoxSettings key={optionType} optionType={optionType} setOption={setOption} />
+          </>
         }
       />
 

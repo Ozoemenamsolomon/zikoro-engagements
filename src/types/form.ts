@@ -19,6 +19,7 @@ export interface TEngagementFormQuestion {
       questionId: string;
       optionFields?: any;
       questionDescription?:string;
+      questionSettings?: any;
     }[];
     formAlias: string;
     eventAlias: string;
@@ -42,6 +43,9 @@ export interface TEngagementFormQuestion {
       isCollectPhone:boolean;
       connectToEvent:boolean;
       showResult:boolean;
+      isRedirectUrl:boolean;
+      engagementId?:string;
+      engagementType?:string;
     };
   }
   
@@ -61,6 +65,9 @@ export interface TEngagementFormQuestion {
     attendeeAlias: string;
     attendeeEmail?: string;
     attendeeId: number | null;
+    startedAt: string;
+    viewed: number;
+    submitted:number;
     formEngagementPoints: number | null;
   }
   
@@ -81,6 +88,10 @@ export interface TEngagementFormQuestion {
     question: string;
     questionImage?: string | any;
     optionFields: any;
+    startedAt: string;
+    viewed: number;
+    submitted:number;
+    
   }
 
   export interface TOrganizationForm extends TEngagementFormQuestion {

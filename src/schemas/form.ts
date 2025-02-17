@@ -12,6 +12,7 @@ export const formQuestion = z.object({
   questionImage: z.any(),
   selectedType: z.string().optional().nullable(),
   optionFields: z.any(),
+  questionSettings: z.any(),
   isRequired: z.boolean(),
   questionId: z.string(),
   questionDescription: z.string().optional(),
@@ -47,7 +48,10 @@ export const formSettingSchema = z.object({
     isCollectEmail: z.boolean(),
     isCollectPhone: z.boolean(),
     connectToEvent: z.boolean(),
+    isRedirectUrl: z.boolean(),
     showResult: z.boolean(),
+    engagementId: z.string().optional(),
+    engagementType: z.string().optional(),
   }),
 });
 
@@ -55,6 +59,8 @@ export const formAnswerSchema = z.object({
   attendeeEmail: z.any(),
   formResponseAlias: z.string(),
   formAlias: z.string(),
+  startedAt: z.string(),
+  viewed: z.number(),
   questions: z.array(formQuestion),
   responses: z.array(
     z.object({

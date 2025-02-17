@@ -15,6 +15,10 @@ import {
   MultiChoiceTypeAnswer,
   UploadTypeAnswer,
   ImageUploadTypeAnswer,
+  AddressTypeAnswer,
+  ContactTypeAnswer,
+  YesNoTypeAnswer,
+  DropDownTypeAnswer,
 } from "./answerTypes";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
 import { Suspense, useEffect, useMemo, useState } from "react";
@@ -27,21 +31,55 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { nanoid } from "nanoid";
 import { InlineIcon } from "@iconify/react";
 import { useVerifyAttendee } from "@/hooks/services/engagement";
+import Link from "next/link";
 
-function SubmittedModal() {
+function SubmittedModal({ formLink }: { formLink: string }) {
+  const socials = [
+    {
+      name: "mingcute:linkedin-fill",
+      link: `https://x.com/intent/tweet?url=${formLink}`,
+    },
+    {
+      name: "ri:twitter-x-fill",
+      link: `https://www.linkedin.com/shareArticle?url=${formLink}`,
+    },
+    {
+      name: "mingcute:facebook-fill",
+      link: `https://www.facebook.com/sharer/sharer.php?u=${formLink}`,
+    },
+  ];
   return (
     <div className="w-full h-full inset-0 fixed bg-white">
-      <div className="w-[95%] max-w-xl border rounded-lg bg-gradient-to-b gap-y-6 from-white  to-basePrimary/20  h-[400px] flex flex-col items-center justify-center shadow absolute inset-0 m-auto">
-        <Image
-          src="/facheck.png"
-          alt=""
-          className="w-fit h-fit"
-          width={48}
-          height={48}
-        />
-        <div className="w-fit flex flex-col items-center justify-center gap-y-2">
-          <h2 className="font-semibold text-lg sm:text-2xl">Forms Submitted</h2>
-          <p>Your answers have been submitted successfully</p>
+      <div className="w-[95%] max-w-xl rounded-lg  gap-y-3  h-[400px] flex flex-col items-center justify-center absolute inset-0 m-auto">
+        <h2>
+          <span className="gradient-text bg-basePrimary text-lg sm:text-xl font-semibold">
+            Hurray
+          </span>{" "}
+          🥳
+        </h2>
+        <p className="font-medium text-zinc-700 text-sm sm:text-base ">
+          Your response has been Submitted
+        </p>
+        <Button
+          onClick={() => window.open(`https://engagements.zikoro.com`)}
+          className="text-white font-semibold bg-basePrimary rounded-lg"
+        >
+          Create your Form
+        </Button>
+
+        <div className="max-w-md bg-white rounded-lg gap-4 mt-10 p-3 mx-auto flex flex-col items-center justify-center">
+          <p className="font-medium">Create your Form</p>
+          <div className="w-fit flex flex-wrap items-center justify-center gap-4">
+            {socials.map((social) => (
+              <Link
+                href={social.link}
+                className="bg-basePrimary-100 rounded-lg border h-10 w-10 flex items-center justify-center"
+                target="_blank"
+              >
+                <InlineIcon fontSize={22} icon={social.name} />
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </div>
@@ -90,6 +128,9 @@ function FillFormComp({
       formResponseAlias: generateAlias(),
       formAlias: formId,
       questions: data?.questions,
+      startedAt: new Date().toISOString(),
+      viewed: 1,
+
     },
   });
 
@@ -102,7 +143,7 @@ function FillFormComp({
   async function onSubmit(values: z.infer<typeof formAnswerSchema>) {
     //  console.log(values); formEngagementPoints
 
-    const { questions, ...restData } = values;
+    const { questions, startedAt, ...restData } = values;
 
     const responses = await Promise.all(
       restData?.responses?.map(async (item) => {
@@ -133,7 +174,12 @@ function FillFormComp({
       attendeeId: attendee?.id ? attendee?.id : null,
       attendeeEmail: attendee?.email || "",
       responses,
+      submittedAt: new Date().toISOString(),
+      submitted: 1
     };
+
+    // console.log(payload)
+    // return
 
     await postData({ payload });
 
@@ -170,7 +216,7 @@ function FillFormComp({
         currentIndexes,
         currentIndexes + questionPerSlide
       );
-    //  console.log(currentIndexes, currentIndexes + questionPerSlide);
+      //  console.log(currentIndexes, currentIndexes + questionPerSlide);
       setCurrentQuestion(slicedQuestion);
     } else {
       setCurrentQuestion(fields);
@@ -201,16 +247,16 @@ function FillFormComp({
     (alpha = 0.1) => {
       if (data) {
         const color = data?.formSettings?.buttonColor || "#001fcc";
-        const r = parseInt(color.slice(1, 3), 12);
-        const g = parseInt(color.slice(3, 5), 12);
-        const b = parseInt(color.slice(5, 7), 12);
+        const r = parseInt(color.slice(1, 3), 16);
+        const g = parseInt(color.slice(3, 5), 16);
+        const b = parseInt(color.slice(5, 7), 16);
         return `rgba(${r}, ${g}, ${b}, ${alpha})`;
       }
     },
     [data, data?.formSettings?.buttonColor]
   );
 
-  console.log(currentQuestions)
+  console.log(currentQuestions);
 
   if (isLoading || attendeeLoading) {
     return (
@@ -262,7 +308,7 @@ function FillFormComp({
               className="w-[15rem] h-[15rem] sm:h-[15rem] object-cover rounded-lg"
             />
           ) : (
-            <div className="w-[15rem] h-[15rem] sm:h-[15rem] rounded-lg animate-pulse bg-gray-200"></div>
+            <div></div>
           )}
           <h2
             style={{
@@ -308,7 +354,7 @@ function FillFormComp({
           style={{
             backgroundColor: data?.formSettings?.backgroundColor || "",
           }}
-          className="w-full max-w--7xl h-full sm:h-[calc(100vh-150px)] overflow-y-auto vert-scroll absolute m-auto inset-0  rounded-lg p-4 sm:p-6"
+          className="w-full h-full overflow-y-auto vert-scroll absolute m-auto inset-0  rounded-lg p-4 sm:p-6"
         >
           <div className="w-full my-10 pb-20 sm:my-20 mx-auto max-w-3xl ">
             <Form {...form}>
@@ -317,84 +363,111 @@ function FillFormComp({
                 className="w-full flex flex-col items-start mt-3 justify-start gap-y-4 sm:gap-y-6 2xl:gap-y-8"
               >
                 {currentQuestions?.map((field, index) => {
-
                   return (
                     <div
-                    className={cn("w-full", data?.formSettings?.displayType === "slide" && "border rounded-lg")}
-                    key={`${field.id}`}
-                  >
-                    {field.selectedType === "INPUT_TEXT" && (
-                      <TextTypeAnswer
-                        form={form}
-                        index={index + currentIndexes}
-                        rgba={rgba || "#F7F8FF"}
-                        bgColor={
-                            data?.formSettings?.buttonColor || "#001fcc"
-                          }
-                      />
-                    )}
-                    {field.selectedType === "INPUT_DATE" && (
-                      <DateTypeAnswer
-                        form={form}
-                        index={index + currentIndexes}
-                        rgba={rgba || "#F7F8FF"}
-                        bgColor={
-                            data?.formSettings?.buttonColor || "#001fcc"
-                          }
-                      />
-                    )}
-                    {field.selectedType === "INPUT_CHECKBOX" && (
-                      <CheckboxTypeAnswer
-                        form={form}
-                        index={index + currentIndexes}
-                        bgColor={
-                          data?.formSettings?.buttonColor || "#001fcc"
-                        }
-                        rgba={rgba || "#F7F8FF"}
-                      />
-                    )}
-                    {field.selectedType === "INPUT_RATING" && (
-                      <RatingTypeAnswer
-                        form={form}
-                        index={index + currentIndexes}
-                        bgColor={
-                          data?.formSettings?.buttonColor || "#001fcc"
-                        }
-                        rgba={rgba || "#F7F8FF"}
-                      />
-                    )}
-                    {field.selectedType === "ATTACHMENT" && (
-                      <UploadTypeAnswer
-                        form={form}
-                        index={index + currentIndexes}
-                        bgColor={
-                          data?.formSettings?.buttonColor || "#001fcc"
-                        }
-                        rgba={rgba || "#F7F8FF"}
-                      />
-                    )}
-                    {field.selectedType === "INPUT_MULTIPLE_CHOICE" && (
-                      <MultiChoiceTypeAnswer
-                        form={form}
-                        index={index + currentIndexes}
-                        bgColor={
-                          data?.formSettings?.buttonColor || "#001fcc"
-                        }
-                        rgba={rgba || "#F7F8FF"}
-                      />
-                    )}
-                    {field.selectedType === "PICTURE_CHOICE" && (
-                      <ImageUploadTypeAnswer
-                        form={form}
-                        index={index + currentIndexes}
-                        bgColor={
-                          data?.formSettings?.buttonColor || "#001fcc"
-                        }
-                        rgba={rgba || "#F7F8FF"}
-                      />
-                    )}
-                  </div>
-                  )
+                      className={cn(
+                        "w-full",
+                        data?.formSettings?.displayType !== "slide" &&
+                          "border p-4 sm:p-6 rounded-lg"
+                      )}
+                      key={`${field.id}`}
+                    >
+                      {(field.selectedType === "INPUT_TEXT" ||
+                        field.selectedType === "INPUT_EMAIL" ||
+                        field.selectedType === "WEBSITE" ||
+                        field.selectedType === "PHONE_NUMBER") && (
+                        <TextTypeAnswer
+                          form={form}
+                          index={index + currentIndexes}
+                          rgba={rgba || "#F7F8FF"}
+                          selectedType={field.selectedType}
+                          bgColor={data?.formSettings?.buttonColor || "#001fcc"}
+                        />
+                      )}
+                      {field.selectedType === "INPUT_ADDRESS" && (
+                        <AddressTypeAnswer
+                          form={form}
+                          index={index + currentIndexes}
+                          rgba={rgba || "#F7F8FF"}
+                          bgColor={data?.formSettings?.buttonColor || "#001fcc"}
+                          selectedType={field.selectedType}
+                        />
+                      )}
+                      {field.selectedType === "DROPDOWN" && (
+                        <DropDownTypeAnswer
+                          form={form}
+                          index={index + currentIndexes}
+                          rgba={rgba || "#F7F8FF"}
+                          bgColor={data?.formSettings?.buttonColor || "#001fcc"}
+                        />
+                      )}
+                      {field.selectedType === "YES_OR_NO" && (
+                        <YesNoTypeAnswer
+                          form={form}
+                          index={index + currentIndexes}
+                          rgba={rgba || "#F7F8FF"}
+                          bgColor={data?.formSettings?.buttonColor || "#001fcc"}
+                        />
+                      )}
+                      {field.selectedType === "CONTACT" && (
+                        <ContactTypeAnswer
+                          form={form}
+                          index={index + currentIndexes}
+                          rgba={rgba || "#F7F8FF"}
+                          bgColor={data?.formSettings?.buttonColor || "#001fcc"}
+                          selectedType={field.selectedType}
+                        />
+                      )}
+                      {field.selectedType === "INPUT_DATE" && (
+                        <DateTypeAnswer
+                          form={form}
+                          index={index + currentIndexes}
+                          rgba={rgba || "#F7F8FF"}
+                          bgColor={data?.formSettings?.buttonColor || "#001fcc"}
+                        />
+                      )}
+                      {field.selectedType === "INPUT_CHECKBOX" && (
+                        <CheckboxTypeAnswer
+                          form={form}
+                          index={index + currentIndexes}
+                          bgColor={data?.formSettings?.buttonColor || "#001fcc"}
+                          rgba={rgba || "#F7F8FF"}
+                        />
+                      )}
+                      {field.selectedType === "INPUT_RATING" && (
+                        <RatingTypeAnswer
+                          form={form}
+                          index={index + currentIndexes}
+                          bgColor={data?.formSettings?.buttonColor || "#001fcc"}
+                          rgba={rgba || "#F7F8FF"}
+                        />
+                      )}
+                      {field.selectedType === "ATTACHMENT" && (
+                        <UploadTypeAnswer
+                          form={form}
+                          index={index + currentIndexes}
+                          bgColor={data?.formSettings?.buttonColor || "#001fcc"}
+                          rgba={rgba || "#F7F8FF"}
+                        />
+                      )}
+                      {field.selectedType === "INPUT_MULTIPLE_CHOICE" && (
+                        <MultiChoiceTypeAnswer
+                          form={form}
+                          index={index + currentIndexes}
+                          bgColor={data?.formSettings?.buttonColor || "#001fcc"}
+                          rgba={rgba || "#F7F8FF"}
+                        />
+                      )}
+                      {field.selectedType === "PICTURE_CHOICE" && (
+                        <ImageUploadTypeAnswer
+                          form={form}
+                          index={index + currentIndexes}
+                          bgColor={data?.formSettings?.buttonColor || "#001fcc"}
+                          rgba={rgba || "#F7F8FF"}
+                        />
+                      )}
+                    </div>
+                  );
                 })}
 
                 {data?.formSettings?.displayType === "slide" && (
@@ -498,7 +571,11 @@ function FillFormComp({
           </div>
         </div>
 
-        {(isSuccess || isResponseAlreadySubmitted) && <SubmittedModal />}
+        {(isSuccess || isResponseAlreadySubmitted) && (
+          <SubmittedModal
+            formLink={`https://engagements.zikoro.com/e/${data?.workspaceAlias}/form/a/${data?.formAlias}`}
+          />
+        )}
       </div>
     </>
   );

@@ -35,7 +35,7 @@ export function FormTextType({
   const [selectedType, setSelectedType] = useState("");
   const selectedOptions = useWatch({
     control: form.control,
-    name: `optionFields` as const,
+    name: `questionSettings` as const,
   });
 
   const image = useMemo(() => {
@@ -58,7 +58,7 @@ export function FormTextType({
 
   useEffect(() => {
     if (selectedType === "Unlimited") {
-      form.setValue("optionFields", null);
+      form.setValue("questionSettings", null);
     }
   }, [form, selectedType]);
 
@@ -76,7 +76,7 @@ export function FormTextType({
           isText
           SettingWidget={
             <div className="w-full flex flex-col gap-3 px-3">
-              <p className="text-mobile">Max. Character Length</p>
+              <p className="text-mobile text-start">Max. Character Length</p>
               <Select
                 onValueChange={(value) => {
                   setSelectedType(value);
@@ -113,7 +113,7 @@ export function FormTextType({
                       value={selectedOptions ?? 0}
                       className="w-full h-1"
                       onChange={(_, e) => {
-                        form.setValue("optionFields", e as number);
+                        form.setValue("questionSettings", e as number);
                       }}
                       sx={{
                         color: "#6b7280",

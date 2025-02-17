@@ -116,6 +116,17 @@ export function calculateAndSetWindowHeight(
     
   
     const parsedDate = typeof date === "string" ? parseISO(date) : date;
-    return format(parsedDate, "MM/dd/yyyy h:mm aa");
+    return format(parsedDate, "MM/dd/yyyy");
   }
   
+
+  export function formatText(text: string): string {
+    return text
+      .replace(/([a-z])([A-Z])/g, "$1 $2") 
+      .replace(/_/g, " ")
+      .trim(); 
+  }
+
+  export function shuffleArray<T>(array: T[]): T[] {
+    return [...array].sort(() => Math.random() - 0.5);
+  }

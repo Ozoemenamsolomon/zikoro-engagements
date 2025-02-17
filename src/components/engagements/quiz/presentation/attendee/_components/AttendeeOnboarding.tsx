@@ -39,6 +39,7 @@ export function AttendeeOnboarding({
   refetchLobby,
   organization,
   isAttendee,
+  
 }: {
   close: () => void;
   organization: TOrganization;
@@ -247,6 +248,17 @@ export function AttendeeOnboarding({
       }
     }
   }, [isAttendee]);
+
+  useEffect(() => {
+    if (quiz  && !query) {
+      if (quiz?.formAlias) {
+        router.push(
+          `/e/${quiz?.workspaceAlias}/form/a/${quiz?.formAlias}?redirect=quiz&id=${id}&link=${window.location.href}`
+        );
+      }
+    }
+  }, [quiz]);
+
 
   return (
     <>

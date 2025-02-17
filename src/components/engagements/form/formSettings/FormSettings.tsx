@@ -103,7 +103,7 @@ export function FormSettings({
           </div>
           {FormSettingType.details === active && (
             <CreateForm
-              engagementForm={engagementForm}
+               engagementForm={engagementForm}
               refetch={refetch}
               organization={organization}
             />
