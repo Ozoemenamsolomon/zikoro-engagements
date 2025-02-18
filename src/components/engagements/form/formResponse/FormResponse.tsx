@@ -10,10 +10,24 @@ import {
   UploadTypeResponse,
   YesOrNoResponse,
 } from "./responseTypes";
+import {
+  Select,
+  SelectContent,
+  SelectTrigger,
+  SelectItem,
+  SelectGroup,
+  SelectValue,
+} from "@/components/ui/select";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/custom";
-import { useMemo, useState } from "react";
+import {
+  forwardRef,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useDeleteRequest } from "@/hooks/services/requests";
 import * as XLSX from "xlsx";
 import { ActionModal } from "@/components/custom/ActionModal";
@@ -25,6 +39,10 @@ import {
   IndividualUploadType,
   IndividualYesNoType,
 } from "./responseTypes/individual/IndividualResponseType";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { formateJSDate } from "@/utils";
+import { CustomEmptyState } from "../../qa/_components";
 
 const options = [
   { name: "Text", image: "/ftext.png", type: "INPUT_TEXT" },
@@ -46,6 +64,11 @@ const options = [
     type: "INPUT_MULTIPLE_CHOICE",
   },
 ];
+
+type IndividualResponseRef = {
+  deleteUserData: () => Promise<void>;
+  downloadIndividualCSV: () => void;
+};
 
 export function getQuestionType(selectType: string) {
   const option = options?.find((s) => s?.type === selectType);
@@ -133,6 +156,7 @@ export default function FormResponses({
   const [isDeleting, setDeleting] = useState(false);
   const [isDownload, setIsDownload] = useState(false);
   const [isSummary, setIsSummary] = useState(true);
+  const individualResponseRef = useRef<IndividualResponseRef | null>(null);
   const { deleteData, isLoading } = useDeleteRequest(
     `/engagements/formAnswer/${formAlias}/delete`
   );
@@ -260,15 +284,15 @@ export default function FormResponses({
         ? entry.response?.map((v) => v?.selectedOption).toString()
         : entry?.response?.selectedOption
         ? entry?.response?.selectedOption
-        : entry?.response;
+        : entry?.response?.toString();
     });
 
     return Object.values(result);
   }
 
-  async function downloadCsv() {
+  async function downloadCsv(data: TFormattedEngagementFormAnswer[]) {
     try {
-      const transformedData = transformData(flattenedResponse);
+      const transformedData = transformData(data);
 
       //  console.log(flattenedResponse)
 
@@ -286,12 +310,20 @@ export default function FormResponses({
   }
 
   async function deleteResponses() {
-    await deleteData();
+    if (!isSummary) {
+      individualResponseRef.current?.deleteUserData();
+    } else {
+      await deleteData();
+    }
     window.location.reload();
   }
 
   async function download() {
-    downloadCsv();
+    if (!isSummary) {
+      individualResponseRef.current?.downloadIndividualCSV();
+    } else {
+      downloadCsv(flattenedResponse);
+    }
     // window.location.reload();
   }
 
@@ -348,7 +380,9 @@ export default function FormResponses({
                 icon="icon-park-twotone:delete-themes"
                 fontSize={22}
               />
-              <p>Clear Responses</p>
+              <p>
+                {isSummary ? "Clear Responses" : "Clear Participant Responses"}
+              </p>
             </Button>
             <Button
               onClick={toggleModal}
@@ -380,7 +414,7 @@ export default function FormResponses({
             Individual Response
           </button>
         </div>
-        <div className={cn("w-full hidden", isSummary && 'block')}>
+        <div className={cn("w-full hidden", isSummary && "block")}>
           <div className="w-full grid h-[150px] grid-cols-4 gap-6">
             <div className="flex flex-col h-full w-full items-center justify-center gap-5">
               <p className="text-lg sm:text-xl">Total Views</p>
@@ -799,7 +833,13 @@ export default function FormResponses({
         </div>
       </div>
 
-      {!isSummary && <IndividualResponse responses={flattenedResponse}/>}
+      {!isSummary && (
+        <IndividualResponse
+          ref={individualResponseRef}
+          responses={flattenedResponse}
+          downloadCsv={downloadCsv}
+        />
+      )}
     </>
   );
 }
@@ -823,12 +863,189 @@ export interface GroupedAttendeeResponse {
     optionFields?: any;
   }>;
 }
-function IndividualResponse({
+
+function FilterActions({
+  questions,
   responses,
+  setFilter,
+  setIsFilter,
+  isFilter,
 }: {
+  questions: { value: string; label: string }[];
   responses: TFormattedEngagementFormAnswer[];
+  isFilter: boolean;
+  setIsFilter: React.Dispatch<React.SetStateAction<boolean>>;
+  setFilter: React.Dispatch<
+    React.SetStateAction<TFormattedEngagementFormAnswer[]>
+  >;
 }) {
+  const [value, setValue] = useState("");
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
+  const [isDatePanel, setDatePanel] = useState(false);
+  const onChange = (dates: [Date | null, Date | null]) => {
+    const [start, end] = dates;
+    setStartDate(start);
+    setEndDate(end);
+
+    if (start !== null && end !== null) {
+      const startIso = start?.toISOString();
+      const endIso = end?.toISOString();
+
+      const filtered = responses?.filter(
+        (q) => q?.submittedAt >= startIso && q?.submittedAt <= endIso
+      );
+
+      setFilter(filtered);
+    }
+  };
+  return (
+    <div className="w-full ">
+      <div className="w-full fle text-sm flex-col items-start justify-start gap-5">
+        <div className="w-full flex items-center justify-between mb-3">
+          <div className=" mb-2 flex items-center gap-x-1">
+            <InlineIcon icon="mage:filter" fontSize={20} />
+            <p>Filter</p>
+          </div>
+
+          <button onClick={() => setIsFilter(false)}>
+            <span className="trnsform -rotate-90">
+              <InlineIcon icon="fluent:arrow-upload-32-regular" fontSize={24} />
+            </span>
+          </button>
+        </div>
+        {/** date range */}
+        <div className="w-full space-y-3 py-4">
+          <p className="">Date Range</p>
+          <div className="w-full relative flex items-center gap-x-6">
+            <div
+              onClick={() => setDatePanel(true)}
+              id="start"
+              className="flex items-center gap-x-1"
+            >
+              <InlineIcon
+                icon="material-symbols-light:date-range-sharp"
+                fontSize={15}
+              />
+              <p>{startDate ? formateJSDate(startDate) : "Start Date"}</p>
+            </div>
+            <p>to</p>
+            <div
+              onClick={() => setDatePanel(true)}
+              id="end"
+              className="flex items-center gap-x-1"
+            >
+              <InlineIcon
+                icon="material-symbols-light:date-range-sharp"
+                fontSize={15}
+              />
+              <p>{endDate ? formateJSDate(endDate) : "End Date"}</p>
+            </div>
+            {isDatePanel && (
+              <div
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                }}
+                className="absolute top-8 right-[-95px] md:right-0"
+              >
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setDatePanel((prev) => !prev);
+                  }}
+                  className="w-full h-full fixed inset-0 z-[150] "
+                ></button>
+                <div
+                  role="button"
+                  onClick={(e) => e.stopPropagation()}
+                  className="relative z-[300]"
+                >
+                  <DatePicker
+                    selected={startDate}
+                    startDate={startDate}
+                    endDate={endDate}
+                    onChange={onChange}
+                    selectsRange
+                    inline
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+        {/** question */}
+        <div className="w-full space-y-3 border-y py-4">
+          <p className="">Question</p>
+          <Select
+            onValueChange={(value) => {
+              setValue(value);
+              const filtered = responses?.filter(
+                (q) => q?.questionId === value
+              );
+              setFilter(filtered);
+            }}
+            defaultValue={value}
+          >
+            <SelectTrigger className="h-11 w-full">
+              <SelectValue className="bg-basePrimary-100" placeholder="Select Question" />
+            </SelectTrigger>
+            <SelectContent className="bg-basePrimary-100">
+              <SelectGroup>
+                {questions.map(({ value, label }, index) => (
+                  <SelectItem
+                    key={index}
+                    className="h-12 items-center justify-start focus:bg-gray-100"
+                    value={value}
+                  >
+                    {label}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+        {/** completion rate range */}
+      </div>
+    </div>
+  );
+}
+
+type IndividualResponseProps = {
+  responses: TFormattedEngagementFormAnswer[];
+  downloadCsv: (param: TFormattedEngagementFormAnswer[]) => void;
+};
+
+const IndividualResponse = forwardRef<
+  IndividualResponseRef,
+  IndividualResponseProps
+>(({ responses, downloadCsv }, ref) => {
+  const [isFilter, setIsFilter] = useState(false);
+  const [filteredQuestions, setFilteredQuestions] =
+    useState<TFormattedEngagementFormAnswer[]>(responses);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const { deleteData, isLoading } = useDeleteRequest(``);
+
+  useImperativeHandle(ref, () => ({
+    deleteUserData,
+    downloadIndividualCSV,
+  }));
+
+  async function deleteUserData() {
+    const form = filteredQuestions[currentIndex];
+    await deleteData(
+      `/engagements/formAnswer/${form.formAlias}/delete/${form.attendeeAlias}`
+    );
+  }
+
+  function downloadIndividualCSV() {
+    const form = filteredQuestions[currentIndex];
+    const filtered = responses?.filter(
+      (q) => q?.attendeeAlias === form?.attendeeAlias
+    );
+    downloadCsv(filtered);
+  }
 
   function groupByAttendee(
     data: TFormattedEngagementFormAnswer[]
@@ -871,18 +1088,40 @@ function IndividualResponse({
   }
 
   const attendeeResponse = useMemo(() => {
-    if (Array.isArray(responses)) {
-      const resp = groupByAttendee(responses);
+    if (Array.isArray(filteredQuestions)) {
+      const resp = groupByAttendee(filteredQuestions);
 
       // setCurrentAttendee(resp[0]);
       // setCurrentIndex(0)
 
       return resp;
     } else return [];
+  }, [filteredQuestions]);
+
+  const questions = useMemo(() => {
+    return responses?.map((q) => {
+      return {
+        value: q?.questionId,
+        label: q?.question,
+      };
+    });
   }, [responses]);
 
+  const completionRate = useMemo(() => {
+    if (currentIndex != -1) {
+      const currentParticipantId = responses[currentIndex].attendeeAlias;
+      const filtered = responses?.filter((v) => v?.attendeeAlias === currentParticipantId)
+
+      const attempted = filtered?.filter((v) =>v?.response);
+
+      return ((attempted?.length/questions?.length) * 100).toFixed(0)
+    }
+    else return "0"
+
+  },[responses, currentIndex])
+
   return (
-    <div className="w-full max-w-7xl mx-auto">
+    <div className="w-full max-w-[1400px] mx-auto">
       <div className="w-full grid h-[150px] grid-cols-3 gap-6">
         <div className="flex flex-col h-full w-full items-center justify-center gap-5">
           <p className="text-lg sm:text-xl">Date Taken</p>
@@ -893,7 +1132,7 @@ function IndividualResponse({
 
         <div className="flex flex-col h-full w-full items-center justify-center gap-5">
           <p className="text-lg sm:text-xl">Completion Rate</p>
-          <h1 className="text-[36px] font-bold">""</h1>
+          <h1 className="text-[36px] font-bold">{completionRate}%</h1>
         </div>
         <div className="flex flex-col h-full border-l w-full items-center justify-center gap-5">
           <p className="text-lg sm:text-xl">Average Completion Time</p>
@@ -901,86 +1140,122 @@ function IndividualResponse({
         </div>
       </div>
 
-      <div className="w-full flex ">
-        <div className="w-full bg-white rounded-lg  px-6 py-10">
-          <div className="flex flex-col items-center justify-center mx-auto gap-3">
-            <p className="font-semibold text-base sm:text-lg">Participants:</p>
-            <div className="w-fit flex items-center gap-x-4">
-              <button
-                disabled={currentIndex === 0}
-                onClick={() => setCurrentIndex((prev) => prev - 1)}
-              >
-                {" "}
-                <InlineIcon icon="iconoir:nav-arrow-left" fontSize={22} />
-              </button>
-              <div className="flex items-center gap-x-2">
-                <h2 className=" font-medium text-lg underline sm:text-xl">
-                  {currentIndex + 1}
-                </h2>
-                <p>of</p>
-                <p>{attendeeResponse?.length}</p>
+      <div
+        className={cn(
+          "w-full grid grid-cols-1 gap-6",
+          isFilter && "grid-cols-10"
+        )}
+      >
+        <div className={cn("w-full hidden", isFilter && "block col-span-3")}>
+          <FilterActions
+            questions={questions}
+            responses={responses}
+            setFilter={setFilteredQuestions}
+            setIsFilter={setIsFilter}
+            isFilter={isFilter}
+          />
+        </div>
+        <div className={cn("w-full", isFilter && "col-span-7")}>
+          <button
+            onClick={() => setIsFilter(true)}
+            className=" mb-2 flex items-center gap-x-1 text-mobile"
+          >
+            <InlineIcon icon="mage:filter" fontSize={15} />
+            <p>Filter</p>
+          </button>
+          <div className="w-full bg-white rounded-lg  px-6 py-10">
+            <div className="flex flex-col items-center justify-center mx-auto gap-3">
+              <p className="font-semibold text-base sm:text-lg">
+                Participants:
+              </p>
+              <div className="w-fit flex items-center gap-x-4">
+                <button
+                  disabled={currentIndex === 0}
+                  onClick={() => setCurrentIndex((prev) => prev - 1)}
+                >
+                  {" "}
+                  <InlineIcon icon="iconoir:nav-arrow-left" fontSize={22} />
+                </button>
+                <div className="flex items-center gap-x-2">
+                  <h2 className=" font-medium text-lg underline sm:text-xl">
+                    {currentIndex + 1}
+                  </h2>
+                  <p>of</p>
+                  <p>{attendeeResponse?.length}</p>
+                </div>
+                <button
+                  disabled={currentIndex === attendeeResponse?.length - 1}
+                  onClick={() => setCurrentIndex((prev) => prev + 1)}
+                >
+                  <InlineIcon icon="iconoir:nav-arrow-right" fontSize={22} />
+                </button>
               </div>
-              <button
-                disabled={currentIndex === attendeeResponse?.length-1}
-                onClick={() => setCurrentIndex((prev) => prev + 1)}
-              >
-                <InlineIcon icon="iconoir:nav-arrow-right" fontSize={22} />
-              </button>
             </div>
+
+            {attendeeResponse[currentIndex] === null ? (
+              <CustomEmptyState
+                title="No Response"
+                description="No Response between the selected dates"
+              />
+            ) : (
+              attendeeResponse[currentIndex]?.responses.map((item, index) => {
+                return (
+                  <div className="w-full  py-6 mx-auto max-w-xl border-b ">
+                    {item.type === "INPUT_TEXT" && (
+                      <IndividualTextType
+                        response={item}
+                        questionIndex={index}
+                      />
+                    )}
+                    {(item.type === "INPUT_DATE" ||
+                      item.type === "INPUT_EMAIL" ||
+                      item.type === "PHONE_NUMBER" ||
+                      item.type === "WEBSITE") && (
+                      <IndividualOtherType
+                        response={item}
+                        questionIndex={index}
+                      />
+                    )}
+                    {item.type === "ATTACHMENT" && (
+                      <IndividualUploadType
+                        response={item}
+                        questionIndex={index}
+                      />
+                    )}
+                    {item.type === "YES_OR_NO" && (
+                      <IndividualYesNoType
+                        response={item}
+                        questionIndex={index}
+                      />
+                    )}
+                    {(item.type === "INPUT_ADDRESS" ||
+                      item.type === "CONTACT") && (
+                      <IndividualMultiInputType
+                        response={item}
+                        questionIndex={index}
+                      />
+                    )}
+
+                    {(item.type === "INPUT_CHECKBOX" ||
+                      item.type === "DROPDOWN") && (
+                      <IndividualSelectType
+                        response={item}
+                        questionIndex={index}
+                      />
+                    )}
+                    {item.type === "INPUT_MULTIPLE_CHOICE" && (
+                      <IndividualSelectType
+                        response={item}
+                        questionIndex={index}
+                      />
+                    )}
+                  </div>
+                );
+              })
+            )}
           </div>
-
-          {attendeeResponse[currentIndex].responses.map((item, index) => {
-            return (
-              <div className="w-full  py-6 mx-auto max-w-xl border-b ">
-                {item.type === "INPUT_TEXT" && (
-                  <IndividualTextType
-                    response={item}
-                    questionIndex={index}
-                  />
-                )}
-                {(item.type === "INPUT_DATE" ||
-                  item.type === "INPUT_EMAIL" ||
-                  item.type === "PHONE_NUMBER" ||
-                  item.type === "WEBSITE") && (
-                  <IndividualOtherType response={item} questionIndex={index} />
-                )}
-                {item.type === "ATTACHMENT" && (
-                  <IndividualUploadType
-                    response={item}
-                    questionIndex={index}
-                  />
-                )}
-                {item.type === "YES_OR_NO" && (
-                  <IndividualYesNoType
-                    response={item}
-                    questionIndex={index}
-                  />
-                )}
-                {(item.type === "INPUT_ADDRESS" || item.type === "CONTACT") && (
-                  <IndividualMultiInputType
-                    response={item}
-                    questionIndex={index}
-                  />
-                )}
-
-                {(item.type === "INPUT_CHECKBOX" ||
-                  item.type === "DROPDOWN") && (
-                  <IndividualSelectType
-                    response={item}
-                    questionIndex={index}
-                  />
-                )}
-                {item.type === "INPUT_MULTIPLE_CHOICE" && (
-                  <IndividualSelectType
-                    response={item}
-                    questionIndex={index}
-                  />
-                )}
-              </div>
-            );
-          })}
         </div>
       </div>
     </div>
   );
-}
+});
