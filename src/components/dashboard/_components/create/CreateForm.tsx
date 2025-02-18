@@ -192,6 +192,23 @@ export function CreateForm({
               </InputOffsetLabel>
             )}
           />
+          {/**
+              <FormField
+        control={form.control}
+        name="formSettings.startButtonText"
+        render={({ field }) => (
+          <InputOffsetLabel className="w-[150px]" label="Start Button Text">
+            <Input
+              placeholder=""
+              type="text"
+              defaultValue={prevStartButtonText}
+              {...form.register("formSettings.startButtonText")}
+              className="placeholder:text-sm h-11 focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
+            />
+          </InputOffsetLabel>
+        )}
+      />
+           */}
           <div className="w-full flex items-end gap-x-2">
             <FormField
               control={form.control}

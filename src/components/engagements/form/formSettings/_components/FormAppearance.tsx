@@ -397,7 +397,7 @@ export default function FormAppearance({
         title="Button Color"
         colorArray={colors}
       />
-      <NumberWidget
+      {/* <NumberWidget
         form={form}
         title="Form title font size"
         value={titleFontSize}
@@ -414,13 +414,13 @@ export default function FormAppearance({
         title="Text size"
         value={textFontSize}
         name="formSettings.textFontSize"
-      />
+      /> */}
 
       <FormField
         control={form.control}
         name="formSettings.buttonText"
         render={({ field }) => (
-          <InputOffsetLabel className="w-[150px]" label="Button Text">
+          <InputOffsetLabel className="w-[150px]" label="End Button Text">
             <Input
               placeholder=""
               type="text"
@@ -432,21 +432,7 @@ export default function FormAppearance({
         )}
       />
 
-      <FormField
-        control={form.control}
-        name="formSettings.startButtonText"
-        render={({ field }) => (
-          <InputOffsetLabel className="w-[150px]" label="Start Button Text">
-            <Input
-              placeholder=""
-              type="text"
-              defaultValue={prevStartButtonText}
-              {...form.register("formSettings.startButtonText")}
-              className="placeholder:text-sm h-11 focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
-            />
-          </InputOffsetLabel>
-        )}
-      />
+   
     </div>
   );
 }

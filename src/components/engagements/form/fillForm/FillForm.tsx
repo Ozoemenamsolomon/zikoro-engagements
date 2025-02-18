@@ -343,11 +343,7 @@ function FillFormComp({
       )}
 
       <div
-        style={{
-          fontSize: data?.formSettings?.textFontSize + "px" || "14px",
-          backgroundColor: rgba,
-          color: data?.formSettings?.textColor || "",
-        }}
+       
         className={cn("w-screen min-h-screen", isLoading && "hidden")}
       >
         <div
