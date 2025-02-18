@@ -23,9 +23,13 @@ export function useRegistration() {
       const { data, error } = await supabase.auth.signUp({
         email: values.email,
         password: values.password,
+      
         options: {
           emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback/${values?.email
             }/${new Date().toISOString()}`,
+            data: {
+              platform:"Engagement"
+            }
         },
       });
 
