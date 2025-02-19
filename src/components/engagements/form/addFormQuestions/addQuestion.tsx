@@ -232,7 +232,7 @@ export function AddQuestion({
                     Choose option type for this question
                   </p>
 
-                  <div className="w-full flex flex-wrap  items-center px-4 mx-auto max-w-[70%] gap-6 py-4 sm:py-8 justify-center">
+                  <div className="w-full flex flex-wrap  items-center px-4 mx-auto max-w-[90%] gap-6 py-4 sm:py-8 justify-center">
                     {options?.map((item) => (
                       <button
                       key={item.type}
