@@ -40,6 +40,7 @@ export async function POST(req: NextRequest) {
             coverImage: "",
             title: user.email,
             description: "Hello there",
+            workspaceAlias:"pPdselJxWSFKfkP5pYlv"
           });
         // const resp = await client.sendMail({
         //   from: {
