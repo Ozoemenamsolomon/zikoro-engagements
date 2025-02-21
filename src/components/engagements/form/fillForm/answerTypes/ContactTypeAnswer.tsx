@@ -33,6 +33,7 @@ export function ContactTypeAnswer({
   const question = form.watch(`questions.${index}.question`);
   const isRequired = form.watch(`questions.${index}.isRequired`);
   const questionImage = form.watch(`questions.${index}.questionImage`);
+  const showDescription = form.watch(`questions.${index}.showDescription`);
   const settings = form.watch(
     `questions.${index}.questionSettings`
   ) as ContactType;
@@ -65,6 +66,7 @@ export function ContactTypeAnswer({
         currentQuestion={question}
         description={questionDescription}
         isRequired={isRequired}
+        showDescription={showDescription}
       />
 
       <div className="flex flex-col items-start gap-y-3 justify-start w-full">
@@ -75,9 +77,6 @@ export function ContactTypeAnswer({
           >
             <label>{formatText(key)}</label>
             <Input
-              style={{
-                backgroundColor: rgba,
-              }}
               name={key}
               value={answers[key as keyof TContactTypeAnswer]}
               onChange={(e) => {
@@ -94,7 +93,7 @@ export function ContactTypeAnswer({
                   : "text"
               }
               required={settings[key as keyof TContactTypeAnswer]}
-              className="w-full h-11 sm:h-12 rounded-md  px-2 placeholder:text-gray-500 placeholder-gray-500"
+              className="w-full h-11 sm:h-12 rounded-md border-x-0 border-b border-t-0  px-2 placeholder:text-gray-500 placeholder-gray-500"
               placeholder="Enter Answer"
             />
           </div>

@@ -67,6 +67,11 @@ export function FormDateType({
     }
   }, [startDate, endDate]);
 
+  const showDescription = useWatch({
+    control: form.control,
+    name: "showDescription",
+  });
+
   return (
     <>
       <div className="w-full flex flex-col items-start justify-start gap-3">
@@ -90,16 +95,15 @@ export function FormDateType({
                 <div
                   onClick={(e) => {
                     e.stopPropagation();
-                    e.preventDefault()
-                    
+                    e.preventDefault();
                   }}
                   className="absolute top-8 right-[-95px] md:right-0"
                 >
                   <button
-                    onClick={(e) =>{
-                      e.preventDefault()
+                    onClick={(e) => {
+                      e.preventDefault();
                       e.stopPropagation();
-                      setDatePanel((prev) => !prev)
+                      setDatePanel((prev) => !prev);
                     }}
                     className="w-full h-full fixed inset-0 z-[150] "
                   ></button>
@@ -123,10 +127,12 @@ export function FormDateType({
           }
         />
 
-        <FormQuestionDescription
-          defaultDescriptionValue={defaultDescriptionValue}
-          form={form}
-        />
+        {showDescription && (
+          <FormQuestionDescription
+            defaultDescriptionValue={defaultDescriptionValue}
+            form={form}
+          />
+        )}
       </div>
     </>
   );

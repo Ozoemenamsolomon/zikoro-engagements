@@ -2,7 +2,7 @@
 
 import { formQuestion } from "@/schemas";
 import { useMemo } from "react";
-import { UseFormReturn } from "react-hook-form";
+import { UseFormReturn, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { FormQuestionDescription } from "../formQuestionDescription";
 import { TEngagementFormQuestion } from "@/types/form";
@@ -54,6 +54,10 @@ export function FormYesNoType({
   //     }
   //   }, [form, selectedType]);
 
+  const showDescription = useWatch({
+    control: form.control,
+    name: 'showDescription'
+  })
   return (
     <>
       <div className="w-full flex flex-col items-start justify-start gap-3">
@@ -67,10 +71,12 @@ export function FormYesNoType({
           type="Yes or No"
         />
 
-        <FormQuestionDescription
-          defaultDescriptionValue={defaultDescriptionValue}
-          form={form}
-        />
+{showDescription && (
+          <FormQuestionDescription
+            defaultDescriptionValue={defaultDescriptionValue}
+            form={form}
+          />
+        )}
 
         <div className="w-full flex items-center justify-center gap-x-6">
           <div className="bg-basePrimary-100 flex items-center gap-x-2 rounded-lg p-2">

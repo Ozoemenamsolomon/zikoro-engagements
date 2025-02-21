@@ -62,6 +62,11 @@ export function FormTextType({
     }
   }, [form, selectedType]);
 
+  const showDescription = useWatch({
+    control: form.control,
+    name: 'showDescription'
+  })
+
   return (
     <>
       <div className="w-full flex flex-col items-start justify-start gap-3">
@@ -148,10 +153,12 @@ export function FormTextType({
           }
         />
 
-        <FormQuestionDescription
-          defaultDescriptionValue={defaultDescriptionValue}
-          form={form}
-        />
+{showDescription && (
+          <FormQuestionDescription
+            defaultDescriptionValue={defaultDescriptionValue}
+            form={form}
+          />
+        )}
       </div>
     </>
   );

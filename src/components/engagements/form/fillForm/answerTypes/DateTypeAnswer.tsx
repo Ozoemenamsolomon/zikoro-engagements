@@ -30,6 +30,7 @@ export function DateTypeAnswer({
   const question = form.watch(`questions.${index}.question`);
   const isRequired = form.watch(`questions.${index}.isRequired`);
   const questionImage = form.watch(`questions.${index}.questionImage`);
+  const showDescription = form.watch(`questions.${index}.showDescription`);
   const selectedType = form.watch(`questions.${index}.selectedType`);
   const optionFields = form.watch(`questions.${index}.optionFields`) as
     | OptionType
@@ -46,17 +47,16 @@ export function DateTypeAnswer({
         currentQuestion={question}
         description={questionDescription}
         isRequired={isRequired}
+        showDescription={showDescription}
       />
 
       <div className="w-full h-11 sm:h-12 relative">
         <Input
-        style={{
-            backgroundColor: rgba
-        }}
+      
           name={`responses.${index}.response`}
           value={form.getValues(`responses.${index}.response`)}
           required={isRequired}
-          className="w-full h-11 sm:h-12 rounded-md  pl-8 pr-2 placeholder:text-gray-500 placeholder-gray-500"
+          className="w-full h-11 sm:h-12 rounded-md border-x-0 border-b border-t-0  pl-8 pr-2 placeholder:text-gray-500 placeholder-gray-500"
           placeholder="YYYY MM DD"
         />
         <button

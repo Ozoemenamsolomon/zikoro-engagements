@@ -47,7 +47,10 @@ export function FormUploadType({
     }
   }, [addedDescription]);
 
-  
+  const showDescription = useWatch({
+    control: form.control,
+    name: 'showDescription'
+  })
 
   return (
     <>
@@ -93,10 +96,12 @@ export function FormUploadType({
           }
         />
 
-        <FormQuestionDescription
-          defaultDescriptionValue={defaultDescriptionValue}
-          form={form}
-        />
+{showDescription && (
+          <FormQuestionDescription
+            defaultDescriptionValue={defaultDescriptionValue}
+            form={form}
+          />
+        )}
       </div>
     </>
   );

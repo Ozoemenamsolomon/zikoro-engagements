@@ -1,6 +1,6 @@
 "use client";
 
-import { UseFormReturn } from "react-hook-form";
+import { UseFormReturn, useWatch } from "react-hook-form";
 import { FormQuestionDescription } from "../formQuestionDescription";
 import { z } from "zod";
 import { formQuestion } from "@/schemas";
@@ -247,6 +247,12 @@ export function FormCheckBoxType({
     }
   }, [addedDescription]);
 
+  const showDescription = useWatch({
+    control: form.control,
+    name: "showDescription",
+  });
+
+
   return (
     <div className="w-full flex flex-col items-start justify-start gap-6">
       <FormQuestionField
@@ -286,10 +292,13 @@ export function FormCheckBoxType({
         }
       />
 
-      <FormQuestionDescription
-        defaultDescriptionValue={defaultDescriptionValue}
-        form={form}
-      />
+   
+{showDescription && (
+          <FormQuestionDescription
+            defaultDescriptionValue={defaultDescriptionValue}
+            form={form}
+          />
+        )}
 
       <div className="w-full flex flex-col items-start justify-start gap-3">
         {options.map((option, index) => (

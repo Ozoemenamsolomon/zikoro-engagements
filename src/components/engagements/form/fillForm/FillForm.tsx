@@ -241,22 +241,30 @@ function FillFormComp({
     }
   }, [formAnswers, attendee, attendeeId]);
 
-  console.log(isLoading, attendeeLoading);
+  // console.log(isLoading, attendeeLoading);
 
   const rgba = useMemo(
     (alpha = 0.1) => {
       if (data) {
         const color = data?.formSettings?.buttonColor || "#001fcc";
-        const r = parseInt(color.slice(1, 3), 16);
-        const g = parseInt(color.slice(3, 5), 16);
-        const b = parseInt(color.slice(5, 7), 16);
+        let r = parseInt(color.slice(1, 3), 16);
+        let g = parseInt(color.slice(3, 5), 16);
+        let b = parseInt(color.slice(5, 7), 16);
+  
+        // Increase brightness (lighter color)
+        const lightenFactor = 1.3; // Increase for more brightness
+        r = Math.min(255, Math.floor(r * lightenFactor));
+        g = Math.min(255, Math.floor(g * lightenFactor));
+        b = Math.min(255, Math.floor(b * lightenFactor));
+  
         return `rgba(${r}, ${g}, ${b}, ${alpha})`;
       }
     },
     [data, data?.formSettings?.buttonColor]
   );
+  
 
-  console.log(currentQuestions);
+  // console.log(currentQuestions);
 
   if (isLoading || attendeeLoading) {
     return (

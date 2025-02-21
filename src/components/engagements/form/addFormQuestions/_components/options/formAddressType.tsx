@@ -116,6 +116,11 @@ export function FormAddressType({
     "country",
   ];
 
+  const showDescription = useWatch({
+    control: form.control,
+    name: "showDescription",
+  });
+
   return (
     <>
       <div className="w-full flex flex-col items-start justify-start gap-3">
@@ -181,10 +186,12 @@ export function FormAddressType({
           }
         />
 
-        <FormQuestionDescription
-          defaultDescriptionValue={defaultDescriptionValue}
-          form={form}
-        />
+{showDescription && (
+          <FormQuestionDescription
+            defaultDescriptionValue={defaultDescriptionValue}
+            form={form}
+          />
+        )}
         <div className="w-full flex flex-col items-start justify-start">
           <p className="w-full border-b p-3">Address 1</p>
           <p className="w-full border-b p-3">Address 2</p>

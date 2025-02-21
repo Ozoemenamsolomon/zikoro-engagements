@@ -23,6 +23,7 @@ export function RatingTypeAnswer({
   const isRequired = form.watch(`questions.${index}.isRequired`);
   const questionImage = form.watch(`questions.${index}.questionImage`);
   const selectedType = form.watch(`questions.${index}.selectedType`);
+  const showDescription = form.watch(`questions.${index}.showDescription`);
   const optionFields = form.watch(`questions.${index}.optionFields`);
   const questionId = form.watch(`questions.${index}.questionId`);
   const questionDescription = form.watch(
@@ -43,6 +44,7 @@ export function RatingTypeAnswer({
         currentQuestion={question}
         description={questionDescription}
         isRequired={isRequired}
+        showDescription={showDescription}
       />
 
       <div className="w-full flex flex-wrap items-center gap-x-2 justify-center">
