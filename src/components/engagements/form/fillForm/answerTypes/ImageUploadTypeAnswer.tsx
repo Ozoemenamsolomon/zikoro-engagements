@@ -63,7 +63,7 @@ export function ImageUploadTypeAnswer({
                     backgroundColor: isSelected ? bgColor : "",
                   }}
                   className={cn(
-                    "w-28 h-fit rounded-lg flex-col border-x-0 border-b border-t-0 flex gap-3 items-center justify-center px-4 py-6 relative",
+                    "w-28 h-fit rounded-lg flex-col border-x-0 border-b border-t-0 bg-transparent flex gap-3 items-center justify-center px-4 py-6 relative",
                     isSelected && " text-white"
                   )}
                 >

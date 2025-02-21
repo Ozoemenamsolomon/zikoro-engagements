@@ -90,7 +90,7 @@ export function UploadTypeAnswer({
           required={isRequired}
           type="file"
           accept={generateAcceptString}
-          className="w-full h-11 sm:h-12 rounded-md px-2 border-x-0 border-b border-t-0 placeholder:text-gray-500 placeholder-gray-500"
+          className="w-full h-11 sm:h-12 rounded-md px-2 border-x-0 border-b border-t-0 bg-transparent placeholder:text-gray-500 placeholder-gray-500"
           placeholder="Enter Answer"
         />
       </div>

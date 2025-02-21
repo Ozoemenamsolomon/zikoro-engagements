@@ -499,7 +499,7 @@ function FillFormComp({
                           data?.formSettings?.buttonColor || "#001fcc"
                         }`,
                       }}
-                      className="border h-12 font-medium"
+                      className="border h-12 px-6 font-medium"
                     >
                       Previous
                     </Button>
@@ -514,7 +514,7 @@ function FillFormComp({
                             data?.formSettings?.buttonColor || "",
                         }}
                         className={cn(
-                          "self-center w-fit gap-x-2  text-white font-medium h-12 ",
+                          "self-center w-fit gap-x-2 px-6 text-white font-medium h-12 ",
                           !data?.formSettings?.buttonColor && "bg-basePrimary"
                         )}
                       >
@@ -559,7 +559,7 @@ function FillFormComp({
                       backgroundColor: data?.formSettings?.buttonColor || "",
                     }}
                     className={cn(
-                      "self-center w-fit gap-x-2  text-white font-medium h-12 ",
+                      "self-center w-fit gap-x-2  text-white font-medium h-12 px-6 ",
                       !data?.formSettings?.buttonColor && "bg-basePrimary"
                     )}
                   >
