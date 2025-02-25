@@ -415,7 +415,7 @@ export default function FormResponses({
           </button>
         </div>
         <div className={cn("w-full hidden", isSummary && "block")}>
-          <div className="w-full grid h-[150px] grid-cols-4 gap-6">
+          <div className="w-full grid h-[150px] grid-cols-3 gap-6">
             <div className="flex flex-col h-full w-full items-center justify-center gap-5">
               <p className="text-lg sm:text-xl">Total Views</p>
               <h1 className="text-[36px] font-bold">{numberOfViewed}</h1>
@@ -430,12 +430,7 @@ export default function FormResponses({
                 {engagementStats?.completionRate}
               </h1>
             </div>
-            <div className="flex flex-col h-full border-l w-full items-center justify-center gap-5">
-              <p className="text-lg sm:text-xl">Average Completion Time</p>
-              <h1 className="text-[36px] font-bold">
-                {engagementStats?.averageCompletionTime}
-              </h1>
-            </div>
+         
           </div>
 
           {Object.entries(data).map(([key, value]) => {
@@ -1122,7 +1117,7 @@ const IndividualResponse = forwardRef<
 
   return (
     <div className="w-full max-w-[1400px] mx-auto">
-      <div className="w-full grid h-[150px] grid-cols-3 gap-6">
+      <div className="w-full grid h-[150px] grid-cols-2 gap-6">
         <div className="flex flex-col h-full w-full items-center justify-center gap-5">
           <p className="text-lg sm:text-xl">Date Taken</p>
           <h1 className="text-[36px] font-bold">
@@ -1134,10 +1129,7 @@ const IndividualResponse = forwardRef<
           <p className="text-lg sm:text-xl">Completion Rate</p>
           <h1 className="text-[36px] font-bold">{completionRate}%</h1>
         </div>
-        <div className="flex flex-col h-full border-l w-full items-center justify-center gap-5">
-          <p className="text-lg sm:text-xl">Average Completion Time</p>
-          <h1 className="text-[36px] font-bold">""</h1>
-        </div>
+   
       </div>
 
       <div
