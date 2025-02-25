@@ -2,7 +2,7 @@
 
 import { formQuestion } from "@/schemas";
 import { useEffect, useMemo, useState } from "react";
-import { UseFormReturn } from "react-hook-form";
+import { UseFormReturn, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { FormQuestionDescription } from "../formQuestionDescription";
 import { TEngagementFormQuestion } from "@/types/form";
@@ -57,6 +57,13 @@ export function FormRatingType({
   function handleToggle() {
     setOpen((p) => !p);
   }
+
+
+  const showDescription = useWatch({
+    control: form.control,
+    name: "showDescription",
+  });
+
 
   return (
     <>
@@ -128,10 +135,12 @@ export function FormRatingType({
           }
         />
 
-        <FormQuestionDescription
-          defaultDescriptionValue={defaultDescriptionValue}
-          form={form}
-        />
+{showDescription && (
+          <FormQuestionDescription
+            defaultDescriptionValue={defaultDescriptionValue}
+            form={form}
+          />
+        )}
 
         <div className="w-full flex items-center gap-x-3 justify-center p-3">
           <div className="flex items-center gap-x-2">

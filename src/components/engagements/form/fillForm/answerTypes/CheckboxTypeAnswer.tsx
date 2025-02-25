@@ -30,6 +30,7 @@ export function CheckboxTypeAnswer({
   const question = form.watch(`questions.${index}.question`);
   const isRequired = form.watch(`questions.${index}.isRequired`);
   const questionImage = form.watch(`questions.${index}.questionImage`);
+  const showDescription = form.watch(`questions.${index}.showDescription`);
   const selectedType = form.watch(`questions.${index}.selectedType`);
   const [options, setOptions] = useState<OptionItemsType[]>([]);
   const questionId = form.watch(`questions.${index}.questionId`);
@@ -66,6 +67,7 @@ export function CheckboxTypeAnswer({
         currentQuestion={question}
         description={questionDescription}
         isRequired={isRequired}
+        showDescription={showDescription}
       />
 
       <div className="w-full flex flex-col items-start justify-start gap-y-4">
@@ -80,10 +82,10 @@ export function CheckboxTypeAnswer({
                   key={id}
                   // htmlFor={`checkbox-${index}`}
                   style={{
-                    backgroundColor: isSelected ? bgColor : rgba,
+                    backgroundColor: isSelected ? bgColor : '',
                   }}
                   className={cn(
-                    "w-full h-fit rounded-lg  px-4 py-6 relative",
+                    "w-full h-fit rounded-lg border px-4 py-6 relative",
                     isSelected && " text-white"
                   )}
                 >

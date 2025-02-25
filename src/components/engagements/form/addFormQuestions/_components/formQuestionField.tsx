@@ -24,7 +24,7 @@ export function FormQuestionField({
   isNotOverflow,
   isText,
   isTemplateType,
-  togggleRequired
+  togggleRequired,
 }: {
   defaultQuestionValue: string;
   question: TEngagementFormQuestion["questions"][number] | null;
@@ -35,9 +35,9 @@ export function FormQuestionField({
   type: string;
   isNotOverflow?: boolean;
   SettingWidget?: ReactNode;
-  isText?:boolean;
-  isTemplateType?:boolean;
-  togggleRequired?:(t:boolean) => void;
+  isText?: boolean;
+  isTemplateType?: boolean;
+  togggleRequired?: (t: boolean) => void;
 }) {
   const { postData } =
     usePostRequest<Partial<TEngagementFormQuestion>>("engagements/form");
@@ -55,6 +55,11 @@ export function FormQuestionField({
   const isRequired = useWatch({
     control: form.control,
     name: `isRequired` as const,
+  });
+
+  const showDescription = useWatch({
+    control: form.control,
+    name: `showDescription` as const,
   });
 
   async function deleteQuestion() {
@@ -135,7 +140,6 @@ export function FormQuestionField({
                   e.preventDefault();
                 }}
                 className="absolute right-[4px] top-5"
-
               >
                 <div
                   onClick={(e) => {
@@ -153,19 +157,29 @@ export function FormQuestionField({
                   )}
                 >
                   <div className="flex w-full px-3 mb-4 items-center justify-between">
-                  <p className="text-mobile">{isTemplateType ? "Required All" :"Required"}</p>
+                    <p className="text-mobile">
+                      {isTemplateType ? "Required All" : "Required"}
+                    </p>
                     <Switch
                       checked={isRequired}
                       onClick={(e) => {
-                 
                         e.preventDefault();
                         form.setValue("isRequired", !isRequired);
-                        togggleRequired?.(!isRequired)
+                        togggleRequired?.(!isRequired);
                       }}
-                  
                       className=""
                     />
-                  
+                  </div>
+                  <div className="flex w-full px-3 mb-4 items-center justify-between">
+                    <p className="text-mobile">Show Description</p>
+                    <Switch
+                      checked={showDescription}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        form.setValue("showDescription", !showDescription);
+                      }}
+                      className=""
+                    />
                   </div>
                   {SettingWidget}
                 </div>

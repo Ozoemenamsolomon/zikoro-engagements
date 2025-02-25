@@ -104,6 +104,7 @@ export function FormAccessibility({
           }}
         />
       </div>
+      
       {isRedirectUrl && (
         <div className="flex flex-col w-full max-w-[350px] items-start justify-start gap-y-3">
           <FormField

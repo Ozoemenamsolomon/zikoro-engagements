@@ -7,12 +7,14 @@ export function FillFormQuestion({
   description,
   questionImage,
   isRequired,
+  showDescription
 }: {
   currentIndex: number;
   currentQuestion: string;
   description?: string;
   questionImage?: string;
   isRequired: boolean;
+  showDescription:boolean;
 }) {
   return (
     <div className="w-full flex flex-col mb-4 items-center gap-4">
@@ -28,7 +30,7 @@ export function FillFormQuestion({
           __html: currentQuestion ?? "",
         }}
       />
-      {description && (
+      {showDescription && description && (
         <div
           className="innerhtml items-center text-center w-full text-sm"
           dangerouslySetInnerHTML={{

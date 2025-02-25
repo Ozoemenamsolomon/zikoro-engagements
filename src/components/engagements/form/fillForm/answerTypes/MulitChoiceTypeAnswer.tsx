@@ -30,6 +30,7 @@ export function MultiChoiceTypeAnswer({
   const isRequired = form.watch(`questions.${index}.isRequired`);
   const questionImage = form.watch(`questions.${index}.questionImage`);
   const selectedType = form.watch(`questions.${index}.selectedType`);
+  const showDescription = form.watch(`questions.${index}.showDescription`);
   const settings = form.watch(`questions.${index}.questionSettings`);
   const questionId = form.watch(`questions.${index}.questionId`);
   const [options, setOptions] = useState<OptionItemsType[]>([]);
@@ -64,6 +65,7 @@ export function MultiChoiceTypeAnswer({
         currentQuestion={question}
         description={questionDescription}
         isRequired={isRequired}
+        showDescription={showDescription}
       />
 
       <div className="w-full flex flex-col items-start justify-start gap-y-4">
@@ -78,10 +80,10 @@ export function MultiChoiceTypeAnswer({
                 <label
                   key={id}
                   style={{
-                    backgroundColor: isSelected ? bgColor : rgba,
+                    backgroundColor: isSelected ? bgColor : '',
                   }}
                   className={cn(
-                    "w-full h-fit rounded-lg  px-4 py-6 relative",
+                    "w-full h-fit rounded-lg  px-4 py-6 border relative",
                     isSelected && " text-white"
                   )}
                 >

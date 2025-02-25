@@ -21,6 +21,7 @@ import {
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/custom";
+import { LuArrowLeftToLine } from "react-icons/lu";
 import {
   forwardRef,
   useImperativeHandle,
@@ -904,9 +905,7 @@ function FilterActions({
           </div>
 
           <button onClick={() => setIsFilter(false)}>
-            <span className="trnsform -rotate-90">
-              <InlineIcon icon="fluent:arrow-upload-32-regular" fontSize={24} />
-            </span>
+         <LuArrowLeftToLine size={22}/>
           </button>
         </div>
         {/** date range */}
@@ -1129,7 +1128,7 @@ const IndividualResponse = forwardRef<
           <p className="text-lg sm:text-xl">Completion Rate</p>
           <h1 className="text-[36px] font-bold">{completionRate}%</h1>
         </div>
-   
+      
       </div>
 
       <div
@@ -1148,13 +1147,13 @@ const IndividualResponse = forwardRef<
           />
         </div>
         <div className={cn("w-full", isFilter && "col-span-7")}>
-          <button
+        {!isFilter &&  <button
             onClick={() => setIsFilter(true)}
             className=" mb-2 flex items-center gap-x-1 text-mobile"
           >
             <InlineIcon icon="mage:filter" fontSize={15} />
             <p>Filter</p>
-          </button>
+          </button>}
           <div className="w-full bg-white rounded-lg  px-6 py-10">
             <div className="flex flex-col items-center justify-center mx-auto gap-3">
               <p className="font-semibold text-base sm:text-lg">
