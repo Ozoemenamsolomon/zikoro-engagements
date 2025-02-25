@@ -175,7 +175,7 @@ export default function AddQuizQuestions({
                   <TrailingHeadRoute
                     as="button"
                     Icon={SettingsIcon}
-                    title="Quiz Settings"
+                    title={`${data?.interactionType === 'quiz'? "Quiz":"Poll"} Settings`}
                     onClick={toggleSetting}
                   />
                 }

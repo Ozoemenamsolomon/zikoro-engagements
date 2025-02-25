@@ -118,7 +118,7 @@ export function CreateQuiz({
             isCollectPhone: false,
             isCollectEmail: false,
             isForm: false,
-            showAnswer: true,
+            showAnswer: interactionType === 'quiz'? true: false,
             showResult: true,
             eventAlias: "",
           },

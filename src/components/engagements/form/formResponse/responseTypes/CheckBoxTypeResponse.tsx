@@ -5,6 +5,12 @@ import { useMemo, useState } from "react";
 import { IoPieChartOutline } from "react-icons/io5";
 import { RiBarChartHorizontalLine } from "react-icons/ri";
 import Image from "next/image";
+
+export const generateRandomColor = () => {
+  return `#${Math.floor(Math.random() * 16777215)
+    .toString(16)
+    .padStart(6, "0")}`;
+};
 import {
   PieChart,
   Pie,
@@ -59,11 +65,7 @@ export function CheckBoxTypeResponse({
     return reformedArray.reduce((acc, curr) => acc + curr?.value, 0) || 0;
   }, [reformedArray]);
 
-  const generateRandomColor = () => {
-    return `#${Math.floor(Math.random() * 16777215)
-      .toString(16)
-      .padStart(6, "0")}`;
-  };
+
 
   const COLORS = reformedArray.map(() => generateRandomColor());
 
