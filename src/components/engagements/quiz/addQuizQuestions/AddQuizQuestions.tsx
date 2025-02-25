@@ -104,6 +104,10 @@ export default function AddQuizQuestions({
 
   //console.log(isAddNew);
 
+  const isQuiz = useMemo(() => {
+    return data.interactionType === "quiz";
+  }, [data]);
+
   if (isLoading) {
     return <LoadingState />;
   }
@@ -175,7 +179,6 @@ export default function AddQuizQuestions({
                     onClick={toggleSetting}
                   />
                 }
-          
               >
                 {(isAddNew ||
                   question !== null ||
@@ -202,7 +205,9 @@ export default function AddQuizQuestions({
           <Button
             onClick={() =>
               router.push(
-                `/e/${workspaceAlias}/quiz/o/${quizId}/presentation?type=preview`
+                `/e/${workspaceAlias}/${
+                  isQuiz ? "quiz" : "poll"
+                }/o/${quizId}/presentation?type=preview`
               )
             }
             disabled={isDisabled}
@@ -216,7 +221,11 @@ export default function AddQuizQuestions({
           </Button>
           <Button
             onClick={() => {
-              router.push(`/e/${workspaceAlias}/quiz/o/${quizId}/analytics`);
+              router.push(
+                `/e/${workspaceAlias}/${
+                  isQuiz ? "quiz" : "poll"
+                }/o/${quizId}/analytics`
+              );
             }}
             disabled={isDisabled}
             className="gap-x-2 bg-basePrimary-200  border-basePrimary border  rounded-xl h-9"
@@ -231,34 +240,40 @@ export default function AddQuizQuestions({
 
         <Button
           onClick={() =>
-            router.push(`/e/${workspaceAlias}/quiz/o/${quizId}/presentation`)
+            router.push(
+              `/e/${workspaceAlias}/${
+                isQuiz ? "quiz" : "poll"
+              }/o/${quizId}/presentation`
+            )
           }
           disabled={isDisabled}
           className="rounded-full h-fit sm:bg-basePrimary-200 px-2 sm:border border-basePrimary gap-x-2"
         >
           <PlayQuizIcon />
           <p className="bg-basePrimary hidden sm:block text-sm sm:text-base gradient-text">
-            Start Quiz
+            Start {isQuiz ? "Quiz" : "Poll"}
           </p>
         </Button>
 
         <div className="flex items-center  gap-x-2">
-          <Button
-            onClick={() => {
-              router.push(
-                `/e/${workspaceAlias}/quiz/a/${quizId}/leaderboard?type=o`
-              );
-            }}
-            disabled={isDisabled}
-            className="gap-x-2 bg-basePrimary-200 px-2 hidden sm:flex border-basePrimary border  rounded-xl h-9"
-          >
-            <PeopleIcon />
-            <p className="bg-basePrimary gradient-text">
-              {Array.isArray(data?.quizParticipants)
-                ? data?.quizParticipants?.length
-                : "0"}
-            </p>
-          </Button>
+          {isQuiz && (
+            <Button
+              onClick={() => {
+                router.push(
+                  `/e/${workspaceAlias}/quiz/a/${quizId}/leaderboard?type=o`
+                );
+              }}
+              disabled={isDisabled}
+              className="gap-x-2 bg-basePrimary-200 px-2 hidden sm:flex border-basePrimary border  rounded-xl h-9"
+            >
+              <PeopleIcon />
+              <p className="bg-basePrimary gradient-text">
+                {Array.isArray(data?.quizParticipants)
+                  ? data?.quizParticipants?.length
+                  : "0"}
+              </p>
+            </Button>
+          )}
           {/* <Button
              
               disabled={isDisabled}
@@ -307,9 +322,17 @@ export default function AddQuizQuestions({
         />
       )}
 
-      {isShare && data && <ShareEngagement title={data?.coverTitle} urlLink={data?.interactionType === "poll"
-      ? `https://engagements.zikoro.com/e/${data?.workspaceAlias}/poll/a/${data?.quizAlias}/presentation`
-      : `https://engagements.zikoro.com/e/${data?.workspaceAlias}/quiz/a/${data?.quizAlias}/presentation`} close={onShare} />}
+      {isShare && data && (
+        <ShareEngagement
+          title={data?.coverTitle}
+          urlLink={
+            data?.interactionType === "poll"
+              ? `https://engagements.zikoro.com/e/${data?.workspaceAlias}/poll/a/${data?.quizAlias}/presentation`
+              : `https://engagements.zikoro.com/e/${data?.workspaceAlias}/quiz/a/${data?.quizAlias}/presentation`
+          }
+          close={onShare}
+        />
+      )}
     </>
   );
 }
@@ -318,9 +341,7 @@ function EmptyQuestion({ addNewQuestion }: { addNewQuestion: () => void }) {
   return (
     <div className="w-full min-h-screen bg-white rounded-lg p-4 sm:p-6 flex items-center justify-center flex-col gap-5">
       <EmptyQuizQuestionIcon />
-      <h2 className="font-semibold text-base sm:text-lg mt-5">
-        Your Quiz is Empty
-      </h2>
+      <h2 className="font-semibold text-base sm:text-lg mt-5">No Question`</h2>
       <Button
         onClick={addNewQuestion}
         className="bg-basePrimary h-11 text-white font-medium"

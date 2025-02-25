@@ -1,5 +1,6 @@
 
-import AddQuizQuestions from "@/components/engagements/quiz/addQuizQuestions/AddQuizQuestions";
+
+import QuizOrganizerView from "@/components/engagements/quiz/presentation/organizer/QuizOrganizerView";
 import { Metadata } from "next";
 export const generateMetadata = async ({
   params,
@@ -18,7 +19,7 @@ export const generateMetadata = async ({
   const quizDetail = await response;
 
   return {
-    title: `${quizDetail?.data?.coverTitle || "Zikoro Quiz"} `,
+    title: `${quizDetail?.data?.coverTitle || "Zikoro Poll Presentation"} `,
     description: `${quizDetail?.data?.description ?? ""}`,
 
     openGraph: {
@@ -34,5 +35,5 @@ export default function Page({
 }: {
   params: { quizId: string; workspaceAlias:string; };
 }) {
-  return <AddQuizQuestions quizId={quizId} workspaceAlias={workspaceAlias} />;
+  return <QuizOrganizerView quizId={quizId} workspaceAlias={workspaceAlias} />;
 }

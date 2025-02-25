@@ -26,11 +26,12 @@ export function CreateQuiz({
   quiz,
   refetch,
   organization,
-  
+  interactionType,
 }: {
   quiz?: TQuiz<TQuestion[]>;
   refetch?: () => Promise<any>;
   organization?: TOrganization;
+  interactionType: string;
 }) {
   const [isOpen, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -100,7 +101,7 @@ export function CreateQuiz({
           createdBy: user?.id,
           coverImage: image as string,
           quizAlias: alias,
-          interactionType: "quiz",
+          interactionType: interactionType,
           lastUpdated_at: new Date().toISOString(),
           accessibility: {
             visible: false,
@@ -119,7 +120,7 @@ export function CreateQuiz({
             isForm: false,
             showAnswer: true,
             showResult: true,
-            eventAlias: ""
+            eventAlias: "",
           },
           branding: {
             eventName: true,
@@ -133,7 +134,9 @@ export function CreateQuiz({
     refetch?.();
     if (!quiz) {
       window.open(
-        `/e/${values?.workspaceAlias}/quiz/o/${alias}/add-question`,
+        interactionType === "quiz"
+          ? `/e/${values?.workspaceAlias}/quiz/o/${alias}/add-question`
+          : `/e/${values?.workspaceAlias}/poll/o/${alias}/add-question`,
         "_self"
       );
     }

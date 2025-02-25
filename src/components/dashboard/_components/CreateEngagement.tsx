@@ -37,9 +37,11 @@ function RenderCreateEngagement({ type }: { type: number }) {
     case CreateType.qa:
       return <CreateQa />;
     case CreateType.quiz:
-      return <CreateQuiz />;
+      return <CreateQuiz interactionType="quiz" />;
     case CreateType.form:
       return <CreateForm />;
+    case CreateType.polls:
+      return <CreateQuiz interactionType="poll" />;
     default:
       return <></>;
   }
