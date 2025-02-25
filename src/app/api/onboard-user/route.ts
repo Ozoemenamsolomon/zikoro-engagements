@@ -6,19 +6,19 @@ export async function POST(req: NextRequest) {
 
   if (req.method === "POST") {
     try {
-      // Query users who registered 2 minutes ago
-      const twoMinutesAgo = new Date(
-        new Date().getTime() - 2 * 60 * 1000
+      // Query users who registered 2 hours ago
+      const twoHoursAgo = new Date(
+        new Date().getTime() - 2 * 60 * 60 * 1000
       ).toISOString();
-      const oneSecondBeforeTwoMinutesAgo = new Date(
-        new Date().getTime() - 2 * 60 * 1000 - 1000
+      const oneSecondBeforeTwoHoursAgo = new Date(
+        new Date().getTime() - 2 * 60 * 60 * 1000 - 1000
       ).toISOString();
-
+      
       const { data: users, error } = await supabase
         .from("users")
         .select("*")
-        .gte("created_at", oneSecondBeforeTwoMinutesAgo)
-        .lte("created_at", twoMinutesAgo);
+        .gte("created_at", oneSecondBeforeTwoHoursAgo)
+        .lte("created_at", twoHoursAgo);
       // .eq('welcome_email_sent', false); // Assuming you have a column to track if the email was sent
 
       if (error) {
@@ -34,14 +34,7 @@ export async function POST(req: NextRequest) {
 
       // Send email to each user
       for (const user of users) {
-        const { error } = await supabase
-          .from("quiz")
-          .upsert({
-            coverImage: "",
-            title: user.email,
-            description: "Hello there",
-            workspaceAlias:"pPdselJxWSFKfkP5pYlv"
-          });
+    
         // const resp = await client.sendMail({
         //   from: {
         //     address: process.env.NEXT_PUBLIC_EMAIL,
@@ -91,3 +84,16 @@ export async function POST(req: NextRequest) {
 }
 
 export const dynamic = "force-dynamic";
+
+
+/**
+ const sevenDaysAgo = new Date(
+  new Date().getTime() - 7 * 24 * 60 * 60 * 1000
+).toISOString();
+
+const { data: unverifiedUsers, error } = await supabase
+  .from("auth.users")
+  .select("*")
+  .is("email_confirmed_at", null) // Email not verified
+  .gte("created_at", sevenDaysAgo); // Registered in the last 7 days
+ */
