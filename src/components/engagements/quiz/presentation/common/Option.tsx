@@ -5,6 +5,8 @@ import { TAnswer, TQuiz, TQuestion } from "@/types/quiz";
 import Image from "next/image";
 import { useMemo } from "react";
 
+
+
 type TOption = {
   optionId: string;
   isAnswer: string;
@@ -47,7 +49,9 @@ export function Option({
   }, [option]);
 
   //  console.log(isCorrectAnswer, { isCorrect: option?.isCorrect });
-
+const isQuiz = useMemo(() => {
+  return quiz?.interactionType === 'quiz'
+},[quiz])
   return (
     <>
       {!isAttendee ? (
@@ -63,6 +67,7 @@ export function Option({
           isImageOption={isImageOption}
         />
       ) : isImageOption ? (
+        <>
         <button
           disabled={isDisabled}
           onClick={() => {
@@ -147,7 +152,9 @@ export function Option({
             className="w-28 rounded-lg object-cover h-32"
           />
         </button>
+        </>
       ) : (
+        <>
         <button
           disabled={isDisabled}
           onClick={() => {
@@ -235,6 +242,7 @@ export function Option({
             </div>
           )}
         </button>
+      </>
       )}
     </>
   );
@@ -264,6 +272,7 @@ export function OrganizerQuestOption({
   return (
     <>
       {isImageOption ? (
+        <>
         <button
           className={cn(
             "w-fit text-gray-500   h-fit rounded-lg p-2 flex flex-col items-center gap-3 bg-basePrimary-100",
@@ -309,7 +318,9 @@ export function OrganizerQuestOption({
             className="w-32 rounded-lg object-cover h-32"
           />
         </button>
+        </>
       ) : (
+        <>
         <button
           className={cn(
             "w-full px-4 text-gray-500 gap-y-1 mb-4  min-h-[60px] h-fit rounded-lg  bg-basePrimary-100",
@@ -357,7 +368,9 @@ export function OrganizerQuestOption({
             </div>
           )}
         </button>
+        </>
       )}
     </>
   );
 }
+

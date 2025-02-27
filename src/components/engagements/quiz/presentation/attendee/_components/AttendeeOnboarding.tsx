@@ -39,7 +39,6 @@ export function AttendeeOnboarding({
   refetchLobby,
   organization,
   isAttendee,
-  
 }: {
   close: () => void;
   organization: TOrganization;
@@ -106,7 +105,6 @@ export function AttendeeOnboarding({
   //     }
   //   }
   // }, [quiz]);
-
 
   function generateAvatars() {
     const avatars = Array.from({ length: 10 }).map((_, index) => {
@@ -192,9 +190,9 @@ export function AttendeeOnboarding({
               {
                 ...playerDetail,
                 nickName:
-                type === "preview"
-                  ? playerDetail?.nickName + "@P"
-                  : playerDetail?.nickName,
+                  type === "preview"
+                    ? playerDetail?.nickName + "@P"
+                    : playerDetail?.nickName,
                 id: id,
 
                 joinedAt: new Date().toISOString(),
@@ -204,7 +202,6 @@ export function AttendeeOnboarding({
             ],
       };
 
-    
       await updateQuiz({ payload });
     }
 
@@ -250,7 +247,7 @@ export function AttendeeOnboarding({
   }, [isAttendee]);
 
   useEffect(() => {
-    if (quiz  && !query) {
+    if (quiz && !query) {
       if (quiz?.formAlias) {
         router.push(
           `/e/${quiz?.workspaceAlias}/form/a/${quiz?.formAlias}?redirect=quiz&id=${id}&link=${window.location.href}`
@@ -258,7 +255,6 @@ export function AttendeeOnboarding({
       }
     }
   }, [quiz]);
-
 
   return (
     <>
@@ -362,7 +358,11 @@ export function AttendeeOnboarding({
                           ? "Email"
                           : "Phone Number"
                       } is required for this game to store your points and
-                    possible follow-up should you appear on the leaderboard.`}
+                    possible follow-up ${
+                      quiz?.interactionType === "quiz"
+                        ? "should you appear on the leaderboard"
+                        : ""
+                    }.`}
                     </p>
                   </div>
                 )}

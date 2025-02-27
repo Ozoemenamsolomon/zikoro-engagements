@@ -20,6 +20,7 @@ export interface TEngagementFormQuestion {
       optionFields?: any;
       questionDescription?:string;
       questionSettings?: any;
+      showDescription: boolean;
     }[];
     formAlias: string;
     eventAlias: string;
@@ -46,6 +47,7 @@ export interface TEngagementFormQuestion {
       isRedirectUrl:boolean;
       engagementId?:string;
       engagementType?:string;
+      hideNumber: boolean;
     };
   }
   

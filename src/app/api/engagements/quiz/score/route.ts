@@ -1,9 +1,8 @@
-
 import { NextRequest, NextResponse } from "next/server";
 import { deploymentUrl } from "@/utils";
 import { createClient } from "@/utils/supabase/server";
 export async function PATCH(req: NextRequest) {
-  const supabase = createClient()
+  const supabase = createClient();
   if (req.method === "PATCH") {
     try {
       const params = await req.json();
@@ -96,21 +95,27 @@ export async function PATCH(req: NextRequest) {
               ">${quiz?.coverTitle}</p>
 
 
-            ${quiz?.interactionType !== "poll" &&  `<p style="
+            ${
+              quiz?.interactionType !== "poll" &&
+              `<p style="
               font-weight:600;
               font-size:24px;
               
               margin-bottom:1rem;
               margin-top:3rem;
               text-align:center;
-              ">${Number(mailto?.attendeePoint)?.toFixed(0)}</p>`}
-             ${ quiz?.interactionType !== "poll" && `<p
+              ">${Number(mailto?.attendeePoint)?.toFixed(0)}</p>`
+            }
+             ${
+               quiz?.interactionType !== "poll" &&
+               `<p
               style="
               text-align:center;
               font-weight:600;
               font-size:20px;
               "
-              >Points</p>`}
+              >Points</p>`
+             }
 
               <div
               style="
@@ -267,7 +272,8 @@ export async function PATCH(req: NextRequest) {
         }
       );
     } catch (error) {
-      console.error(error, "patch");
+      console.error(JSON.stringify(error), "patch");
+
       return NextResponse.json(
         {
           error: "An error occurred while making the request.",

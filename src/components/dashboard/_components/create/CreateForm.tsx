@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { formCreationSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import _ from "lodash";
 import useUserStore from "@/store/globalUserStore";
 import { z } from "zod";
@@ -41,6 +41,33 @@ export function CreateForm({
     usePostRequest<Partial<TEngagementFormQuestion>>("engagements/form");
   const form = useForm<z.infer<typeof formCreationSchema>>({
     resolver: zodResolver(formCreationSchema),
+    defaultValues: engagementForm ? {formSettings: engagementForm?.formSettings} : {
+      formSettings: {
+        isConnectedToEngagement: false,
+        showForm: "beforeEngagement",
+        redirectUrl: "",
+        isCoverScreen: true,
+        displayType: "listing",
+        questionPerSlides: "1",
+        titleFontSize: "36",
+        headingFontSize: "24",
+        backgroundColor: "#ffffff",
+        textColor: "#000000",
+        buttonColor: "#001FFC",
+        textFontSize: "14",
+        isCoverImage: true,
+        buttonText: "Submit",
+        startButtonText: "Start",
+        isCollectEmail: false,
+        isCollectPhone: false,
+        connectToEvent:false,
+        showResult:false,
+        isRedirectUrl:false,
+        engagementId:'',
+        engagementType:'',
+        hideNumber: false
+      },
+    }
   });
 
   const coverImg = form.watch("coverImage");
@@ -95,30 +122,7 @@ export function CreateForm({
             createdBy: user?.id,
             coverImage: image as string,
             formAlias: alias,
-            formSettings: {
-              isConnectedToEngagement: false,
-              showForm: "beforeEngagement",
-              redirectUrl: "",
-              isCoverScreen: true,
-              displayType: "listing",
-              questionPerSlides: "1",
-              titleFontSize: "36",
-              headingFontSize: "24",
-              backgroundColor: "#ffffff",
-              textColor: "#000000",
-              buttonColor: "#001FFC",
-              textFontSize: "14",
-              isCoverImage: true,
-              buttonText: "Submit",
-              startButtonText: "Start",
-              isCollectEmail: false,
-              isCollectPhone: false,
-              connectToEvent:false,
-              showResult:false,
-              isRedirectUrl:false,
-              engagementId:'',
-              engagementType:''
-            },
+          
           },
     });
     setLoading(false);
@@ -148,6 +152,13 @@ export function CreateForm({
       };
     } else return "";
   }, [organization]);
+
+
+
+  const prevStartButtonText = useWatch({
+    control: form.control,
+    name: "formSettings.startButtonText",
+  });
 
   return (
     <>
@@ -192,7 +203,7 @@ export function CreateForm({
               </InputOffsetLabel>
             )}
           />
-          {/**
+   {engagementForm &&       
               <FormField
         control={form.control}
         name="formSettings.startButtonText"
@@ -207,8 +218,8 @@ export function CreateForm({
             />
           </InputOffsetLabel>
         )}
-      />
-           */}
+      />}
+          
           <div className="w-full flex items-end gap-x-2">
             <FormField
               control={form.control}

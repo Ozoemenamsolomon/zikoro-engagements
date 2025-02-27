@@ -469,7 +469,7 @@ export default function QuizAttendeeView({
         <div className="w-full h-[300px] flex flex-col bg-basePrimary-200 rounded-lg items-center justify-center">
           <InlineIcon icon="clarity:sad-face-line" fontSize={30} />
           <p className="font-medium text-base sm:text-lg">
-            You don't have access to this quiz
+            You don't have access to this {quiz?.interactionType === 'quiz' ? "quiz" : "poll"}
           </p>
         </div>
       )}

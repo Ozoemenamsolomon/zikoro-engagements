@@ -46,7 +46,7 @@ export function SendMailModal<T>({
   answers?: TAnswer[];
   setIsQuizResult: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const { mutateData: updateQuiz, isLoading } = useMutateData("/quiz/score");
+  const { mutateData: updateQuiz, isLoading } = useMutateData("/engagements/quiz/score");
   const form = useForm<z.infer<typeof sendMailQuizSchema>>({
     resolver: zodResolver(sendMailQuizSchema),
     defaultValues: {

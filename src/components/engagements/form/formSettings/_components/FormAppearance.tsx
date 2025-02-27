@@ -287,18 +287,18 @@ export default function FormAppearance({
     control: form.control,
     name: "formSettings.buttonColor",
   });
-  const titleFontSize = useWatch({
-    control: form.control,
-    name: "formSettings.titleFontSize",
-  });
-  const headingFontSize = useWatch({
-    control: form.control,
-    name: "formSettings.headingFontSize",
-  });
-  const textFontSize = useWatch({
-    control: form.control,
-    name: "formSettings.textFontSize",
-  });
+  // const titleFontSize = useWatch({
+  //   control: form.control,
+  //   name: "formSettings.titleFontSize",
+  // });
+  // const headingFontSize = useWatch({
+  //   control: form.control,
+  //   name: "formSettings.headingFontSize",
+  // });
+  // const textFontSize = useWatch({
+  //   control: form.control,
+  //   name: "formSettings.textFontSize",
+  // });
   const questionPerSlides = useWatch({
     control: form.control,
     name: "formSettings.questionPerSlides",
@@ -309,10 +309,15 @@ export default function FormAppearance({
     name: "formSettings.buttonText",
   });
 
-  const prevStartButtonText = useWatch({
+  const hideNumber = useWatch({
     control: form.control,
-    name: "formSettings.startButtonText",
+    name: "formSettings.hideNumber",
   });
+
+  // const prevStartButtonText = useWatch({
+  //   control: form.control,
+  //   name: "formSettings.startButtonText",
+  // });
   return (
     <div className="w-full flex flex-col items-start justify-start gap-y-4 sm:gap-y-6">
       <div className="w-full flex items-center justify-between gap-x-4">
@@ -331,6 +336,22 @@ export default function FormAppearance({
           }}
         
           
+        />
+      </div>
+      <div className="flex w-full text-mobile sm:text-sm items-center justify-between">
+        <div className="flex flex-col items-start justify-start">
+          <p>Hide Number</p>
+          {/* <p className="text-xs text-gray-500">
+            User will see how the fill form immediately after the filling the
+            form
+          </p> */}
+        </div>
+        <Switch
+          checked={hideNumber}
+          onCheckedChange={(checked) =>
+            form.setValue("formSettings.hideNumber", checked)
+          }
+          className=""
         />
       </div>
 

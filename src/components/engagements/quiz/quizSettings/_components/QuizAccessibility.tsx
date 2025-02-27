@@ -33,8 +33,6 @@ function AddMusic({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    
-
     const reader = new FileReader();
     reader.onload = (event) => {
       const base64String = event.target?.result as string;
@@ -42,7 +40,7 @@ function AddMusic({
         label: file.name,
         value: base64String,
       };
-    //  console.log(file.name);
+      //  console.log(file.name);
       addMusic(musicObject);
     };
     reader.readAsDataURL(file);
@@ -191,7 +189,7 @@ export function QuizAccessibility({
   const [loading, setLoading] = useState(false);
   const { postData, isLoading } =
     usePostRequest<Partial<TQuiz<TQuestion[]>>>("engagements/quiz");
-  const [accessibility, setAccessibility] = useState(quiz?.accessibility)
+  const [accessibility, setAccessibility] = useState(quiz?.accessibility);
   const isQuiz = useMemo(() => {
     return quiz.interactionType === "quiz";
   }, [quiz]);
@@ -415,7 +413,9 @@ export function QuizAccessibility({
         <div className="flex flex-col items-start justify-start">
           <p>Show timer</p>
           <p className="text-xs text-gray-500">
-            The timer shown while attempting the quiz will be turned off.
+            The timer shown while attempting the
+            {quiz?.interactionType === "quiz" ? "quiz" : "poll"} will be turned
+            off.
           </p>
         </div>
         <Switch

@@ -38,7 +38,7 @@ export function Advert({
   const quizLink =
     quiz?.interactionType === "poll"
       ? `https://engagements.zikoro.com/e/${quiz?.workspaceAlias}/poll/a/${quiz?.quizAlias}/presentation`
-      : `https://engagements.zikoro.com/e/${quiz?.workspaceAlias}/quiz/a/${quiz?.quizAlias}/presentation?type=${preview}`;
+      : `https://engagements.zikoro.com/e/${quiz?.workspaceAlias}/quiz/a/${quiz?.quizAlias}/presentation`;
   return (
     <div
       className={cn(

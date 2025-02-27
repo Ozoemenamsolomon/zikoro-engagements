@@ -2,7 +2,7 @@
 
 import { formQuestion } from "@/schemas";
 import { useEffect, useMemo, useState } from "react";
-import { UseFormReturn } from "react-hook-form";
+import { UseFormReturn, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { FormQuestionDescription } from "../formQuestionDescription";
 import { TEngagementFormQuestion } from "@/types/form";
@@ -160,6 +160,13 @@ export function FormImageUploadType({
       }
     }, [options]);
 
+
+    const showDescription = useWatch({
+      control: form.control,
+      name: "showDescription",
+    });
+  
+
   return (
     <>
       <div className="w-full flex flex-col items-start justify-start gap-3">
@@ -174,12 +181,13 @@ export function FormImageUploadType({
           
         />
 
-        <FormQuestionDescription
-          defaultDescriptionValue={defaultDescriptionValue}
-          form={form}
-         
-        />
-
+       
+{showDescription && (
+          <FormQuestionDescription
+            defaultDescriptionValue={defaultDescriptionValue}
+            form={form}
+          />
+        )}
         <div className="w-full flex flex-wrap justify-center items-center gap-3">
           {options?.map((option, index) => (
             <UploadOptionItem

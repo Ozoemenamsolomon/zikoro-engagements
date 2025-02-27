@@ -29,6 +29,8 @@ import { isAfter } from "date-fns";
 import { usePostRequest } from "@/hooks/services/requests";
 import { TopSection } from "../../_components";
 import Link from "next/link";
+import { generateRandomColor } from "@/components/engagements/form/formResponse/responseTypes";
+import { InlineIcon } from "@iconify/react/dist/iconify.js";
 
 export type QuestionViewRef = {
   onNextBtnClick: () => void;
@@ -70,6 +72,7 @@ type TQuestionProps = {
   getLiveParticipant: () => Promise<any>;
   actualQuiz: TQuiz<TQuestion[]>;
 };
+const optionLetter = ["A", "B", "C", "D"];
 
 export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(
   (
@@ -336,8 +339,6 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(
         setCurrentQuestionIndex(currentQuestionIndex - 1);
       }
     }
-
-    const optionLetter = ["A", "B", "C", "D"];
 
     // console.log("answer", answer)
     async function selectOption(id: string) {
@@ -622,7 +623,9 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(
                       )}
                     </div>
 
-                    <div
+                   {quiz?.interactionType !== 'quiz' && showAnswerMetric ?
+                   <AnsweredPollMetrics options={currentQuestion?.options!} answer={answer}/>
+                   : <div
                       className={cn(
                         "w-full",
                         isImageOption &&
@@ -652,7 +655,7 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(
                         />
                       ))}
                     </div>
-
+}
                     <div
                       className={cn(
                         "w-full flex items-start justify-between",
@@ -680,11 +683,15 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(
                             }`}</p>
                           </div>
                         )}
-                      <p className="self-end bg-basePrimary-200 rounded-3xl text-sm text-basePrimary px-2 py-1">{`${Number(
-                        currentQuestion?.points
-                      )} ${
-                        Number(currentQuestion?.points) > 1 ? `pts` : `pt`
-                      }`}</p>
+                      {quiz?.interactionType === "quiz" ? (
+                        <p className="self-end bg-basePrimary-200 rounded-3xl text-sm text-basePrimary px-2 py-1">{`${Number(
+                          currentQuestion?.points
+                        )} ${
+                          Number(currentQuestion?.points) > 1 ? `pts` : `pt`
+                        }`}</p>
+                      ) : (
+                        <></>
+                      )}
                     </div>
 
                     {quiz?.accessibility?.review && (
@@ -755,7 +762,9 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(
                         target="_blank"
                         className="text-center bg-white text-xs sm:text-sm w-full  p-2 "
                       >
-                        Create your Quiz with Zikoro
+                        Create your{" "}
+                        {quiz?.interactionType === "quiz" ? "Quiz" : "Poll"}{" "}
+                        with Zikoro
                       </Link>
                     )}
 
@@ -830,6 +839,64 @@ function Transition({
           text={`${secondsLeft === 0 ? "GO" : secondsLeft}`}
         />
       </div>
+    </div>
+  );
+}
+type TOption = {
+  optionId: string;
+  isAnswer: string;
+  option?: any;
+  isCorrect: boolean | string;
+};
+
+export function AnsweredPollMetrics({
+  options,
+  answer,
+}: {
+  options: TOption[];
+  answer: TAnswer[];
+}) {
+  const COLORS = options.map((r) => generateRandomColor());
+  return (
+    <div className="w-full h-[350px] flex items-start gap-x-3 justify-center">
+      {options?.map((option, index) => {
+
+        const chosedOption = useMemo(() => {
+          const i = answer?.filter((ans) => {
+            return option?.optionId === ans?.selectedOptionId?.optionId;
+          });
+
+          return i?.length || 0;
+        }, [answer]);
+        
+        return (
+          <div className="w-[60px] h-full flex flex-col items-center gap-2">
+            <div className="h-[280px] w-[60px] sm:w-[90px]">
+              <div
+                style={{
+                  backgroundColor: COLORS[index],
+                  height: chosedOption
+                    ? `${((chosedOption / answer?.length) * 100).toFixed(0)}%`
+                    : "0%",
+                }}
+                className="w-full flex flex-col items-center justify-center rounded-t-lg"
+              >
+                {chosedOption > 0 && (
+                  <div className="bg-white/50 rounded-3xl px-3 py-2 flex gap-1 flex-col items-center justify-center">
+                    {`${((chosedOption / answer?.length) * 100).toFixed(0)}%`}
+                    <p className="text-xs flex items-center gap-x-1">
+                      <InlineIcon icon="mdi:users" fontSize={16} />
+                      <span>{chosedOption}</span>
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <p>{optionLetter[index]}</p>
+          </div>
+        );
+      })}
     </div>
   );
 }

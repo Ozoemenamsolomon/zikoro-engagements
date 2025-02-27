@@ -75,7 +75,7 @@ export function FormContactType({
   }, [form, selectedType]);
   const order = ["firstName", "lastName", "phoneNumber", "email", "company"];
 
-  function togggleRequired(isRequired:boolean) {
+  function togggleRequired(isRequired: boolean) {
     if (isRequired) {
       setSelectedType({
         firstName: true,
@@ -100,11 +100,15 @@ export function FormContactType({
       return;
     }
   }
+
+  const showDescription = useWatch({
+    control: form.control,
+    name: "showDescription",
+  });
   return (
     <>
       <div className="w-full flex flex-col items-start justify-start gap-3">
         <FormQuestionField
-       
           defaultQuestionValue={defaultQuestionValue}
           addedImage={image}
           form={form}
@@ -146,7 +150,7 @@ export function FormContactType({
                       e.stopPropagation();
                       e.preventDefault();
                       if (selectedType[key as keyof ContactType]) {
-                        form.setValue('isRequired', false)
+                        form.setValue("isRequired", false);
                       }
 
                       setSelectedType((prev) => ({
@@ -163,10 +167,12 @@ export function FormContactType({
           }
         />
 
-        <FormQuestionDescription
-          defaultDescriptionValue={defaultDescriptionValue}
-          form={form}
-        />
+        {showDescription && (
+          <FormQuestionDescription
+            defaultDescriptionValue={defaultDescriptionValue}
+            form={form}
+          />
+        )}
         <div className="w-full flex flex-col items-start justify-start">
           <p className="w-full border-b p-3">First Name</p>
           <p className="w-full border-b p-3">Last Name</p>

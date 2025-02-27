@@ -28,6 +28,7 @@ export function DropDownTypeAnswer({
   const question = form.watch(`questions.${index}.question`);
   const isRequired = form.watch(`questions.${index}.isRequired`);
   const questionImage = form.watch(`questions.${index}.questionImage`);
+  const showDescription = form.watch(`questions.${index}.showDescription`);
   const [isOpen, setOpen] = useState(false);
   const selectedType = form.watch(`questions.${index}.selectedType`);
   const settings = form.watch(`questions.${index}.questionSettings`);
@@ -65,6 +66,7 @@ export function DropDownTypeAnswer({
         currentQuestion={question}
         description={questionDescription}
         isRequired={isRequired}
+        showDescription={showDescription}
       />
 
       <div

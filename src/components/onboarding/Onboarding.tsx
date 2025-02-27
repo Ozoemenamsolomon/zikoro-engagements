@@ -8,7 +8,7 @@ import {
   SProgress5,
 } from "@/constants";
 import React, { useMemo, useState } from "react";
-import { useOnboarding, useGetUserId, getUser } from "@/hooks";
+import { useOnboarding, getUser } from "@/hooks";
 import {
   useCreateUserOrganization,
   useUpdateOrganization,

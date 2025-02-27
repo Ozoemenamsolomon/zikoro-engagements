@@ -22,6 +22,7 @@ export function YesNoTypeAnswer({
   const questionImage = form.watch(`questions.${index}.questionImage`);
   const selectedType = form.watch(`questions.${index}.selectedType`);
   const questionId = form.watch(`questions.${index}.questionId`);
+  const showDescription = form.watch(`questions.${index}.showDescription`);
 
   const questionDescription = form.watch(
     `questions.${index}.questionDescription`
@@ -43,6 +44,7 @@ export function YesNoTypeAnswer({
         currentQuestion={question}
         description={questionDescription}
         isRequired={isRequired}
+        showDescription={showDescription}
       />
 
       <div className="w-full flex flex-col items-start justify-start gap-y-4">

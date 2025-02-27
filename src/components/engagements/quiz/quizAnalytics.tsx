@@ -317,7 +317,7 @@ function QuizEngagementInsight({
                       onClick={() => {
                         setActiveAnalytics(analytic);
                         setCurrentIndex(index + 1);
-                      }}
+                        }}
                       key={index}
                       className={cn(
                         "w-full flex items-center rounded-lg p-3 border h-36  flex-col gap-6",

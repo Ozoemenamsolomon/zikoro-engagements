@@ -2,7 +2,7 @@
 
 import { formQuestion } from "@/schemas";
 import {  useMemo } from "react";
-import { UseFormReturn } from "react-hook-form";
+import { UseFormReturn, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { FormQuestionDescription } from "../formQuestionDescription";
 import { TEngagementFormQuestion } from "@/types/form";
@@ -56,6 +56,12 @@ export function FormBasicType({
 //     }
 //   }, [form, selectedType]);
 
+const showDescription = useWatch({
+  control: form.control,
+  name: "showDescription",
+});
+
+
   return (
     <>
       <div className="w-full flex flex-col items-start justify-start gap-3">
@@ -69,10 +75,12 @@ export function FormBasicType({
           type={type}
         />
 
-        <FormQuestionDescription
-          defaultDescriptionValue={defaultDescriptionValue}
-          form={form}
-        />
+{showDescription && (
+          <FormQuestionDescription
+            defaultDescriptionValue={defaultDescriptionValue}
+            form={form}
+          />
+        )}
       </div>
     </>
   );
