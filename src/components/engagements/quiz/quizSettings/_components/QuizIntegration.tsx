@@ -106,7 +106,6 @@ export function QuizIntegration({
     } else return "";
   }, [events, eventAlias]);
 
-  
 
   return (
     <>

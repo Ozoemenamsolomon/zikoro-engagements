@@ -1,6 +1,7 @@
 
 import AddQuizQuestions from "@/components/engagements/quiz/addQuizQuestions/AddQuizQuestions";
 import { Metadata } from "next";
+
 export const generateMetadata = async ({
   params,
 }: {
@@ -18,7 +19,7 @@ export const generateMetadata = async ({
   const quizDetail = await response;
 
   return {
-    title: `${quizDetail?.data?.coverTitle || "Zikoro Quiz"} `,
+    title: `${quizDetail?.data?.coverTitle || "Zikoro Poll"} `,
     description: `${quizDetail?.data?.description ?? ""}`,
 
     openGraph: {

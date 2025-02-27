@@ -273,6 +273,7 @@ export function AddQuestion({
           <TopSection
             points={currentPoint}
             duration={currentDuration}
+            interactionType={quiz?.interactionType}
             changeDuration={toggleDuration}
             changePoint={togglePoint}
           />

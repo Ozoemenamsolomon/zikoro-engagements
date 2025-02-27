@@ -83,7 +83,7 @@ export function QuizSettings({
               quiz={quiz}
               refetch={refetch}
               organization={organization}
-           
+              interactionType={quiz?.interactionType}  
              
             />
           )}

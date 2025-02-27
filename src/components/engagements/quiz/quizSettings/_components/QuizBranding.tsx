@@ -2,7 +2,7 @@
 
 import { TQuestion, TQuiz } from "@/types/quiz";
 import { Switch } from "@/components/ui/switch";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
 import { usePostRequest } from "@/hooks/services/requests";
 import { Button } from "@/components/custom";
@@ -32,10 +32,14 @@ export function QuizBranding({
     setLoading(false);
     refetch();
   }
+
+    const isQuiz = useMemo(() => {
+      return quiz.interactionType === "quiz";
+    }, [quiz]);
   return (
     <div className="w-full flex flex-col items-center gap-4">
       <div className="flex w-full text-mobile sm:text-sm items-center justify-between">
-        <p>Show Quiz Name</p>
+        <p>Show {isQuiz ? "Quiz" : "Poll"} Name</p>
         <Switch
           disabled={loading}
           checked={branding?.eventName}
@@ -49,7 +53,7 @@ export function QuizBranding({
       <div className="flex flex-col items-start justify-start">
       <p>Show Zikoro Branding</p>
           <p className="text-xs text-gray-500">
-           Create your own Quiz with Zikoro will be hidden
+           Create your own {isQuiz ?"Quiz" :"Poll"} with Zikoro will be hidden
            
           </p>
         </div>
