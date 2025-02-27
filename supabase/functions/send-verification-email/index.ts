@@ -34,7 +34,7 @@ Deno.serve(async () => {
     const unverifiedUsers = users.users.filter(
       // @ts-ignore
       (user) =>
-        !user.email_verified &&
+        !user.email_confirmed_at &&
         new Date(user.created_at) >= new Date(twoHoursAgo)
     );
 

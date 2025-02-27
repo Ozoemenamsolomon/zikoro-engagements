@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 // @ts-ignore
 import { createClient } from "@supabase/supabase-js";
 
-
 const supabaseUrl = process.env.SUPABASE_URL as string;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY as string;
 const supabase = createClient(supabaseUrl, supabaseKey);
@@ -14,18 +13,17 @@ export async function POST(
   const { userId, token } = params;
   if (req.method === "POST") {
     try {
-      const {data} = await supabase.auth.admin.getUserById(userId);
+      const { data } = await supabase.auth.admin.getUserById(userId);
 
       if (data.user) {
-        const userData = data?.user
+        const userData = data?.user;
         const userToken = userData?.user_metadata?.verification_token;
 
         if (userToken === token) {
-
           await supabase.auth.admin.updateUserById(userId, {
-            user_metadata: { email_verified: true },
+            email_confirm: true,
+            
           });
-
         }
       }
 
