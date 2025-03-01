@@ -1,18 +1,15 @@
 import { createClient } from "@/utils/supabase/server";
-import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
+
 export async function POST(req: NextRequest) {
-  const supabase = createClient();
+  const supabase = createClient()
   if (req.method === "POST") {
     try {
       const params = await req.json();
 
-      const { error } = await supabase
-        .from("organizationTeamMembers_Engagement")
-        .upsert([params]);
-
-        //organizationTeamMembers
+      
+      const { error } = await supabase.from("zikorofeedback").upsert(params);
 
       if (error) {
         return NextResponse.json(
@@ -24,27 +21,14 @@ export async function POST(req: NextRequest) {
       }
       if (error) throw error;
 
-      const { error: nError } = await supabase
-      .from("organizationTeamMembers")
-      .upsert([params]);
-
-      if (nError) {
-        return NextResponse.json(
-          { nError: nError?.message },
-          {
-            status: 400,
-          }
-        );
-      }
-      if (nError) throw nError;
-
       return NextResponse.json(
-        { msg: "Organization Created Successfully" },
+        { msg: "Feedback sent Successfully" },
         {
           status: 200,
         }
       );
     } catch (error) {
+      
       return NextResponse.json(
         {
           error: "An error occurred while making the request.",
@@ -59,4 +43,6 @@ export async function POST(req: NextRequest) {
   }
 }
 
-//
+
+export const dynamic = "force-dynamic";
+

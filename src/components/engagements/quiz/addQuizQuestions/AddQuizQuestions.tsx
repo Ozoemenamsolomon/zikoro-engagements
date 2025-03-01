@@ -105,7 +105,7 @@ export default function AddQuizQuestions({
   //console.log(isAddNew);
 
   const isQuiz = useMemo(() => {
-    return data.interactionType === "quiz";
+    return data?.interactionType === "quiz";
   }, [data]);
 
   if (isLoading) {

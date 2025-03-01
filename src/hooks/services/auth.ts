@@ -1,15 +1,16 @@
 "use client";
 
 import { loginSchema, onboardingSchema } from "@/schemas/auth";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import * as z from "zod";
 import { useRouter, useSearchParams } from "next/navigation";
-import { postRequest } from "@/utils/api";
+import { getRequest, postRequest } from "@/utils/api";
 import useUserStore from "@/store/globalUserStore";
 import { createClient } from "@/utils/supabase/client";
 import { TUser } from "@/types/user";
 import { nanoid } from "nanoid";
+import { UseGetResult } from "@/utils/request";
 
 const supabase = createClient();
 
@@ -384,4 +385,50 @@ export const useGetUserId = () => {
   };
 
   return { getUserId };
+};
+
+
+
+type TUserReferrals = Pick<TUser, "created_at" | "firstName" | "lastName">;
+
+export const useGetUserReferrals = ({
+  userId,
+  referredBy,
+}: {
+  userId: string;
+  referredBy: string;
+}): UseGetResult<TUserReferrals[], "userReferrals", "getUserReferrals"> => {
+  const [userReferrals, setUserReferrals] = useState<TUserReferrals[]>([]);
+  const [isLoading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
+
+  const getUserReferrals = async () => {
+    setLoading(true);
+
+    try {
+      const { data, status } = await getRequest<TUserReferrals[]>({
+        endpoint: `/users/${userId}/referrals?referredBy=${referredBy}`,
+      });
+
+      if (status !== 200) {
+        throw data;
+      }
+      setUserReferrals(data.data);
+    } catch (error) {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getUserReferrals();
+  }, []);
+
+  return {
+    userReferrals,
+    isLoading,
+    error,
+    getUserReferrals,
+  };
 };

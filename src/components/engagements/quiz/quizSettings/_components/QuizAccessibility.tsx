@@ -573,7 +573,7 @@ export function QuizAccessibility({
         )}
       </div>
 
-      <div className="flex w-full text-mobile sm:text-sm items-center justify-between">
+      <div className="hidden w-full text-mobile sm:text-sm items-center justify-between">
         <div className="flex flex-col items-start  justify-start">
           <p>Form</p>
           <p className="text-xs text-gray-500">
