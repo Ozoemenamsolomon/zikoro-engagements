@@ -43,7 +43,7 @@ import {
 } from "./_components";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/utils/supabase/client";
-import { ScoreBoard } from "../common/ScoreBoard";
+import { MainPollResult, ScoreBoard } from "../common/ScoreBoard";
 import { InlineIcon } from "@iconify/react/dist/iconify.js";
 import { ActionModal } from "@/components/custom/ActionModal";
 import PreviewDeletionGuard from "../common/PreviewDeleteGuard";
@@ -562,16 +562,24 @@ export default function QuizOrganizerView({
       )}
       {showScoreSheet ? (
         <div className="w-full ">
-          <ScoreBoard
-            answers={answers}
-            id={id}
-            quiz={quizResult}
-            actualQuiz={quiz}
-            close={() => {
-              setShowScoreSheet(false);
-              if (audio) audio.pause();
-            }}
-          />
+          {quiz?.interactionType === "poll" && quizResult ? (
+            <MainPollResult
+              actualQuiz={quiz}
+              quizResult={quizResult}
+              answers={answers}
+            />
+          ) : (
+            <ScoreBoard
+              answers={answers}
+              id={id}
+              quiz={quizResult}
+              actualQuiz={quiz}
+              close={() => {
+                setShowScoreSheet(false);
+                if (audio) audio.pause();
+              }}
+            />
+          )}
         </div>
       ) : (
         <div className="w-full min-h-screen px-4  mx-auto  flex flex-col justify-between">
