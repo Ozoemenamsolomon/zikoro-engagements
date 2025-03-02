@@ -142,6 +142,7 @@ export function CreateQuiz({
     }
   }
 
+
   useEffect(() => {
     if (quiz) {
       form.reset({
@@ -173,7 +174,7 @@ export function CreateQuiz({
           {!quiz && (
             <div className="flex items-center flex-col justify-center mb-4 gap-y-2">
               <QuizIcon />
-              <p className="font-semibold">Create Quiz</p>
+              <p className="font-semibold">Create {interactionType === 'quiz' ? 'Quiz' : 'Poll'}</p>
             </div>
           )}
 
@@ -182,7 +183,7 @@ export function CreateQuiz({
             control={form.control}
             name="coverTitle"
             render={({ field }) => (
-              <InputOffsetLabel label="QA Title">
+              <InputOffsetLabel label="Title">
                 <Input
                   placeholder="Enter title"
                   type="text"
@@ -196,7 +197,7 @@ export function CreateQuiz({
             control={form.control}
             name="description"
             render={({ field }) => (
-              <InputOffsetLabel label="QA Description">
+              <InputOffsetLabel label="Description">
                 <Input
                   placeholder="Enter description"
                   type="text"

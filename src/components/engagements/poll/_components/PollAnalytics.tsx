@@ -21,9 +21,10 @@ import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { EmptyQuizQuestionIcon, PeopleIcon } from "@/constants";
 import { formatReviewNumber } from "@/utils";
-import { MetricCard } from "../_components";
+import { MetricCard } from "../../_components";
 import { Button } from "@/components/custom";
 import { ActionModal } from "@/components/custom/ActionModal";
+import { generateRandomColor } from "../../form/formResponse/responseTypes";
 
 type TQuizStatistics = {
   totalParticipants: number;
@@ -53,7 +54,7 @@ type QuestionOption = {
   option?: any;
   isAnswer: string;
   isCorrect: boolean | string;
-  selectionPercentage: number; // New field
+  selectionPercentage: number;
 };
 
 export type TEngagementAnalytics = {
@@ -167,120 +168,45 @@ function calculateOptionSelectionPercentage(
 function QuestOption({
   option,
   index,
+  colors,
 }: {
   option: QuestionOption;
   index: number;
+  colors: string[];
 }) {
   const isImageOption = (option?.option as string)?.startsWith("https://");
   const optionLetters = ["A", "B", "C", "D"];
+
   return (
-    <>
-      {isImageOption ? (
-        <button
-          className={cn(
-            "w-fit  text-gray-600 gap-3 flex flex-col items-center p-2 h-fit rounded-lg  bg-basePrimary-100",
-            typeof option?.optionId === option?.isAnswer &&
-              "bg-green-500 text-white"
-          )}
+    <div className="w-[60px] h-full flex flex-col items-center gap-2">
+      <div className="h-[280px] w-[60px] sm:w-[90px]">
+        <div
+          style={{
+            backgroundColor: colors[index],
+            height: option?.selectionPercentage
+              ? `${option?.selectionPercentage.toFixed(0)}%`
+              : "0%",
+          }}
+          className="w-full flex flex-col items-center justify-center rounded-t-lg"
         >
-          <span
-            className={cn(
-              "rounded-lg h-9 flex items-center text-gray-600 justify-center font-medium w-9 bg-white border border-gray-700",
-              typeof option?.optionId === option?.isAnswer && "text-green-500"
-            )}
-          >
-            {optionLetters[index]}
-          </span>
-          <div className="w-full flex items-center justify-between">
-            <div className="w-11/12 relative h-2 rounded-3xl bg-gray-200">
-              <span
-                style={{
-                  width: option?.selectionPercentage
-                    ? `${option?.selectionPercentage.toFixed(0)}%`
-                    : "0%",
-                }}
-                className={cn(
-                  "absolute rounded-3xl ring-1 ring-white bg-[#001fcc] inset-0  h-full",
-
-                  typeof option?.optionId === option?.isAnswer && "bg-green-500"
-                )}
-              ></span>
+          {option?.selectionPercentage > 0 && (
+            <div className="bg-white/50 rounded-3xl px-3 py-2 flex gap-1 flex-col items-center justify-center">
+              {`${option?.selectionPercentage.toFixed(0)}%`}
+              <p className="text-xs flex items-center gap-x-1">
+                <InlineIcon icon="mdi:users" fontSize={16} />
+                <span>{option?.selectionPercentage}</span>
+              </p>
             </div>
-
-            <div className="text-mobile">
-              <span>
-                {option?.selectionPercentage
-                  ? `${option?.selectionPercentage.toFixed(0)}%`
-                  : "0%"}
-              </span>
-            </div>
-          </div>
-          <Image
-            src={option?.option}
-            alt=""
-            width={400}
-            height={400}
-            className="w-28 rounded-lg object-cover h-32"
-          />
-        </button>
-      ) : (
-        <button
-          className={cn(
-            "w-full px-4 text-gray-600 space-y-1 mb-4  min-h-[60px] h-fit rounded-lg  bg-basePrimary-100",
-            typeof option?.optionId === option?.isAnswer &&
-              "bg-green-500 text-white"
           )}
-        >
-          <div className="w-full flex items-center justify-between">
-            <div className="w-full flex items-center gap-x-2">
-              <span
-                className={cn(
-                  "rounded-lg h-9 flex items-center text-gray-600 justify-center font-medium w-9 bg-white border border-gray-700",
-                  typeof option?.optionId === option?.isAnswer &&
-                    "text-green-500 "
-                )}
-              >
-                {optionLetters[index]}
-              </span>
+        </div>
+      </div>
 
-              <div
-                className="innerhtml"
-                dangerouslySetInnerHTML={{
-                  __html: option?.option ?? "",
-                }}
-              />
-            </div>
-
-            <div className="text-mobile">
-              <span>
-                {option?.selectionPercentage
-                  ? `${option?.selectionPercentage.toFixed(0)}%`
-                  : "0%"}
-              </span>
-            </div>
-          </div>
-
-          <div className="w-full relative h-2 rounded-3xl bg-gray-200">
-            <span
-              style={{
-                width: option?.selectionPercentage
-                  ? `${option?.selectionPercentage.toFixed(0)}%`
-                  : "0%",
-              }}
-              className={cn(
-                "absolute rounded-3xl ring-1 ring-white inset-0 bg-[#001fcc] h-full",
-                typeof option?.optionId === option?.isAnswer &&
-                  "bg-green-500 text-white"
-              )}
-            ></span>
-          </div>
-        </button>
-      )}
-    </>
+      <p>{optionLetters[index]}</p>
+    </div>
   );
 }
 
-function QuizEngagementInsight({
+function PollEngagementInsight({
   analytics,
 
   totalParticipants,
@@ -309,6 +235,10 @@ function QuizEngagementInsight({
       ).toFixed(0);
     else return 0;
   }, [activeAnalytics]);
+
+  const colors = useMemo(() => {
+    return activeAnalytics?.options?.map((r) => generateRandomColor());
+  }, [activeAnalytics?.options]);
   return (
     <div className="w-full mt-10">
       <h2 className="font-semibold text-base sm:text-lg mb-3 text-start">
@@ -399,9 +329,18 @@ function QuizEngagementInsight({
                     "flex-row flex-wrap gap-3 justify-center items-center"
                 )}
               >
-                {activeAnalytics?.options?.map((option, index) => (
-                  <QuestOption key={index} index={index} option={option} />
-                ))}
+                <div className="w-full h-[350px] flex items-start gap-x-3 justify-center">
+                  {activeAnalytics?.options?.map((option, index) => {
+                    return (
+                      <QuestOption
+                        key={index}
+                        colors={colors ?? []}
+                        index={index}
+                        option={option}
+                      />
+                    );
+                  })}
+                </div>
               </div>
             </div>
           </div>
@@ -411,12 +350,12 @@ function QuizEngagementInsight({
   );
 }
 
-export default function QuizAnalytics({ quizId }: { quizId: string }) {
+export default function PollAnalytics({ pollId }: { pollId: string }) {
   const router = useRouter();
   const { data, isLoading } = useGetData<TQuizResponse>(
-    `engagements/quiz/${quizId}/analytics`
+    `engagements/quiz/${pollId}/analytics`
   );
-  const { deleteData } = useDeleteRequest(`engagements/quiz/answer/${quizId}`);
+  const { deleteData } = useDeleteRequest(`engagements/quiz/answer/${pollId}`);
   const { postData: updateQuiz } =
     usePostRequest<Partial<TQuiz<TQuestion[]>>>("engagements/quiz");
   const [isToClear, setIsToClear] = useState(false);
@@ -464,133 +403,121 @@ export default function QuizAnalytics({ quizId }: { quizId: string }) {
 
   return (
     <>
-    <div className="w-full text-sm max-w-7xl mx-auto p-4 sm:p-6">
-      <div className="w-full mb-6 flex items-center justify-between">
-        <button
-          className="flex items-center gap-x-2"
-          onClick={() => router.back()}
-        >
-          <InlineIcon
-            icon="material-symbols:arrow-back-rounded"
-            fontSize={22}
-          />
-          <p className="text-sm hidden sm:block">{data?.quiz?.coverTitle}</p>
-        </button>
-        <h2 className="font-semibold text-lg sm:text-base">Analytics</h2>
-        <Button
-          onClick={() => {
-            onToggleClear();
-          }}
-          className="flex w-fit bg-basePrimary items-center rounded-lg h-10  gap-x-2"
-        >
-          <InlineIcon
-            icon="mingcute:delete-line"
-            fontSize={18}
-            color="#ffffff"
-          />
-          <p className="text-white font-medium">Delete Record</p>
-        </Button>
+      <div className="w-full text-sm max-w-7xl mx-auto p-4 sm:p-6">
+        <div className="w-full mb-6 flex items-center justify-between">
+          <button
+            className="flex items-center gap-x-2"
+            onClick={() => router.back()}
+          >
+            <InlineIcon
+              icon="material-symbols:arrow-back-rounded"
+              fontSize={22}
+            />
+            <p className="text-sm hidden sm:block">{data?.quiz?.coverTitle}</p>
+          </button>
+          <h2 className="font-semibold text-lg sm:text-base">Analytics</h2>
+          <Button
+            onClick={() => {
+              onToggleClear();
+            }}
+            className="flex w-fit bg-basePrimary items-center rounded-lg h-10  gap-x-2"
+          >
+            <InlineIcon
+              icon="mingcute:delete-line"
+              fontSize={18}
+              color="#ffffff"
+            />
+            <p className="text-white font-medium">Delete Record</p>
+          </Button>
+        </div>
+        <h2 className="font-semibold text-base sm:text-lg mb-3 text-start">
+          Overview
+        </h2>
+        <div className="w-full grid grid-cols-1  md:grid-cols-3 gap-4">
+          <div className="w-full flex  flex-col items-start gap-4">
+            <MetricCard
+              title="Total Questions"
+              subTitle="Number of questions available to be answered"
+              metric={`${data?.quizStatistics?.totalQuestions ?? 0}`}
+            />
+
+            <MetricCard
+              title="Completion Rate"
+              subTitle="Percentage of participants who completed the quiz"
+              metric={`${(data?.quizStatistics?.completionRate ?? 0).toFixed(
+                0
+              )}%`}
+            />
+            <MetricCard
+              title="Avg time to complete the quiz"
+              subTitle="Avg time taken for participants to complete the quiz"
+              metric={`${(
+                (data?.quizStatistics?.avgCompletionTime ?? 0) / 1000
+              ).toFixed(0)} Sec`}
+            />
+          </div>
+          <div className="w-full flex flex-col items-start gap-4">
+            <MetricCard
+              title="Total Participants"
+              subTitle="Number of people that participated"
+              metric={`${data?.quizStatistics?.totalParticipants ?? 0}`}
+            />
+            <MetricCard
+              title="Active Participants"
+              subTitle="Participants that attempted 50% of the question"
+              metric={`${(
+                data?.quizStatistics?.activeParticipants ?? 0
+              ).toFixed(0)}`}
+            />
+
+            <MetricCard
+              title="Avg time to answer a question"
+              subTitle="Avg time taken for participants to answer each question"
+              metric={`${(
+                (data?.quizStatistics?.avgTimeToAnswerQuestion ?? 0) / 1000
+              ).toFixed(0)} Sec`}
+            />
+          </div>
+          <div className="w-full h-[320px] bg-white rounded-lg py-6 px-4  ">
+            <h2 className="font-semibold text-base sm:text-lg mb-4">
+              Participants Engagement
+            </h2>
+
+            <ResponsiveContainer width="100%" maxHeight={250}>
+              <LineChart width={500} height={240} data={data?.quizEngagement}>
+                {/* <CartesianGrid strokeDasharray="3 3" /> */}
+                <XAxis
+                  dataKey="questionNumber"
+                  label={{
+                    value: "Question",
+                    position: "insideBottom",
+                    dy: 10,
+                  }}
+                />
+                <YAxis
+                  label={{
+                    value: "No. of Participants",
+                    angle: -90,
+                    position: "insideLeft",
+                    dy: 50,
+                  }}
+                />
+                <Tooltip />
+                {/* <Legend /> */}
+
+                <Line type="monotone" dataKey="engagement" stroke="#001fcc" />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        <PollEngagementInsight
+          analytics={engagementInsight}
+          key={engagementInsight.length}
+          totalParticipants={data?.quizStatistics?.totalParticipants}
+        />
       </div>
-      <h2 className="font-semibold text-base sm:text-lg mb-3 text-start">
-        Overview
-      </h2>
-      <div className="w-full grid grid-cols-1  md:grid-cols-3 gap-4">
-        <div className="w-full flex  flex-col items-start gap-4">
-        <MetricCard
-            title="Total Questions"
-            subTitle="Number of questions available to be answered"
-            metric={`${data?.quizStatistics?.totalQuestions ?? 0}`}
-          />
-          
-          <MetricCard
-            title="Completion Rate"
-            subTitle="Percentage of participants who completed the quiz"
-            metric={`${(data?.quizStatistics?.completionRate ?? 0).toFixed(
-              0
-            )}%`}
-          />
-          <MetricCard
-            title="Avg time to complete the quiz"
-            subTitle="Avg time taken for participants to complete the quiz"
-            metric={`${(
-              (data?.quizStatistics?.avgCompletionTime ?? 0) / 1000
-            ).toFixed(0)} Sec`}
-          />
-         <MetricCard
-            title="Avg Points"
-            subTitle="Avg points gotten by participants"
-            metric={`${(
-              data?.quizStatistics?.avgPointGottenByParticipant ?? 0
-            ).toFixed(0)}`}
-          />
-        </div>
-        <div className="w-full flex flex-col items-start gap-4">
-        <MetricCard
-            title="Total Points Allocated"
-            subTitle="Total number of points allocated to the quiz"
-            metric={`${formatReviewNumber(
-              data?.quizStatistics?.totalAllocatedPoints ?? 0
-            )}`}
-          />
-        
-        <MetricCard
-            title="Total Participants"
-            subTitle="Number of people that participated"
-            metric={`${data?.quizStatistics?.totalParticipants ?? 0}`}
-          />
-          <MetricCard
-            title="Active Participants"
-            subTitle="Participants that attempted 50% of the question"
-            metric={`${(data?.quizStatistics?.activeParticipants ?? 0).toFixed(
-              0
-            )}`}
-          />
-         
-          <MetricCard
-            title="Avg time to answer a question"
-            subTitle="Avg time taken for participants to answer each question"
-            metric={`${(
-              (data?.quizStatistics?.avgTimeToAnswerQuestion ?? 0) / 1000
-            ).toFixed(0)} Sec`}
-          />
-          
-        </div>
-        <div className="w-full h-[430px] bg-white rounded-lg py-6 px-4  ">
-          <h2 className="font-semibold text-base sm:text-lg mb-4">
-            Participants Engagement
-          </h2>
-
-          <ResponsiveContainer width="100%" maxHeight={350}>
-            <LineChart width={500} height={340} data={data?.quizEngagement}>
-              {/* <CartesianGrid strokeDasharray="3 3" /> */}
-              <XAxis
-                dataKey="questionNumber"
-                label={{ value: "Question", position: "insideBottom", dy: 10 }}
-              />
-              <YAxis
-                label={{
-                  value: "No. of Participants",
-                  angle: -90,
-                  position: "insideLeft",
-                  dy: 50,
-                }}
-              />
-              <Tooltip />
-              {/* <Legend /> */}
-
-              <Line type="monotone" dataKey="engagement" stroke="#001fcc" />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-      <QuizEngagementInsight
-        analytics={engagementInsight}
-        key={engagementInsight.length}
-        totalParticipants={data?.quizStatistics?.totalParticipants}
-      />
-    </div>
-    {isToClear && (
+      {isToClear && (
         <ActionModal
           loading={isLoadingClear}
           close={onToggleClear}

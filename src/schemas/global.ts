@@ -39,3 +39,9 @@ export const attendeeNoteSchema = z.object({
   attendeeEmail: z.string().email(),
   notes: z.string(),
 });
+
+
+export const feedBackSchema = z.object({
+  comment: z.string().min(3, { message: "Comment is required" }),
+  ratings: z.enum(["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]),
+});

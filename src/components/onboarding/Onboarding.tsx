@@ -377,6 +377,8 @@ export default function OnboardingForm({
     setFormData({ ...formData, [name]: value });
   };
   const { postData } = usePostRequest<any>("organization");
+
+  //create team member function will add the team member to both engagement team member and the general team member
   const { postData: createTeamMember } =
     usePostRequest<any>("organization/team");
   const stages = ["stage1", "stage2", "stage3", "stage4", "stage5"];

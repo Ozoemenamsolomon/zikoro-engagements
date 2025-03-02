@@ -105,8 +105,10 @@ export default function AddQuizQuestions({
   //console.log(isAddNew);
 
   const isQuiz = useMemo(() => {
-    return data.interactionType === "quiz";
+    return data?.interactionType === "quiz";
   }, [data]);
+
+  console.log(data?.interactionType)
 
   if (isLoading) {
     return <LoadingState />;
@@ -190,7 +192,7 @@ export default function AddQuizQuestions({
                       editQuestion={editQuestion}
                       question={question}
                       quiz={data}
-                      interactionType="quiz"
+                      interactionType={data?.interactionType}
                       workspaceAlias={workspaceAlias}
                       key={question?.id}
                     />

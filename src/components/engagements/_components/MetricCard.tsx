@@ -13,7 +13,7 @@ export function MetricCard({
           {metric}
         </p>
         <div className="flex flex-col items-start justify-start gap-2">
-          <p className="font-semibold text-base sm:text-lg">{title}</p>
+          <p className="font-semibold text-base sm:text-base">{title}</p>
           <p className="text-xs">{subTitle}</p>
         </div>
       </div>

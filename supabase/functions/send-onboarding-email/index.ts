@@ -54,30 +54,66 @@ Deno.serve(async (req) => {
       </tr>
       <tr>
         <td align="center">
-          <div style="background: #fff; padding: 20px; border-radius: 8px; max-width: 600px; text-align: center;">
-            <h2 style="color: #333;">Congratulations! You've Earned Your Certificate</h2>
+          <div style="background: #fff; padding: 20px; border-radius: 8px; max-width: 600px; text-align: start;">
+           
             <p style="color: #555;">Hi ${user?.firstName},</p>
-            <p style="color: #555;">
-              Great news! You've successfully completed your registration.
+            <p style="color: #555; margin-top: 20px; margin-bottom: 20px;">
+              We’re thrilled to have you on Zikoro! Here’s how you can get started right away:
             </p>
+              <p style="color: #555; margin-top: 10px; margin-bottom: 10px;">
+              <span>✅ Create and sell event/workshop tickets in just 5 minutes.</span> <a style="margin-right: 3px;" href="https://zikoro.com" >Get Started</a>
+            </p>
+              <p style="color: #555; margin-top: 10px; margin-bottom: 10px;">
+               <span>✅ Issue digital certificates effortlessly and turn your recipients into brand ambassadors.</span> <a style="margin-right: 3px;" href="https://credentials.zikoro.com">Get Started</a>
+              
+            </p>
+              <p style="color: #555; margin-top: 10px; margin-bottom: 10px;">
+              <span>  ✅ Gamify your event experience—engage attendees with fun quizzes, polls, and interactive forms.</span> <a style="margin-right: 3px;" href="https://engagements.zikoro.com">Get Started</a>
+            
+            </p>
+              <p style="color: #555; margin-top: 10px; margin-bottom: 10px;">
+               <span>✅ Simplify your appointments—enhance client interactions and run an efficient business.</span> <a style="margin-right: 3px;" href="https://bookings.zikoro.com">Get Started</a>
+             
+
+            </p>
+            
+
+              <p style="color: #555; margin-top: 20px; margin-bottom: 20px;">
+             Start exploring and make the most of your experience with Zikoro!
+
+            </p>
+
+               <p style="color: #555; margin-top: 20px; margin-bottom: 20px;">
+             Want to get the most out of Zikoro? Let’s chat! We’ll help you optimize your business with tailored solutions. 📲 WhatsApp us at <a href="https://wa.me/+2347041497076">+2347041497076</a>!
+
+            </p>
+          
+
+ <p style="color: #555; margin-top: 5px; margin-bottom: 5px;">
+            Best Regards,
+
+            </p>
+             <p style="color: #555;">
+            The Zikoro Team
+
+            </p>
+           
+
            
           </div>
         </td>
       </tr>
-      <tr>
+      <tr style="margin-top: 12px; margin-bottom: 12px;">
         <td align="center" style="padding-top: 20px;">
-          <p style="color: #555;">
-            <a href="GET_MORE_COURSES_URL" style="color: #007bff; text-decoration: none;">Get more courses</a> • 
-            <a href="GET_CERTIFIED_URL" style="color: #007bff; text-decoration: none;">Get certified</a> • 
-            <a href="CONTACT_US_URL" style="color: #007bff; text-decoration: none;">Contact us</a>
-          </p>
-          <p>
-             <a href="#" style="margin: 0 10px; border: 1px solid #E4E4E4; border-radius: 6px; padding: 4px;"><img width="28px" height="28px"  src="https://res.cloudinary.com/dkdrbjfdt/image/upload/v1740654856/mingcute--linkedin-fill_badqjp.png" alt="LinkedIn"></a>
-      <a href="#" style="margin: 0 10px; border: 1px solid #E4E4E4; border-radius: 6px; padding: 4px;"><img width="28px" height="28px" src="https://res.cloudinary.com/dkdrbjfdt/image/upload/v1740654856/pajamas--twitter_j0qwnj.png" alt="X"></a>
+          <p style="color: #777; font-size: 12px; margin-bottom: 15px;">Follow us on</p>
+          <p style="margin-top: 12px; margin-bottom: 12px;">
+             <a href="https://www.linkedin.com/company/zikoro/?viewAsMember=true" style="margin: 0 10px; border: 1px solid #E4E4E4; border-radius: 6px; padding: 4px;"><img width="20px" height="20px"  src="https://res.cloudinary.com/dkdrbjfdt/image/upload/v1740654856/mingcute--linkedin-fill_badqjp.png" alt="LinkedIn"></a>
+      <a href="https://www.instagram.com/zikoro24/" style="margin: 0 10px; border: 1px solid #E4E4E4; border-radius: 6px; padding: 4px;"><img width="20px" height="20px" src="https://res.cloudinary.com/dkdrbjfdt/image/upload/v1740675569/ri--instagram-fill_n1vyop.png" alt="Instagram"></a>
 
-      <a href="#" style="margin: 0 10px; border: 1px solid #E4E4E4; border-radius: 6px; padding: 4px;"><img width="28px" height="28px" src="https://res.cloudinary.com/dkdrbjfdt/image/upload/v1740654856/mingcute--facebook-fill_pnkuma.png" alt="Facebook"></a>
+    
+         <a href="https://www.facebook.com/profile.php?id=61558280512718" style="margin: 0 10px; border: 1px solid #E4E4E4; border-radius: 6px; padding: 4px;"><img width="20px" height="20px" src="https://res.cloudinary.com/dkdrbjfdt/image/upload/v1740654856/mingcute--facebook-fill_pnkuma.png" alt="Facebook"></a>
           </p>
-          <p style="color: #777; font-size: 12px;">Powered by <strong>Zikoro Credentials</strong></p>
+         
         </td>
       </tr>
     </table>
@@ -106,7 +142,7 @@ Deno.serve(async (req) => {
                 },
               },
             ],
-            subject: "Welcome to Zikoro",
+            subject: "Welcome to Zikoro! Let’s Get Started 🚀",
             htmlbody: mailBody,
           }),
         }

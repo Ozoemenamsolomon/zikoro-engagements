@@ -24,7 +24,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 Deno.serve(async () => {
   try {
     // Get users who joined within the last 2 hours
-    const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
+    const twoHoursAgo = new Date(Date.now() - 0.15 * 60 * 60 * 1000).toISOString();
 
     const { data: users, error } = await supabase.auth.admin.listUsers();
     if (error) throw new Error(`Error fetching users: ${error.message}`);
@@ -51,7 +51,7 @@ Deno.serve(async () => {
             user.email
           }&createdAt=${new Date().toISOString()}&userId=${user?.id}&token=${
             userMetaData?.verification_token
-          }`; // Fallback if not available
+          }`; 
         }
 
         if (userMetaData?.platform === "Event") {
@@ -59,7 +59,7 @@ Deno.serve(async () => {
           //    user.email
           //  }&createdAt=${new Date().toISOString()}&userId=${user?.id}&token=${
           //    userMetaData?.verification_token
-          //  }`; // Fallback if not available
+          //  }`; 
         }
 
         if (userMetaData?.platform === "Credential") {
@@ -67,7 +67,7 @@ Deno.serve(async () => {
           //    user.email
           //  }&createdAt=${new Date().toISOString()}&userId=${user?.id}&token=${
           //    userMetaData?.verification_token
-          //  }`; // Fallback if not available
+          //  }`;
         }
 
         // Send email with magic link
@@ -84,12 +84,24 @@ Deno.serve(async () => {
               to: [{ email_address: { address: user.email, name: "User" } }],
               subject: "Verify Your Email & Continue Onboarding",
               htmlbody: `
-            <div>
+            <div style="background-color: #f4f4f4; padding: 20px;">
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" align="center">
+      <tr>
+        <td align="center">
+          <img src="https://res.cloudinary.com/dkdrbjfdt/image/upload/v1740654461/logo_rogdwe.webp" alt="Company Logo" width="150" style="margin-bottom: 20px;">
+        </td>
+      </tr>
+      <tr>
+        <td align="center">
+          <div style="background: #fff; padding: 20px; border-radius: 8px; max-width: 600px; text-align: start;">
               <p>Hello,</p>
-              <p>Click the button below to verify your email and continue onboarding:</p>
+              <p>Hey there! 👋 It looks like your verification on Zikoro isn’t complete yet. No worries—just click the button below to finish up and get started! 😊</p>
               <p style="margin-top: 20px; margin-bottom: 20px;"><a href="${magicLink}" style="background-color: #007bff; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">Verify Now</a></p>
               <p>If the button above doesn't work, copy and paste this link into your browser:</p>
               <p>${magicLink}</p>
+  </td>
+      </tr>
+                </table>
             </div>
           `,
             }),
