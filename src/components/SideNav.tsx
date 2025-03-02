@@ -5,9 +5,10 @@ import Image from "next/image";
 import { FeedbackIcon, navLinks, ReferIcon, SupportIcon } from "@/constants";
 import { usePathname, useRouter } from "next/navigation";
 import { InlineIcon } from "@iconify/react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useUserStore from "@/store/globalUserStore";
 import { FeedBack } from "./feedback/FeedBack";
+import { NavModalIcon } from "@/constants/icons";
 
 export function SideBarLayout({ children }: { children: React.ReactNode }) {
   const [isSideNav, setSideNav] = useState(false);
@@ -42,7 +43,7 @@ export function SideBarLayout({ children }: { children: React.ReactNode }) {
 export default function SideNav({
   isNav,
   close,
-  openFeedback
+  openFeedback,
 }: {
   isNav: boolean;
   close: () => void;
@@ -51,6 +52,25 @@ export default function SideNav({
   const pathname = usePathname();
   const router = useRouter();
   const { user } = useUserStore();
+  const previewRef = useRef<HTMLDivElement>(null);
+  const [isPreviewShowing, setIsPreviewShowing] = useState<boolean>(false);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        previewRef.current &&
+        !previewRef.current.contains(event.target as Node)
+      ) {
+        setIsPreviewShowing(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
   return (
     <>
       <div
@@ -100,9 +120,107 @@ export default function SideNav({
 
           <div className="w-full h-[35vh]">
             <div className="w-full border-y  py-3 flex flex-col items-start justify-start gap-y-3">
-              <Navs as="a" href="/referrals" navName="Refer & Earn" Icon={ReferIcon} />
+              <button
+                onClick={() => setIsPreviewShowing(!isPreviewShowing)}
+                className="relative px-3"
+              >
+                Try
+                {isPreviewShowing && (
+                  <div
+                    onClick={(e) => e.stopPropagation()}
+                    className="absolute bg-white shrink shadow-sm hidden lg:flex flex-col items-start justify-start mt-3 gap-y-6 p-3 left-[201px] transform -translate-x-1/2  rounded-[10px]"
+                    ref={previewRef}
+                  >
+                    {/* 2nd app */}
+                    <div className="w-full flex items-center gap-x-4">
+                      {/* left */}
+                      <div className="text-start">
+                        <p className="bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end gradient-text font-semibold">
+                          Zikoro Events
+                        </p>
+                        <p className="text-[12px] font-medium text-[#31353B] w-[282px]">
+                          Create event tickets, check-in attendees, send RSVPs
+                          and more.{" "}
+                        </p>
+                      </div>
+
+                      {/* right */}
+                      <div
+                        className="cursor-pointer "
+                        onClick={() =>
+                          window.open("https://www.zikoro.com", "_blank")
+                        }
+                      >
+                        <NavModalIcon />
+                      </div>
+                    </div>
+
+                    {/* 3rd app */}
+                    <div className="w-full flex items-center gap-x-4">
+                      {/* left */}
+                      <div className="text-start">
+                        <p className="bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end gradient-text font-semibold">
+                          Zikoro Bookings
+                        </p>
+                        <p className="text-[12px] font-medium text-[#31353B]  w-[282px]">
+                          Simplify appointment booking and scheduling for
+                          seamless coordination.
+                        </p>
+                      </div>
+
+                      {/* right */}
+                      <div
+                        className="cursor-pointer "
+                        onClick={() =>
+                          window.open("https://bookings.zikoro.com/", "_blank")
+                        }
+                      >
+                        <NavModalIcon />
+                      </div>
+                    </div>
+
+                    {/* 4th app */}
+                    <div className="w-full flex items-center gap-x-4">
+                      {/* left */}
+                      <div className="text-start">
+                        <p className="bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end gradient-text font-semibold">
+                          Zikoro Credentials
+                        </p>
+                        <p className="text-[12px] font-medium text-[#31353B]  w-[282px]">
+                          Create, issue certificates and digital badges with
+                          ease.
+                        </p>
+                      </div>
+
+                      {/* right */}
+                      <div
+                        className="cursor-pointer "
+                        onClick={() =>
+                          window.open(
+                            "https://credentials.zikoro.com/",
+                            "_blank"
+                          )
+                        }
+                      >
+                        <NavModalIcon />
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </button>
+              <Navs
+                as="a"
+                href="/referrals"
+                navName="Refer & Earn"
+                Icon={ReferIcon}
+              />
               <Navs as="div" navName="Support" Icon={SupportIcon} />
-              <Navs as="div" actionFn={openFeedback} navName="Feedback" Icon={FeedbackIcon} />
+              <Navs
+                as="div"
+                actionFn={openFeedback}
+                navName="Feedback"
+                Icon={FeedbackIcon}
+              />
             </div>
           </div>
           <div className="absolute bottom-2 w-full px-3 inset-x-0">
