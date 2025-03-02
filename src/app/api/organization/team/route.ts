@@ -23,6 +23,20 @@ export async function POST(req: NextRequest) {
         );
       }
       if (error) throw error;
+      //
+      const { error: cError } = await supabase
+      .from("organizationTeamMembers_Credentials")
+      .upsert([params]);
+
+      if (cError) {
+        return NextResponse.json(
+          { nError: cError?.message },
+          {
+            status: 400,
+          }
+        );
+      }
+      if (cError) throw cError;
 
       const { error: nError } = await supabase
       .from("organizationTeamMembers")
