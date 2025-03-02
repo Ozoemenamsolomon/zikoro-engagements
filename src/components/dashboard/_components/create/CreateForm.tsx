@@ -41,33 +41,35 @@ export function CreateForm({
     usePostRequest<Partial<TEngagementFormQuestion>>("engagements/form");
   const form = useForm<z.infer<typeof formCreationSchema>>({
     resolver: zodResolver(formCreationSchema),
-    defaultValues: engagementForm ? {formSettings: engagementForm?.formSettings} : {
-      formSettings: {
-        isConnectedToEngagement: false,
-        showForm: "beforeEngagement",
-        redirectUrl: "",
-        isCoverScreen: true,
-        displayType: "listing",
-        questionPerSlides: "1",
-        titleFontSize: "36",
-        headingFontSize: "24",
-        backgroundColor: "#ffffff",
-        textColor: "#000000",
-        buttonColor: "#001FFC",
-        textFontSize: "14",
-        isCoverImage: true,
-        buttonText: "Submit",
-        startButtonText: "Start",
-        isCollectEmail: false,
-        isCollectPhone: false,
-        connectToEvent:false,
-        showResult:false,
-        isRedirectUrl:false,
-        engagementId:'',
-        engagementType:'',
-        hideNumber: false
-      },
-    }
+    defaultValues: engagementForm
+      ? { formSettings: engagementForm?.formSettings }
+      : {
+          formSettings: {
+            isConnectedToEngagement: false,
+            showForm: "beforeEngagement",
+            redirectUrl: "",
+            isCoverScreen: true,
+            displayType: "listing",
+            questionPerSlides: "1",
+            titleFontSize: "36",
+            headingFontSize: "24",
+            backgroundColor: "#ffffff",
+            textColor: "#000000",
+            buttonColor: "#001FFC",
+            textFontSize: "14",
+            isCoverImage: true,
+            buttonText: "Submit",
+            startButtonText: "Start",
+            isCollectEmail: false,
+            isCollectPhone: false,
+            connectToEvent: false,
+            showResult: false,
+            isRedirectUrl: false,
+            engagementId: "",
+            engagementType: "",
+            hideNumber: false,
+          },
+        },
   });
 
   const coverImg = form.watch("coverImage");
@@ -122,7 +124,6 @@ export function CreateForm({
             createdBy: user?.id,
             coverImage: image as string,
             formAlias: alias,
-          
           },
     });
     setLoading(false);
@@ -152,8 +153,6 @@ export function CreateForm({
       };
     } else return "";
   }, [organization]);
-
-
 
   const prevStartButtonText = useWatch({
     control: form.control,
@@ -203,23 +202,29 @@ export function CreateForm({
               </InputOffsetLabel>
             )}
           />
-   {engagementForm &&       
+          {engagementForm && (
+            <div className="w-full">
               <FormField
-        control={form.control}
-        name="formSettings.startButtonText"
-        render={({ field }) => (
-          <InputOffsetLabel className="w-[150px]" label="Start Button Text">
-            <Input
-              placeholder=""
-              type="text"
-              defaultValue={prevStartButtonText}
-              {...form.register("formSettings.startButtonText")}
-              className="placeholder:text-sm h-11 focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
-            />
-          </InputOffsetLabel>
-        )}
-      />}
-          
+                control={form.control}
+                name="formSettings.startButtonText"
+                render={({ field }) => (
+                  <InputOffsetLabel
+                    className="w-[150px]"
+                    label="Start Button Text"
+                  >
+                    <Input
+                      placeholder=""
+                      type="text"
+                      defaultValue={prevStartButtonText}
+                      {...form.register("formSettings.startButtonText")}
+                      className="placeholder:text-sm h-11 focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
+                    />
+                  </InputOffsetLabel>
+                )}
+              />
+            </div>
+          )}
+
           <div className="w-full flex items-end gap-x-2">
             <FormField
               control={form.control}
@@ -253,7 +258,7 @@ export function CreateForm({
             className="text-white h-11 gap-x-2 font-medium bg-basePrimary w-full max-w-xs mt-4"
           >
             {loading && <LoaderAlt size={20} className="animate-spin" />}
-            <p> {engagementForm? "Update" : "Create"}</p>
+            <p> {engagementForm ? "Update" : "Create"}</p>
           </Button>
         </form>
       </Form>

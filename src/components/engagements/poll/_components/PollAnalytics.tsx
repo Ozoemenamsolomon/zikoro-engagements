@@ -478,13 +478,13 @@ export default function PollAnalytics({ pollId }: { pollId: string }) {
               ).toFixed(0)} Sec`}
             />
           </div>
-          <div className="w-full h-[430px] bg-white rounded-lg py-6 px-4  ">
+          <div className="w-full h-[320px] bg-white rounded-lg py-6 px-4  ">
             <h2 className="font-semibold text-base sm:text-lg mb-4">
               Participants Engagement
             </h2>
 
-            <ResponsiveContainer width="100%" maxHeight={350}>
-              <LineChart width={500} height={340} data={data?.quizEngagement}>
+            <ResponsiveContainer width="100%" maxHeight={250}>
+              <LineChart width={500} height={240} data={data?.quizEngagement}>
                 {/* <CartesianGrid strokeDasharray="3 3" /> */}
                 <XAxis
                   dataKey="questionNumber"
