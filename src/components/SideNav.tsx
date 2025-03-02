@@ -8,7 +8,8 @@ import { InlineIcon } from "@iconify/react";
 import { useEffect, useRef, useState } from "react";
 import useUserStore from "@/store/globalUserStore";
 import { FeedBack } from "./feedback/FeedBack";
-import { NavModalIcon } from "@/constants/icons";
+import { AppCIcon, NavModalIcon, SupportMailIcon, SupportWhatsappIcon } from "@/constants/icons";
+import { whatsapp, sendMail } from "@/utils";
 
 export function SideBarLayout({ children }: { children: React.ReactNode }) {
   const [isSideNav, setSideNav] = useState(false);
@@ -120,101 +121,119 @@ export default function SideNav({
 
           <div className="w-full h-[35vh]">
             <div className="w-full border-y  py-3 flex flex-col items-start justify-start gap-y-3">
-              <button
-                onClick={() => setIsPreviewShowing(!isPreviewShowing)}
-                className="relative px-3"
-              >
-                Try
-                {isPreviewShowing && (
-                  <div
-                    onClick={(e) => e.stopPropagation()}
-                    className="absolute bg-white shrink shadow-sm hidden lg:flex flex-col items-start justify-start mt-3 gap-y-6 p-3 left-[201px] transform -translate-x-1/2  rounded-[10px]"
-                    ref={previewRef}
-                  >
-                    {/* 2nd app */}
-                    <div className="w-full flex items-center gap-x-4">
-                      {/* left */}
-                      <div className="text-start">
-                        <p className="bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end gradient-text font-semibold">
-                          Zikoro Events
-                        </p>
-                        <p className="text-[12px] font-medium text-[#31353B] w-[282px]">
-                          Create event tickets, check-in attendees, send RSVPs
-                          and more.{" "}
-                        </p>
-                      </div>
-
-                      {/* right */}
+              <Navs
+                as="div"
+                actionFn={() => setIsPreviewShowing(!isPreviewShowing)}
+                navName="Other Apps"
+                Icon={AppCIcon}
+                Child={
+                  <>
+                    {isPreviewShowing && (
                       <div
-                        className="cursor-pointer "
-                        onClick={() =>
-                          window.open("https://www.zikoro.com", "_blank")
-                        }
+                        onClick={(e) => e.stopPropagation()}
+                        className="absolute bg-white shrink shadow-sm hidden lg:flex flex-col items-start justify-start mt-3 gap-y-6 top-0 p-3 left-[201px] transform -translate-x-1/2  rounded-[10px]"
+                        ref={previewRef}
                       >
-                        <NavModalIcon />
-                      </div>
-                    </div>
+                        {/* 2nd app */}
+                        <div className="w-full flex items-center gap-x-4">
+                          {/* left */}
+                          <div className="text-start">
+                            <p className="bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end gradient-text font-semibold">
+                              Zikoro Events
+                            </p>
+                            <p className="text-[12px] font-medium text-[#31353B] w-[282px]">
+                              Create event tickets, check-in attendees, send
+                              RSVPs and more.{" "}
+                            </p>
+                          </div>
 
-                    {/* 3rd app */}
-                    <div className="w-full flex items-center gap-x-4">
-                      {/* left */}
-                      <div className="text-start">
-                        <p className="bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end gradient-text font-semibold">
-                          Zikoro Bookings
-                        </p>
-                        <p className="text-[12px] font-medium text-[#31353B]  w-[282px]">
-                          Simplify appointment booking and scheduling for
-                          seamless coordination.
-                        </p>
-                      </div>
+                          {/* right */}
+                          <div
+                            className="cursor-pointer "
+                            onClick={() =>
+                              window.open("https://www.zikoro.com", "_blank")
+                            }
+                          >
+                            <NavModalIcon />
+                          </div>
+                        </div>
 
-                      {/* right */}
-                      <div
-                        className="cursor-pointer "
-                        onClick={() =>
-                          window.open("https://bookings.zikoro.com/", "_blank")
-                        }
-                      >
-                        <NavModalIcon />
-                      </div>
-                    </div>
+                        {/* 3rd app */}
+                        <div className="w-full flex items-center gap-x-4">
+                          {/* left */}
+                          <div className="text-start">
+                            <p className="bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end gradient-text font-semibold">
+                              Zikoro Bookings
+                            </p>
+                            <p className="text-[12px] font-medium text-[#31353B]  w-[282px]">
+                              Simplify appointment booking and scheduling for
+                              seamless coordination.
+                            </p>
+                          </div>
 
-                    {/* 4th app */}
-                    <div className="w-full flex items-center gap-x-4">
-                      {/* left */}
-                      <div className="text-start">
-                        <p className="bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end gradient-text font-semibold">
-                          Zikoro Credentials
-                        </p>
-                        <p className="text-[12px] font-medium text-[#31353B]  w-[282px]">
-                          Create, issue certificates and digital badges with
-                          ease.
-                        </p>
-                      </div>
+                          {/* right */}
+                          <div
+                            className="cursor-pointer "
+                            onClick={() =>
+                              window.open(
+                                "https://bookings.zikoro.com/",
+                                "_blank"
+                              )
+                            }
+                          >
+                            <NavModalIcon />
+                          </div>
+                        </div>
 
-                      {/* right */}
-                      <div
-                        className="cursor-pointer "
-                        onClick={() =>
-                          window.open(
-                            "https://credentials.zikoro.com/",
-                            "_blank"
-                          )
-                        }
-                      >
-                        <NavModalIcon />
+                        {/* 4th app */}
+                        <div className="w-full flex items-center gap-x-4">
+                          {/* left */}
+                          <div className="text-start">
+                            <p className="bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end gradient-text font-semibold">
+                              Zikoro Credentials
+                            </p>
+                            <p className="text-[12px] font-medium text-[#31353B]  w-[282px]">
+                              Create, issue certificates and digital badges with
+                              ease.
+                            </p>
+                          </div>
+
+                          {/* right */}
+                          <div
+                            className="cursor-pointer "
+                            onClick={() =>
+                              window.open(
+                                "https://credentials.zikoro.com/",
+                                "_blank"
+                              )
+                            }
+                          >
+                            <NavModalIcon />
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                )}
-              </button>
+                    )}
+                  </>
+                }
+              />
+
               <Navs
                 as="a"
                 href="/referrals"
                 navName="Refer & Earn"
                 Icon={ReferIcon}
               />
-              <Navs as="div" navName="Support" Icon={SupportIcon} />
+              <Navs as="div" navName="Support" Icon={SupportIcon} Child={
+                <div className="hidden group-hover:flex items-center gap-x-1">
+
+                  <button onClick={() => whatsapp("+2347041497076")}>
+                  <SupportWhatsappIcon/>
+                  </button>
+                  <button onClick={() => sendMail("admin@zikoro.com")}>
+                  <SupportMailIcon/>
+                  </button>
+                </div>
+              } />
               <Navs
                 as="div"
                 actionFn={openFeedback}
@@ -258,6 +277,7 @@ function Navs({
   navName,
   href,
   actionFn,
+  Child,
 }: {
   as?: React.ElementType;
   Icon: React.ElementType;
@@ -265,18 +285,20 @@ function Navs({
   navName: string;
   href?: string;
   actionFn?: () => void;
+  Child?: React.ReactNode;
 }) {
   return (
     <Component
       href={href}
       onClick={actionFn}
       className={cn(
-        "flex items-center group-hover:justify-start justify-center w-full gap-x-2 p-2 rounded-lg",
+        "flex items-center group-hover:justify-start relative justify-center w-full gap-x-2 p-2 rounded-lg",
         isActive && "bg-basePrimary-100"
       )}
     >
       <Icon />
       <p className="group-hover:block hidden">{navName}</p>
+      {Child}
     </Component>
   );
 }

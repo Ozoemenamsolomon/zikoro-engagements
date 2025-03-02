@@ -736,6 +736,14 @@ export default function OnboardingForm({
                 {formData.organizationType === "Private" ? (
                   <button
                     onClick={(e) => {
+                      const data = {
+                        "First Name": formData?.firstName,
+                        "Last Name": formData?.lastName
+                      }
+                      for (let i in data) {
+                        // @ts-ignore
+                        return toast.error(`${data[i]} is required`);
+                      }
                       handleCreateUser(e, formData);
                     }}
                     disabled={currentIndex === stages.length - 1}
