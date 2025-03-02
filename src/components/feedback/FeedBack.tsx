@@ -15,6 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { feedBackSchema } from "@/schemas/global";
 import InputOffsetLabel from "../InputOffsetLabel";
 import { usePostRequest } from "@/hooks/services/requests";
+import useUserStore from "@/store/globalUserStore";
 
 export function FeedBack({ close }: { close: () => void }) {
   return (
@@ -36,6 +37,7 @@ export function FeedBack({ close }: { close: () => void }) {
 
 export function FeedBackComp({ close }: { close: () => void }) {
   const { isLoading:loading, postData: sendFeedback } = usePostRequest("/feedback");
+  const {user} = useUserStore()
   const form = useForm<z.infer<typeof feedBackSchema>>({
     resolver: zodResolver(feedBackSchema),
   });
@@ -44,6 +46,8 @@ export function FeedBackComp({ close }: { close: () => void }) {
     const payload = {
       comment: values.comment,
       ratings: Number(values.ratings),
+      platform:"zikoro-engagement",
+      userId: user?.id
     };
     await sendFeedback({payload});
    close();

@@ -391,23 +391,19 @@ export const useGetUserId = () => {
 
 type TUserReferrals = Pick<TUser, "created_at" | "firstName" | "lastName">;
 
-export const useGetUserReferrals = ({
-  userId,
-  referredBy,
-}: {
-  userId: string;
-  referredBy: string;
-}): UseGetResult<TUserReferrals[], "userReferrals", "getUserReferrals"> => {
+export const useGetUserReferrals = (): UseGetResult<TUserReferrals[], "userReferrals", "getUserReferrals"> => {
   const [userReferrals, setUserReferrals] = useState<TUserReferrals[]>([]);
   const [isLoading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
+  const {user} = useUserStore()
 
   const getUserReferrals = async () => {
     setLoading(true);
 
     try {
+      if(!user) return;
       const { data, status } = await getRequest<TUserReferrals[]>({
-        endpoint: `/users/${userId}/referrals?referredBy=${referredBy}`,
+        endpoint: `/users/${user?.id?.toString()}/referrals?referredBy=${user?.referralCode}`,
       });
 
       if (status !== 200) {
@@ -423,7 +419,7 @@ export const useGetUserReferrals = ({
 
   useEffect(() => {
     getUserReferrals();
-  }, []);
+  }, [user]);
 
   return {
     userReferrals,

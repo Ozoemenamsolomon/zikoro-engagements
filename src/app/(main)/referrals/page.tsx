@@ -29,15 +29,10 @@ import Link from "next/link";
 
 const page = () => {
   const { user } = useUserStore();
-  const router = useRouter();
   const [copiedText, copyToClipboard] = useCopyToClipboard();
   const hasCopiedText = Boolean(copiedText);
 
-  if (!user) return;
-  const { userReferrals, isLoading } = useGetUserReferrals({
-    userId: user?.id?.toString(),
-    referredBy: user?.referralCode,
-  });
+  const { userReferrals, isLoading } = useGetUserReferrals();
 
   const {
     data: subscriptions,
@@ -61,7 +56,7 @@ const page = () => {
   console.log(userReferrals);
 
   return (
-    <div className="w-full max-w-7xl mx-auto">
+    <div className="w-full mt-16 max-w-7xl mx-auto">
       <h1 className="px-4 py-6 border-b text-lg font-medium">Refer and Earn</h1>
       <div className="p-4 grid md:grid-cols-10 gap-3 md:gap-6">
         <div className="md:col-span-6 space-y-6">
