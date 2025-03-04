@@ -53,14 +53,4 @@ export async function POST(
 
 export const dynamic = "force-dynamic";
 
-/**
- const sevenDaysAgo = new Date(
-  new Date().getTime() - 7 * 24 * 60 * 60 * 1000
-).toISOString();
 
-const { data: unverifiedUsers, error } = await supabase
-  .from("auth.users")
-  .select("*")
-  .is("email_confirmed_at", null) // Email not verified
-  .gte("created_at", sevenDaysAgo); // Registered in the last 7 days
- */

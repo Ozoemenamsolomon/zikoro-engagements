@@ -24,7 +24,9 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 Deno.serve(async () => {
   try {
     // Get users who joined within the last 2 hours
-    const twoHoursAgo = new Date(Date.now() - 0.15 * 60 * 60 * 1000).toISOString();
+    const twoHoursAgo = new Date(
+      Date.now() - 0.15 * 60 * 60 * 1000
+    ).toISOString();
 
     const { data: users, error } = await supabase.auth.admin.listUsers();
     if (error) throw new Error(`Error fetching users: ${error.message}`);
@@ -51,7 +53,7 @@ Deno.serve(async () => {
             user.email
           }&createdAt=${new Date().toISOString()}&userId=${user?.id}&token=${
             userMetaData?.verification_token
-          }`; 
+          }`;
         }
 
         if (userMetaData?.platform === "Event") {
@@ -59,15 +61,15 @@ Deno.serve(async () => {
           //    user.email
           //  }&createdAt=${new Date().toISOString()}&userId=${user?.id}&token=${
           //    userMetaData?.verification_token
-          //  }`; 
+          //  }`;
         }
 
-        if (userMetaData?.platform === "Credential") {
-          // magicLink = `https://engagements.zikoro.com/onboarding?email=${
-          //    user.email
-          //  }&createdAt=${new Date().toISOString()}&userId=${user?.id}&token=${
-          //    userMetaData?.verification_token
-          //  }`;
+        if (userMetaData?.platform === "credentials") {
+          magicLink = ` https://credentials.zikoro.com/onboarding?email=${
+            user.email
+          }&createdAt=${new Date().toISOString()}&userId=${user?.id}&token=${
+            userMetaData?.verification_token
+          }`;
         }
 
         // Send email with magic link
