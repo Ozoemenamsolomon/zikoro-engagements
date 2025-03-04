@@ -8,7 +8,12 @@ import { InlineIcon } from "@iconify/react";
 import { useEffect, useRef, useState } from "react";
 import useUserStore from "@/store/globalUserStore";
 import { FeedBack } from "./feedback/FeedBack";
-import { AppCIcon, NavModalIcon, SupportMailIcon, SupportWhatsappIcon } from "@/constants/icons";
+import {
+  AppCIcon,
+  NavModalIcon,
+  SupportMailIcon,
+  SupportWhatsappIcon,
+} from "@/constants/icons";
 import { whatsapp, sendMail } from "@/utils";
 
 export function SideBarLayout({ children }: { children: React.ReactNode }) {
@@ -103,7 +108,7 @@ export default function SideNav({
               height={50}
             />
           </div>
-          <div className="w-full h-[40vh] overflow-y-auto no-scrollbar">
+          <div className="w-full h-[32vh] overflow-y-auto no-scrollbar">
             <div className="w-full flex  flex-col gap-y-3 items-start justify-start px-3">
               {navLinks.slice(0, 2).map((nav, index) => (
                 <Navs
@@ -119,7 +124,7 @@ export default function SideNav({
             </div>
           </div>
 
-          <div className="w-full h-[35vh]">
+          <div className="w-full h-[43vh]">
             <div className="w-full border-y  py-3 flex flex-col items-start justify-start gap-y-3">
               <Navs
                 as="div"
@@ -131,7 +136,7 @@ export default function SideNav({
                     {isPreviewShowing && (
                       <div
                         onClick={(e) => e.stopPropagation()}
-                        className="absolute bg-white shrink shadow-sm hidden lg:flex flex-col items-start justify-start mt-3 gap-y-6 top-0 p-3 left-[201px] transform -translate-x-1/2  rounded-[10px]"
+                        className="absolute bg-white shrink shadow-sm z-[99999] hidden lg:flex flex-col items-start justify-start mt-3 gap-y-6 top-0 p-3 left-[201px] transform -translate-x-1/2  rounded-[10px]"
                         ref={previewRef}
                       >
                         {/* 2nd app */}
@@ -152,33 +157,6 @@ export default function SideNav({
                             className="cursor-pointer "
                             onClick={() =>
                               window.open("https://www.zikoro.com", "_blank")
-                            }
-                          >
-                            <NavModalIcon />
-                          </div>
-                        </div>
-
-                        {/* 3rd app */}
-                        <div className="w-full flex items-center gap-x-4">
-                          {/* left */}
-                          <div className="text-start">
-                            <p className="bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end gradient-text font-semibold">
-                              Zikoro Bookings
-                            </p>
-                            <p className="text-[12px] font-medium text-[#31353B]  w-[282px]">
-                              Simplify appointment booking and scheduling for
-                              seamless coordination.
-                            </p>
-                          </div>
-
-                          {/* right */}
-                          <div
-                            className="cursor-pointer "
-                            onClick={() =>
-                              window.open(
-                                "https://bookings.zikoro.com/",
-                                "_blank"
-                              )
                             }
                           >
                             <NavModalIcon />
@@ -211,6 +189,33 @@ export default function SideNav({
                             <NavModalIcon />
                           </div>
                         </div>
+
+                        {/* 3rd app */}
+                        <div className="w-full flex items-center gap-x-4">
+                          {/* left */}
+                          <div className="text-start">
+                            <p className="bg-gradient-to-tr from-custom-gradient-start to-custom-gradient-end gradient-text font-semibold">
+                              Zikoro Bookings
+                            </p>
+                            <p className="text-[12px] font-medium text-[#31353B]  w-[282px]">
+                              Simplify appointment booking and scheduling for
+                              seamless coordination.
+                            </p>
+                          </div>
+
+                          {/* right */}
+                          <div
+                            className="cursor-pointer "
+                            onClick={() =>
+                              window.open(
+                                "https://bookings.zikoro.com/",
+                                "_blank"
+                              )
+                            }
+                          >
+                            <NavModalIcon />
+                          </div>
+                        </div>
                       </div>
                     )}
                   </>
@@ -223,17 +228,21 @@ export default function SideNav({
                 navName="Refer & Earn"
                 Icon={ReferIcon}
               />
-              <Navs as="div" navName="Support" Icon={SupportIcon} Child={
-                <div className="hidden group-hover:flex items-center gap-x-1">
-
-                  <button onClick={() => whatsapp("+2347041497076")}>
-                  <SupportWhatsappIcon/>
-                  </button>
-                  <button onClick={() => sendMail("admin@zikoro.com")}>
-                  <SupportMailIcon/>
-                  </button>
-                </div>
-              } />
+              <Navs
+                as="div"
+                navName="Support"
+                Icon={SupportIcon}
+                Child={
+                  <div className="hidden group-hover:flex items-center gap-x-1">
+                    <button onClick={() => whatsapp("+2347041497076")}>
+                      <SupportWhatsappIcon />
+                    </button>
+                    <button onClick={() => sendMail("admin@zikoro.com")}>
+                      <SupportMailIcon />
+                    </button>
+                  </div>
+                }
+              />
               <Navs
                 as="div"
                 actionFn={openFeedback}
