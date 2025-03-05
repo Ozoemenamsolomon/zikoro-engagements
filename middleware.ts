@@ -11,7 +11,11 @@ const includedPaths = [
 //  "/event/:eventId/reception",
 const dynamicPaths  = [
  
-  "/e/:workspaceAlias/qa/o/:qaId"
+  "/e/:workspaceAlias/qa/o/:qaId",
+  "/e/:workspaceAlias/quiz/o/:quizId",
+  "/e/:workspaceAlias/form/o/:formId",
+  "/e/:workspaceAlias/poll/o/:quizId",
+
 ]
 
 

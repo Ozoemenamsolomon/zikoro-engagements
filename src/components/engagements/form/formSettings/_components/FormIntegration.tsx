@@ -4,10 +4,19 @@ import { UseFormReturn, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { formSettingSchema } from "@/schemas";
 import { cn } from "@/lib/utils";
-import { useGetUserEngagements } from "@/hooks/services/engagement";
-import { useMemo, useState } from "react";
+import {
+  useGetOrganizationEvents,
+  useGetUserEngagements,
+} from "@/hooks/services/engagement";
+import { useEffect, useMemo, useState } from "react";
 import { Switch } from "@/components/ui/switch";
-
+import _ from "lodash";
+import { CreateOrganization } from "@/components/createOrganization/CreateOrganization";
+import { TOrganization } from "@/types/home";
+import { PlusCircle } from "styled-icons/bootstrap";
+import { Button, ReactSelect } from "@/components/custom";
+import InputOffsetLabel from "@/components/InputOffsetLabel";
+import { FormField } from "@/components/ui/form";
 
 type EngagementList = {
   value: string;
@@ -100,12 +109,17 @@ function AddEngagement({
 
 export function FormIntegration({
   form,
+  organizationList,
+  getOrganizations,
 }: {
   form: UseFormReturn<z.infer<typeof formSettingSchema>, any, any>;
+  getOrganizations: () => Promise<any>;
+  organizationList: TOrganization[];
 }) {
   const { qas, qaLoading, quizLoading, quizzes, forms, formLoading } =
     useGetUserEngagements();
-
+  const { getEvents, events } = useGetOrganizationEvents();
+  const [isOpen, setOpen] = useState(false);
   const filteredData = useMemo(() => {
     if (!qaLoading && !quizLoading && !formLoading) {
       const newqas = Array.isArray(qas)
@@ -134,38 +148,87 @@ export function FormIntegration({
     control: form.control,
     name: "formSettings.isConnectedToEngagement",
   });
-  const showForm = useWatch({
+  const isConnectedToEvent = useWatch({
     control: form.control,
-    name: "formSettings.showForm",
+    name: "formSettings.isConnectedToEvent",
   });
 
-  return (
-    <div className="w-full flex  flex-col items-start justify-start gap-6">
-      <div className="w-full flex items-center justify-between">
-        <div className="w-11/12 flex flex-col items-start justify-start">
-          <p className="font-medium text-mobile sm:text-sm">
-            Connect form with other engagement
-          </p>
-          <p className="text-xs  text-gray-500">
-            Embed your form into any engagement, allowing users to fill it out
-            either before or after engagement.
-          </p>
-        </div>
+  const eventAlias = useWatch({
+    control: form.control,
+    name: "formSettings.eventAlias",
+  });
+  function onClose() {
+    setOpen((prev) => !prev);
+  }
 
-        <Switch
-          checked={isConnectedToEngagement}
-          onCheckedChange={(checked) => {
-            form.setValue("formSettings.isConnectedToEngagement", checked);
-          }}
-        />
-      </div>
-      {isConnectedToEngagement && (
-        <AddEngagement
-          form={form}
-          engagementList={filteredData as EngagementList[]}
-        />
-      )}
-      {/* 
+  const formattedList = useMemo(() => {
+    const restructuredList = organizationList?.map(
+      ({ id, organizationName }) => {
+        return { value: id.toString(), label: organizationName };
+      }
+    );
+    return _.uniqBy(restructuredList, "value");
+  }, [organizationList]);
+
+  const workAlias = form.watch("wAlias");
+
+  useEffect(() => {
+    (async () => {
+      if (workAlias) {
+        await getEvents(workAlias);
+      }
+    })();
+  }, [workAlias]);
+
+  const formattedEvents = useMemo(() => {
+    if (Array.isArray(events) && events?.length > 0) {
+      return events?.map((e) => {
+        return {
+          value: e?.eventAlias,
+          label: e?.eventTitle,
+        };
+      });
+    } else return [];
+  }, [events]);
+
+  const prevEvents = useMemo(() => {
+    if (events?.length > 0 && eventAlias) {
+      const singEvent = events?.find((e) => e.eventAlias === eventAlias);
+      return {
+        value: singEvent?.eventAlias,
+        label: singEvent?.eventTitle,
+      };
+    } else return "";
+  }, [events, eventAlias]);
+
+  return (
+    <>
+      <div className="w-full flex  flex-col items-start justify-start gap-6">
+        <div className="w-full flex items-center justify-between">
+          <div className="w-11/12 flex flex-col items-start justify-start">
+            <p className="font-medium text-mobile sm:text-sm">
+              Connect form with other engagement
+            </p>
+            <p className="text-xs  text-gray-500">
+              Embed your form into any engagement, allowing users to fill it out
+              either before or after engagement.
+            </p>
+          </div>
+
+          <Switch
+            checked={isConnectedToEngagement}
+            onCheckedChange={(checked) => {
+              form.setValue("formSettings.isConnectedToEngagement", checked);
+            }}
+          />
+        </div>
+        {isConnectedToEngagement && (
+          <AddEngagement
+            form={form}
+            engagementList={filteredData as EngagementList[]}
+          />
+        )}
+        {/* 
       {isConnectedToEngagement && (
         <div className="flex flex-col items-start justify-start gap-y-3">
           <p className="font-medium text-mobile sm:text-sm">
@@ -201,7 +264,91 @@ export function FormIntegration({
           </div>
         </div>
       )} */}
-    </div>
+
+        <div className="w-full flex flex-col mt-6 items-center gap-6">
+          <div className="flex w-full text-mobile sm:text-sm items-center justify-between">
+            <div className="flex flex-col items-start justify-start">
+              <p>Connect Form to an Event</p>
+              <p className="text-tiny text-gray-500">
+                Participants must provide their email to confirm event
+                registration before being allowed to participate. Form points
+                will be added to their Zikoro event participant points.
+              </p>
+            </div>
+            <Switch
+              checked={isConnectedToEvent}
+              onCheckedChange={(checked) => {
+                form.setValue("formSettings.isConnectedToEvent", checked);
+              }}
+              className=""
+            />
+          </div>
+
+          {isConnectedToEvent && (
+            <>
+              {" "}
+              <div className="w-full mx-auto max-w-lg flex items-end gap-x-2">
+                <FormField
+                  control={form.control}
+                  name="wAlias"
+                  render={({ field }) => (
+                    <InputOffsetLabel label="">
+                      <ReactSelect
+                        {...field}
+                        placeHolder="Select a Workspace"
+                        options={formattedList}
+                      />
+                    </InputOffsetLabel>
+                  )}
+                />
+                <Button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    onClose();
+                  }}
+                  className="hover:bg-basePrimary text-basePrimary  rounded-md border border-basePrimary hover:text-gray-50 gap-x-2 h-11 font-medium"
+                >
+                  <PlusCircle size={20} />
+                  <p className="text-sm">Workspace</p>
+                </Button>
+              </div>
+              <div className="w-full mx-auto max-w-lg flex items-end gap-x-2">
+                <FormField
+                  control={form.control}
+                  name="formSettings.eventAlias"
+                  render={({ field }) => (
+                    <InputOffsetLabel label="">
+                      <ReactSelect
+                        defaultValue={prevEvents}
+                        {...field}
+                        placeHolder="Select an Event"
+                        options={formattedEvents}
+                        key={prevEvents?.toString()}
+                      />
+                    </InputOffsetLabel>
+                  )}
+                />
+                <Button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    window.open("https://zikoro.com/create");
+                  }}
+                  className="hover:bg-basePrimary text-basePrimary  rounded-md border border-basePrimary hover:text-gray-50 gap-x-2 h-11 font-medium"
+                >
+                  <PlusCircle size={20} />
+                  <p className="text-sm">Event</p>
+                </Button>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+      {isOpen && (
+        <CreateOrganization close={onClose} refetch={getOrganizations} />
+      )}
+    </>
   );
 }
 
