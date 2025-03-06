@@ -81,7 +81,7 @@ export const formSettingSchema = z.object({
     engagementType: z.string().optional(),
     hideNumber: z.boolean(),
     eventAlias: z.string().optional(),
-    isConnectedToEvent: z.boolean()
+    
   }),
 });
 

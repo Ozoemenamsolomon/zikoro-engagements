@@ -68,6 +68,8 @@ export function CreateForm({
             engagementId: "",
             engagementType: "",
             hideNumber: false,
+           
+            eventAlias:""
           },
         },
   });
@@ -143,7 +145,7 @@ export function CreateForm({
         workspaceAlias: engagementForm?.workspaceAlias,
       });
     }
-  }, [form, engagementForm]);
+  }, [ engagementForm]);
 
   const prevOrg = useMemo(() => {
     if (organization) {

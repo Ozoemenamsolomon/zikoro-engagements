@@ -148,9 +148,9 @@ export function FormIntegration({
     control: form.control,
     name: "formSettings.isConnectedToEngagement",
   });
-  const isConnectedToEvent = useWatch({
+  const connectToEvent = useWatch({
     control: form.control,
-    name: "formSettings.isConnectedToEvent",
+    name: "formSettings.connectToEvent",
   });
 
   const eventAlias = useWatch({
@@ -179,6 +179,8 @@ export function FormIntegration({
       }
     })();
   }, [workAlias]);
+
+  console.log("fewfwe", workAlias)
 
   const formattedEvents = useMemo(() => {
     if (Array.isArray(events) && events?.length > 0) {
@@ -276,15 +278,15 @@ export function FormIntegration({
               </p>
             </div>
             <Switch
-              checked={isConnectedToEvent}
+              checked={connectToEvent}
               onCheckedChange={(checked) => {
-                form.setValue("formSettings.isConnectedToEvent", checked);
+                form.setValue("formSettings.connectToEvent", checked);
               }}
               className=""
             />
           </div>
 
-          {isConnectedToEvent && (
+          {connectToEvent && (
             <>
               {" "}
               <div className="w-full mx-auto max-w-lg flex items-end gap-x-2">
