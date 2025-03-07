@@ -60,18 +60,18 @@ Deno.serve(async (req) => {
             <p style="color: #555; margin-top: 20px; margin-bottom: 20px;">
               We’re thrilled to have you on Zikoro! Here’s how you can get started right away:
             </p>
-              <p style="color: #555; margin-top: 10px; margin-bottom: 10px;">
+              <p style="color: #555; margin-top: 10px; margin-bottom: 10px;  text-align: start;">
               <span>✅ Create and sell event/workshop tickets in just 5 minutes.</span> <a style="margin-right: 3px;" href="https://zikoro.com" >Get Started</a>
             </p>
-              <p style="color: #555; margin-top: 10px; margin-bottom: 10px;">
+              <p style="color: #555; margin-top: 10px; margin-bottom: 10px;  text-align: start;">
                <span>✅ Issue digital certificates effortlessly and turn your recipients into brand ambassadors.</span> <a style="margin-right: 3px;" href="https://credentials.zikoro.com">Get Started</a>
               
             </p>
-              <p style="color: #555; margin-top: 10px; margin-bottom: 10px;">
+              <p style="color: #555; margin-top: 10px; margin-bottom: 10px;  text-align: start;">
               <span>  ✅ Gamify your event experience—engage attendees with fun quizzes, polls, and interactive forms.</span> <a style="margin-right: 3px;" href="https://engagements.zikoro.com">Get Started</a>
             
             </p>
-              <p style="color: #555; margin-top: 10px; margin-bottom: 10px;">
+              <p style="color: #555; margin-top: 10px; margin-bottom: 10px; text-align: start;">
                <span>✅ Simplify your appointments—enhance client interactions and run an efficient business.</span> <a style="margin-right: 3px;" href="https://bookings.zikoro.com">Get Started</a>
              
 

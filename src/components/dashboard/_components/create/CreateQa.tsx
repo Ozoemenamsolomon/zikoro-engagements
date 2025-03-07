@@ -20,9 +20,13 @@ import { LoaderAlt } from "styled-icons/boxicons-regular";
 import useUserStore from "@/store/globalUserStore";
 import { TQa } from "@/types/qa";
 import { generateInteractionAlias, uploadFile } from "@/utils";
+import { useSearchParams } from "next/navigation";
 export function CreateQa() {
   const [isOpen, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const params = useSearchParams();
+  const eventId = params.get("eventId")
+  const platform  = params.get("platform")
   const { user } = useUserStore();
   const { organizations: organizationList, getOrganizations } =
     useGetUserOrganizations();
@@ -90,9 +94,9 @@ export function CreateQa() {
           canPin: false,
           indicateAnsweredQuestions: false,
           canTag: false,
-          eventAlias:"",
+          eventAlias:eventId ?? "",
           canCollectEmail: false,
-          connectEvent: false
+          connectEvent: platform === 'Event' ? true : false
         }
       },
     });

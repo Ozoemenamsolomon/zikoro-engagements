@@ -95,7 +95,7 @@ export function AddressTypeAnswer({
               }}
               type={key === "zip_code" ? "number" : "text"}
               required={settings[key as keyof TAddressTypeAnswer]}
-              className="w-full h-11 sm:h-12 border-x-0 border-b border-t-0 bg-transparent rounded-md  px-2 placeholder:text-gray-500 placeholder-gray-500"
+              className="w-full h-11 sm:h-12 border-x-0 border-b border-t-0 bg-transparent rounded-none  px-2 placeholder:text-gray-500 placeholder-gray-500"
               placeholder="Enter Answer"
             />
           </div>

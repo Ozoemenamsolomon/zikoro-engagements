@@ -101,6 +101,7 @@ function FillFormComp({
   const attendeeId = params.get("id");
   const link = params.get("link");
   const query = params.get("redirect");
+  const attendeeAlias = params.get("attendeeAlias");
   const [isView, setIsView] = useState(true);
   const [currentIndexes, setCurrentIndexes] = useState(0);
   // const { isIdPresent } = useCheckTeamMember({ eventId });
@@ -108,8 +109,12 @@ function FillFormComp({
   const { data, isLoading } = useGetData<TEngagementFormQuestion>(
     `/engagements/form/${formId}`
   );
+
   const { data: formAnswers } = useGetData<TEngagementFormAnswer[]>(
     `/engagements/form/answer/${formId}`
+  );
+  const { postData: postRecipientCertData } = usePostRequest(
+    "/certificate/recipient"
   );
   const attendeeEmail = params.get("attendeeEmail");
   const {
@@ -130,7 +135,6 @@ function FillFormComp({
       questions: data?.questions,
       startedAt: new Date().toISOString(),
       viewed: 1,
-
     },
   });
 
@@ -175,13 +179,25 @@ function FillFormComp({
       attendeeEmail: attendee?.email || "",
       responses,
       submittedAt: new Date().toISOString(),
-      submitted: 1
+      submitted: 1,
     };
 
     // console.log(payload)
     // return
 
     await postData({ payload });
+
+    // post certificate data
+    if (attendeeAlias) {
+      const recipient = {
+        recipientEmail: attendee?.email,
+        recipientFirstName: attendee?.firstName,
+        recipientLastName: attendee?.lastName,
+        recipientAlias: generateAlias(),
+        profilePicture: attendee?.profilePicture,
+      };
+      await postRecipientCertData({ payload: recipient });
+    }
 
     if (query) {
       router.push(
@@ -201,11 +217,11 @@ function FillFormComp({
 
   useEffect(() => {
     (async () => {
-      if (attendeeEmail) {
-        await getAttendee(workspaceAlias, attendeeEmail);
+      if (attendeeAlias) {
+        await getAttendee(workspaceAlias, attendeeAlias);
       }
     })();
-  }, [attendeeEmail]);
+  }, [attendeeAlias]);
 
   useEffect(() => {
     if (data?.formSettings?.displayType === "slide") {
@@ -250,19 +266,18 @@ function FillFormComp({
         let r = parseInt(color.slice(1, 3), 16);
         let g = parseInt(color.slice(3, 5), 16);
         let b = parseInt(color.slice(5, 7), 16);
-  
+
         // Increase brightness (lighter color)
         const lightenFactor = 1.3; // Increase for more brightness
         r = Math.min(255, Math.floor(r * lightenFactor));
         g = Math.min(255, Math.floor(g * lightenFactor));
         b = Math.min(255, Math.floor(b * lightenFactor));
-  
+
         return `rgba(${r}, ${g}, ${b}, ${alpha})`;
       }
     },
     [data, data?.formSettings?.buttonColor]
   );
-  
 
   // console.log(currentQuestions);
 
@@ -350,10 +365,7 @@ function FillFormComp({
         </div>
       )}
 
-      <div
-       
-        className={cn("w-screen min-h-screen", isLoading && "hidden")}
-      >
+      <div className={cn("w-screen min-h-screen", isLoading && "hidden")}>
         <div
           style={{
             backgroundColor: data?.formSettings?.backgroundColor || "",
@@ -499,7 +511,7 @@ function FillFormComp({
                           data?.formSettings?.buttonColor || "#001fcc"
                         }`,
                       }}
-                      className="border h-12 px-6 font-medium"
+                      className="border h-11 px-6 font-medium"
                     >
                       Previous
                     </Button>
@@ -544,7 +556,7 @@ function FillFormComp({
                           backgroundColor:
                             data?.formSettings?.buttonColor || "",
                         }}
-                        className="text-white h-12 font-medium"
+                        className="text-white h-11 font-medium"
                       >
                         Next
                       </Button>
