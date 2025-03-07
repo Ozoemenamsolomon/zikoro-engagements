@@ -22,6 +22,7 @@ import { generateInteractionAlias } from "@/utils";
 import { uploadFile } from "@/utils";
 import { TEngagementFormQuestion } from "@/types/form";
 import { TOrganization } from "@/types/home";
+import { useSearchParams } from "next/navigation";
 
 export function CreateForm({
   engagementForm,
@@ -35,6 +36,9 @@ export function CreateForm({
   const [isOpen, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const { user } = useUserStore();
+  const params = useSearchParams();
+  const eventId = params.get("eventId")
+  const platform  = params.get("platform")
   const { organizations: organizationList, getOrganizations } =
     useGetUserOrganizations();
   const { postData, isLoading } =
@@ -62,12 +66,14 @@ export function CreateForm({
             startButtonText: "Start",
             isCollectEmail: false,
             isCollectPhone: false,
-            connectToEvent: false,
+            connectToEvent: platform === 'Event' ? true : false,
             showResult: false,
             isRedirectUrl: false,
             engagementId: "",
             engagementType: "",
             hideNumber: false,
+           
+            eventAlias:eventId ?? "",
           },
         },
   });
@@ -143,7 +149,7 @@ export function CreateForm({
         workspaceAlias: engagementForm?.workspaceAlias,
       });
     }
-  }, [form, engagementForm]);
+  }, [ engagementForm]);
 
   const prevOrg = useMemo(() => {
     if (organization) {
@@ -209,7 +215,7 @@ export function CreateForm({
                 name="formSettings.startButtonText"
                 render={({ field }) => (
                   <InputOffsetLabel
-                    className="w-[150px]"
+                    className="w-full"
                     label="Start Button Text"
                   >
                     <Input

@@ -46,6 +46,7 @@ Deno.serve(async () => {
       const userMetaData = user?.user_metadata;
 
       if (userMetaData?.verification_token) {
+        let imageUrl = "";
         let magicLink = "";
         // Extract the magic link from the response
         if (userMetaData?.platform === "Engagement") {
@@ -54,14 +55,17 @@ Deno.serve(async () => {
           }&createdAt=${new Date().toISOString()}&userId=${user?.id}&token=${
             userMetaData?.verification_token
           }`;
+
+          imageUrl = "https://res.cloudinary.com/dkdrbjfdt/image/upload/v1740654461/logo_rogdwe.webp"
         }
 
         if (userMetaData?.platform === "Event") {
-          // magicLink = `https://engagements.zikoro.com/onboarding?email=${
-          //    user.email
-          //  }&createdAt=${new Date().toISOString()}&userId=${user?.id}&token=${
-          //    userMetaData?.verification_token
-          //  }`;
+          magicLink = `https://zikoro.com/onboarding?email=${
+             user.email
+           }&createdAt=${new Date().toISOString()}&userId=${user?.id}&token=${
+             userMetaData?.verification_token
+           }`;
+           imageUrl = "https://res.cloudinary.com/dkdrbjfdt/image/upload/v1741084022/logo_re5khj.png"
         }
 
         if (userMetaData?.platform === "credentials") {
@@ -70,6 +74,8 @@ Deno.serve(async () => {
           }&createdAt=${new Date().toISOString()}&userId=${user?.id}&token=${
             userMetaData?.verification_token
           }`;
+
+          imageUrl = "https://res.cloudinary.com/dkdrbjfdt/image/upload/v1741082831/WhatsApp_Image_2025-03-04_at_01.42.56_qjbm0b.jpg"
         }
 
         // Send email with magic link
@@ -90,7 +96,7 @@ Deno.serve(async () => {
               <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" align="center">
       <tr>
         <td align="center">
-          <img src="https://res.cloudinary.com/dkdrbjfdt/image/upload/v1740654461/logo_rogdwe.webp" alt="Company Logo" width="150" style="margin-bottom: 20px;">
+          <img src=${imageUrl} alt="Company Logo" width="150" style="margin-bottom: 20px;">
         </td>
       </tr>
       <tr>

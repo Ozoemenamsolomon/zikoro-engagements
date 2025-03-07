@@ -52,11 +52,11 @@ export function useVerifyAttendee() {
   const [attendee, setAttendee] =useState<TAttendee | null>(null)
   const [loading, setLoading] = useState(false);
 
-  async function getAttendee(orgId: string, email:string) {
+  async function getAttendee(orgId: string, alias:string) {
     try {
       setLoading(true);
       const { data: responseData, status } = await getRequest<TAttendee>({
-        endpoint: `organization/${orgId}/event/attendee/${email}`,
+        endpoint: `organization/${orgId}/event/attendee/${alias}`,
       });
 
       if (status !== 200) {

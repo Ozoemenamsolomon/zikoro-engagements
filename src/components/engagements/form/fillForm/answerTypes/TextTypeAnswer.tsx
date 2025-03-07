@@ -74,7 +74,7 @@ export function TextTypeAnswer({
           }
           maxLength={selectedType === "INPUT_TEXT" ? settings : null}
           required={isRequired}
-          className="w-full h-11 sm:h-12 rounded-md border-x-0 border-t-0 border-b bg-transparent px-2 placeholder:text-gray-500 placeholder-gray-500"
+          className="w-full h-11 sm:h-12 rounded-none border-x-0 border-t-0 border-b bg-transparent px-2 placeholder:text-gray-500 placeholder-gray-500"
           placeholder="Enter Answer"
         />
       </div>

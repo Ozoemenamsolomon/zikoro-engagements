@@ -75,10 +75,10 @@ export function DropDownTypeAnswer({
           e.preventDefault();
           setOpen(true);
         }}
-        style={{
-          backgroundColor: rgba,
-        }}
-        className="w-full relative h-12 px-3 flex items-center justify-start rounded-lg"
+        // style={{
+        //   backgroundColor: rgba,
+        // }}
+        className="w-full relative border h-12 px-3 flex items-center justify-start rounded-lg"
       >
         <p
           className="innerhtml  w-full text-sm"

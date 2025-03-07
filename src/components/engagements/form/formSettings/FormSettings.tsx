@@ -16,6 +16,7 @@ import { FormAccessibility, FormIntegration } from "./_components";
 import FormAppearance from "./_components/FormAppearance";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
 import { usePostRequest } from "@/hooks/services/requests";
+import { useGetUserOrganizations } from "@/hooks/services/engagement";
 
 export enum FormSettingType {
   details,
@@ -39,6 +40,11 @@ export function FormSettings({
   const [active, setActive] = useState<FormSettingType>(
     FormSettingType.details
   );
+  const {
+    organizations: organizationList,
+    getOrganizations,
+    loading: isLoading,
+  } = useGetUserOrganizations();
   const { postData } =
     usePostRequest<Partial<TEngagementFormQuestion>>("engagements/form");
   const form = useForm<z.infer<typeof formSettingSchema>>({
@@ -55,9 +61,10 @@ export function FormSettings({
 
   async function onSubmit(values: z.infer<typeof formSettingSchema>) {
     setLoading(true);
+    const {wAlias, ...remData} =  values;
     const payload: Partial<TEngagementFormQuestion> = {
       ...engagementForm,
-      ...values,
+      ...remData,
     };
     await postData({ payload });
     setLoading(false);
@@ -103,7 +110,7 @@ export function FormSettings({
           </div>
           {FormSettingType.details === active && (
             <CreateForm
-               engagementForm={engagementForm}
+              engagementForm={engagementForm}
               refetch={refetch}
               organization={organization}
             />
@@ -122,7 +129,11 @@ export function FormSettings({
                   <FormAppearance form={form} />
                 )}
                 {FormSettingType.integration === active && (
-                  <FormIntegration form={form} />
+                  <FormIntegration
+                    form={form}
+                    organizationList={organizationList}
+                    getOrganizations={getOrganizations}
+                  />
                 )}
                 <Button
                   disabled={loading}

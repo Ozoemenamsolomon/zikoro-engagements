@@ -55,6 +55,7 @@ export const formSettingSchema = z.object({
   title: z.string().min(3, { message: "Title is required" }),
   description: z.string().optional(),
   coverImage: z.any(),
+  wAlias: z.any(),
   formSettings: z.object({
     isConnectedToEngagement: z.boolean(),
     showForm: z.string(),
@@ -78,7 +79,9 @@ export const formSettingSchema = z.object({
     showResult: z.boolean(),
     engagementId: z.string().optional(),
     engagementType: z.string().optional(),
-    hideNumber: z.boolean()
+    hideNumber: z.boolean(),
+    eventAlias: z.string().optional(),
+    
   }),
 });
 

@@ -3,9 +3,9 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { email: string } }
+  { params }: { params: { attendeeAlias: string } }
 ) {
-  const { email } = params;
+  const { attendeeAlias } = params;
   const supabase = createClient();
 
   if (req.method === "GET") {
@@ -14,7 +14,7 @@ export async function GET(
         .from("attendees")
         .select("*")
 
-        .eq("email", email)
+        .eq("attendeeAlias", attendeeAlias)
         .single();
 
       const { data, error, status } = await query;

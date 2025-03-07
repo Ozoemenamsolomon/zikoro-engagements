@@ -56,7 +56,7 @@ export function DateTypeAnswer({
           name={`responses.${index}.response`}
           value={form.getValues(`responses.${index}.response`)}
           required={isRequired}
-          className="w-full h-11 sm:h-12 rounded-md border-x-0 border-b border-t-0 bg-transparent  pl-8 pr-2 placeholder:text-gray-500 placeholder-gray-500"
+          className="w-full h-11 sm:h-12 rounded-none border-x-0 border-b border-t-0 bg-transparent  pl-8 pr-2 placeholder:text-gray-500 placeholder-gray-500"
           placeholder="YYYY MM DD"
         />
         <button

@@ -63,6 +63,7 @@ export function AddQuestion({
     defaultValues: {
       questionId: generateAlias(),
       isRequired: false,
+      showDescription: false,
     },
   });
 
@@ -111,7 +112,7 @@ export function AddQuestion({
       );
     }
 
-    console.log(processedOptionFields);
+    //  console.log(processedOptionFields);
 
     // console.log("processed", values?.optionFields);
 
@@ -195,6 +196,8 @@ export function AddQuestion({
 
   useEffect(() => {}, [optionType]);
 
+  // console.log("form", form.formState.errors)
+
   return (
     <>
       <div className="w-full px-4 sm:px-6 pt-4 sm:pt-6  h-full">
@@ -210,7 +213,6 @@ export function AddQuestion({
             <div className="my-6 flex flex-col items-start justify-start gap-3">
               {optionType !== null && (
                 <button
-
                   onClick={(e) => {
                     e.stopPropagation();
                     e.preventDefault();
@@ -235,7 +237,7 @@ export function AddQuestion({
                   <div className="w-full flex flex-wrap  items-center px-4 mx-auto max-w-[90%] gap-6 py-4 sm:py-8 justify-center">
                     {options?.map((item) => (
                       <button
-                      key={item.type}
+                        key={item.type}
                         onClick={() => setOptionType(item?.type)}
                         className={cn(
                           "w-full max-w-[170px] min-w-[170px] flex border hover:border-basePrimary border-gray-300 items-center gap-x-3 p-2 rounded-lg  sm:p-3"
@@ -402,7 +404,10 @@ export function AddQuestion({
 
             {optionType !== null && (
               <div className="w-full my-10 flex gap-3 items-center justify-center">
-                <Button className="h-11 bg-basePrimary rounded-lg gap-x-2 text-white font-medium">
+                <Button
+                  disabled={loading}
+                  className="h-11 bg-basePrimary rounded-lg gap-x-2 text-white font-medium"
+                >
                   {loading && <LoaderAlt size={20} className="animate-spin" />}
                   <p>Save Question</p>
                 </Button>

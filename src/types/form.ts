@@ -48,6 +48,7 @@ export interface TEngagementFormQuestion {
       engagementId?:string;
       engagementType?:string;
       hideNumber: boolean;
+      eventAlias?:string
     };
   }
   
