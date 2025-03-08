@@ -19,6 +19,7 @@ import {
   ContactTypeAnswer,
   YesNoTypeAnswer,
   DropDownTypeAnswer,
+  CountryTypeAnswer,
 } from "./answerTypes";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
 import { Suspense, useEffect, useMemo, useState } from "react";
@@ -32,6 +33,8 @@ import { nanoid } from "nanoid";
 import { InlineIcon } from "@iconify/react";
 import { useVerifyAttendee } from "@/hooks/services/engagement";
 import Link from "next/link";
+import { toast } from "react-toastify";
+import { getQuestionType } from "../formResponse/FormResponse";
 
 function SubmittedModal({ formLink }: { formLink: string }) {
   const socials = [
@@ -148,6 +151,26 @@ function FillFormComp({
     //  console.log(values); formEngagementPoints
 
     const { questions, startedAt, ...restData } = values;
+
+    // checking if all the required fields are filled ==> STARTS
+    const reformedData = questions?.map((val) => {
+      return {
+        type: val?.selectedType,
+        questionId: val?.questionId,
+        response: restData?.responses?.find(
+          (res) => res?.questionId === val?.questionId
+        )?.response,
+      };
+    });
+
+    for (let data of reformedData) {
+      if (!data?.response || data?.response === "") {
+        return toast.error(`${getQuestionType(data?.type!)} is required`);
+        break;
+      }
+    }
+
+    // ====> ENDS
 
     const responses = await Promise.all(
       restData?.responses?.map(async (item) => {
@@ -340,7 +363,7 @@ function FillFormComp({
                 1.3 * parseInt(data?.formSettings?.titleFontSize) + "px" ||
                 "40px",
             }}
-            className="text-lg mb-3 sm:text-xl lg:text-2xl"
+            className="text-lg capitalize mb-3 sm:text-xl lg:text-2xl"
           >
             {data?.title ?? ""}
           </h2>
@@ -411,6 +434,14 @@ function FillFormComp({
                       )}
                       {field.selectedType === "DROPDOWN" && (
                         <DropDownTypeAnswer
+                          form={form}
+                          index={index + currentIndexes}
+                          rgba={rgba || "#F7F8FF"}
+                          bgColor={data?.formSettings?.buttonColor || "#001fcc"}
+                        />
+                      )}
+                      {field.selectedType === "COUNTRY" && (
+                        <CountryTypeAnswer
                           form={form}
                           index={index + currentIndexes}
                           rgba={rgba || "#F7F8FF"}

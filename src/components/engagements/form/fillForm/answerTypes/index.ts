@@ -9,3 +9,4 @@ export * from "./AddressTypeAnswer";
 export * from "./ContactTypeAnswer";
 export * from "./YesNoAnswerType";
 export * from "./DropDownTypeAnswer";
+export * from "./CountryTypeAnswer"
