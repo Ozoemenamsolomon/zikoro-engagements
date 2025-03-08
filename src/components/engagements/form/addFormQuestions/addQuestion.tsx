@@ -188,7 +188,8 @@ export function AddQuestion({
         question: question?.question,
         optionFields: question?.optionFields,
         questionSettings: question?.questionSettings,
-        isRequired: question?.isRequired,
+        isRequired: question?.isRequired || false,
+        showDescription: question?.showDescription || false
       });
       setOptionType(question?.selectedType);
     }
@@ -196,7 +197,7 @@ export function AddQuestion({
 
   useEffect(() => {}, [optionType]);
 
-  // console.log("form", form.formState.errors)
+  // console.log("form", form.formState.errors, form.getValues())
 
   return (
     <>
