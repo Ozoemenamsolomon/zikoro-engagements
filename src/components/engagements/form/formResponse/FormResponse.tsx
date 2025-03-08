@@ -536,7 +536,9 @@ export default function FormResponses({
                         <div className="w-full flex flex-col items-center justify-center">
                           <div className="w-fit bg-basePrimary-100 rounded-lg  mb-2">
                             <p className="p-3 text-center">
-                              {response?.response ?? ""}
+                              {typeof response?.response === "object"
+                                ? `${response?.response?.selectedOption} ${response?.response?.optionId}`
+                                : response?.response ?? ""}
                             </p>
                           </div>
                         </div>
