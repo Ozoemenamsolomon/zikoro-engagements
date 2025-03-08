@@ -1,7 +1,8 @@
 import { TextEditor } from "@/components/custom";
+import { cn } from "@/lib/utils";
 import { formQuestion } from "@/schemas";
 import { useState } from "react";
-import { UseFormReturn } from "react-hook-form";
+import { UseFormReturn, useWatch } from "react-hook-form";
 import { z } from "zod";
 
 export function FormQuestionDescription({
@@ -12,10 +13,12 @@ export function FormQuestionDescription({
   form: UseFormReturn<z.infer<typeof formQuestion>>;
 }) {
   const [isFocused, setIsFocused] = useState(false);
+
+
   return (
     <>
       {
-        <div className="w-full" id="select-description">
+        <div className={cn("w-full")} id="select-description">
           {isFocused ? (
             <div className="w-full">
               <TextEditor
