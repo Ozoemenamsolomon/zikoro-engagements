@@ -33,6 +33,8 @@ import { nanoid } from "nanoid";
 import { InlineIcon } from "@iconify/react";
 import { useVerifyAttendee } from "@/hooks/services/engagement";
 import Link from "next/link";
+import { toast } from "react-toastify";
+import { getQuestionType } from "../formResponse/FormResponse";
 
 function SubmittedModal({ formLink }: { formLink: string }) {
   const socials = [
@@ -149,6 +151,26 @@ function FillFormComp({
     //  console.log(values); formEngagementPoints
 
     const { questions, startedAt, ...restData } = values;
+
+    // checking if all the required fields are filled ==> STARTS
+    const reformedData = questions?.map((val) => {
+      return {
+        type: val?.selectedType,
+        questionId: val?.questionId,
+        response: restData?.responses?.find(
+          (res) => res?.questionId === val?.questionId
+        )?.response,
+      };
+    });
+
+    for (let data of reformedData) {
+      if (!data?.response || data?.response === "") {
+        return toast.error(`${getQuestionType(data?.type!)} is required`);
+        break;
+      }
+    }
+
+    // ====> ENDS
 
     const responses = await Promise.all(
       restData?.responses?.map(async (item) => {
@@ -418,7 +440,7 @@ function FillFormComp({
                           bgColor={data?.formSettings?.buttonColor || "#001fcc"}
                         />
                       )}
-                       {field.selectedType === "COUNTRY" && (
+                      {field.selectedType === "COUNTRY" && (
                         <CountryTypeAnswer
                           form={form}
                           index={index + currentIndexes}

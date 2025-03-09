@@ -5,15 +5,8 @@ import { UseFormReturn, useWatch } from "react-hook-form";
 import * as z from "zod";
 import { FillFormQuestion } from "../common";
 import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
-import { shuffleArray } from "@/utils";
+import { useState } from "react";
 import { COUNTRY_CODE } from "@/utils/countryCode";
-
-type OptionItemsType = {
-  id: string;
-  option: string;
-  optionImage: string;
-};
 
 export function CountryTypeAnswer({
   form,
