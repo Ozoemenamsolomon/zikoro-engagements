@@ -19,6 +19,7 @@ import {
   ContactTypeAnswer,
   YesNoTypeAnswer,
   DropDownTypeAnswer,
+  CountryTypeAnswer,
 } from "./answerTypes";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
 import { Suspense, useEffect, useMemo, useState } from "react";
@@ -340,7 +341,7 @@ function FillFormComp({
                 1.3 * parseInt(data?.formSettings?.titleFontSize) + "px" ||
                 "40px",
             }}
-            className="text-lg mb-3 sm:text-xl lg:text-2xl"
+            className="text-lg capitalize mb-3 sm:text-xl lg:text-2xl"
           >
             {data?.title ?? ""}
           </h2>
@@ -411,6 +412,14 @@ function FillFormComp({
                       )}
                       {field.selectedType === "DROPDOWN" && (
                         <DropDownTypeAnswer
+                          form={form}
+                          index={index + currentIndexes}
+                          rgba={rgba || "#F7F8FF"}
+                          bgColor={data?.formSettings?.buttonColor || "#001fcc"}
+                        />
+                      )}
+                       {field.selectedType === "COUNTRY" && (
+                        <CountryTypeAnswer
                           form={form}
                           index={index + currentIndexes}
                           rgba={rgba || "#F7F8FF"}

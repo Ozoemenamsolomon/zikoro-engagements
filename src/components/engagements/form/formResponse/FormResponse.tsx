@@ -59,6 +59,7 @@ const options = [
   { name: "Phone Number", image: "/fphone.svg", type: "PHONE_NUMBER" },
   { name: "Contact", image: "/fcontact.svg", type: "CONTACT" },
   { name: "Dropdown", image: "/fcontact.svg", type: "DROPDOWN" },
+  { name: "Country", image: "/fcountry.svg", type: "COUNTRY" },
   {
     name: "Mutiple Choice",
     image: "/fmultiplechoice.png",
@@ -431,7 +432,6 @@ export default function FormResponses({
                 {engagementStats?.completionRate}
               </h1>
             </div>
-         
           </div>
 
           {Object.entries(data).map(([key, value]) => {
@@ -531,6 +531,7 @@ export default function FormResponses({
                       )}
                       {(item?.type === "INPUT_EMAIL" ||
                         item?.type === "PHONE_NUMBER" ||
+                        item?.type === "COUNTRY" ||
                         item?.type === "WEBSITE") && (
                         <div className="w-full flex flex-col items-center justify-center">
                           <div className="w-fit bg-basePrimary-100 rounded-lg  mb-2">
@@ -905,7 +906,7 @@ function FilterActions({
           </div>
 
           <button onClick={() => setIsFilter(false)}>
-         <LuArrowLeftToLine size={22}/>
+            <LuArrowLeftToLine size={22} />
           </button>
         </div>
         {/** date range */}
@@ -983,7 +984,10 @@ function FilterActions({
             defaultValue={value}
           >
             <SelectTrigger className="h-11 w-full">
-              <SelectValue className="bg-basePrimary-100" placeholder="Select Question" />
+              <SelectValue
+                className="bg-basePrimary-100"
+                placeholder="Select Question"
+              />
             </SelectTrigger>
             <SelectContent className="bg-basePrimary-100">
               <SelectGroup>
@@ -1104,15 +1108,15 @@ const IndividualResponse = forwardRef<
   const completionRate = useMemo(() => {
     if (currentIndex != -1) {
       const currentParticipantId = responses[currentIndex].attendeeAlias;
-      const filtered = responses?.filter((v) => v?.attendeeAlias === currentParticipantId)
+      const filtered = responses?.filter(
+        (v) => v?.attendeeAlias === currentParticipantId
+      );
 
-      const attempted = filtered?.filter((v) =>v?.response);
+      const attempted = filtered?.filter((v) => v?.response);
 
-      return ((attempted?.length/questions?.length) * 100).toFixed(0)
-    }
-    else return "0"
-
-  },[responses, currentIndex])
+      return ((attempted?.length / questions?.length) * 100).toFixed(0);
+    } else return "0";
+  }, [responses, currentIndex]);
 
   return (
     <div className="w-full max-w-[1400px] mx-auto">
@@ -1128,7 +1132,6 @@ const IndividualResponse = forwardRef<
           <p className="text-lg sm:text-xl">Completion Rate</p>
           <h1 className="text-[36px] font-bold">{completionRate}%</h1>
         </div>
-      
       </div>
 
       <div
@@ -1147,13 +1150,15 @@ const IndividualResponse = forwardRef<
           />
         </div>
         <div className={cn("w-full", isFilter && "col-span-7")}>
-        {!isFilter &&  <button
-            onClick={() => setIsFilter(true)}
-            className=" mb-2 flex items-center gap-x-1 text-mobile"
-          >
-            <InlineIcon icon="mage:filter" fontSize={15} />
-            <p>Filter</p>
-          </button>}
+          {!isFilter && (
+            <button
+              onClick={() => setIsFilter(true)}
+              className=" mb-2 flex items-center gap-x-1 text-mobile"
+            >
+              <InlineIcon icon="mage:filter" fontSize={15} />
+              <p>Filter</p>
+            </button>
+          )}
           <div className="w-full bg-white rounded-lg  px-6 py-10">
             <div className="flex flex-col items-center justify-center mx-auto gap-3">
               <p className="font-semibold text-base sm:text-lg">

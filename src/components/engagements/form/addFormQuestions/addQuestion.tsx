@@ -41,6 +41,7 @@ const options = [
   { name: "Address", image: "/faddress.svg", type: "INPUT_ADDRESS" },
   { name: "Phone Number", image: "/fphone.svg", type: "PHONE_NUMBER" },
   { name: "Contact", image: "/fcontact.svg", type: "CONTACT" },
+  { name: "Country", image: "/fcountry.svg", type: "COUNTRY" },
 ];
 
 export function AddQuestion({
@@ -189,7 +190,7 @@ export function AddQuestion({
         optionFields: question?.optionFields,
         questionSettings: question?.questionSettings,
         isRequired: question?.isRequired || false,
-        showDescription: question?.showDescription || false
+        showDescription: question?.showDescription || false,
       });
       setOptionType(question?.selectedType);
     }
@@ -380,6 +381,7 @@ export function AddQuestion({
 
                   {(optionType === "INPUT_EMAIL" ||
                     optionType === "PHONE_NUMBER" ||
+                    optionType === "COUNTRY" ||
                     optionType === "WEBSITE") && (
                     <FormBasicType
                       form={form}
@@ -395,6 +397,8 @@ export function AddQuestion({
                           ? "Email"
                           : optionType === "WEBSITE"
                           ? "Website"
+                          : optionType === "COUNTRY"
+                          ? "Country"
                           : "Phone Number"
                       }
                     />
