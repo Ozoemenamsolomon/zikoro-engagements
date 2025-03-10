@@ -37,8 +37,8 @@ export function CreateForm({
   const [loading, setLoading] = useState(false);
   const { user } = useUserStore();
   const params = useSearchParams();
-  const eventId = params.get("eventId")
-  const platform  = params.get("platform")
+  const eventId = params.get("eventId");
+  const platform = params.get("platform");
   const { organizations: organizationList, getOrganizations } =
     useGetUserOrganizations();
   const { postData, isLoading } =
@@ -66,14 +66,14 @@ export function CreateForm({
             startButtonText: "Start",
             isCollectEmail: false,
             isCollectPhone: false,
-            connectToEvent: platform === 'Event' ? true : false,
+            connectToEvent: platform === "Event" ? true : false,
             showResult: false,
             isRedirectUrl: false,
             engagementId: "",
             engagementType: "",
             hideNumber: false,
-           
-            eventAlias:eventId ?? "",
+
+            eventAlias: eventId ?? "",
           },
         },
   });
@@ -147,9 +147,10 @@ export function CreateForm({
         title: engagementForm?.title,
         description: engagementForm?.description,
         workspaceAlias: engagementForm?.workspaceAlias,
+        formSettings: engagementForm?.formSettings,
       });
     }
-  }, [ engagementForm]);
+  }, [engagementForm]);
 
   const prevOrg = useMemo(() => {
     if (organization) {
@@ -165,6 +166,9 @@ export function CreateForm({
     name: "formSettings.startButtonText",
   });
 
+  console.log("form creation update", form.formState.errors);
+  console.log("form values", form.getValues());
+  console.log("init", engagementForm?.formSettings);
   return (
     <>
       <Form {...form}>
