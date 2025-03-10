@@ -69,6 +69,8 @@ export function FormSettings({
     await postData({ payload });
     setLoading(false);
   }
+
+  console.log("form", form.formState.errors)
   return (
     <div
       onClick={close}

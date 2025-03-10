@@ -28,8 +28,9 @@ export const formCreationSchema = z.object({
     showResult: z.boolean(),
     engagementId: z.string().optional(),
     engagementType: z.string().optional(),
-    hideNumber: z.boolean()
-  }),
+    hideNumber: z.boolean(),
+    eventAlias:z.string().optional()
+  }).optional(),
 });
 
 export const formQuestion = z.object({
