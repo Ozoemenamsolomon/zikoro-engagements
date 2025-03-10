@@ -49,6 +49,7 @@ export function MultiChoiceTypeAnswer({
   useEffect(() => {
     if (settings) {
       const inOrder = settings?.inOrder;
+    
       if (!inOrder) {
         const randomizedArray = shuffleArray(optionFields);
         setOptions(randomizedArray);
@@ -57,6 +58,7 @@ export function MultiChoiceTypeAnswer({
       }
     }
   }, [settings]);
+
   return (
     <>
       <FillFormQuestion
@@ -135,7 +137,7 @@ export function MultiChoiceTypeAnswer({
                           "rounded-lg h-8 flex items-center text-gray-600 justify-center font-medium w-8 bg-white border border-gray-700"
                         )}
                       >
-                        {index + 1}
+                        {id + 1}
                       </span>
                       <div
                         className="innerhtml  w-full text-sm"

@@ -59,6 +59,8 @@ export function CheckboxTypeAnswer({
       }
     }
   }, [settings]);
+
+ 
   return (
     <>
       <FillFormQuestion
@@ -124,7 +126,7 @@ export function CheckboxTypeAnswer({
                           "rounded-lg h-8 flex items-center text-gray-600 justify-center font-medium w-8 bg-white border border-gray-700"
                         )}
                       >
-                        {index + 1}
+                        {id + 1}
                       </span>
                       <div
                         className="innerhtml  w-full text-sm"
