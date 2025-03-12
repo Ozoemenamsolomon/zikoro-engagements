@@ -8,6 +8,7 @@ export interface TEngagementFormQuestion {
     coverImage: string | any;
     createdBy: number;
     workspaceAlias:string;
+    integrationAlias?:string;
     updatedAt: string;
     isActive: boolean;
     expirationDate: string;
@@ -72,6 +73,7 @@ export interface TEngagementFormQuestion {
     viewed: number;
     submitted:number;
     formEngagementPoints: number | null;
+    integrationAlias?:string;
   }
   
   export interface TFormattedEngagementFormAnswer {
