@@ -343,7 +343,7 @@ function FillFormComp({
           </div>
         )}
       {isView && !isLoading && data?.formSettings?.isCoverImage && (
-        <div className="w-full min-h-screen bg-white justify-center inset-0 fixed z-[100] flex flex-col items-center gap-y-8">
+        <div className="w-full min-h-screen p-6 bg-white justify-center inset-0 fixed z-[100] flex flex-col items-center gap-y-8">
           {data?.coverImage &&
           (data?.coverImage as string).startsWith("https") ? (
             <Image
