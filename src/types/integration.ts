@@ -8,7 +8,8 @@ export interface CredentialsIntegration {
     disconnect: boolean;
     integrationSettings: Record<string, unknown> | null;
     workspaceAlias: string;
-  templateId: string
+  templateId: string;
+  credentialId:string;
   }
 
 
