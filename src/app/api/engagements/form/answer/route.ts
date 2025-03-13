@@ -119,7 +119,9 @@ export async function POST(req: NextRequest) {
               await supabase
                 .from("certificateRecipients")
                 .upsert(recipientCertificate, { onConflict: "id" })
-                .select("*, certificate(*)")
+                .select(
+                  "*, certificate!inner(*, workspace:organization!inner(*, verification:organizationVerification(*)))"
+                )
                 .single();
 
             console.log("recipeint certificate", certificateRecipients);
@@ -188,14 +190,14 @@ export async function POST(req: NextRequest) {
           <h1 style="font-size: 24px; font-weight: 700; margin-bottom: 10px;">Certificate for completing the form </h1>
             ${replaceSpecialText(emailTemplate?.body, {
               recipient: recipientCertificate,
-              organization,
+              organization: recipientCertificate?.certificate?.workspace,
               asset: recipientCertificate?.certificate,
             })}
       
             <div style="width: fit-content; margin: 20px auto; border-top: 1px solid #e5e5e5; padding-top: 20px; text-align: center;">
               <p style="margin-bottom: 10px; font-style: italic; text-align: center;">View on a desktop computer for the best experience</p>
               <a href="https://credentials.zikoro.com/credentials/verify/certificate/${
-                recipientData["credentialId"]
+                recipientCertificate?.certificateId
               }"
                 style="display: inline-block; background-color: ${
                   emailTemplate?.buttonProps.backgroundColor
@@ -214,7 +216,7 @@ export async function POST(req: NextRequest) {
             emailTemplate?.showSocialLinks
               ? `<table role="presentation" style="width: 100%; margin-top: 20px; text-align: center;">
                    <tr>
-                     ${organization?.socialLinks
+                     ${recipientCertificate?.certificate?.workspace?.socialLinks
                        ?.map((link) =>
                          link.url
                            ? `<td style="padding: 5px;">
@@ -238,28 +240,28 @@ export async function POST(req: NextRequest) {
                  <tr>
                  <td style="padding: 5px;">
                    <a href="${
-                     organization?.linkedIn || ""
+                     recipientCertificate?.certificate?.workspace?.linkedIn || ""
                    }" style='color: #4b5563; font-size: 14px; font-weight: 600;'>
                             Linkedin
                           </a>
                           </td>
                           <td style="padding: 5px;">
                           <a href="${
-                            organization?.x || ""
+                            recipientCertificate?.certificate?.workspace?.x || ""
                           }" style="color: #4b5563; font-size: 14px; font-weight: 600;>
                             X
                           </a>
                           </td>
                           <td style="padding: 5px;">
                           <a href="${
-                            organization?.instagram || ""
+                            recipientCertificate?.certificate?.workspace?.instagram || ""
                           }" style="color: #4b5563; font-size: 14px; font-weight: 600;>
                             Instagram
                           </a>
                           </td>
                           <td style="padding: 5px;">
                           <a href="${
-                            organization?.facebook || ""
+                            recipientCertificate?.certificate?.workspace?.facebook || ""
                           }" style="color: #4b5563; font-size: 14px; font-weight: 600;>
                             Facebook
                           </a>
