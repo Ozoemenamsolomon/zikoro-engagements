@@ -39,6 +39,7 @@ export interface TQuiz<T> {
   liveMode: any;
   description: string;
   interactionType: string;
+  integrationAlias?:string;
   formAlias?: string;
   coverImage: string;
   branding: { poweredBy: boolean; eventName: boolean };
@@ -114,7 +115,8 @@ export interface TAnswer {
   phone: string;
   correctOptionId: { optionId: string };
   eventAlias: string;
-  answeredQuestion: TRefinedQuestion
+  answeredQuestion: TRefinedQuestion;
+  integrationAlias?:string;
 }
 
 export interface TExportedAnswer {

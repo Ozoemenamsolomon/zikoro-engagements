@@ -113,10 +113,14 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(
       usePostRequest<Partial<TQuiz<TQuestion[]>>>("engagements/quiz");
     const [isOptionSelected, setIsOptionSelected] = useState(false);
     const [isJoiningAttempt, setIsJoiningAttempt] = useState(false);
+    const [isIntegrating, setIsIntegrating] = useState(false);
     const [chosenAnswerStatus, setChosenAnswerStatus] =
       useState<ChosenAnswerStatus | null>(null);
     const { postData: createAnswer } = usePostRequest<Partial<TAnswer>>(
       "engagements/quiz/answer"
+    );
+    const { postData: postIntegration } = usePostRequest(
+      "engagements/quiz/integration"
     );
 
     useImperativeHandle(ref, () => ({
@@ -407,6 +411,7 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(
         const payload: Partial<TAnswer> = {
           ...attendeeDetail,
           quizId: quiz?.id,
+          integrationAlias: quiz?.integrationAlias,
           eventAlias: quiz?.eventAlias,
           questionId: currentQuestion?.id,
           quizParticipantId: quizParticipantId,
@@ -458,6 +463,9 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(
 
     // quiz result
     async function openQuizResult() {
+      if (quiz?.integrationAlias) {
+        await integrationAction();
+      }
       onOpenScoreSheet();
       if (quiz?.accessibility?.live) {
         const { questions, liveMode, ...restData } = quiz;
@@ -479,6 +487,15 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(
         refetchQuiz();
         onOpenScoreSheet();
       }
+    }
+
+    // integration function
+    async function integrationAction() {
+      setIsIntegrating(true);
+      await postIntegration({
+        payload: { integrationAlias: quiz?.integrationAlias },
+      });
+      setIsIntegrating(false);
     }
 
     async function onNextBtnClick() {
@@ -623,39 +640,43 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(
                       )}
                     </div>
 
-                   {quiz?.interactionType !== 'quiz' && showAnswerMetric ?
-                   <AnsweredPollMetrics options={currentQuestion?.options!} answer={answer}/>
-                   : <div
-                      className={cn(
-                        "w-full",
-                        isImageOption &&
-                          "flex items-center justify-center flex-wrap gap-4"
-                      )}
-                    >
-                      {currentQuestion?.options.map((option, index, arr) => (
-                        <Option
-                          key={index}
-                          option={option}
-                          isAttendee={isAttendee}
-                          setIsOptionSelected={setIsOptionSelected}
-                          showAnswerMetric={showAnswerMetric}
-                          answer={answer}
-                          isImageOption={isImageOption}
-                          isDisabled={
-                            timing === 0 ||
-                            arr?.some(
-                              ({ isCorrect }) =>
-                                typeof isCorrect === "boolean" ||
-                                isOptionSelected
-                            )
-                          }
-                          selectOption={selectOption}
-                          optionIndex={optionLetter[index]}
-                          quiz={quiz}
-                        />
-                      ))}
-                    </div>
-}
+                    {quiz?.interactionType !== "quiz" && showAnswerMetric ? (
+                      <AnsweredPollMetrics
+                        options={currentQuestion?.options!}
+                        answer={answer}
+                      />
+                    ) : (
+                      <div
+                        className={cn(
+                          "w-full",
+                          isImageOption &&
+                            "flex items-center justify-center flex-wrap gap-4"
+                        )}
+                      >
+                        {currentQuestion?.options.map((option, index, arr) => (
+                          <Option
+                            key={index}
+                            option={option}
+                            isAttendee={isAttendee}
+                            setIsOptionSelected={setIsOptionSelected}
+                            showAnswerMetric={showAnswerMetric}
+                            answer={answer}
+                            isImageOption={isImageOption}
+                            isDisabled={
+                              timing === 0 ||
+                              arr?.some(
+                                ({ isCorrect }) =>
+                                  typeof isCorrect === "boolean" ||
+                                  isOptionSelected
+                              )
+                            }
+                            selectOption={selectOption}
+                            optionIndex={optionLetter[index]}
+                            quiz={quiz}
+                          />
+                        ))}
+                      </div>
+                    )}
                     <div
                       className={cn(
                         "w-full flex items-start justify-between",
@@ -860,7 +881,6 @@ export function AnsweredPollMetrics({
   return (
     <div className="w-full h-[350px] flex items-start gap-x-3 justify-center">
       {options?.map((option, index) => {
-
         const chosedOption = useMemo(() => {
           const i = answer?.filter((ans) => {
             return option?.optionId === ans?.selectedOptionId?.optionId;
@@ -868,7 +888,7 @@ export function AnsweredPollMetrics({
 
           return i?.length || 0;
         }, [answer]);
-        
+
         return (
           <div className="w-[60px] h-full flex flex-col items-center gap-2">
             <div className="h-[280px] w-[60px] sm:w-[90px]">
