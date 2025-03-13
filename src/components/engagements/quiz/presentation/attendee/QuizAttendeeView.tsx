@@ -164,37 +164,36 @@ export default function QuizAttendeeView({
     if (!quiz?.accessibility?.live) return;
     const channel = supabase.channel("live-answer");
 
-      // channel.on(
-      //   "postgres_changes",
-      //   {
-      //     event: "UPDATE",
-      //     schema: "public",
-      //     table: "quizAnswer",
-      //     filter: `quizId=eq.${quiz?.id}`,
-      //   },
-      //   (payload) => {
-      //     setAnswers((prev) => [...prev, payload.new as TAnswer]);
-      //   }
-      // )
+    // channel.on(
+    //   "postgres_changes",
+    //   {
+    //     event: "UPDATE",
+    //     schema: "public",
+    //     table: "quizAnswer",
+    //     filter: `quizId=eq.${quiz?.id}`,
+    //   },
+    //   (payload) => {
+    //     setAnswers((prev) => [...prev, payload.new as TAnswer]);
+    //   }
+    // )
 
-      channel.on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "quizAnswer",
-          filter: `quizId=eq.${quiz?.id}`,
-        },
-        (payload) => {
+    channel.on(
+      "postgres_changes",
+      {
+        event: "INSERT",
+        schema: "public",
+        table: "quizAnswer",
+        filter: `quizId=eq.${quiz?.id}`,
+      },
+      (payload) => {
         //  console.log("new answer data", payload.new)
         setAnswers((prev) => _.uniqBy([...prev, payload.new as TAnswer], "id"));
-          
-        }
-      )
+      }
+    );
 
-      channel.subscribe((status) => {
-        console.log("Subscription status: ANSWER", status);
-      });
+    channel.subscribe((status) => {
+      console.log("Subscription status: ANSWER", status);
+    });
 
     return () => {
       supabase.removeChannel(channel);
@@ -411,7 +410,6 @@ export default function QuizAttendeeView({
               refetchLobby={getLiveParticipant}
               organization={organization}
               quiz={quiz}
-              
             />
           )}
 
@@ -469,7 +467,8 @@ export default function QuizAttendeeView({
         <div className="w-full h-[300px] flex flex-col bg-basePrimary-200 rounded-lg items-center justify-center">
           <InlineIcon icon="clarity:sad-face-line" fontSize={30} />
           <p className="font-medium text-base sm:text-lg">
-            You don't have access to this {quiz?.interactionType === 'quiz' ? "quiz" : "poll"}
+            You don't have access to this{" "}
+            {quiz?.interactionType === "quiz" ? "quiz" : "poll"}
           </p>
         </div>
       )}

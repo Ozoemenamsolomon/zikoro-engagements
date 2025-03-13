@@ -1,5 +1,7 @@
 import { parseISO, format } from "date-fns";
+import * as crypto from "crypto";
 import {nanoid} from "nanoid"
+import { CertificateRecipient, TAttendeeCertificate, TOrganization } from "@/types/home";
 export async function isImageValid(url: string): Promise<boolean> {
     try {
       const response = await fetch(url);
@@ -148,4 +150,57 @@ export function calculateAndSetWindowHeight(
 
   export function shuffleArray<T>(array: T[]): T[] {
     return [...array].sort(() => Math.random() - 0.5);
+  }
+
+  export function createHash(data: string): string {
+    const hash = crypto.createHash("sha256");
+    hash.update(data);
+    const fullHash = hash.digest("hex");
+    return fullHash.substring(0, 12);
+  }
+
+  type Context = {
+    asset: any;
+    recipient: CertificateRecipient;
+    organization: TOrganization;
+  };
+
+  export function replaceSpecialText(input: string, context: Context): string {
+    const pattern = /#{(.*?)#}/g;
+  
+    if (pattern.test(input)) {
+    } else {
+    }
+  
+    return input.replaceAll(/#{(.*?)#}/g, (match, value) => {
+      // console.log(value, context.asset?.attributes, "attribute");
+      if (
+        context.asset?.attributes &&
+        context.asset?.attributes?.includes(value.trim())
+      ) {
+        return context?.recipient?.metadata?.[value.trim()] || "N/A";
+      }
+  
+      switch (value.trim()) {
+        case "first_name":
+          return context.recipient.recipientFirstName;
+        case "last_name":
+          return context.recipient.recipientLastName;
+        case "recipient_email":
+          return context.recipient.recipientEmail;
+        case "certificateId":
+          return context.recipient.certificateId;
+        case "certificate_link":
+          return (
+            "https://www.credentials.zikoro.com/credentials/verify/certificate/" +
+            context.recipient.certificateId
+          );
+        case "organization_name":
+          return context.organization.organizationName;
+        case "organisation_logo":
+          return context.organization.organizationLogo || "";
+        default:
+          return match;
+      }
+    });
   }

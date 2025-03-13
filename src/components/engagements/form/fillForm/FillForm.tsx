@@ -116,9 +116,9 @@ function FillFormComp({
   const { data: formAnswers } = useGetData<TEngagementFormAnswer[]>(
     `/engagements/form/answer/${formId}`
   );
-  const { postData: postRecipientCertData } = usePostRequest(
-    "/certificate/recipient"
-  );
+  // const { postData: postRecipientCertData } = usePostRequest(
+  //   "/certificate/recipient"
+  // );
   const attendeeEmail = params.get("attendeeEmail");
   const {
     attendee,
@@ -203,24 +203,24 @@ function FillFormComp({
       responses,
       submittedAt: new Date().toISOString(),
       submitted: 1,
-    };
+      integrationAlias: data?.integrationAlias
 
-    // console.log(payload)
-    // return
+
+    };
 
     await postData({ payload });
 
     // post certificate data
-    if (attendeeAlias) {
-      const recipient = {
-        recipientEmail: attendee?.email,
-        recipientFirstName: attendee?.firstName,
-        recipientLastName: attendee?.lastName,
-        recipientAlias: generateAlias(),
-        profilePicture: attendee?.profilePicture,
-      };
-      await postRecipientCertData({ payload: recipient });
-    }
+    // if (attendeeAlias) {
+    //   const recipient = {
+    //     recipientEmail: attendee?.email,
+    //     recipientFirstName: attendee?.firstName,
+    //     recipientLastName: attendee?.lastName,
+    //     recipientAlias: generateAlias(),
+    //     profilePicture: attendee?.profilePicture,
+    //   };
+    //   await postRecipientCertData({ payload: recipient });
+    // }
 
     if (query) {
       router.push(
