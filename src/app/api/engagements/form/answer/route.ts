@@ -14,7 +14,9 @@ export async function POST(req: NextRequest) {
     try {
       const params = await req.json();
 
-      const { error } = await supabase.from("formResponse").upsert(params);
+      const { integrationAlias, ...restData } = params;
+
+      const { error } = await supabase.from("formResponse").upsert(restData);
 
       if (error) {
         return NextResponse.json(
@@ -37,11 +39,17 @@ export async function POST(req: NextRequest) {
           .eq("integrationAlias", params?.integrationAlias)
           .single();
 
+        console.log("Dddddd integration", data);
+
         if (data) {
           const integration = data as CredentialsIntegration;
 
+          console.log("cool fetched integration", integration);
+
           //> recipient data is stored in the integration settingd a JSON, anfd can be null
           const recipientData = integration.integrationSettings;
+
+          console.log("cool settings", JSON.stringify(recipientData));
 
           //> check if recipient data is not null
           if (recipientData) {
@@ -63,10 +71,19 @@ export async function POST(req: NextRequest) {
             });
 
             //> since the first three is in this order recipientFirstName, recipientLastName, recipientEmail
-              const recipientFirstName = mappedData[keys[0]];
-              const recipientLastName = mappedData[keys[1]];
-              const recipientEmail = mappedData[keys[2]];
-           
+            const recipientFirstName = mappedData[keys[0]];
+            const recipientLastName = mappedData[keys[1]];
+            const recipientEmail = mappedData[keys[2]];
+
+            console.log(
+              "fname",
+              recipientFirstName,
+              "lname",
+              recipientLastName,
+              "email",
+              recipientEmail
+            );
+
             const recipient = {
               metadata: {},
               recipientEmail: recipientEmail,
@@ -77,9 +94,13 @@ export async function POST(req: NextRequest) {
 
             //> post recipients certificate
             const recipientCertificate = {
-              certificateGroupId: recipientData["credentialId"],
-              certificateId:  createHash(
-              JSON.stringify({ certificateGroupId:recipientData['credentialId'], ...recipient })),
+              certificateGroupId: integration?.credentialId,
+              certificateId: createHash(
+                JSON.stringify({
+                  certificateGroupId: integration?.credentialId,
+                  ...recipient,
+                })
+              ),
 
               status: "issued",
               statusDetails: [
@@ -90,48 +111,52 @@ export async function POST(req: NextRequest) {
               ],
               ...recipient,
             };
-             
+
+            console.log("reec", recipientCertificate);
+
             //> fetch recipient certificate
-            const { error: certError, data: certificateRecipients } = await supabase
-              .from("certificateRecipients")
-              .upsert(
-                {
-                  ...recipientCertificate,
-                },
-                { onConflict: "id" }
-              )
-              .select(", certificate!inner()")
-              .maybeSingle()
-              ;
+            const { error: certError, data: certificateRecipients } =
+              await supabase
+                .from("certificateRecipients")
+                .upsert(recipientCertificate, { onConflict: "id" })
+                .select("*, certificate(*)")
+                .single();
 
+            console.log("recipeint certificate", certificateRecipients);
             //> fetch template with the template id
-            const { error: reciptempError, data: recipientEmailTemplate } = await supabase
-              .from("recipientEmailTemplate")
-              .select("*")
-              .eq("id", integration?.templateId)
-              .single();
+            const { error: reciptempError, data: recipientEmailTemplate } =
+              await supabase
+                .from("recipientEmailTemplate")
+                .select("*")
+                .eq("id", integration?.templateId)
+                .single();
 
-
-              const { data: workspaceData, error, status } = await supabase
+            const {
+              data: workspaceData,
+              error,
+              status,
+            } = await supabase
               .from("organization")
               .select("*")
               .eq("organizationAlias", integration?.workspaceAlias)
               .single();
 
             if (certificateRecipients) {
-              const recipientCertificate = certificateRecipients as any
-              const emailTemplate = recipientEmailTemplate as RecipientEmailTemplate;
+              const recipientCertificate = certificateRecipients as any;
+              const emailTemplate =
+                recipientEmailTemplate as RecipientEmailTemplate;
 
-              const organization = workspaceData as TOrganization
+              const organization = workspaceData as TOrganization;
 
               try {
+                console.log("sending email");
                 // Import ZeptoMail's client. (This can be imported once at the top if desired.)
                 const { SendMailClient } = require("zeptomail");
                 const client = new SendMailClient({
                   url: process.env.NEXT_PUBLIC_ZEPTO_URL,
                   token: process.env.NEXT_PUBLIC_ZEPTO_TOKEN,
                 });
-      
+
                 await client.sendMail({
                   from: {
                     address: process.env.NEXT_PUBLIC_EMAIL,
@@ -169,14 +194,18 @@ export async function POST(req: NextRequest) {
       
             <div style="width: fit-content; margin: 20px auto; border-top: 1px solid #e5e5e5; padding-top: 20px; text-align: center;">
               <p style="margin-bottom: 10px; font-style: italic; text-align: center;">View on a desktop computer for the best experience</p>
-              <a href="https://credentials.zikoro.com/credentials/verify/certificate/${recipientData["credentialId"]}"
+              <a href="https://credentials.zikoro.com/credentials/verify/certificate/${
+                recipientData["credentialId"]
+              }"
                 style="display: inline-block; background-color: ${
                   emailTemplate?.buttonProps.backgroundColor
                 };
-                       color: ${ emailTemplate?.buttonProps.textColor}; text-decoration: none;
+                       color: ${
+                         emailTemplate?.buttonProps.textColor
+                       }; text-decoration: none;
                        padding: 3px 12px; border-radius: 5px;
                        font-family: Arial, sans-serif; font-size: 14px; font-weight: bold;">
-                ${ emailTemplate?.buttonProps.text}
+                ${emailTemplate?.buttonProps.text}
               </a>
             </div>
           </div>
@@ -203,7 +232,7 @@ export async function POST(req: NextRequest) {
           }
       
           ${
-            true
+            emailTemplate?.showSocialLinks
               ? `
             <table role="presentation" style="width: 100%; margin-top: 20px; text-align: center;">
                  <tr>
@@ -254,9 +283,10 @@ export async function POST(req: NextRequest) {
           </div>
         </div>
       </div>
-      
-                `,
+    `,
                 });
+
+                console.log("sent email");
               } catch (emailError) {
                 console.error(
                   `Error sending email to ${recipientEmail}:`,
