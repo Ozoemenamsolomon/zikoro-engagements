@@ -19,9 +19,11 @@ export async function POST(req: NextRequest) {
       }
       if (error) throw error;
 
+      console.log(params.formSettings)
+
       if (
         typeof params.formSettings.engagementId === "string" &&
-        params.formSettings.engagementId.length > 0 &&
+        params?.formSettings.engagementId.length > 0 &&
         params.formSettings.engagementType === "quiz"
       ) {
         const { error: engagementFetchError, data } = await supabase
@@ -46,7 +48,7 @@ export async function POST(req: NextRequest) {
         if (data && !data?.formAlias) {
           const payload = {
             ...data,
-            formAlias: params.formSettings.engagementId,
+            formAlias: params?.formAlias,
           };
           const { error: upateError } = await supabase
             .from("quiz")
@@ -69,7 +71,7 @@ export async function POST(req: NextRequest) {
 
       if (
         typeof params.formSettings.engagementId === "string" &&
-        params.formSettings.engagementId.length > 0 &&
+        params?.formSettings.engagementId.length > 0 &&
         params.formSettings.engagementType === "Q & A"
       ) {
         const { error: engagementFetchError, data } = await supabase
@@ -94,7 +96,7 @@ export async function POST(req: NextRequest) {
         if (data && !data?.formAlias) {
           const payload = {
             ...data,
-            formAlias: params.formSettings.engagementId,
+            formAlias: params?.formAlias,
           };
           const { error: upateError } = await supabase
             .from("QandA")
