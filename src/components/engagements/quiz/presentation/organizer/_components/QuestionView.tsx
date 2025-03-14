@@ -116,11 +116,12 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(
     const [isIntegrating, setIsIntegrating] = useState(false);
     const [chosenAnswerStatus, setChosenAnswerStatus] =
       useState<ChosenAnswerStatus | null>(null);
+  
     const { postData: createAnswer } = usePostRequest<Partial<TAnswer>>(
       "engagements/quiz/answer"
     );
     const { postData: postIntegration } = usePostRequest(
-      "engagements/quiz/integration"
+      "/certificate/recipient"
     );
 
     useImperativeHandle(ref, () => ({
@@ -411,7 +412,6 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(
         const payload: Partial<TAnswer> = {
           ...attendeeDetail,
           quizId: quiz?.id,
-          integrationAlias: quiz?.integrationAlias,
           eventAlias: quiz?.eventAlias,
           questionId: currentQuestion?.id,
           quizParticipantId: quizParticipantId,
@@ -463,7 +463,7 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(
 
     // quiz result
     async function openQuizResult() {
-      if (quiz?.integrationAlias) {
+      if (quiz?.integrationAlias && isAttendee && quiz?.formAlias) {
         await integrationAction();
       }
       onOpenScoreSheet();
@@ -492,8 +492,10 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(
     // integration function
     async function integrationAction() {
       setIsIntegrating(true);
+      "/engagements/form/answer/${quiz?.formAlias}"
+      const payload =  { integrationAlias: quiz?.integrationAlias }
       await postIntegration({
-        payload: { integrationAlias: quiz?.integrationAlias },
+        payload
       });
       setIsIntegrating(false);
     }

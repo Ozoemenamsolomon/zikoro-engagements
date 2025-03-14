@@ -73,7 +73,7 @@ export interface TEngagementFormQuestion {
     viewed: number;
     submitted:number;
     formEngagementPoints: number | null;
-    integrationAlias?:string;
+
   }
   
   export interface TFormattedEngagementFormAnswer {

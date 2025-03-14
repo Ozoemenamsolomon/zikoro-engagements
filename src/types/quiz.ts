@@ -116,7 +116,7 @@ export interface TAnswer {
   correctOptionId: { optionId: string };
   eventAlias: string;
   answeredQuestion: TRefinedQuestion;
-  integrationAlias?:string;
+
 }
 
 export interface TExportedAnswer {
