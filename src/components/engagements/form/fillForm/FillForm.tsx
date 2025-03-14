@@ -219,6 +219,7 @@ function FillFormComp({
       const payload = {
         integrationAlias: data?.integrationAlias,
         answers: values?.responses,
+        createdBy: data?.createdBy
       }
 
       await postRecipientCertData({  payload });

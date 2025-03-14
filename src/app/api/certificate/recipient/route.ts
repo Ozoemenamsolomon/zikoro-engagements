@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
   if (req.method === "POST") {
     try {
       const params = await req.json();
-      const { integrationAlias, answers } = params;
+      const { integrationAlias, createdBy, answers } = params;
 
       //> Only if params contains integration alias
       if (params?.integrationAlias) {
@@ -135,6 +135,8 @@ export async function POST(req: NextRequest) {
                 .eq("id", integration?.credentialId)
                 .single();
 
+            console.log("certificate", certificate);    
+
             if (certificateError) throw certificateError;
             if (!certificate) {
               throw new Error("Invalid certificate");
@@ -146,7 +148,7 @@ export async function POST(req: NextRequest) {
               {
                 amountToCharge: 1,
                 credentialId: integration?.credentialId,
-                activityBy: "createdBy",
+                activityBy: createdBy,
                 workspaceId: workspaceData?.id,
                 workspaceAlias: integration?.workspaceAlias,
                 recipientDetails: [recipient],
