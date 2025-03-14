@@ -8,157 +8,203 @@ import {
 import { createHash, generateAlias, replaceSpecialText } from "@/utils";
 
 import { NextRequest, NextResponse } from "next/server";
+import axios from "axios";
 
 export async function POST(req: NextRequest) {
   const supabase = createClient();
   if (req.method === "POST") {
     try {
       const params = await req.json();
-      const {integrationAlias, answers} = params;
+      const { integrationAlias, answers } = params;
 
-            //> Only if params contains integration alias
-            if (params?.integrationAlias) {
-              //> fetch the integration
-              const { error, data } = await supabase
-                .from("credentialsIntegration")
-                .select("*")
-                .eq("integrationAlias", params?.integrationAlias)
+      //> Only if params contains integration alias
+      if (params?.integrationAlias) {
+        //> fetch the integration
+        const { error, data } = await supabase
+          .from("credentialsIntegration")
+          .select("*")
+          .eq("integrationAlias", params?.integrationAlias)
+          .single();
+
+        console.log("Dddddd integration", data);
+
+        if (data) {
+          const integration = data as CredentialsIntegration;
+
+          const {
+            data: workspaceData,
+            error,
+            status,
+          } = await supabase
+            .from("organization")
+            .select("*")
+            .eq("organizationAlias", integration?.workspaceAlias)
+            .single();
+
+          console.log("cool fetched integration", integration);
+
+          //> recipient data is stored in the integration settingd a JSON, anfd can be null
+          const recipientData = integration.integrationSettings;
+
+          console.log("cool settings", JSON.stringify(recipientData));
+
+          //> check if recipient data is not null
+          if (recipientData) {
+            const mappedData = recipientData["mapping"] as Record<
+              string,
+              string
+            >;
+
+            const metadata: Record<string, string> = {};
+
+            const keys = Object.keys(mappedData);
+
+            //> loop throught the answers to add values to the question id in mappedData
+            (answers as TEngagementFormAnswer["responses"]).forEach((value) => {
+              //> check if the mapped data key is present as an ID in answers
+              if (keys.includes(value.questionId)) {
+                mappedData[value.questionId] = value?.response;
+              }
+            });
+
+            //> since the first three is in this order recipientFirstName, recipientLastName, recipientEmail
+            const recipientFirstName = mappedData[keys[0]];
+            const recipientLastName = mappedData[keys[1]];
+            const recipientEmail = mappedData[keys[2]];
+
+            (answers as TEngagementFormAnswer["responses"]).forEach((value) => {
+              if (!keys.slice(0, 3).includes(value.questionId)) {
+                metadata[value.questionId] = value.response;
+              }
+            });
+
+            console.log(
+              "fname",
+              recipientFirstName,
+              "lname",
+              recipientLastName,
+              "email",
+              recipientEmail
+            );
+
+            const recipient = {
+              metadata,
+              recipientEmail: recipientEmail,
+              recipientFirstName: recipientFirstName,
+              recipientLastName: recipientLastName,
+              recipientAlias: generateAlias(),
+            };
+
+            //> post recipients certificate
+            const recipientCertificate = {
+              certificateGroupId: integration?.credentialId,
+              certificateId: createHash(
+                JSON.stringify({
+                  certificateGroupId: integration?.credentialId,
+                  ...recipient,
+                })
+              ),
+
+              status: "issued",
+              statusDetails: [
+                {
+                  action: "issued",
+                  date: new Date().toISOString(),
+                },
+              ],
+              ...recipient,
+              integrationAlias,
+            };
+
+            console.log("reec", recipientCertificate);
+
+            //> fetch recipient certificate
+            const { error: certError, data: certificateRecipients } =
+              await supabase
+                .from("certificateRecipients")
+                .upsert(recipientCertificate, { onConflict: "id" })
+                .select(
+                  "*, certificate!inner(*, workspace:organization!inner(*, verification:organizationVerification(*)))"
+                )
                 .single();
-      
-              console.log("Dddddd integration", data);
-      
-              if (data) {
-                const integration = data as CredentialsIntegration;
-      
-                console.log("cool fetched integration", integration);
-      
-                //> recipient data is stored in the integration settingd a JSON, anfd can be null
-                const recipientData = integration.integrationSettings;
-      
-                console.log("cool settings", JSON.stringify(recipientData));
-      
-                //> check if recipient data is not null
-                if (recipientData) {
-                  const mappedData = recipientData["mapping"] as Record<
-                    string,
-                    string
-                  >;
-                  const keys = Object.keys(mappedData);
-      
-      
-                  //> loop throught the answers to add values to the question id in mappedData
-                 ( answers as TEngagementFormAnswer['responses']).forEach((value) => {
-                    //> check if the mapped data key is present as an ID in answers
-                    if (keys.includes(value.questionId)) {
-                      mappedData[value.questionId] = value?.response;
-                    }
-                  });
-      
-                  //> since the first three is in this order recipientFirstName, recipientLastName, recipientEmail
-                  const recipientFirstName = mappedData[keys[0]];
-                  const recipientLastName = mappedData[keys[1]];
-                  const recipientEmail = mappedData[keys[2]];
-      
-                  console.log(
-                    "fname",
-                    recipientFirstName,
-                    "lname",
-                    recipientLastName,
-                    "email",
-                    recipientEmail
-                  );
-      
-                  const recipient = {
-                    metadata: {},
-                    recipientEmail: recipientEmail,
-                    recipientFirstName: recipientFirstName,
-                    recipientLastName: recipientLastName,
-                    recipientAlias: generateAlias(),
-                  };
-      
-                  //> post recipients certificate
-                  const recipientCertificate = {
-                    certificateGroupId: integration?.credentialId,
-                    certificateId: createHash(
-                      JSON.stringify({
-                        certificateGroupId: integration?.credentialId,
-                        ...recipient,
-                      })
-                    ),
-      
-                    status: "issued",
-                    statusDetails: [
-                      {
-                        action: "issued",
-                        date: new Date().toISOString(),
+
+            const { data: certificate, error: certificateError } =
+              await supabase
+                .from("certificate")
+                .select("*")
+                .eq("id", integration?.credentialId)
+                .single();
+
+            if (certificateError) throw certificateError;
+            if (!certificate) {
+              throw new Error("Invalid certificate");
+            }
+
+            // Charge tokens (assumes the endpoint returns 201 on success)
+            const response = await axios.post(
+              `⁠${req.nextUrl.origin}/api/workspaces/${integration?.workspaceAlias}/credits/charge`,
+              {
+                amountToCharge: 1,
+                credentialId: integration?.credentialId,
+                activityBy: "createdBy",
+                workspaceId: workspaceData?.id,
+                workspaceAlias: integration?.workspaceAlias,
+                recipientDetails: [recipient],
+                tokenId:
+                  certificate?.attributes && certificate?.attributes.length > 0
+                    ? 3
+                    : certificate?.hasQRCode
+                    ? 2
+                    : 1,
+                credentialType: "certificate",
+              }
+            );
+
+            console.log(response.status);
+            if (response.status !== 201) {
+              throw new Error("Failed to charge tokens");
+            }
+
+            console.log("recipeint certificate", certificateRecipients);
+            //> fetch template with the template id
+            const { error: reciptempError, data: recipientEmailTemplate } =
+              await supabase
+                .from("recipientEmailTemplate")
+                .select("*")
+                .eq("id", integration?.templateId)
+                .single();
+
+            if (certificateRecipients) {
+              const recipientCertificate = certificateRecipients as any;
+              const emailTemplate =
+                recipientEmailTemplate as RecipientEmailTemplate;
+
+              const organization = workspaceData as TOrganization;
+
+              try {
+                console.log("sending email");
+                // Import ZeptoMail's client. (This can be imported once at the top if desired.)
+                const { SendMailClient } = require("zeptomail");
+                const client = new SendMailClient({
+                  url: process.env.NEXT_PUBLIC_ZEPTO_URL,
+                  token: process.env.NEXT_PUBLIC_ZEPTO_TOKEN,
+                });
+
+                await client.sendMail({
+                  from: {
+                    address: process.env.NEXT_PUBLIC_EMAIL,
+                    name: organization?.organizationName,
+                  },
+                  to: [
+                    {
+                      email_address: {
+                        address: recipientEmail,
+                        name: `${recipientFirstName} ${recipientLastName}`,
                       },
-                    ],
-                    ...recipient,
-                    integrationAlias
-                  };
-      
-                  console.log("reec", recipientCertificate);
-      
-                  //> fetch recipient certificate
-                  const { error: certError, data: certificateRecipients } =
-                    await supabase
-                      .from("certificateRecipients")
-                      .upsert(recipientCertificate, { onConflict: "id" })
-                      .select(
-                        "*, certificate!inner(*, workspace:organization!inner(*, verification:organizationVerification(*)))"
-                      )
-                      .single();
-      
-                  console.log("recipeint certificate", certificateRecipients);
-                  //> fetch template with the template id
-                  const { error: reciptempError, data: recipientEmailTemplate } =
-                    await supabase
-                      .from("recipientEmailTemplate")
-                      .select("*")
-                      .eq("id", integration?.templateId)
-                      .single();
-      
-                  const {
-                    data: workspaceData,
-                    error,
-                    status,
-                  } = await supabase
-                    .from("organization")
-                    .select("*")
-                    .eq("organizationAlias", integration?.workspaceAlias)
-                    .single();
-      
-                  if (certificateRecipients) {
-                    const recipientCertificate = certificateRecipients as any;
-                    const emailTemplate =
-                      recipientEmailTemplate as RecipientEmailTemplate;
-      
-                    const organization = workspaceData as TOrganization;
-      
-                    try {
-                      console.log("sending email");
-                      // Import ZeptoMail's client. (This can be imported once at the top if desired.)
-                      const { SendMailClient } = require("zeptomail");
-                      const client = new SendMailClient({
-                        url: process.env.NEXT_PUBLIC_ZEPTO_URL,
-                        token: process.env.NEXT_PUBLIC_ZEPTO_TOKEN,
-                      });
-      
-                      await client.sendMail({
-                        from: {
-                          address: process.env.NEXT_PUBLIC_EMAIL,
-                          name: organization?.organizationName,
-                        },
-                        to: [
-                          {
-                            email_address: {
-                              address: recipientEmail,
-                              name: `${recipientFirstName} ${recipientLastName}`,
-                            },
-                          },
-                        ],
-                        subject: emailTemplate?.subject,
-                        htmlbody: `
+                    },
+                  ],
+                  subject: emailTemplate?.subject,
+                  htmlbody: `
                         <div style="background-color: #f7f8ff; width: 100%; margin: 0 auto; padding: 20px;">
               <div style="width: 500px; margin: 0 auto;">
                 <div style="margin: 20px auto; display: table;">
@@ -225,28 +271,32 @@ export async function POST(req: NextRequest) {
                        <tr>
                        <td style="padding: 5px;">
                          <a href="${
-                           recipientCertificate?.certificate?.workspace?.linkedIn || ""
+                           recipientCertificate?.certificate?.workspace
+                             ?.linkedIn || ""
                          }" style='color: #4b5563; font-size: 14px; font-weight: 600;'>
                                   Linkedin
                                 </a>
                                 </td>
                                 <td style="padding: 5px;">
                                 <a href="${
-                                  recipientCertificate?.certificate?.workspace?.x || ""
+                                  recipientCertificate?.certificate?.workspace
+                                    ?.x || ""
                                 }" style="color: #4b5563; font-size: 14px; font-weight: 600;>
                                   X
                                 </a>
                                 </td>
                                 <td style="padding: 5px;">
                                 <a href="${
-                                  recipientCertificate?.certificate?.workspace?.instagram || ""
+                                  recipientCertificate?.certificate?.workspace
+                                    ?.instagram || ""
                                 }" style="color: #4b5563; font-size: 14px; font-weight: 600;>
                                   Instagram
                                 </a>
                                 </td>
                                 <td style="padding: 5px;">
                                 <a href="${
-                                  recipientCertificate?.certificate?.workspace?.facebook || ""
+                                  recipientCertificate?.certificate?.workspace
+                                    ?.facebook || ""
                                 }" style="color: #4b5563; font-size: 14px; font-weight: 600;>
                                   Facebook
                                 </a>
@@ -271,39 +321,33 @@ export async function POST(req: NextRequest) {
               </div>
             </div>
           `,
-                      });
-      
-                      console.log("sent email");
-                    } catch (emailError) {
-                      console.error(
-                        `Error sending email to ${recipientEmail}:`,
-                        emailError
-                      );
-                    }
-      
-                    
-                  }
-                }
-      
-                //> 
-                   //> fetch the integration
-            
-              
-      
-              }
-      
-              // integrationType integrationSettings
-              if (error) {
-                return NextResponse.json(
-                  { error: error?.message },
-                  {
-                    status: 400,
-                  }
+                });
+
+                console.log("sent email");
+              } catch (emailError) {
+                console.error(
+                  `Error sending email to ${recipientEmail}:`,
+                  emailError
                 );
               }
-              if (error) throw error;
             }
+          }
 
+          //>
+          //> fetch the integration
+        }
+
+        // integrationType integrationSettings
+        if (error) {
+          return NextResponse.json(
+            { error: error?.message },
+            {
+              status: 400,
+            }
+          );
+        }
+        if (error) throw error;
+      }
 
       return NextResponse.json(
         { msg: "Certificate Updated Successfully" },
