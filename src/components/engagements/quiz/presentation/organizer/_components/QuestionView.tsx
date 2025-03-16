@@ -26,11 +26,17 @@ import { LoaderAlt } from "styled-icons/boxicons-regular";
 import { AvatarFullConfig } from "react-nice-avatar";
 import { JoiningAttemptTab } from "./JoinAttemptTab";
 import { isAfter } from "date-fns";
-import { usePostRequest } from "@/hooks/services/requests";
+import {
+  useFetchData,
+  useGetData,
+  usePostRequest,
+} from "@/hooks/services/requests";
 import { TopSection } from "../../_components";
 import Link from "next/link";
 import { generateRandomColor } from "@/components/engagements/form/formResponse/responseTypes";
 import { InlineIcon } from "@iconify/react/dist/iconify.js";
+import { TEngagementFormAnswer } from "@/types/form";
+import { Loader2Icon } from "lucide-react";
 
 export type QuestionViewRef = {
   onNextBtnClick: () => void;
@@ -113,14 +119,17 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(
       usePostRequest<Partial<TQuiz<TQuestion[]>>>("engagements/quiz");
     const [isOptionSelected, setIsOptionSelected] = useState(false);
     const [isJoiningAttempt, setIsJoiningAttempt] = useState(false);
-    const [isIntegrating, setIsIntegrating] = useState(false);
+   // const [isIntegrating, setIsIntegrating] = useState(false);
     const [chosenAnswerStatus, setChosenAnswerStatus] =
       useState<ChosenAnswerStatus | null>(null);
+    const { data: formResponses, getData } = useFetchData<
+      TEngagementFormAnswer[]
+    >("/engagements/form/answer");
     const { postData: createAnswer } = usePostRequest<Partial<TAnswer>>(
       "engagements/quiz/answer"
     );
     const { postData: postIntegration } = usePostRequest(
-      "engagements/quiz/integration"
+      "/certificate/recipient"
     );
 
     useImperativeHandle(ref, () => ({
@@ -411,7 +420,6 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(
         const payload: Partial<TAnswer> = {
           ...attendeeDetail,
           quizId: quiz?.id,
-          integrationAlias: quiz?.integrationAlias,
           eventAlias: quiz?.eventAlias,
           questionId: currentQuestion?.id,
           quizParticipantId: quizParticipantId,
@@ -463,9 +471,9 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(
 
     // quiz result
     async function openQuizResult() {
-      if (quiz?.integrationAlias) {
-        await integrationAction();
-      }
+      // if (quiz?.integrationAlias && isAttendee && quiz?.formAlias) {
+      //   await integrationAction();
+      // }
       onOpenScoreSheet();
       if (quiz?.accessibility?.live) {
         const { questions, liveMode, ...restData } = quiz;
@@ -489,14 +497,26 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(
       }
     }
 
-    // integration function
-    async function integrationAction() {
-      setIsIntegrating(true);
-      await postIntegration({
-        payload: { integrationAlias: quiz?.integrationAlias },
-      });
-      setIsIntegrating(false);
-    }
+    // // integration function
+    // async function integrationAction() {
+    //   setIsIntegrating(true);
+
+    //   if (quiz?.formAlias) {
+    //     await getData(quiz?.formAlias);
+    //   }
+    //   const attendeeResponse = formResponses?.find(
+    //     (resp) => resp?.attendeeAlias === attendeeDetail?.attendeeId
+    //   );
+
+    //   const payload = {
+    //     integrationAlias: quiz?.integrationAlias,
+    //     answers: attendeeResponse?.responses,
+    //   };
+    //   await postIntegration({
+    //     payload,
+    //   });
+    //   setIsIntegrating(false);
+    // }
 
     async function onNextBtnClick() {
       if (loading || isUpdating) return;
@@ -557,6 +577,11 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(
 
     return (
       <>
+        {/* {isIntegrating && (
+          <div className="w-screen bg-black/50 flex items-center justify-center flex-col h-screen fixed z-[300]">
+            <Loader2Icon size={40} className="text-white animate-spin" />
+          </div>
+        )} */}
         <div
           className={cn(
             "w-full h-full bg-white relative text-sm  border-x border-y  col-span-6",
