@@ -11,8 +11,7 @@ export interface CredentialsIntegration {
   templateId: string;
   credentialId:string;
   }
-
-
+  
   export interface RecipientEmailTemplate {
     id: number;
     createdAt: string;

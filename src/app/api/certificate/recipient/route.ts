@@ -18,6 +18,9 @@ export async function POST(req: NextRequest) {
       const { integrationAlias, createdBy, answers } = params;
 
       //> Only if params contains integration alias
+      //schedule: 'schedule',
+      // scheduleDate: '2025-03-20T18:53',
+
       if (params?.integrationAlias) {
         //> fetch the integration
         const { error, data } = await supabase
@@ -31,6 +34,8 @@ export async function POST(req: NextRequest) {
         if (data) {
           const integration = data as CredentialsIntegration;
 
+          // @ts-ignore
+          if (integration?.schedule === "schedule") return;
           const {
             data: workspaceData,
             error,
@@ -135,7 +140,7 @@ export async function POST(req: NextRequest) {
                 .eq("id", integration?.credentialId)
                 .single();
 
-            console.log("certificate", certificate);    
+            console.log("certificate", certificate);
 
             if (certificateError) throw certificateError;
             if (!certificate) {
