@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
         .from("organizationTeamMembers_Engagement")
         .upsert([params]);
 
-        //organizationTeamMembers
+      //organizationTeamMembers
 
       if (error) {
         return NextResponse.json(
@@ -25,8 +25,8 @@ export async function POST(req: NextRequest) {
       if (error) throw error;
       //
       const { error: cError } = await supabase
-      .from("organizationTeamMembers_Credentials")
-      .upsert([params]);
+        .from("organizationTeamMembers_Credentials")
+        .upsert([params]);
 
       if (cError) {
         return NextResponse.json(
@@ -39,8 +39,8 @@ export async function POST(req: NextRequest) {
       if (cError) throw cError;
 
       const { error: nError } = await supabase
-      .from("organizationTeamMembers")
-      .upsert([params]);
+        .from("organizationTeamMembers")
+        .upsert([params]);
 
       if (nError) {
         return NextResponse.json(
@@ -51,6 +51,21 @@ export async function POST(req: NextRequest) {
         );
       }
       if (nError) throw nError;
+
+      //
+      const { error: bError } = await supabase
+        .from("organizationTeamMembers_Bookings")
+        .upsert([params]);
+
+      if (nError) {
+        return NextResponse.json(
+          { bError: bError?.message },
+          {
+            status: 400,
+          }
+        );
+      }
+      if (bError) throw bError;
 
       return NextResponse.json(
         { msg: "Organization Created Successfully" },
