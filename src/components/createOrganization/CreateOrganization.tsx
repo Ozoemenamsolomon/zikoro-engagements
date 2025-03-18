@@ -222,7 +222,7 @@ export function CreateOrganization({
         paymentReference: "",
         email: values?.userEmail,
         total: total,
-        currency: selectedCurrency,
+      currency: selectedCurrency,
         discount: appliedDiscount,
         discountCode: discount?.discountCode || "",
         organizationAlias: values?.organizationAlias,

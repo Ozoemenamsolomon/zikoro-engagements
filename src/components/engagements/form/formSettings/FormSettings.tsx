@@ -70,7 +70,7 @@ export function FormSettings({
     setLoading(false);
   }
 
-  console.log("form", form.formState.errors)
+
   return (
     <div
       onClick={close}

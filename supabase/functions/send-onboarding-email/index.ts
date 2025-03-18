@@ -8,7 +8,6 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 // @ts-ignore
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.0";
 
-console.log("Hello from Functions!");
 
 // initialize supabase
 //@ts-ignore
