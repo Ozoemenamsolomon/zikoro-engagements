@@ -8,6 +8,7 @@ export async function POST(
   const supabase = createClient()
 
   try {
+    console.log("Charge request received.");
     const { workspaceId: workspaceAlias } = params;
     const payload = await req.json();
     const {
@@ -108,6 +109,10 @@ export async function POST(
     );
   }
 }
+
+
+
+
 
 // function generateTransactionReference(): string {
 //   return `txn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
