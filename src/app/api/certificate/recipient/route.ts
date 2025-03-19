@@ -34,8 +34,8 @@ export async function POST(req: NextRequest) {
         if (data) {
           const integration = data as CredentialsIntegration;
 
-          // @ts-ignore
-          if (integration?.schedule === "schedule") return;
+          // // @ts-ignore
+          // if (integration?.schedule === "schedule") return;
           const {
             data: workspaceData,
             error,
