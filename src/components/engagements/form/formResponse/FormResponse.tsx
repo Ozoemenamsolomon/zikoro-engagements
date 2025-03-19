@@ -1,5 +1,8 @@
 "use client";
-import { TFormattedEngagementFormAnswer } from "@/types/form";
+import {
+  TFormattedEngagementFormAnswer,
+  TEngagementFormQuestion,
+} from "@/types/form";
 import { InlineIcon } from "@iconify/react";
 import {
   CheckBoxTypeResponse,
@@ -90,6 +93,8 @@ interface FormResponseProps {
   formAlias: string;
   coverTitle: string;
   setActive: React.Dispatch<React.SetStateAction<number>>;
+  questionLength: number;
+  questions: TEngagementFormQuestion["questions"];
 }
 type Response = {
   attendeeEmail: string;
@@ -154,6 +159,8 @@ export default function FormResponses({
   formAlias,
   coverTitle,
   setActive,
+  questionLength,
+  questions,
 }: FormResponseProps) {
   const [isDeleting, setDeleting] = useState(false);
   const [isDownload, setIsDownload] = useState(false);
@@ -334,10 +341,16 @@ export default function FormResponses({
   }
 
   const numberOfViewed =
-    flattenedResponse?.reduce((acc, curr) => acc + curr?.viewed, 0) || 0;
+    (
+      flattenedResponse?.reduce((acc, curr) => acc + curr?.viewed, 0) /
+      questionLength
+    ).toFixed(0) || 0;
 
   const numberOfSubmitted =
-    flattenedResponse?.reduce((acc, curr) => acc + curr?.submitted, 0) || 0;
+    (
+      flattenedResponse?.reduce((acc, curr) => acc + curr?.submitted, 0) /
+      questionLength
+    ).toFixed(0) || 0;
 
   const engagementStats = useMemo(() => {
     return calculateEngagementStats(flattenedResponse);
@@ -436,15 +449,17 @@ export default function FormResponses({
 
           {Object.entries(data).map(([key, value]) => {
             const response = value?.find((v) => v?.questionId === key);
-            const questionIndex = flattenedResponse?.findIndex(
+            const questionIndex = questions?.findIndex(
               (v) => v?.questionId === key
             );
+
+            
 
             return (
               <div
                 key={Math.random()}
                 className={cn(
-                  "w-full rounded-lg bg-white border px-6 py-10 mb-6 sm:mb-8",
+                  "w-full rounded-lg bg-white overflow-y-auto max-h-[400px] vert-scroll border px-6 py-10 mb-6 sm:mb-8",
                   value[0]?.type === "INPUT_MULTIPLE_CHOICE" &&
                     value[0]?.questionId === key &&
                     "hidden",
@@ -511,8 +526,10 @@ export default function FormResponses({
                   <p>{value?.length} Responses</p>
                 </div>
                 {Array.isArray(value) &&
-                  value?.map((item) => (
-                    <div className="w-full">
+                  value?.map((item) => {
+                    console.log(value)
+                    return (
+                      <div className="w-full">
                       {item?.type === "INPUT_TEXT" && (
                         <div className="w-full flex flex-col items-start justify-start gap-y-2">
                           <TextTypeResponse response={item} />
@@ -550,7 +567,9 @@ export default function FormResponses({
                         </div>
                       )}
                     </div>
-                  ))}
+                    )
+                  }
+                  )}
               </div>
             );
           })}
@@ -561,7 +580,7 @@ export default function FormResponses({
                 (m) => m?.questionId === v?.key[0]?.questionId
               );
               return (
-                <div className="w-full bg-white rounded-lg border px-6 py-10 mb-6 sm:mb-8">
+                <div className="w-full bg-white  rounded-lg border px-6 py-10 mb-6 sm:mb-8">
                   <p className="w-14 h-14 flex text-2xl mx-auto mb-6 items-center bg-basePrimary-100 justify-center rounded-full border border-basePrimary">
                     {questionIndex + 1}
                   </p>

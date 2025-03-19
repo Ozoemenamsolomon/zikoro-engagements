@@ -27,7 +27,6 @@ import { FormSettings } from "../formSettings/FormSettings";
 import { LoadingState } from "@/components/composables/LoadingState";
 import FormResponses from "../formResponse/FormResponse";
 import { ShareEngagement } from "../../_components/ShareEngagement";
-import { deploymentUrl } from "@/utils";
 
 export default function AddFormQuestions({
   formId,
@@ -279,6 +278,8 @@ export default function AddFormQuestions({
           flattenedResponse={flattenedResponse}
           setActive={setActive}
           coverTitle={data?.title}
+          questionLength={data?.questions?.length || 0}
+          questions={data?.questions|| []}
         />
       )}
        {isShare && (
