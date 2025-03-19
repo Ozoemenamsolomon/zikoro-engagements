@@ -153,6 +153,8 @@ export function calculateEngagementStats(
   };
 }
 
+
+
 export default function FormResponses({
   data,
   flattenedResponse,
@@ -453,8 +455,6 @@ export default function FormResponses({
               (v) => v?.questionId === key
             );
 
-            
-
             return (
               <div
                 key={Math.random()}
@@ -527,49 +527,49 @@ export default function FormResponses({
                 </div>
                 {Array.isArray(value) &&
                   value?.map((item) => {
-                    console.log(value)
+                    console.log(value);
                     return (
                       <div className="w-full">
-                      {item?.type === "INPUT_TEXT" && (
-                        <div className="w-full flex flex-col items-start justify-start gap-y-2">
-                          <TextTypeResponse response={item} />
-                        </div>
-                      )}
-                      {item?.type === "INPUT_DATE" && (
-                        <div className="w-full flex flex-col items-center justify-center ">
-                          <DateTypeResponse response={item} />
-                        </div>
-                      )}
-
-                      {item?.type === "ATTACHMENT" && (
-                        <div className="w-full flex flex-col items-start justify-start gap-y-2">
-                          <UploadTypeResponse response={item} />
-                        </div>
-                      )}
-                      {(item?.type === "INPUT_EMAIL" ||
-                        item?.type === "PHONE_NUMBER" ||
-                        item?.type === "COUNTRY" ||
-                        item?.type === "WEBSITE") && (
-                        <div className="w-full flex flex-col items-center justify-center">
-                          <div className="w-fit bg-basePrimary-100 rounded-lg  mb-2">
-                            <p className="p-3 text-center">
-                              {typeof response?.response === "object"
-                                ? `${response?.response?.selectedOption} ${response?.response?.optionId}`
-                                : response?.response ?? ""}
-                            </p>
+                        {item?.type === "INPUT_TEXT" && (
+                          <div className="w-full flex flex-col items-start justify-start gap-y-2">
+                            <TextTypeResponse response={item} />
                           </div>
-                        </div>
-                      )}
-                      {(item.type === "INPUT_ADDRESS" ||
-                        item?.type === "CONTACT") && (
-                        <div className="w-full max-w-lg mx-auto flex flex-col items-center justify-center">
-                          <MultiInputResponseType response={item} />
-                        </div>
-                      )}
-                    </div>
-                    )
-                  }
-                  )}
+                        )}
+                        {item?.type === "INPUT_DATE" && (
+                          <div className="w-full flex flex-col items-center justify-center ">
+                            <DateTypeResponse response={item} />
+                          </div>
+                        )}
+
+                        {item?.type === "ATTACHMENT" && (
+                          <div className="w-full flex flex-col items-start justify-start gap-y-2">
+                            <UploadTypeResponse response={item} />
+                          </div>
+                        )}
+                        {(item?.type === "INPUT_EMAIL" ||
+                          item?.type === "PHONE_NUMBER" ||
+                          item?.type === "COUNTRY" ||
+                          item?.type === "WEBSITE") && (
+                          <div className="w-full flex flex-col items-center justify-center">
+                            <div className="w-fit bg-basePrimary-100 rounded-lg  mb-2">
+                              <p className="p-3 text-center">
+                                {typeof item?.response === "object"
+                                  ? `${item?.response?.selectedOption} ${item?.response?.optionId}`
+                                  : item?.response?.response ?? ""}
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                    
+                        {(item.type === "INPUT_ADDRESS" ||
+                          item?.type === "CONTACT") && (
+                          <div className="w-full max-w-lg mx-auto flex flex-col items-center justify-center">
+                            <MultiInputResponseType response={item} />
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
               </div>
             );
           })}

@@ -60,28 +60,6 @@ export async function POST(req: NextRequest) {
               string
             >;
 
-            // const metadata: Record<string, string> = {};
-
-            // const keys = Object.keys(mappedData);
-
-            // //> loop throught the answers to add values to the question id in mappedData
-            // (answers as TEngagementFormAnswer["responses"]).forEach((value) => {
-            //   //> check if the mapped data key is present as an ID in answers
-            //   if (keys.includes(value.questionId)) {
-            //     mappedData[value.questionId] = value?.response;
-            //   }
-            // });
-
-            // //> since the first three is in this order recipientFirstName, recipientLastName, recipientEmail
-            // const recipientFirstName = mappedData[keys[0]];
-            // const recipientLastName = mappedData[keys[1]];
-            // const recipientEmail = mappedData[keys[2]];
-
-            // (answers as TEngagementFormAnswer["responses"]).forEach((value) => {
-            //   if (!keys.slice(0, 3).includes(value.questionId)) {
-            //     metadata[value.questionId] = value.response;
-            //   }
-            // });
 
             const transformed = (answers as TEngagementFormAnswer["responses"]).reduce(
               (acc, { questionId, response }) => {
@@ -142,15 +120,7 @@ export async function POST(req: NextRequest) {
 
             console.log("reec", recipientCertificate);
 
-            //> fetch recipient certificate
-            const { error: certError, data: certificateRecipients } =
-              await supabase
-                .from("certificateRecipients")
-                .upsert(recipientCertificate, { onConflict: "id" })
-                .select(
-                  "*, certificate!inner(*, workspace:organization!inner(*, verification:organizationVerification(*)))"
-                )
-                .single();
+         
 
             const { data: certificate, error: certificateError } =
               await supabase
@@ -165,7 +135,7 @@ export async function POST(req: NextRequest) {
             if (!certificate) {
               throw new Error("Invalid certificate");
             }
-            console.log( `⁠${req.nextUrl.origin}/api/workspaces/${integration?.workspaceAlias}/credits/charge`)
+           
 
       
             // Charge tokens (assumes the endpoint returns 201 on success)
@@ -216,10 +186,20 @@ export async function POST(req: NextRequest) {
              .order("expiryDate", { ascending: true });
        
            if (creditsError) {
+            const data = {
+              ...recipientCertificate,
+              failureReason: `Failed to fetch tokens: ${creditsError.message}`
+            }
+            await postFailedData(data)
              throw new Error(`Failed to fetch tokens: ${creditsError.message}`);
            }
        
            if (!tokens || tokens.length === 0) {
+            const data = {
+              ...recipientCertificate,
+              failureReason: "No valid tokens available for charging."
+            }
+            await postFailedData(data)
              throw new Error("No valid tokens available for charging.");
            }
        
@@ -243,13 +223,24 @@ export async function POST(req: NextRequest) {
                .eq("id", token.id);
        
              if (updateError) {
+              const data = {
+                ...recipientCertificate,
+                failureReason: "Failed to update token balance"
+              }
+              await postFailedData(data)
                throw new Error(
+                
                  `Failed to update token balance for tokenId ${token.tokenId}: ${updateError.message}`
                );
              }
            }
        
            if (remainingCharge > 0) {
+            const data = {
+              ...recipientCertificate,
+              failureReason: "Insufficient balance to complete the charge."
+            }
+            await postFailedData(data)
              throw new Error("Insufficient balance to complete the charge.");
            }
        
@@ -274,6 +265,17 @@ export async function POST(req: NextRequest) {
            if (logError) {
              throw new Error(`Failed to insert usage logs: ${logError.message}`);
            }
+
+
+              //> fetch recipient certificate
+              const { error: certError, data: certificateRecipients } =
+              await supabase
+                .from("certificateRecipients")
+                .upsert(recipientCertificate, { onConflict: "id" })
+                .select(
+                  "*, certificate!inner(*, workspace:organization!inner(*, verification:organizationVerification(*)))"
+                )
+                .single();
        
         
 
@@ -515,6 +517,20 @@ export async function GET(req: NextRequest) {
     }
   } else {
     return NextResponse.json({ error: "Method not allowed" });
+  }
+}
+
+
+async function postFailedData(recipientCertificate: any) {
+  const supabase = createClient();
+  //> fetch recipient certificate
+  const { error: certError, data } =
+  await supabase
+    .from("certificateRecipientsFailed")
+    .upsert(recipientCertificate, { onConflict: "id" })
+  
+  if (certError) {
+    throw new Error("Error "+ certError)
   }
 }
 
