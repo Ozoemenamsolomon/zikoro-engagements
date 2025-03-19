@@ -78,6 +78,16 @@ Deno.serve(async () => {
           imageUrl = "https://res.cloudinary.com/dkdrbjfdt/image/upload/v1741082831/WhatsApp_Image_2025-03-04_at_01.42.56_qjbm0b.jpg"
         }
 
+        if (userMetaData?.platform === "Bookings") {
+          magicLink = ` https://bookings.zikoro.com/onboarding?email=${
+            user.email
+          }&createdAt=${new Date().toISOString()}&userId=${user?.id}&token=${
+            userMetaData?.verification_token
+          }`;
+
+          imageUrl = "https://bookings.zikoro.com/_next/image?url=%2Flogo.png&w=128&q=75"
+        }
+
         // Send email with magic link
         const emailResponse = await fetch(
           "https://api.zeptomail.com/v1.1/email",

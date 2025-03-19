@@ -60,45 +60,64 @@ export async function POST(req: NextRequest) {
               string
             >;
 
-            const metadata: Record<string, string> = {};
+            // const metadata: Record<string, string> = {};
 
-            const keys = Object.keys(mappedData);
+            // const keys = Object.keys(mappedData);
 
-            //> loop throught the answers to add values to the question id in mappedData
-            (answers as TEngagementFormAnswer["responses"]).forEach((value) => {
-              //> check if the mapped data key is present as an ID in answers
-              if (keys.includes(value.questionId)) {
-                mappedData[value.questionId] = value?.response;
-              }
-            });
+            // //> loop throught the answers to add values to the question id in mappedData
+            // (answers as TEngagementFormAnswer["responses"]).forEach((value) => {
+            //   //> check if the mapped data key is present as an ID in answers
+            //   if (keys.includes(value.questionId)) {
+            //     mappedData[value.questionId] = value?.response;
+            //   }
+            // });
 
-            //> since the first three is in this order recipientFirstName, recipientLastName, recipientEmail
-            const recipientFirstName = mappedData[keys[0]];
-            const recipientLastName = mappedData[keys[1]];
-            const recipientEmail = mappedData[keys[2]];
+            // //> since the first three is in this order recipientFirstName, recipientLastName, recipientEmail
+            // const recipientFirstName = mappedData[keys[0]];
+            // const recipientLastName = mappedData[keys[1]];
+            // const recipientEmail = mappedData[keys[2]];
 
-            (answers as TEngagementFormAnswer["responses"]).forEach((value) => {
-              if (!keys.slice(0, 3).includes(value.questionId)) {
-                metadata[value.questionId] = value.response;
-              }
-            });
+            // (answers as TEngagementFormAnswer["responses"]).forEach((value) => {
+            //   if (!keys.slice(0, 3).includes(value.questionId)) {
+            //     metadata[value.questionId] = value.response;
+            //   }
+            // });
+
+            const transformed = (answers as TEngagementFormAnswer["responses"]).reduce(
+              (acc, { questionId, response }) => {
+                const key = mappedData[questionId];
+            
+                if (!key) return acc; 
+            
+                if (["recipientFirstName", "recipientLastName", "recipientEmail"].includes(key)) {
+                  acc[key] = response; 
+                } else {
+                  acc.metadata[key] = response; 
+                }
+            
+                return acc;
+              },
+              {
+                metadata: {},
+                recipientAlias: generateAlias()
+              } as Record<string, any> & { metadata: Record<string, string> }
+            );
+            
+
+           
+
+            const recipient = transformed
+
+            console.log("recipient  --------", recipient)
 
             console.log(
               "fname",
-              recipientFirstName,
+              recipient?.recipientFirstName,
               "lname",
-              recipientLastName,
+              recipient?.recipientLastName,
               "email",
-              recipientEmail
+              recipient?.recipientEmail
             );
-
-            const recipient = {
-              metadata,
-              recipientEmail: recipientEmail,
-              recipientFirstName: recipientFirstName,
-              recipientLastName: recipientLastName,
-              recipientAlias: generateAlias(),
-            };
 
             //> post recipients certificate
             const recipientCertificate = {
@@ -291,8 +310,8 @@ export async function POST(req: NextRequest) {
                   to: [
                     {
                       email_address: {
-                        address: recipientEmail,
-                        name: `${recipientFirstName} ${recipientLastName}`,
+                        address: recipient?.recipientEmail,
+                        name: `${recipient?.recipientFirstName} ${recipient?.recipientLastName}`,
                       },
                     },
                   ],
@@ -419,7 +438,7 @@ export async function POST(req: NextRequest) {
                 console.log("sent email");
               } catch (emailError) {
                 console.error(
-                  `Error sending email to ${recipientEmail}:`,
+                  `Error sending email to ${recipient?.recipientEmail}:`,
                   emailError
                 );
               }
