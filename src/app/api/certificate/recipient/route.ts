@@ -1,6 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import { TEngagementFormAnswer } from "@/types/form";
-import { CertificateRecipient, TOrganization } from "@/types/home";
+import {  TOrganization } from "@/types/home";
 import {
   CredentialsIntegration,
   RecipientEmailTemplate,

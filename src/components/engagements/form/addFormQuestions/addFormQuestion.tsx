@@ -49,6 +49,7 @@ export default function AddFormQuestions({
   const { data: formResponses } = useGetData<TEngagementFormAnswer[]>(
     `/engagements/form/answer/${formId}`
   );
+  const [isEndScreenSetting, setShowEndScreenSetting] = useState(false)
   const [active, setActive] = useState(0);
   const [isAddNew, setIsAddNew] = useState(false);
   const [isToggleSetting, setToggleSetting] = useState(false);
@@ -132,6 +133,7 @@ export default function AddFormQuestions({
                       questions={data?.questions}
                       editQuestion={editQuestion}
                       editingQuestion={question}
+                      toggleEndScreen={() => setShowEndScreenSetting((prev) => !prev)}
                       addNewQuestion={() => {
                         setIsAddNew(true);
                         editQuestion(null);

@@ -11,12 +11,14 @@ export function AddedFormQuestions({
   editQuestion,
   addNewQuestion,
   isAddNew,
+  toggleEndScreen,
 }: {
   questions: TEngagementFormQuestion["questions"];
   className?: string;
   editingQuestion: TEngagementFormQuestion["questions"][number] | null;
   editQuestion: (t: TEngagementFormQuestion["questions"][number]) => void;
   addNewQuestion: () => void;
+  toggleEndScreen: () => void;
   isAddNew: boolean;
 }) {
   const [isNew, setIsNew] = useState(false);
@@ -84,6 +86,17 @@ export function AddedFormQuestions({
             {Array.isArray(questions) ? questions?.length + 1 : 1}
           </p>
         </div>
+      </div>
+      <div
+        onClick={toggleEndScreen}
+        className={cn(
+          "w-full flex items-center mt-3 border-basePrimary rounded-lg p-3 border h-36  flex-col gap-4"
+        )}
+      >
+        <p className="text-basePrimary font-semibold text-base sm:text-lg">
+          End Screen
+        </p>
+        <p className="text-center"> Click to customize end screen appearance</p>
       </div>
     </div>
   );

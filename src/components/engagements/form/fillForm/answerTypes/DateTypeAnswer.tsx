@@ -18,13 +18,17 @@ type OptionType = {
 export function DateTypeAnswer({
   form,
   index,
-  bgColor,
-  rgba
+  btnColor,
+  rgba,
+  hideNumber,
+  hideLabel
 }: {
   form: UseFormReturn<z.infer<typeof formAnswerSchema>, any, any>;
   index: number;
-  bgColor:string;
+  btnColor:string;
   rgba:string;
+  hideNumber:boolean;
+  hideLabel:boolean;
 }) {
   const [isDatePanel, setDatePanel] = useState(false);
   const question = form.watch(`questions.${index}.question`);
@@ -48,6 +52,9 @@ export function DateTypeAnswer({
         description={questionDescription}
         isRequired={isRequired}
         showDescription={showDescription}
+        btnColor={btnColor}
+        rgba={rgba}
+        hideNumber={hideNumber}
       />
 
       <div className="w-full h-11 sm:h-12 relative">

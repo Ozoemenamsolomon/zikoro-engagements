@@ -17,14 +17,18 @@ export function TextTypeAnswer({
   form,
   index,
   rgba,
-  bgColor,
+  btnColor,
   selectedType,
+  hideNumber,
+  hideLabel
 }: {
   form: UseFormReturn<z.infer<typeof formAnswerSchema>, any, any>;
   index: number;
-  bgColor: string;
+  btnColor: string;
   rgba: string;
   selectedType: string;
+  hideNumber:boolean;
+  hideLabel:boolean
 }) {
   const question = form.watch(`questions.${index}.question`);
   const isRequired = form.watch(`questions.${index}.isRequired`);
@@ -45,6 +49,9 @@ export function TextTypeAnswer({
         description={questionDescription}
         isRequired={isRequired}
         showDescription={showDescription}
+        btnColor={btnColor}
+        rgba={rgba}
+        hideNumber={hideNumber}
       />
 
       <div className="flex flex-col items-start gap-y-2 justify-start w-full">
