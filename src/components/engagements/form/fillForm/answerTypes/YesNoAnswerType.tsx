@@ -9,13 +9,19 @@ import { cn } from "@/lib/utils";
 export function YesNoTypeAnswer({
   form,
   index,
-  bgColor,
+  btnColor,
   rgba,
+  textColor,
+  hideNumber,
+  hideLabel
 }: {
   form: UseFormReturn<z.infer<typeof formAnswerSchema>, any, any>;
   index: number;
-  bgColor: string;
+  btnColor: string;
   rgba: string;
+  textColor:string;
+  hideNumber:boolean;
+  hideLabel:boolean;
 }) {
   const question = form.watch(`questions.${index}.question`);
   const isRequired = form.watch(`questions.${index}.isRequired`);
@@ -45,6 +51,9 @@ export function YesNoTypeAnswer({
         description={questionDescription}
         isRequired={isRequired}
         showDescription={showDescription}
+        btnColor={btnColor}
+        rgba={rgba}
+        hideNumber={hideNumber}
       />
 
       <div className="w-full flex flex-col items-start justify-start gap-y-4">
@@ -52,7 +61,8 @@ export function YesNoTypeAnswer({
           // htmlFor={`checkbox-${index}`}
           style={{
             backgroundColor:
-              response === "Yes" ? bgColor : rgba,
+              response === "Yes" ? btnColor : rgba,
+              color: response === "Yes"?  "#fff": textColor
           }}
           className={cn(
             "w-full h-fit rounded-lg   p-2 relative",
@@ -78,11 +88,11 @@ export function YesNoTypeAnswer({
           <div className="w-full flex justify-start gap-x-2 items-center">
             <p
               style={{
-                color: response === "Yes" ? bgColor : "",
-                borderColor: response === "Yes" ? bgColor : "",
+                color: response === "Yes" ? btnColor : "",
+                borderColor: response === "Yes" ? btnColor : "",
               }}
               className={cn(
-                "font-bold rounded-lg bg-white text-2xl h-11 w-11 flex items-center justify-center border border-black"
+                "font-bold rounded-lg bg-white/50 text-2xl h-11 w-11 flex items-center justify-center border border-black"
               )}
             >
               Y
@@ -94,7 +104,8 @@ export function YesNoTypeAnswer({
         <label
           // htmlFor={`checkbox-${index}`}
           style={{
-            backgroundColor: response === "No" ? bgColor : rgba,
+            backgroundColor: response === "No" ? btnColor : '',
+            color: response === "Yes"?  "#fff": textColor
           }}
           className={cn(
             "w-full h-fit rounded-lg  p-2 relative",
@@ -120,11 +131,11 @@ export function YesNoTypeAnswer({
           <div className="w-full flex justify-start gap-x-2 items-center">
             <p
               style={{
-                color: response === "No" ? bgColor : "",
-                borderColor: response === "No" ? bgColor : "",
+                color: response === "No" ? btnColor : "",
+                borderColor: response === "No" ? btnColor : "",
               }}
               className={cn(
-                "font-bold rounded-lg bg-white text-2xl h-11 w-11 flex items-center justify-center border border-black"
+                "font-bold rounded-lg bg-white/50 text-2xl h-11 w-11 flex items-center justify-center border border-black"
               )}
             >
               N

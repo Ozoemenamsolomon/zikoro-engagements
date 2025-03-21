@@ -71,7 +71,7 @@ export function FormAccessibility({
 
       <div className="flex w-full text-mobile sm:text-sm items-center justify-between">
         <div className="flex flex-col items-start justify-start">
-          <p>Show Form Result</p>
+          <p className="font-medium text-mobile sm:text-sm">Show Form Result</p>
           <p className="text-xs text-gray-500">
             User will see how the fill form immediately after the filling the
             form

@@ -28,7 +28,7 @@ import { generateAlias, uploadFile } from "@/utils";
 import { FormBasicType } from "./_components/options/formBasicType";
 import { toast } from "react-toastify";
 
-const options = [
+export const options = [
   { name: "Text", image: "/ftext.png", type: "INPUT_TEXT" },
   { name: "Date", image: "/fdate.png", type: "INPUT_DATE" },
   { name: "CheckBox", image: "/fcheckbox.png", type: "INPUT_CHECKBOX" },

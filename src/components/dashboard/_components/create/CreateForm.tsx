@@ -72,7 +72,12 @@ export function CreateForm({
             engagementId: "",
             engagementType: "",
             hideNumber: false,
-
+            hideLabel: false,
+            labellingType: "Number",
+            backgroundBrightness: 100,
+            preMadeType:"",
+            isBackgroundImage: false,
+            isBackgroundColor: false,
             eventAlias: eventId ?? "",
           },
         },

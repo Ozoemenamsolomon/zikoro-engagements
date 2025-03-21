@@ -6,18 +6,23 @@ import * as z from "zod";
 import { FillFormQuestion } from "../common";
 import { Star } from "styled-icons/fluentui-system-regular";
 import { StarFullOutline } from "styled-icons/typicons";
-import { cn } from "@/lib/utils";
 
 export function RatingTypeAnswer({
   form,
   index,
-  bgColor,
+  btnColor,
   rgba,
+  hideNumber,
+  hideLabel
+  
 }: {
   form: UseFormReturn<z.infer<typeof formAnswerSchema>, any, any>;
   index: number;
-  bgColor: string;
+  btnColor: string;
   rgba: string;
+  hideNumber:boolean
+  hideLabel:boolean;
+
 }) {
   const question = form.watch(`questions.${index}.question`);
   const isRequired = form.watch(`questions.${index}.isRequired`);
@@ -44,7 +49,10 @@ export function RatingTypeAnswer({
         currentQuestion={question}
         description={questionDescription}
         isRequired={isRequired}
+        btnColor={btnColor}
+        rgba={rgba}
         showDescription={showDescription}
+        hideNumber={hideNumber}
       />
 
       <div className="w-full flex flex-wrap items-center gap-x-2 justify-center">
@@ -57,9 +65,9 @@ export function RatingTypeAnswer({
             }}
             key={index}
             style={{
-              color: index + 1 <= rating ? bgColor : "",
+              color: index + 1 <= rating ? btnColor : btnColor,
             }}
-            className={cn("text-gray-400")}
+           
           >
             {index + 1 <= rating ? (
               <StarFullOutline size={24} />
