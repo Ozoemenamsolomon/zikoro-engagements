@@ -97,8 +97,8 @@ function SubmittedModal({
       backgroundRepeat: "no-repeat",
       color: textColor,
     }}
-    className="w-full h-full inset-0 fixed bg-white">
-         <h2 className="text-xl font-semibold">
+    className="w-full h-full inset-0 flex flex-col items-center justify-center gap-6 fixed bg-white">
+         <h2 className="text-xl text-center font-semibold">
           {data?.formSettings?.endScreenSettings?.title ??
             "Thanks for completing the form"}
         </h2>
@@ -119,7 +119,7 @@ function SubmittedModal({
           </div>
         )}
 
-        <p>
+        <p className="text-center">
           {data?.formSettings?.endScreenSettings?.subText ??
             "This is all for now"}
         </p>
