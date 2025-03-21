@@ -17,8 +17,7 @@ import {
   RadioButton,
 } from "@/constants";
 import { Button } from "@/components/custom";
-import { Portal } from "@/components/custom/Portal";
-import { ThemeSettings } from "../ThemeSettings";
+
 import { TEngagementFormQuestion } from "@/types/form";
 
 function ColorPicker({

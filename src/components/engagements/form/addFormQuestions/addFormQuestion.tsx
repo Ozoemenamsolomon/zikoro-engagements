@@ -27,6 +27,7 @@ import { FormSettings } from "../formSettings/FormSettings";
 import { LoadingState } from "@/components/composables/LoadingState";
 import FormResponses from "../formResponse/FormResponse";
 import { ShareEngagement } from "../../_components/ShareEngagement";
+import { EndScreenSettings } from "./EndScreenSettings";
 
 export default function AddFormQuestions({
   formId,
@@ -39,7 +40,7 @@ export default function AddFormQuestions({
   const { data, isLoading, getData } = useGetData<TEngagementFormQuestion>(
     `engagements/form/${formId}`
   );
-  const [isShare, setIsShare]  = useState(false)
+  const [isShare, setIsShare] = useState(false);
   const [flattenedResponse, setFlattenedResponse] = useState<
     TFormattedEngagementFormAnswer[]
   >([]);
@@ -49,7 +50,7 @@ export default function AddFormQuestions({
   const { data: formResponses } = useGetData<TEngagementFormAnswer[]>(
     `/engagements/form/answer/${formId}`
   );
-  const [isEndScreenSetting, setShowEndScreenSetting] = useState(false)
+  const [isEndScreenSetting, setShowEndScreenSetting] = useState(false);
   const [active, setActive] = useState(0);
   const [isAddNew, setIsAddNew] = useState(false);
   const [isToggleSetting, setToggleSetting] = useState(false);
@@ -133,7 +134,9 @@ export default function AddFormQuestions({
                       questions={data?.questions}
                       editQuestion={editQuestion}
                       editingQuestion={question}
-                      toggleEndScreen={() => setShowEndScreenSetting((prev) => !prev)}
+                      toggleEndScreen={() =>
+                        setShowEndScreenSetting((prev) => !prev)
+                      }
                       addNewQuestion={() => {
                         setIsAddNew(true);
                         editQuestion(null);
@@ -185,29 +188,29 @@ export default function AddFormQuestions({
                         }}
                       />
                     }
-                    // CenterWidget={
-                    //   <TrailingHeadRoute
-                    //     as="button"
-                    //     Icon={SettingsIcon}
-                    //     title="Form Response"
-                    //     onClick={() => {}}
-                    //   />
-                    // }
                   >
-                    {(isAddNew ||
-                      question !== null ||
-                      (Array.isArray(data?.questions) &&
-                        data?.questions?.length > 0)) &&
-                      data && (
-                        <AddQuestion
-                          refetch={getData}
-                          editQuestion={editQuestion}
-                          question={question}
-                          engagementForm={data}
-                          workspaceAlias={workspaceAlias}
-                          key={question?.questionId}
-                        />
+                    <>
+                      {isEndScreenSetting ? (
+                        <EndScreenSettings engagementForm={data} />
+                      ) : (
+                        <>
+                          {(isAddNew ||
+                            question !== null ||
+                            (Array.isArray(data?.questions) &&
+                              data?.questions?.length > 0)) &&
+                            data && (
+                              <AddQuestion
+                                refetch={getData}
+                                editQuestion={editQuestion}
+                                question={question}
+                                engagementForm={data}
+                                workspaceAlias={workspaceAlias}
+                                key={question?.questionId}
+                              />
+                            )}
+                        </>
                       )}
+                    </>
                   </EngagementLayout>
                 </div>
               </div>
@@ -232,13 +235,12 @@ export default function AddFormQuestions({
               </Button> */}
               <Button
                 onClick={() => setActive(1)}
-                
                 className="gap-x-2 bg-basePrimary-200  border-basePrimary border  rounded-xl h-9"
               >
                 <AnalyticsIcon />
                 <p className="bg-basePrimary hidden sm:block  gradient-text">
                   {" "}
-                 Form Response
+                  Form Response
                 </p>
               </Button>
             </div>
@@ -253,7 +255,7 @@ export default function AddFormQuestions({
               <p className="bg-basePrimary  gradient-text">Present</p>
             </Button> */}
               <Button
-              onClick={() => setIsShare(true)}
+                onClick={() => setIsShare(true)}
                 className="gap-x-2 bg-basePrimary-200 border-basePrimary border  rounded-xl h-9"
               >
                 <SmallShareIcon />
@@ -281,10 +283,10 @@ export default function AddFormQuestions({
           setActive={setActive}
           coverTitle={data?.title}
           questionLength={data?.questions?.length || 0}
-          questions={data?.questions|| []}
+          questions={data?.questions || []}
         />
       )}
-       {isShare && (
+      {isShare && (
         <ShareEngagement
           urlLink={`https://engagements.zikoro.com/e/${data?.workspaceAlias}/form/a/${data?.formAlias}`}
           title={data?.title}

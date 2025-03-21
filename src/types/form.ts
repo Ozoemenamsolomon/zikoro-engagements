@@ -56,8 +56,23 @@ export interface TEngagementFormQuestion {
     isBackgroundImage?: boolean;
     backgroundImage?: string;
     backgroundBrightness?: number;
-    isPreMade?:boolean;
+    isPreMade?: boolean;
+    endScreenSettings?: TEndScreenSettings;
   };
+}
+
+export interface TEndScreenSettings {
+  title?: string;
+  subText?: string;
+  buttonText?: string;
+  buttonUrl?: string;
+  x?: string;
+  linkedIn?: string;
+  instagram?: string;
+  facebook?: string;
+  website?: string;
+  showButton?:boolean;
+  socialLink?:boolean;
 }
 
 export interface TEngagementFormAnswer {

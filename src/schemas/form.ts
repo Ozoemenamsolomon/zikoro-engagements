@@ -39,7 +39,21 @@ export const formCreationSchema = z.object({
       backgroundImage: z.string().optional(),
       backgroundBrightness: z.number().optional(),
       isPreMade: z.boolean().optional(),
-      isBackgroundColor: z.boolean().optional()
+      isBackgroundColor: z.boolean().optional(),
+         //> new end screen settings
+    endScreenSettings: z.object({
+      title: z.string().optional(),
+      subText:z.string().optional(),
+      buttonText: z.string().optional(),
+      buttonUrl: z.string().optional(),
+      x: z.string().optional(),
+      linkedIn: z.string().optional(),
+      instagram: z.string().optional(),
+      facebook: z.string().optional(),
+      website: z.string().optional(),
+      showButton: z.boolean().optional(),
+      socialLink: z.boolean().optional()
+    }).optional()
     })
     .optional(),
 });
@@ -101,7 +115,21 @@ export const formSettingSchema = z.object({
     backgroundImage: z.any().optional(),
     backgroundBrightness: z.number().optional(),
     isPreMade: z.boolean().optional(),
-    isBackgroundColor: z.boolean().optional()
+    isBackgroundColor: z.boolean().optional(),
+    //> new end screen settings
+    endScreenSettings: z.object({
+      title: z.string().optional(),
+      subText:z.string().optional(),
+      buttonText: z.string().optional(),
+      buttonUrl: z.string().optional(),
+      x: z.string().optional(),
+      linkedIn: z.string().optional(),
+      instagram: z.string().optional(),
+      facebook: z.string().optional(),
+      website: z.string().optional(),
+      showButton: z.boolean().optional(),
+      socialLink: z.boolean().optional()
+    }).optional()
   }),
 });
 

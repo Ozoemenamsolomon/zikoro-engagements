@@ -39,58 +39,101 @@ import { getQuestionType } from "../formResponse/FormResponse";
 function SubmittedModal({
   data,
   formLink,
+  bgColor,
+  textColor,
+  btnColor
 }: {
   data: TEngagementFormQuestion;
   formLink: string;
+  bgColor:string;
+  textColor:string;
+  btnColor:string;
 }) {
-  const socials = [
-    {
-      name: "mingcute:linkedin-fill",
-      link: `https://x.com/intent/tweet?url=${formLink}`,
-    },
-    {
-      name: "ri:twitter-x-fill",
-      link: `https://www.linkedin.com/shareArticle?url=${formLink}`,
-    },
-    {
-      name: "mingcute:facebook-fill",
-      link: `https://www.facebook.com/sharer/sharer.php?u=${formLink}`,
-    },
-  ];
-  return (
-    <div className="w-full h-full inset-0 fixed bg-white">
-      <div className="w-[95%] max-w-xl rounded-lg  gap-y-3  h-[400px] flex flex-col items-center justify-center absolute inset-0 m-auto">
-        <h2>
-          <span className="gradient-text bg-basePrimary text-lg sm:text-xl font-semibold">
-            Hurray
-          </span>{" "}
-          🥳
-        </h2>
-        <p className="font-medium text-zinc-700 text-sm sm:text-base ">
-          Your response has been Submitted
-        </p>
-        <Button
-          onClick={() => window.open(`https://engagements.zikoro.com`)}
-          className="text-white font-semibold bg-basePrimary rounded-lg"
-        >
-          Create your Form
-        </Button>
+ 
 
-        <div className="max-w-md bg-white rounded-lg gap-4 mt-10 p-3 mx-auto flex flex-col items-center justify-center">
-          <p className="font-medium">Create your Form</p>
-          <div className="w-fit flex flex-wrap items-center justify-center gap-4">
-            {socials.map((social) => (
-              <Link
-                href={social.link}
-                className="bg-basePrimary-100 rounded-lg border h-10 w-10 flex items-center justify-center"
-                target="_blank"
-              >
-                <InlineIcon fontSize={22} icon={social.name} />
-              </Link>
+  const socials = useMemo(() => {
+    const formSetting = data?.formSettings;
+    return [
+      {
+        image: "/end-u-x.svg",
+        url: formSetting?.endScreenSettings?.x || "https://zikoro.com",
+      },
+      {
+        image: "/end-u-fb.svg",
+        url: formSetting?.endScreenSettings?.facebook || "https://zikoro.com",
+      },
+      {
+        image: "/end-u-in.svg",
+        url: formSetting?.endScreenSettings?.linkedIn || "https://zikoro.com",
+      },
+    ];
+  }, [data]);
+
+  const showLinks = useMemo(() => {
+    return data?.formSettings?.endScreenSettings
+      ? data?.formSettings?.endScreenSettings?.socialLink
+      : true;
+  }, [data]);
+
+  const showButton = useMemo(() => {
+    return data?.formSettings?.endScreenSettings
+      ? data?.formSettings?.endScreenSettings?.showButton
+      : true;
+  }, [data]);
+  return (
+    <div
+    style={{
+      backgroundColor: bgColor,
+      backgroundImage: data?.formSettings?.isPreMade
+        ? `url('${data?.formSettings?.preMadeType}')`
+        : data?.formSettings?.isBackgroundImage
+        ? `url('${data?.formSettings?.backgroundImage}')`
+        : "",
+      filter: data?.formSettings?.isBackgroundImage
+        ? `brightness(${data?.formSettings?.backgroundBrightness})`
+        : "",
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      backgroundRepeat: "no-repeat",
+      color: textColor,
+    }}
+    className="w-full h-full inset-0 fixed bg-white">
+         <h2 className="text-xl font-semibold">
+          {data?.formSettings?.endScreenSettings?.title ??
+            "Thanks for completing the form"}
+        </h2>
+
+        {showLinks && (
+          <div className="flex items-center gap-x-3 justify-center mx-auto">
+            {socials?.map((item) => (
+              <button onClick={() => window.open(item?.url)}>
+                <Image
+                  src={item?.image}
+                  alt=""
+                  className="w-[40px] h-[40px]"
+                  width={100}
+                  height={100}
+                />
+              </button>
             ))}
           </div>
-        </div>
-      </div>
+        )}
+
+        <p>
+          {data?.formSettings?.endScreenSettings?.subText ??
+            "This is all for now"}
+        </p>
+        {showButton && (
+          <Button
+            style={{
+              backgroundColor: btnColor,
+            }}
+            className="font-medium text-white rounded-xl"
+          >
+            {data?.formSettings?.endScreenSettings?.buttonText ??
+              "Create your form"}
+          </Button>
+        )}
     </div>
   );
 }
@@ -331,7 +374,7 @@ function FillFormComp({
     } else return ["A", "B", "C", "D"];
   }, [data]);
 
-  console.log(data);
+  
 
   if (isLoading || attendeeLoading) {
     return (
@@ -724,6 +767,9 @@ function FillFormComp({
         {(isSuccess || isResponseAlreadySubmitted) && (
           <SubmittedModal
             data={data}
+            bgColor={bgColor || "#fff"}
+            btnColor={btnColor}
+            textColor={textColor}
             formLink={`https://engagements.zikoro.com/e/${data?.workspaceAlias}/form/a/${data?.formAlias}`}
           />
         )}

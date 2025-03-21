@@ -79,6 +79,19 @@ export function CreateForm({
             isBackgroundImage: false,
             isBackgroundColor: false,
             eventAlias: eventId ?? "",
+            endScreenSettings: {
+              title: "Thanks for completing the form",
+              subText: "This is all for now",
+              buttonText: "Create Form",
+              buttonUrl: "",
+              x: "",
+              linkedIn: "",
+              instagram: "",
+              facebook: "",
+              website: "",
+              showButton: true,
+              socialLink: true,
+            }
           },
         },
   });
