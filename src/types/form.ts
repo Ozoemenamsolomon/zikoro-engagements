@@ -73,6 +73,7 @@ export interface TEndScreenSettings {
   website?: string;
   showButton?:boolean;
   socialLink?:boolean;
+  showCreateForm?:boolean
 }
 
 export interface TEngagementFormAnswer {

@@ -2,7 +2,7 @@ import { TextEditor } from "@/components/custom";
 import { cn } from "@/lib/utils";
 import { formQuestion } from "@/schemas";
 import { useState } from "react";
-import { UseFormReturn, useWatch } from "react-hook-form";
+import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 
 export function FormQuestionDescription({
@@ -22,6 +22,7 @@ export function FormQuestionDescription({
           {isFocused ? (
             <div className="w-full">
               <TextEditor
+                isForm
                 defaultValue={defaultDescriptionValue}
                 placeholder="Enter your Description"
                 onChange={(value) => {
@@ -35,7 +36,7 @@ export function FormQuestionDescription({
           ) : (
             <div
               onClick={() => setIsFocused(true)}
-              className="innerhtml w-full p-3 rounded-lg bg-basePrimary-100"
+              className="innerhtml w-full p-3 rounded-lg border bg-white/10"
               dangerouslySetInnerHTML={{
                 __html: defaultDescriptionValue || "Enter Your Description",
               }}

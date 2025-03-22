@@ -61,6 +61,7 @@ function OptionItem({
           {isFocused ? (
             <div className="w-full">
               <TextEditor
+              isForm
                 placeholder="Enter Text"
                 defaultValue={option.option}
                 onChange={(value) => {
@@ -73,7 +74,7 @@ function OptionItem({
           ) : (
             <div
               onClick={() => setIsFocused(true)}
-              className="innerhtml w-full p-3 rounded-lg bg-basePrimary-100"
+              className="innerhtml w-full p-3 rounded-lg bg-white/10 border"
               dangerouslySetInnerHTML={{
                 __html: option?.option || "Enter Text",
               }}
@@ -177,6 +178,7 @@ export function FormCheckBoxType({
   refetch,
   setOption,
   optionType,
+  btnColor
 }: {
   form: UseFormReturn<z.infer<typeof formQuestion>>;
   question: TEngagementFormQuestion["questions"][number] | null;
@@ -185,6 +187,7 @@ export function FormCheckBoxType({
   refetch: () => Promise<any>;
   setOption: (value: string) => void;
   optionType: string;
+  btnColor:string;
 }) {
   const addedImage = form.watch("questionImage");
   const addedDescription = form.watch("questionDescription");
@@ -263,6 +266,7 @@ export function FormCheckBoxType({
         question={question}
         refetch={refetch}
         type="CheckBox"
+        btnColor={btnColor}
         SettingWidget={
           <>
             <div className="flex w-full px-3 mb-4 items-center justify-between">
@@ -320,6 +324,9 @@ export function FormCheckBoxType({
               ...options,
               { id: nanoid(), option: "", optionImage: "" },
             ]);
+          }}
+          style={{
+            color:btnColor
           }}
           className="w-fit h-fit px-0 mt-3 text-basePrimary text-sm underline"
         >

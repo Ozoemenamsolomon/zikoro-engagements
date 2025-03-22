@@ -16,6 +16,7 @@ export function FormBasicType({
   engagementForm,
   refetch,
   type,
+  btnColor
 }: {
   form: UseFormReturn<z.infer<typeof formQuestion>>;
   question: TEngagementFormQuestion["questions"][number] | null;
@@ -23,6 +24,7 @@ export function FormBasicType({
   defaultQuestionValue: string;
   refetch: () => Promise<any>;
   type: string;
+  btnColor:string;
 }) {
   const addedImage = form.watch("questionImage");
   const addedDescription = form.watch("questionDescription");
@@ -73,6 +75,7 @@ const showDescription = useWatch({
           question={question}
           refetch={refetch}
           type={type}
+          btnColor={btnColor}
         />
 
 {showDescription && (

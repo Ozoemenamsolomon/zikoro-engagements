@@ -13,6 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { usePostRequest } from "@/hooks/services/requests";
 import { Loader2Icon } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
+import { cn } from "@/lib/utils";
 function FieldSettings({
   close,
   engagementForm,
@@ -45,6 +46,11 @@ function FieldSettings({
   const showSocialLink = useWatch({
     control: form.control,
     name: "formSettings.endScreenSettings.socialLink",
+  });
+
+  const showCreateForm = useWatch({
+    control: form.control,
+    name: "formSettings.endScreenSettings.showCreateForm",
   });
 
   return (
@@ -343,6 +349,24 @@ function FieldSettings({
                   )}
                 />
                 {/** second section */}
+                <div className="flex w-full text-mobile sm:text-sm items-center justify-between">
+                  <div className="flex flex-col items-start justify-start">
+                    <p className="font-medium text-mobile sm:text-sm">
+                      Create your form
+                    </p>
+                  </div>
+                  <Switch
+                    disabled
+                    checked={showCreateForm}
+                    onCheckedChange={(checked) =>
+                      form.setValue(
+                        "formSettings.endScreenSettings.showCreateForm",
+                        checked
+                      )
+                    }
+                    className=""
+                  />
+                </div>
 
                 <Button className="self-center w-fit mt-8 gap-x-2  bg-basePrimary rounded-xl text-white ">
                   {loading && (
@@ -386,6 +410,7 @@ export function EndScreenSettings({
           website: "",
           showButton: true,
           socialLink: true,
+          showCreateForm: true,
           ...engagementForm?.formSettings?.endScreenSettings,
         },
       },
@@ -433,6 +458,11 @@ export function EndScreenSettings({
     control: form.control,
     name: "formSettings.endScreenSettings.instagram",
   });
+  const website = useWatch({
+    control: form.control,
+    name: "formSettings.endScreenSettings.website",
+  });
+  //
 
   const btnColor = useMemo(() => {
     if (engagementForm?.formSettings?.isPreMade) {
@@ -459,41 +489,44 @@ export function EndScreenSettings({
   }, [engagementForm]);
 
   const socials = useMemo(() => {
-    const formSetting = engagementForm?.formSettings;
     return [
       {
         image: "/end-u-x.svg",
-        url: x || "https://zikoro.com",
+        url: x || "",
       },
       {
         image: "/end-u-fb.svg",
-        url: facebook || "https://zikoro.com",
+        url: facebook || "",
       },
       {
         image: "/end-u-in.svg",
-        url: linkedIn || "https://zikoro.com",
+        url: linkedIn || "",
+      },
+      {
+        image: "/end-u-web.svg",
+        url: website || "",
       },
     ];
-  }, [x, linkedIn, facebook, insta]);
+  }, [x, linkedIn, facebook, insta, website]);
 
   return (
     <>
       <div
-        style={{
-          backgroundColor: bgColor,
-          backgroundImage: engagementForm?.formSettings?.isPreMade
-            ? `url('${engagementForm?.formSettings?.preMadeType}')`
-            : engagementForm?.formSettings?.isBackgroundImage
-            ? `url('${engagementForm?.formSettings?.backgroundImage}')`
-            : "",
-          filter: engagementForm?.formSettings?.isBackgroundImage
-            ? `brightness(${engagementForm?.formSettings?.backgroundBrightness})`
-            : "",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-          color: textColor,
-        }}
+        // style={{
+        //   backgroundColor: bgColor,
+        //   backgroundImage: engagementForm?.formSettings?.isPreMade
+        //     ? `url('${engagementForm?.formSettings?.preMadeType}')`
+        //     : engagementForm?.formSettings?.isBackgroundImage
+        //     ? `url('${engagementForm?.formSettings?.backgroundImage}')`
+        //     : "",
+        //   filter: engagementForm?.formSettings?.isBackgroundImage
+        //     ? `brightness(${engagementForm?.formSettings?.backgroundBrightness})`
+        //     : "",
+        //   backgroundSize: "cover",
+        //   backgroundPosition: "center",
+        //   backgroundRepeat: "no-repeat",
+        //   color: textColor,
+        // }}
         className="w-full h-screen text-sm flex-col flex items-center justify-center gap-4 relative"
       >
         <Button
@@ -509,7 +542,10 @@ export function EndScreenSettings({
         {showSocialLink && (
           <div className="flex items-center gap-x-3 justify-center mx-auto">
             {socials?.map((item) => (
-              <button onClick={() => window.open(item?.url)}>
+              <button
+                className={cn("block", !item?.url && "hidden")}
+                onClick={() => window.open(item?.url)}
+              >
                 <Image
                   src={item?.image}
                   alt=""

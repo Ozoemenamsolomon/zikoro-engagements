@@ -25,6 +25,7 @@ export function FormQuestionField({
   isText,
   isTemplateType,
   togggleRequired,
+  btnColor,
 }: {
   defaultQuestionValue: string;
   question: TEngagementFormQuestion["questions"][number] | null;
@@ -38,6 +39,7 @@ export function FormQuestionField({
   isText?: boolean;
   isTemplateType?: boolean;
   togggleRequired?: (t: boolean) => void;
+  btnColor: string;
 }) {
   const { postData } =
     usePostRequest<Partial<TEngagementFormQuestion>>("engagements/form");
@@ -105,6 +107,7 @@ export function FormQuestionField({
         {
           <div className="w-full">
             <TextEditor
+            isForm
               defaultValue={defaultQuestionValue}
               placeholder="Enter your Question"
               onChange={onChange}
@@ -121,7 +124,12 @@ export function FormQuestionField({
               accept="image/*"
               {...form.register("questionImage")}
             />
-            <AddQuizImageIcon />
+
+            <InlineIcon
+              icon="ic:twotone-image"
+              color={btnColor}
+              fontSize={22}
+            />
           </label>
           <button
             onClick={(e) => {
@@ -132,7 +140,11 @@ export function FormQuestionField({
             className="relative"
             title="setting"
           >
-            <InlineIcon icon="duo-icons:settings" fontSize={22} />
+            <InlineIcon
+              icon="duo-icons:settings"
+              color={btnColor}
+              fontSize={22}
+            />
             {isSettings && (
               <div
                 onClick={(e) => {

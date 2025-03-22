@@ -41,30 +41,32 @@ function SubmittedModal({
   formLink,
   bgColor,
   textColor,
-  btnColor
+  btnColor,
 }: {
   data: TEngagementFormQuestion;
   formLink: string;
-  bgColor:string;
-  textColor:string;
-  btnColor:string;
+  bgColor: string;
+  textColor: string;
+  btnColor: string;
 }) {
- 
-
   const socials = useMemo(() => {
     const formSetting = data?.formSettings;
     return [
       {
         image: "/end-u-x.svg",
-        url: formSetting?.endScreenSettings?.x || "https://zikoro.com",
+        url: formSetting?.endScreenSettings?.x || "",
       },
       {
         image: "/end-u-fb.svg",
-        url: formSetting?.endScreenSettings?.facebook || "https://zikoro.com",
+        url: formSetting?.endScreenSettings?.facebook || "",
       },
       {
         image: "/end-u-in.svg",
-        url: formSetting?.endScreenSettings?.linkedIn || "https://zikoro.com",
+        url: formSetting?.endScreenSettings?.linkedIn || "",
+      },
+      {
+        image: "/end-u-web.svg",
+        url: formSetting?.endScreenSettings?.website || "",
       },
     ];
   }, [data]);
@@ -82,58 +84,62 @@ function SubmittedModal({
   }, [data]);
   return (
     <div
-    style={{
-      backgroundColor: bgColor,
-      backgroundImage: data?.formSettings?.isPreMade
-        ? `url('${data?.formSettings?.preMadeType}')`
-        : data?.formSettings?.isBackgroundImage
-        ? `url('${data?.formSettings?.backgroundImage}')`
-        : "",
-      filter: data?.formSettings?.isBackgroundImage
-        ? `brightness(${data?.formSettings?.backgroundBrightness})`
-        : "",
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-      backgroundRepeat: "no-repeat",
-      color: textColor,
-    }}
-    className="w-full h-full inset-0 flex flex-col items-center justify-center gap-6 fixed bg-white">
-         <h2 className="text-xl text-center font-semibold">
-          {data?.formSettings?.endScreenSettings?.title ??
-            "Thanks for completing the form"}
-        </h2>
+      style={{
+        backgroundColor: bgColor,
+        backgroundImage: data?.formSettings?.isPreMade
+          ? `url('${data?.formSettings?.preMadeType}')`
+          : data?.formSettings?.isBackgroundImage
+          ? `url('${data?.formSettings?.backgroundImage}')`
+          : "",
+        filter: data?.formSettings?.isBackgroundImage
+          ? `brightness(${data?.formSettings?.backgroundBrightness})`
+          : "",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        color: textColor,
+      }}
+      className="w-full h-full inset-0 flex flex-col items-center justify-center gap-6 fixed bg-white"
+    >
+      <h2 className="text-xl text-center font-semibold">
+        {data?.formSettings?.endScreenSettings?.title ??
+          "Thanks for completing the form"}
+      </h2>
 
-        {showLinks && (
-          <div className="flex items-center gap-x-3 justify-center mx-auto">
-            {socials?.map((item) => (
-              <button onClick={() => window.open(item?.url)}>
-                <Image
-                  src={item?.image}
-                  alt=""
-                  className="w-[40px] h-[40px]"
-                  width={100}
-                  height={100}
-                />
-              </button>
-            ))}
-          </div>
-        )}
+      {showLinks && (
+        <div className="flex items-center  gap-x-3 justify-center mx-auto">
+          {socials?.map((item) => (
+            <button
+              className={cn("block", !item?.url && "hidden")}
+              onClick={() => window.open(item?.url)}
+            >
+              <Image
+                src={item?.image}
+                alt=""
+                className="w-[40px] h-[40px]"
+                width={100}
+                height={100}
+              />
+            </button>
+          ))}
+        </div>
+      )}
 
-        <p className="text-center">
-          {data?.formSettings?.endScreenSettings?.subText ??
-            "This is all for now"}
-        </p>
-        {showButton && (
-          <Button
-            style={{
-              backgroundColor: btnColor,
-            }}
-            className="font-medium text-white rounded-xl"
-          >
-            {data?.formSettings?.endScreenSettings?.buttonText ??
-              "Create your form"}
-          </Button>
-        )}
+      <p className="text-center">
+        {data?.formSettings?.endScreenSettings?.subText ??
+          "This is all for now"}
+      </p>
+      {showButton && (
+        <Button
+          style={{
+            backgroundColor: btnColor,
+          }}
+          className="font-medium text-white rounded-xl"
+        >
+          {data?.formSettings?.endScreenSettings?.buttonText ??
+            "Create your form"}
+        </Button>
+      )}
     </div>
   );
 }
@@ -374,8 +380,6 @@ function FillFormComp({
     } else return ["A", "B", "C", "D"];
   }, [data]);
 
-  
-
   if (isLoading || attendeeLoading) {
     return (
       <div className="w-full h-[30rem] flex items-center justify-center">
@@ -426,7 +430,7 @@ function FillFormComp({
                       `https://zikoro.com/live-events/${attendee?.eventAlias}`
                     );
                   }}
-                  className="bg-basePrimary h-12 text-white font-medium"
+                  className="bg-basePrimary rounded-xl h-12 text-white font-medium"
                 >
                   Register for the event
                 </Button>
@@ -436,21 +440,21 @@ function FillFormComp({
         )}
       {isView && !isLoading && data?.formSettings?.isCoverImage && (
         <div
-        style={{
-          backgroundColor: bgColor,
-          backgroundImage: data?.formSettings?.isPreMade
-            ? `url('${data?.formSettings?.preMadeType}')`
-            : data?.formSettings?.isBackgroundImage
-            ? `url('${data?.formSettings?.backgroundImage}')`
-            : "",
-          filter: data?.formSettings?.isBackgroundImage
-            ? `brightness(${data?.formSettings?.backgroundBrightness})`
-            : "",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-          color: textColor,
-        }}
+          style={{
+            backgroundColor: bgColor,
+            backgroundImage: data?.formSettings?.isPreMade
+              ? `url('${data?.formSettings?.preMadeType}')`
+              : data?.formSettings?.isBackgroundImage
+              ? `url('${data?.formSettings?.backgroundImage}')`
+              : "",
+            filter: data?.formSettings?.isBackgroundImage
+              ? `brightness(${data?.formSettings?.backgroundBrightness})`
+              : "",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            color: textColor,
+          }}
           className="w-full min-h-screen p-6 bg-white justify-center inset-0 fixed z-[100] flex flex-col items-center gap-y-8"
         >
           {data?.coverImage &&
@@ -488,7 +492,7 @@ function FillFormComp({
               backgroundColor: btnColor,
             }}
             className={cn(
-              "self-center w-fit gap-x-2  text-white font-medium h-11 ",
+              "self-center w-fit gap-x-2  rounded-xl text-white font-medium h-11 ",
               !data?.formSettings?.buttonColor && "bg-basePrimary"
             )}
           >
@@ -499,21 +503,21 @@ function FillFormComp({
 
       <div className={cn("w-screen min-h-screen", isLoading && "hidden")}>
         <div
-             style={{
-              backgroundColor: bgColor,
-              backgroundImage: data?.formSettings?.isPreMade
-                ? `url('${data?.formSettings?.preMadeType}')`
-                : data?.formSettings?.isBackgroundImage
-                ? `url('${data?.formSettings?.backgroundImage}')`
-                : "",
-              filter: data?.formSettings?.isBackgroundImage
-                ? `brightness(${data?.formSettings?.backgroundBrightness})`
-                : "",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
-              color: textColor,
-            }}
+          style={{
+            backgroundColor: bgColor,
+            backgroundImage: data?.formSettings?.isPreMade
+              ? `url('${data?.formSettings?.preMadeType}')`
+              : data?.formSettings?.isBackgroundImage
+              ? `url('${data?.formSettings?.backgroundImage}')`
+              : "",
+            filter: data?.formSettings?.isBackgroundImage
+              ? `brightness(${data?.formSettings?.backgroundBrightness})`
+              : "",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            color: textColor,
+          }}
           className="w-full h-full overflow-y-auto vert-scroll absolute m-auto inset-0  rounded-lg p-4 sm:p-6"
         >
           <div className="w-full my-10 pb-20 sm:my-20 mx-auto max-w-3xl ">
@@ -691,7 +695,7 @@ function FillFormComp({
                         color: btnColor || "",
                         border: `1px solid ${btnColor}`,
                       }}
-                      className="border h-11 px-6 font-medium"
+                      className="border h-11 px-6 rounded-xl font-medium"
                     >
                       Previous
                     </Button>
@@ -705,7 +709,7 @@ function FillFormComp({
                           backgroundColor: btnColor,
                         }}
                         className={cn(
-                          "self-center w-fit gap-x-2 px-6 text-white font-medium h-12 "
+                          "self-center w-fit gap-x-2 px-6 rounded-xl text-white font-medium h-12 "
                         )}
                       >
                         {loading && (
@@ -733,7 +737,7 @@ function FillFormComp({
                         style={{
                           backgroundColor: btnColor,
                         }}
-                        className="text-white h-11 font-medium"
+                        className="text-white rounded-xl h-11 font-medium"
                       >
                         Next
                       </Button>
@@ -748,7 +752,7 @@ function FillFormComp({
                       backgroundColor: btnColor,
                     }}
                     className={cn(
-                      "self-center w-fit gap-x-2  text-white font-medium h-12 px-6 ",
+                      "self-center w-fit gap-x-2 rounded-xl  text-white font-medium h-12 px-6 ",
                       !data?.formSettings?.buttonColor && "bg-basePrimary"
                     )}
                   >

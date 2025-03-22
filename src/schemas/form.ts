@@ -52,7 +52,8 @@ export const formCreationSchema = z.object({
       facebook: z.string().optional(),
       website: z.string().optional(),
       showButton: z.boolean().optional(),
-      socialLink: z.boolean().optional()
+      socialLink: z.boolean().optional(),
+      showCreateForm: z.boolean().optional()
     }).optional()
     })
     .optional(),
@@ -128,7 +129,8 @@ export const formSettingSchema = z.object({
       facebook: z.string().optional(),
       website: z.string().optional(),
       showButton: z.boolean().optional(),
-      socialLink: z.boolean().optional()
+      socialLink: z.boolean().optional(),
+      showCreateForm: z.boolean().optional()
     }).optional()
   }),
 });

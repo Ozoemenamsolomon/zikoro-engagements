@@ -110,6 +110,22 @@ export default function AddFormQuestions({
     }
   }, [data, formResponses]);
 
+  const bgColor = useMemo(() => {
+    if (data?.formSettings?.isPreMade) {
+      return data?.formSettings?.preMadeType;
+    } else if (data?.formSettings?.isBackgroundImage) {
+      return data?.formSettings?.backgroundImage;
+    } else return data?.formSettings?.backgroundColor || "#ffffff";
+  }, [data]);
+
+  const textColor = useMemo(() => {
+    if (data?.formSettings?.isPreMade) {
+      return data?.formSettings?.preMadeType === "/brown-bg.jpg"
+        ? "#6C4A4A"
+        : "#190044";
+    } else return data?.formSettings?.textColor || "#000000";
+  }, [data]);
+
   if (isLoading) {
     return <LoadingState />;
   }
@@ -162,6 +178,21 @@ export default function AddFormQuestions({
                   )}
                 >
                   <EngagementLayout
+                    style={{
+                      backgroundColor: bgColor,
+                      backgroundImage: data?.formSettings?.isPreMade
+                        ? `url('${data?.formSettings?.preMadeType}')`
+                        : data?.formSettings?.isBackgroundImage
+                        ? `url('${data?.formSettings?.backgroundImage}')`
+                        : "",
+                      filter: data?.formSettings?.isBackgroundImage
+                        ? `brightness(${data?.formSettings?.backgroundBrightness})`
+                        : "",
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                      backgroundRepeat: "no-repeat",
+                      color: textColor,
+                    }}
                     className=" w-full vert-scroll overflow-y-auto pb-32"
                     parentClassName={cn(
                       "  relative px-0 h-full",

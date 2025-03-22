@@ -108,12 +108,14 @@ export function FormImageUploadType({
   question,
   engagementForm,
   refetch,
+  btnColor
 }: {
   form: UseFormReturn<z.infer<typeof formQuestion>>;
   question: TEngagementFormQuestion["questions"][number] | null;
   engagementForm: TEngagementFormQuestion;
   defaultQuestionValue: string;
   refetch: () => Promise<any>;
+  btnColor:string;
 }) {
   const addedImage = form.watch("questionImage");
   const prevSelectedOptions = form.watch(`optionFields`);
@@ -178,6 +180,7 @@ export function FormImageUploadType({
           question={question}
           refetch={refetch}
           type="Image Upload"
+          btnColor={btnColor}
           
         />
 
