@@ -270,7 +270,7 @@ export function AddQuestion({
                     fontSize={16}
                     color={btnColor}
                   />
-                  <p>Change Option Type</p>
+                  <p className="font-medium">Change Option Type</p>
                 </button>
               )}
               {optionType === null && (
@@ -349,6 +349,7 @@ export function AddQuestion({
                         setOptionType(value);
                       }}
                       btnColor={btnColor}
+                      rgba={rgba || "#001FCC19"}
                     />
                   )}
 
