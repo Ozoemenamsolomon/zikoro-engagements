@@ -39,6 +39,7 @@ export function AttendeeOnboarding({
   refetchLobby,
   organization,
   isAttendee,
+  btnColor,
 }: {
   close: () => void;
   organization: TOrganization;
@@ -55,6 +56,7 @@ export function AttendeeOnboarding({
   setChosenAvatar: React.Dispatch<
     React.SetStateAction<Required<AvatarFullConfig> | null>
   >;
+  btnColor: string;
   audio?: HTMLAudioElement | null;
   quiz: TQuiz<TQuestion[]>;
   liveQuizPlayers: TLiveQuizParticipant[];
@@ -294,7 +296,8 @@ export function AttendeeOnboarding({
               e.stopPropagation();
               toggleAvatarModal();
             }}
-            className="text-basePrimary rounded-lg h-16 w-16 flex items-center justify-center border flex-col"
+            
+            className=" rounded-lg h-16 w-16 flex items-center justify-center border flex-col"
           >
             {chosenAvatar ? (
               <Avatar
@@ -374,7 +377,10 @@ export function AttendeeOnboarding({
         <Button
           disabled={loading}
           // onClick={submit}
-          className="bg-basePrimary gap-x-2 px-10 h-12 rounded-lg text-gray-50 transform transition-all duration-400 "
+          style={{
+            background: btnColor
+          }}
+          className=" gap-x-2 px-10 h-12 rounded-lg text-gray-50 transform transition-all duration-400 "
         >
           {loading && <LoaderAlt size={22} className="animate-spin" />}
           <p> Let's Go</p>

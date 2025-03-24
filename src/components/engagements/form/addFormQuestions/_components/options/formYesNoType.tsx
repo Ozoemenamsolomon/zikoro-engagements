@@ -14,12 +14,14 @@ export function FormYesNoType({
   question,
   engagementForm,
   refetch,
+  btnColor
 }: {
   form: UseFormReturn<z.infer<typeof formQuestion>>;
   question: TEngagementFormQuestion["questions"][number] | null;
   engagementForm: TEngagementFormQuestion;
   defaultQuestionValue: string;
   refetch: () => Promise<any>;
+  btnColor:string;
 
 }) {
   const addedImage = form.watch("questionImage");
@@ -69,6 +71,7 @@ export function FormYesNoType({
           question={question}
           refetch={refetch}
           type="Yes or No"
+          btnColor={btnColor}
         />
 
 {showDescription && (

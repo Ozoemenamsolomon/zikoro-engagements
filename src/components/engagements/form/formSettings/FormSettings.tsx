@@ -17,6 +17,8 @@ import FormAppearance from "./_components/FormAppearance";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
 import { usePostRequest } from "@/hooks/services/requests";
 import { useGetUserOrganizations } from "@/hooks/services/engagement";
+import { ThemeSettings } from "./ThemeSettings";
+import { nanoid } from "nanoid";
 
 export enum FormSettingType {
   details,
@@ -40,6 +42,7 @@ export function FormSettings({
   const [active, setActive] = useState<FormSettingType>(
     FormSettingType.details
   );
+  const [isThemeSetting, setThemeSetting] = useState(false);
   const {
     organizations: organizationList,
     getOrganizations,
@@ -54,6 +57,8 @@ export function FormSettings({
       coverImage: engagementForm?.coverImage,
       description: engagementForm?.description,
       formSettings: {
+        hideLabel: false,
+        labellingType: "Number",
         ...engagementForm?.formSettings,
       },
     },
@@ -61,7 +66,7 @@ export function FormSettings({
 
   async function onSubmit(values: z.infer<typeof formSettingSchema>) {
     setLoading(true);
-    const {wAlias, ...remData} =  values;
+    const { wAlias, ...remData } = values;
     const payload: Partial<TEngagementFormQuestion> = {
       ...engagementForm,
       ...remData,
@@ -72,6 +77,7 @@ export function FormSettings({
 
 
   return (
+    <>
     <div
       onClick={close}
       className="w-screen h-screen fixed inset-0 bg-white/50 z-[100] "
@@ -128,7 +134,7 @@ export function FormSettings({
                   <FormAccessibility form={form} />
                 )}
                 {FormSettingType.appearance === active && (
-                  <FormAppearance form={form} />
+                  <FormAppearance setThemeSetting={setThemeSetting} form={form} engagementForm={engagementForm} />
                 )}
                 {FormSettingType.integration === active && (
                   <FormIntegration
@@ -150,5 +156,13 @@ export function FormSettings({
         </div>
       </div>
     </div>
+    {isThemeSetting && (
+            <ThemeSettings
+            key={nanoid()}
+            close={() => setThemeSetting(false)}
+            engagementForm={engagementForm}
+          />
+      )}
+    </>
   );
 }

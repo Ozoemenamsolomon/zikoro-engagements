@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import { TEngagementFormQuestion } from "@/types/form";
 import Image from "next/image";
 import { IoMdStar } from "react-icons/io";
@@ -7,7 +8,10 @@ export function FillFormQuestion({
   description,
   questionImage,
   isRequired,
-  showDescription
+  showDescription,
+  btnColor,
+  rgba,
+  hideNumber
 }: {
   currentIndex: number;
   currentQuestion: string;
@@ -15,11 +19,21 @@ export function FillFormQuestion({
   questionImage?: string;
   isRequired: boolean;
   showDescription:boolean;
+  btnColor: string;
+  rgba:string;
+  hideNumber:boolean;
 }) {
   return (
     <div className="w-full flex flex-col mb-4 items-center gap-4">
       <div className="flex items-start">
-        <p className="w-10 h-10 flex text-lg items-center bg-basePrimary-100 justify-center rounded-full border border-basePrimary">
+        <p 
+        style={{
+          borderColor: btnColor || '',
+          backgroundColor: rgba || '',
+          opacity: 50,
+          color: btnColor
+        }}
+        className={cn("w-10 h-10 flex text-lg items-center bg-basePrimary-100 justify-center rounded-full border border-basePrimary", hideNumber && 'hidden')}>
           {currentIndex}
         </p>
         {isRequired && <IoMdStar size={12} className="text-red-700" />}

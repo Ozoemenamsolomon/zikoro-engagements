@@ -36,12 +36,16 @@ export function UploadTypeAnswer({
   form,
   index,
   rgba,
-  bgColor
+  btnColor,
+  hideNumber,
+  hideLabel
 }: {
   form: UseFormReturn<z.infer<typeof formAnswerSchema>, any, any>;
   index: number;
-  bgColor:string;
+  btnColor:string;
   rgba:string;
+  hideNumber:boolean
+  hideLabel:boolean
 }) {
  const question = form.watch(`questions.${index}.question`);
   const optionFields = form.watch(`questions.${index}.optionFields`)
@@ -72,6 +76,9 @@ export function UploadTypeAnswer({
         description={questionDescription}
         isRequired={isRequired}
         showDescription={showDescription}
+        btnColor={btnColor}
+        rgba={rgba}
+        hideNumber={hideNumber}
       />
 
       <div className="w-full">

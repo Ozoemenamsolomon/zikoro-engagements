@@ -24,6 +24,7 @@ export function Option({
   isDisabled,
   quiz,
   isImageOption,
+  btnColor
 }: {
   optionIndex: string;
   option: TOption;
@@ -35,6 +36,7 @@ export function Option({
   isDisabled: boolean;
   quiz: TQuiz<TQuestion[]>;
   isImageOption: boolean;
+  btnColor:string;
 }) {
   const chosedOption = useMemo(() => {
     const i = answer?.filter((ans) => {

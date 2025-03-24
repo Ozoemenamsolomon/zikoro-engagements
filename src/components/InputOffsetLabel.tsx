@@ -28,23 +28,22 @@ export default function InputOffsetLabel({
         {label}
         {isRequired && <sup className="text-red-700">*</sup>}
       </FormLabel>
-      {append && (
-        <div className="absolute !my-0 left-2 z-10 h-full flex items-center">
+   
+      <FormControl className="!mt-0">
+        <div
+          className={` w-full`}
+        >
+          <div className="w-full relative ">
+          {append && (
+        <div className="absolute !my-0 left-1 z-10 h-full flex items-center">
           {append}
         </div>
       )}
       {prepend && (
-        <div className="absolute !my-0 right-2 z-10 h-full flex items-center">
+        <div className="absolute !my-0 right-1 z-10 h-full flex items-center">
           {prepend}
         </div>
       )}
-      <FormControl className="!mt-0">
-        <div
-          className={`${append ? "[&>*]:pl-8" : ""} ${
-            prepend ? "[&>*]:pr-8" : ""
-          }  w-full`}
-        >
-          <div className="w-full ">
             {children}
           </div>
         </div>
@@ -54,3 +53,9 @@ export default function InputOffsetLabel({
     </FormItem>
   );
 }
+
+{/**
+${append ? "[&>*]:pl-8" : ""} ${
+            prepend ? "[&>*]:pr-8" : ""
+          } 
+  */}

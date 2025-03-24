@@ -67,6 +67,17 @@ export interface TQuiz<T> {
     musicList: {label:string, value:string}[] | null,
     music: {label:string, value:string} | null,
     eventAlias: string;
+    //> new
+    preMadeType?: string;
+    isBackgroundImage?: boolean;
+    backgroundImage?: string;
+    backgroundBrightness?: number;
+    isPreMade?: boolean;
+    isBackgroundColor?:boolean;
+    textColor?:string;
+    backgroundColor?:string;
+    buttonColor?:string;
+    //> 
   };
 }
 

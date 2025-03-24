@@ -72,8 +72,26 @@ export function CreateForm({
             engagementId: "",
             engagementType: "",
             hideNumber: false,
-
+            hideLabel: false,
+            labellingType: "Number",
+            backgroundBrightness: 100,
+            preMadeType:"",
+            isBackgroundImage: false,
+            isBackgroundColor: false,
             eventAlias: eventId ?? "",
+            endScreenSettings: {
+              title: "Thanks for completing the form",
+              subText: "This is all for now",
+              buttonText: "Create Form",
+              buttonUrl: "",
+              x: "",
+              linkedIn: "",
+              instagram: "",
+              facebook: "",
+              website: "",
+              showButton: true,
+              socialLink: true,
+            }
           },
         },
   });

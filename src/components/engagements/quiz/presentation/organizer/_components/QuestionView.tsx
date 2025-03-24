@@ -77,6 +77,8 @@ type TQuestionProps = {
   liveQuizPlayers: TLiveQuizParticipant[];
   getLiveParticipant: () => Promise<any>;
   actualQuiz: TQuiz<TQuestion[]>;
+  btnColor:string;
+  rgba:string;
 };
 const optionLetter = ["A", "B", "C", "D"];
 
@@ -104,6 +106,8 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(
       getLiveParticipant,
       actualQuiz,
       className,
+      btnColor,
+      rgba
     }: TQuestionProps,
     ref
   ) => {
@@ -583,8 +587,9 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(
           </div>
         )} */}
         <div
+      
           className={cn(
-            "w-full h-full bg-white relative text-sm  border-x border-y  col-span-6",
+            "w-full h-full bg-white/40 relative text-sm  border-x border-y  col-span-6",
             isLeftBox && isRightBox && !isAttendee && "col-span-6",
             !isLeftBox &&
               !isRightBox &&
@@ -634,6 +639,8 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(
                     isLeftBox={isLeftBox}
                     isAttendee={isAttendee}
                     playerAvatar={attendeeDetail?.avatar}
+                    rgba={rgba}
+                    btnColor={btnColor}
                   />
 
                   {/** <p className="text-xs sm:text-mobile text-gray-500">{`${
@@ -641,7 +648,14 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(
                   }/${quiz?.questions?.length} Questions`}</p> */}
                   <div className="w-full flex flex-col gap-3 max-w-2xl mx-auto">
                     <div className="w-full  flex flex-col items-center gap-6">
-                      <p className="w-10 h-10 flex text-lg items-center bg-basePrimary-100 justify-center rounded-full border border-basePrimary">
+                      <p
+                         style={{
+                          borderColor: btnColor || '',
+                          backgroundColor: rgba || '',
+                          opacity: 50,
+                          color: btnColor
+                        }}
+                      className="w-10 h-10 flex text-lg items-center bg-basePrimary-100 justify-center rounded-full border border-basePrimary">
                         {currentQuestionIndex + 1}
                       </p>
 
@@ -686,6 +700,7 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(
                             setIsOptionSelected={setIsOptionSelected}
                             showAnswerMetric={showAnswerMetric}
                             answer={answer}
+                            btnColor={btnColor}
                             isImageOption={isImageOption}
                             isDisabled={
                               timing === 0 ||
@@ -753,8 +768,11 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(
                           </p>
                         )}
                         <button
+                        style={{
+                          color: btnColor
+                        }}
                           onClick={toggleExplanationVisibility}
-                          className="text-xs sm:text-sm text-basePrimary underline"
+                          className="text-xs sm:text-sm  underline"
                         >
                           {showExplanation
                             ? "Hide Explanation"
@@ -789,12 +807,15 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(
               <p className="w-1 h-1"></p>
             </div> */}
 
-                  <div className="w-full rounded-b-xl flex flex-col items-center justify-center mx-auto absolute inset-x-0 bottom-0 gap-y-3  bg-white py-2">
+                  <div className="w-full rounded-b-xl flex flex-col items-center justify-center mx-auto absolute inset-x-0 bottom-0 gap-y-3  bg-white/20 py-2">
                     {!quiz?.accessibility?.live && isAttendee && (
                       <Button
+                      style={{
+                        backgroundColor: btnColor
+                      }}
                         disabled={loading || isUpdating} //
                         onClick={onNextBtnClick}
-                        className="text-gray-50  mx-auto w-[180px] my-4 bg-[#001fcc] gap-x-2 h-11 font-medium flex"
+                        className="text-gray-50  mx-auto w-[180px] my-4  gap-x-2 h-11 font-medium flex"
                       >
                         {isUpdating && (
                           <LoaderAlt size={22} className="animate-spin" />
@@ -806,7 +827,7 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(
                       <Link
                         href="/"
                         target="_blank"
-                        className="text-center bg-white text-xs sm:text-sm w-full  p-2 "
+                        className="text-center  text-xs sm:text-sm w-full  p-2 "
                       >
                         Create your{" "}
                         {quiz?.interactionType === "quiz" ? "Quiz" : "Poll"}{" "}
@@ -816,6 +837,9 @@ export const QuestionView = forwardRef<QuestionViewRef, TQuestionProps>(
 
                     {!isAttendee && (
                       <Button
+                      style={{
+                        color: btnColor
+                      }}
                         onClick={toggleLeftBox}
                         className={cn("absolute bottom-1 left-1")}
                       >
