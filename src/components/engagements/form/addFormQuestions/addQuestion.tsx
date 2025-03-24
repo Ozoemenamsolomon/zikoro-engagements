@@ -236,7 +236,7 @@ export function AddQuestion({
   );
   return (
     <>
-      <div className="w-full px-4 sm:px-6 pt-4 sm:pt-6  h-full">
+      <div className=" w-full px-4 sm:px-6 pt-4 sm:pt-6  h-full">
         <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
           <div className="w-full max-w-3xl mx-auto mt-8">
             <div className="w-full flex flex-col  gap-1 items-center">

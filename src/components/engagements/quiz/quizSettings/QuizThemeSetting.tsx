@@ -1,29 +1,27 @@
 import { Button } from "@/components/custom";
 import { usePostRequest } from "@/hooks/services/requests";
 import { cn } from "@/lib/utils";
-import { formSettingSchema } from "@/schemas";
-import { TEngagementFormQuestion } from "@/types/form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { InlineIcon } from "@iconify/react/dist/iconify.js";
 import { Loader2Icon } from "lucide-react";
 import Image from "next/image";
 import { useMemo, useState, useEffect } from "react";
 import { useForm, UseFormReturn, useWatch } from "react-hook-form";
 import { z } from "zod";
-import { bgColors, colors, ColorWidget } from "./_components/FormAppearance";
+import {
+  bgColors,
+  ColorWidget,
+  colors,
+} from "../../form/formSettings/_components";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@mui/material";
 import { Portal } from "@/components/custom/Portal";
 import { uploadFile } from "@/utils";
+import { TQuestion, TQuiz } from "@/types/quiz";
 
-function PreMade({
-  form,
-}: {
-  form: UseFormReturn<z.infer<typeof formSettingSchema>, any, any>;
-}) {
+function PreMade({ form }: { form: UseFormReturn<TQuiz<TQuestion[]>> }) {
   const preMadeType = useWatch({
     control: form.control,
-    name: "formSettings.preMadeType",
+    name: "accessibility.preMadeType",
   });
 
   return (
@@ -33,8 +31,8 @@ function PreMade({
           onClick={(e) => {
             e.stopPropagation();
             e.preventDefault();
-            form.setValue("formSettings.preMadeType", "/purple-bg.jpeg");
-            form.setValue("formSettings.isPreMade", true);
+            form.setValue("accessibility.preMadeType", "/purple-bg.jpeg");
+            form.setValue("accessibility.isPreMade", true);
           }}
           className={cn(
             "p-1 rounded-xl border",
@@ -47,8 +45,8 @@ function PreMade({
           onClick={(e) => {
             e.stopPropagation();
             e.preventDefault();
-            form.setValue("formSettings.preMadeType", "/brown-bg.jpg");
-            form.setValue("formSettings.isPreMade", true);
+            form.setValue("accessibility.preMadeType", "/brown-bg.jpg");
+            form.setValue("accessibility.isPreMade", true);
           }}
           className={cn(
             "p-1 rounded-xl border",
@@ -62,38 +60,34 @@ function PreMade({
   );
 }
 
-function Standard({
-  form,
-}: {
-  form: UseFormReturn<z.infer<typeof formSettingSchema>, any, any>;
-}) {
+function Standard({ form }: { form: UseFormReturn<TQuiz<TQuestion[]>> }) {
   const isBackgroundImage = useWatch({
     control: form.control,
-    name: "formSettings.isBackgroundImage",
+    name: "accessibility.isBackgroundImage",
   });
   const isBackgroundColor = useWatch({
     control: form.control,
-    name: "formSettings.isBackgroundColor",
+    name: "accessibility.isBackgroundColor",
   });
   const textColor = useWatch({
     control: form.control,
-    name: "formSettings.textColor",
+    name: "accessibility.textColor",
   });
   const backgroundColor = useWatch({
     control: form.control,
-    name: "formSettings.backgroundColor",
+    name: "accessibility.backgroundColor",
   });
   const buttonColor = useWatch({
     control: form.control,
-    name: "formSettings.buttonColor",
+    name: "accessibility.buttonColor",
   });
   const backgroundBrightness = useWatch({
     control: form.control,
-    name: "formSettings.backgroundBrightness",
+    name: "accessibility.backgroundBrightness",
   });
   //
 
-  const coverImg = form.watch("formSettings.backgroundImage");
+  const coverImg = form.watch("accessibility.backgroundImage");
   const addedImage = useMemo(() => {
     if (typeof coverImg === "string") {
       return coverImg;
@@ -104,7 +98,7 @@ function Standard({
     }
   }, [coverImg]);
 
-  console.log("dsfs", coverImg)
+  console.log("dsfs", coverImg);
 
   return (
     <div className="w-full flex gap-4 items-start justify-start flex-col ">
@@ -120,29 +114,29 @@ function Standard({
           // disabled={loading}
           checked={isBackgroundColor}
           onCheckedChange={(checked) => {
-            form.setValue("formSettings.isBackgroundColor", checked);
-            form.setValue("formSettings.isBackgroundImage", false);
+            form.setValue("accessibility.isBackgroundColor", checked);
+            form.setValue("accessibility.isBackgroundImage", false);
           }}
         />
       </div>
       <ColorWidget
-        currentColor={backgroundColor}
+        currentColor={backgroundColor || "#ffffff"}
         form={form}
-        name="formSettings.backgroundColor"
+        name="accessibility.backgroundColor"
         title="Background Color"
         colorArray={bgColors}
       />
       <ColorWidget
-        currentColor={textColor}
+        currentColor={textColor || "#000000"}
         form={form}
-        name="formSettings.textColor"
+        name="accessibility.textColor"
         title="Text Color"
         colorArray={colors}
       />
       <ColorWidget
-        currentColor={buttonColor}
+        currentColor={buttonColor || "#001fcc"}
         form={form}
-        name="formSettings.buttonColor"
+        name="accessibility.buttonColor"
         title="Button Color"
         colorArray={colors}
       />
@@ -159,13 +153,17 @@ function Standard({
           // disabled={loading}
           checked={isBackgroundImage}
           onCheckedChange={(checked) => {
-            form.setValue("formSettings.isBackgroundImage", checked);
-            form.setValue("formSettings.isBackgroundColor", false);
+            form.setValue("accessibility.isBackgroundImage", checked);
+            form.setValue("accessibility.isBackgroundColor", false);
           }}
         />
       </div>
 
-      <UploadImage image={addedImage} name="formSettings.backgroundImage" form={form} />
+      <UploadImage
+        image={addedImage}
+        name="accessibility.backgroundImage"
+        form={form}
+      />
 
       <div className="w-full flex flex-col gap-3 items-start justify-start max-w-sm">
         <p className="font-medium text-mobile sm:text-sm">
@@ -183,7 +181,10 @@ function Standard({
               value={backgroundBrightness}
               className="w-full h-1"
               onChange={(_, e) => {
-                form.setValue("formSettings.backgroundBrightness", e as number);
+                form.setValue(
+                  "accessibility.backgroundBrightness",
+                  e as number
+                );
               }}
               sx={{
                 color: "#6b7280",
@@ -218,57 +219,53 @@ function Standard({
   );
 }
 
-export function ThemeSettings({
+export function QuizThemeSettings({
   close,
-  engagementForm,
+  quiz,
 }: {
-  engagementForm: TEngagementFormQuestion;
+  quiz: TQuiz<TQuestion[]>;
   close: () => void;
 }) {
   const [active, setActive] = useState(0);
   const { postData } =
-    usePostRequest<Partial<TEngagementFormQuestion>>("engagements/form");
+    usePostRequest<Partial<TQuiz<TQuestion[]>>>("engagements/quiz");
   const [loading, setLoading] = useState(false);
   const [, setshowing] = useState(false);
 
-  const form = useForm<z.infer<typeof formSettingSchema>>({
-    resolver: zodResolver(formSettingSchema),
+  const form = useForm<TQuiz<TQuestion[]>>({
     defaultValues: {
-      title: engagementForm?.title,
-      coverImage: engagementForm?.coverImage,
-      description: engagementForm?.description,
-      formSettings: {
+      accessibility: {
         backgroundBrightness: 1,
         preMadeType: "",
+        textColor: "#000000",
+        backgroundColor: "#ffffff",
         isPreMade: false,
+        buttonColor: "#001FFC",
         isBackgroundImage: false,
         isBackgroundColor: false,
-
-        ...engagementForm?.formSettings,
+        ...quiz?.accessibility,
       },
     },
   });
 
-  console.log("data", engagementForm);
-
   console.log("vakue", form.getValues());
 
-  console.log(form.formState.errors)
-  async function onSubmit(values: z.infer<typeof formSettingSchema>) {
+  console.log(form.formState.errors);
+  async function onSubmit(values: TQuiz<TQuestion[]>) {
     setLoading(true);
 
     const image = await new Promise(async (resolve) => {
       if (
-        typeof values?.formSettings?.backgroundImage === "string" &&
-        values?.formSettings?.backgroundImage.length > 0
+        typeof values?.accessibility?.backgroundImage === "string" &&
+        values?.accessibility?.backgroundImage.length > 0
       ) {
-        resolve(values?.formSettings?.backgroundImage);
+        resolve(values?.accessibility?.backgroundImage);
       } else if (
-        values?.formSettings?.backgroundImage &&
-        values?.formSettings?.backgroundImage[0]
+        values?.accessibility?.backgroundImage &&
+        values?.accessibility?.backgroundImage[0]
       ) {
         const img = await uploadFile(
-          values?.formSettings?.backgroundImage[0],
+          values?.accessibility?.backgroundImage[0],
           "image"
         );
         resolve(img);
@@ -277,16 +274,16 @@ export function ThemeSettings({
       }
     });
 
-    const payload: Partial<TEngagementFormQuestion> = {
-      ...engagementForm,
+    const payload: Partial<TQuiz<TQuestion[]>> = {
+      ...quiz,
       ...values,
-      formSettings: {
-        ...values?.formSettings,
+      accessibility: {
+        ...values?.accessibility,
         isPreMade:
-          values?.formSettings?.isBackgroundImage ||
-          values?.formSettings?.isBackgroundColor
+          values?.accessibility?.isBackgroundImage ||
+          values?.accessibility?.isBackgroundColor
             ? false
-            : values?.formSettings?.isPreMade,
+            : values?.accessibility?.isPreMade,
         backgroundImage: image as string,
       },
     };
@@ -296,7 +293,7 @@ export function ThemeSettings({
 
   useEffect(() => {
     setshowing(true);
-  }, [engagementForm]);
+  }, [quiz]);
   return (
     <Portal>
       <div
@@ -357,7 +354,7 @@ export function ThemeSettings({
             <h2 className="font-semibold mx-auto text-center mb-3">
               {active === 0
                 ? "Choose from our pre-made themes"
-                : "Customize the look of your form"}
+                : "Customize the look of your quiz"}
             </h2>
 
             <div

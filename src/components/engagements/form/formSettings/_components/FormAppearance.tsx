@@ -233,7 +233,7 @@ export function ColorWidget({
   colorArray,
 }: {
   title: string;
-  form: UseFormReturn<z.infer<typeof formSettingSchema>, any, any>;
+  form: UseFormReturn<any>;
   name: string;
   currentColor: string;
   colorArray: string[];
@@ -354,7 +354,7 @@ export default function FormAppearance({
             e.stopPropagation();
             e.preventDefault();
             setThemeSetting(true);
-            console.log("clicked");
+           
           }}
           type="button"
           className="w-full mb-3 rounded-lg border border-gray-200 gap-x-2"

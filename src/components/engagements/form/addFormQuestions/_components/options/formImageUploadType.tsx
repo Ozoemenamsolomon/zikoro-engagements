@@ -23,12 +23,14 @@ function UploadOptionItem({
   index,
   removeOption,
   option,
+  btnColor,
   setOption,
 }: {
   index: number;
   setOption: (id: string, value: string) => void;
   option: UploadOptionItemsType;
   removeOption: (id: string) => void;
+  btnColor:string;
 }) {
   return (
     <div className="w-[200px] ">
@@ -61,7 +63,7 @@ function UploadOptionItem({
       </div>
       <label
         htmlFor={`selectedOption${option?.id}`}
-        className="w-full flex items-center bg-basePrimary-100 rounded-lg justify-center flex-col gap-4 relative  h-[150px]"
+        className="w-full flex items-center bg-white/40 rounded-lg justify-center flex-col gap-4 relative  h-[150px]"
       >
         {option?.image ? (
           <Image
@@ -73,8 +75,8 @@ function UploadOptionItem({
           />
         ) : (
           <>
-            <InlineIcon icon="ic:twotone-image" fontSize={50} />
-            <p>Upload Image</p>
+            <InlineIcon icon="ic:twotone-image" color={btnColor} fontSize={50} />
+            <p style={{color: btnColor}} className="font-medium">Upload Image</p>
           </>
         )}
         <input
@@ -198,6 +200,7 @@ export function FormImageUploadType({
               setOption={handleChangeOption}
               index={index}
               removeOption={removeOption}
+              btnColor={btnColor}
             />
           ))}
         </div>
@@ -211,7 +214,10 @@ export function FormImageUploadType({
               { id: nanoid(),  image: "" },
             ]);
           }}
-          className="w-fit h-fit px-0 mt-3 text-basePrimary text-sm underline"
+          style={{
+            color: btnColor
+          }}
+          className="w-fit h-fit px-0 mt-3 font-medium text-basePrimary text-sm underline"
         >
           Add New Option
         </Button>

@@ -85,7 +85,7 @@ function SubmittedModal({
   return (
     <div
       style={{
-        backgroundColor: bgColor,
+        backgroundColor: !data?.formSettings?.isPreMade ? '' : bgColor,
         backgroundImage: data?.formSettings?.isPreMade
           ? `url('${data?.formSettings?.preMadeType}')`
           : data?.formSettings?.isBackgroundImage
@@ -387,7 +387,7 @@ function FillFormComp({
       </div>
     );
   }
-
+  //
   return (
     <>
       {!isLoading &&
@@ -396,7 +396,7 @@ function FillFormComp({
         (typeof attendee !== "object" || attendeeId !== null) && (
           <div
             style={{
-              backgroundColor: bgColor,
+              backgroundColor: !data?.formSettings?.isPreMade ? "" : bgColor,
               backgroundImage: data?.formSettings?.isPreMade
                 ? `url('${data?.formSettings?.preMadeType}')`
                 : data?.formSettings?.isBackgroundImage
@@ -441,7 +441,7 @@ function FillFormComp({
       {isView && !isLoading && data?.formSettings?.isCoverImage && (
         <div
           style={{
-            backgroundColor: bgColor,
+            backgroundColor: !data?.formSettings?.isPreMade ? '' : bgColor,
             backgroundImage: data?.formSettings?.isPreMade
               ? `url('${data?.formSettings?.preMadeType}')`
               : data?.formSettings?.isBackgroundImage
@@ -504,7 +504,7 @@ function FillFormComp({
       <div className={cn("w-screen min-h-screen", isLoading && "hidden")}>
         <div
           style={{
-            backgroundColor: bgColor,
+            backgroundColor: !data?.formSettings?.isPreMade ? '' : bgColor,
             backgroundImage: data?.formSettings?.isPreMade
               ? `url('${data?.formSettings?.preMadeType}')`
               : data?.formSettings?.isBackgroundImage

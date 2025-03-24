@@ -13,7 +13,9 @@ export function TopSection({
   toggleJoiningAttempt,
   isLeftBox,
   playerAvatar,
-  isTimer
+  isTimer,
+  rgba,
+  btnColor
 }: {
   changeDuration?: () => void;
   noOfParticipants?: string;
@@ -27,20 +29,32 @@ export function TopSection({
   isLeftBox?:boolean;
   playerAvatar?: Required<AvatarFullConfig>;
   isTimer?:boolean;
+  rgba:string;
+  btnColor:string;
   
 }) {
   return (
-    <div className="w-full flex items-start pt-6 text-sm justify-between">
+    <div
+    style={{
+      color: btnColor
+    }}
+    className="w-full flex items-start pt-6 text-sm justify-between">
       <div className="flex flex-col items-start justify-start ">
         <div
+        style={{
+          backgroundColor: rgba,
+         
+        }}
           onClick={toggleJoiningAttempt}
-          className="bg-basePrimary-200 relative h-10 justify-center px-3 rounded-3xl flex items-center gap-x-2"
+          className=" relative h-10 justify-center px-3 rounded-3xl flex items-center gap-x-2"
         >
-          <PeopleIcon />
+          
+       
+          <InlineIcon icon="ic:twotone-people-alt" fontSize={24} color={btnColor} />
           <p>{noOfParticipants}</p>
           {isLive && attemptingToJoinIndicator && (
             <div className="absolute -right-1 -top-2">
-              <InlineIcon icon="mdi:dot" fontSize={24} color="#001fcc" />
+              <InlineIcon icon="mdi:dot" fontSize={24} color={btnColor} />
             </div>
           )}
         </div>

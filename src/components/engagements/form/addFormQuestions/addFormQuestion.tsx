@@ -179,15 +179,15 @@ export default function AddFormQuestions({
                 >
                   <EngagementLayout
                     style={{
-                      backgroundColor: bgColor,
+                      backgroundColor: !data?.formSettings?.isPreMade ? '' : bgColor,
                       backgroundImage: data?.formSettings?.isPreMade
                         ? `url('${data?.formSettings?.preMadeType}')`
                         : data?.formSettings?.isBackgroundImage
                         ? `url('${data?.formSettings?.backgroundImage}')`
                         : "",
-                      filter: data?.formSettings?.isBackgroundImage
-                        ? `brightness(${data?.formSettings?.backgroundBrightness})`
-                        : "",
+                      // filter: data?.formSettings?.isBackgroundImage
+                      //   ? `brightness(${data?.formSettings?.backgroundBrightness})`
+                      //   : "",
                       backgroundSize: "cover",
                       backgroundPosition: "center",
                       backgroundRepeat: "no-repeat",

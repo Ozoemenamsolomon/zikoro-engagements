@@ -75,7 +75,6 @@ export function FormSettings({
     setLoading(false);
   }
 
-  console.log(isThemeSetting)
 
   return (
     <>

@@ -3,7 +3,7 @@
 import { Switch } from "@/components/ui/switch";
 import { TQuestion, TQuiz } from "@/types/quiz";
 import Image from "next/image";
-import { useEffect, useMemo, useState, useRef } from "react";
+import React, { useEffect, useMemo, useState, useRef } from "react";
 import { Button } from "@/components/custom";
 import { TOrganization } from "@/types/home";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
@@ -11,6 +11,7 @@ import { usePostRequest } from "@/hooks/services/requests";
 import { InlineIcon } from "@iconify/react/dist/iconify.js";
 import { cn } from "@/lib/utils";
 import { uploadFile } from "@/utils";
+import { Pallete } from "@/constants";
 
 function AddMusic({
   music,
@@ -181,15 +182,18 @@ export function QuizAccessibility({
   quiz,
   refetch,
   organization,
+  setThemeSetting
 }: {
   quiz: TQuiz<TQuestion[]>;
   refetch: () => Promise<any>;
   organization: TOrganization;
+  setThemeSetting: React.Dispatch<React.SetStateAction<boolean>>
 }) {
   const [loading, setLoading] = useState(false);
   const { postData, isLoading } =
     usePostRequest<Partial<TQuiz<TQuestion[]>>>("engagements/quiz");
   const [accessibility, setAccessibility] = useState(quiz?.accessibility);
+
   const isQuiz = useMemo(() => {
     return quiz.interactionType === "quiz";
   }, [quiz]);
@@ -295,6 +299,19 @@ export function QuizAccessibility({
           className=""
         />
       </div> */}
+        <Button
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            setThemeSetting(true);
+           
+          }}
+          type="button"
+          className="w-full mb-3 rounded-lg border border-gray-200 gap-x-2"
+        >
+          <Pallete />
+          <p>Select Theme</p>
+        </Button>
 
       {accessibility?.visible && (
         <>

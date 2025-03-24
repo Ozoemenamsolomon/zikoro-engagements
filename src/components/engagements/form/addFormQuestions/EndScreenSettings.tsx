@@ -7,13 +7,14 @@ import { InlineIcon } from "@iconify/react/dist/iconify.js";
 import { useForm, UseFormReturn, useWatch } from "react-hook-form";
 import { z } from "zod";
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { TEngagementFormQuestion } from "@/types/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { usePostRequest } from "@/hooks/services/requests";
 import { Loader2Icon } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
+import { Portal } from "@/components/custom/Portal";
 function FieldSettings({
   close,
   engagementForm,
@@ -23,6 +24,7 @@ function FieldSettings({
   close: () => void;
   form: UseFormReturn<z.infer<typeof formSettingSchema>, any, any>;
 }) {
+  const [, setshowing] = useState(false);
   const { postData } =
     usePostRequest<Partial<TEngagementFormQuestion>>("engagements/form");
   const [loading, setLoading] = useState(false);
@@ -53,7 +55,12 @@ function FieldSettings({
     name: "formSettings.endScreenSettings.showCreateForm",
   });
 
+  useEffect(() => {
+    setshowing(true);
+  },[engagementForm])
+
   return (
+    <Portal>
     <div
       onClick={close}
       className="w-screen h-screen fixed inset-0 bg-white/50 z-[100] "
@@ -380,6 +387,8 @@ function FieldSettings({
         </div>
       </div>
     </div>
+
+    </Portal>
   );
 }
 
