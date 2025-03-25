@@ -11,12 +11,16 @@ import { COUNTRY_CODE } from "@/utils/countryCode";
 export function CountryTypeAnswer({
   form,
   index,
-  bgColor,
+  btnColor,
+  hideNumber,
+  hideLabel,
   rgba,
 }: {
   form: UseFormReturn<z.infer<typeof formAnswerSchema>, any, any>;
   index: number;
-  bgColor: string;
+  btnColor: string;
+  hideNumber:boolean;
+  hideLabel:boolean;
   rgba: string;
 }) {
   const question = form.watch(`questions.${index}.question`);
@@ -45,6 +49,9 @@ export function CountryTypeAnswer({
         description={questionDescription}
         isRequired={isRequired}
         showDescription={showDescription}
+        btnColor={btnColor}
+        rgba={rgba}
+        hideNumber={hideNumber}
       />
 
       <div
@@ -80,7 +87,7 @@ export function CountryTypeAnswer({
               className="w-full h-full inset-0 fixed z-[100]"
             ></div>
 
-            <div className="w-full overflow-y-auto vert-scroll relative z-[300] bg-white rounded-lg shadow h-fit max-h-[300px]">
+            <div className="w-full overflow-y-auto vert-scroll relative z-[300] bg-white/80 rounded-lg shadow h-fit max-h-[300px]">
               <div className="w-full flex flex-col items-start justify-start">
                 {COUNTRY_CODE.map((value, id) => {
                   const isSelected = response?.selectedOption === value?.name;
@@ -109,10 +116,11 @@ export function CountryTypeAnswer({
                         }}
                         key={id}
                         style={{
-                          backgroundColor: isSelected ? rgba : "",
+                          backgroundColor: isSelected ? btnColor : "",
+                           color: isSelected ? "#fff":"#000"
                         }}
                         className={cn(
-                          "w-full h-12 border-b bg-white rounded-none  px-4 py-6 relative"
+                          "w-full h-12 border-b border-gray-400 bg-white/80 rounded-none  px-4 py-6 relative"
                         )}
                       >
                         <div className="w-full h-full">

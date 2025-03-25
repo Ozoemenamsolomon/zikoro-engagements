@@ -5,32 +5,43 @@ export const formCreationSchema = z.object({
   title: z.string().min(3, { message: "Title is required" }),
   coverImage: z.any(),
   workspaceAlias: z.string().min(2, { message: "Organization is required" }),
-  formSettings: z.object({
-    isConnectedToEngagement: z.boolean(),
-    showForm: z.string(),
-    redirectUrl: z.string().optional(),
-    isCoverScreen: z.boolean(),
-    displayType: z.string(),
-    questionPerSlides: z.string().optional(),
-    titleFontSize: z.string(),
-    headingFontSize: z.string(),
-    backgroundColor: z.string(),
-    textColor: z.string(),
-    buttonColor: z.string(),
-    buttonText: z.string(),
-    startButtonText: z.string(),
-    textFontSize: z.string(),
-    isCoverImage: z.boolean(),
-    isCollectEmail: z.boolean(),
-    isCollectPhone: z.boolean(),
-    connectToEvent: z.boolean(),
-    isRedirectUrl: z.boolean(),
-    showResult: z.boolean(),
-    engagementId: z.string().optional(),
-    engagementType: z.string().optional(),
-    hideNumber: z.boolean(),
-    eventAlias:z.string().optional()
-  }).optional(),
+  formSettings: z
+    .object({
+      isConnectedToEngagement: z.boolean(),
+      showForm: z.string(),
+      redirectUrl: z.string().optional(),
+      isCoverScreen: z.boolean(),
+      displayType: z.string(),
+      questionPerSlides: z.string().optional(),
+      titleFontSize: z.string(),
+      headingFontSize: z.string(),
+      backgroundColor: z.string(),
+      textColor: z.string(),
+      buttonColor: z.string(),
+      buttonText: z.string(),
+      startButtonText: z.string(),
+      textFontSize: z.string(),
+      isCoverImage: z.boolean(),
+      isCollectEmail: z.boolean(),
+      isCollectPhone: z.boolean(),
+      connectToEvent: z.boolean(),
+      isRedirectUrl: z.boolean(),
+      showResult: z.boolean(),
+      engagementId: z.string().optional(),
+      engagementType: z.string().optional(),
+      hideNumber: z.boolean(),
+      eventAlias: z.string().optional(),
+      //> new
+      hideLabel: z.boolean().optional(),
+      labellingType: z.string().optional(),
+      preMadeType: z.string().optional(),
+      isBackgroundImage: z.boolean().optional(),
+      backgroundImage: z.string().optional(),
+      backgroundBrightness: z.number().optional(),
+      isPreMade: z.boolean().optional(),
+      isBackgroundColor: z.boolean().optional()
+    })
+    .optional(),
 });
 
 export const formQuestion = z.object({
@@ -82,7 +93,15 @@ export const formSettingSchema = z.object({
     engagementType: z.string().optional(),
     hideNumber: z.boolean(),
     eventAlias: z.string().optional(),
-    
+    //> new
+    hideLabel: z.boolean().optional(),
+    labellingType: z.string().optional(),
+    preMadeType: z.string().optional(),
+    isBackgroundImage: z.boolean().optional(),
+    backgroundImage: z.any().optional(),
+    backgroundBrightness: z.number().optional(),
+    isPreMade: z.boolean().optional(),
+    isBackgroundColor: z.boolean().optional()
   }),
 });
 

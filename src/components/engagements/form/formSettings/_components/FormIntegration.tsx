@@ -270,8 +270,8 @@ export function FormIntegration({
         <div className="w-full flex flex-col mt-6 items-center gap-6">
           <div className="flex w-full text-mobile sm:text-sm items-center justify-between">
             <div className="flex flex-col items-start justify-start">
-              <p>Connect Form to an Event</p>
-              <p className="text-tiny text-gray-500">
+              <p className="font-medium text-mobile sm:text-sm">Connect Form to an Event</p>
+              <p className="text-xs text-gray-500">
                 Participants must provide their email to confirm event
                 registration before being allowed to participate. Form points
                 will be added to their Zikoro event participant points.
