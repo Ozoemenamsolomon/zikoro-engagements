@@ -5,24 +5,21 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { useRegistration } from "@/hooks/services/auth";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { registerSchema } from "@/schemas";
 
 const AppointmentSignupForm = () => {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const { loading, register } = useRegistration();
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const form = useForm<z.infer<typeof registerSchema>>({});
+  const {
+    formState: { errors },
+  } = form;
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    await register(formData);
+  async function onSubmit(values: z.infer<typeof registerSchema>) {
+    await register(values);
   }
 
   return (
@@ -47,18 +44,21 @@ const AppointmentSignupForm = () => {
         </span>
       </p>
 
-      <form action="" className="mt-10" onSubmit={onSubmit}>
+      <form className="mt-10" onSubmit={form.handleSubmit(onSubmit)}>
         <div className="flex flex-col gap-y-3 mt-6">
           <label htmlFor="">Email Address</label>
           <input
             type="email"
-            name="email"
             required
-            value={formData.email}
-            onChange={handleChange}
+            {...form.register("email")}
             placeholder="Enter Email Address"
             className="border-[1px] border-gray-200 px-[10px] py-4 w-full text-base rounded-[6px] outline-none"
           />
+          {errors?.email?.message && (
+            <p className="mt-2 font-medium text-red-500 text-mobile">
+              {errors?.email.message}
+            </p>
+          )}
         </div>
 
         <div className="flex flex-col gap-y-3 mt-6">
@@ -66,18 +66,27 @@ const AppointmentSignupForm = () => {
           <div className="flex items-center justify-around border-[1px] border-gray-200 rounded-[6px] ">
             <input
               type={showPassword ? "text" : "password"}
-              name="password"
               required
-              value={formData.password}
-              onChange={handleChange}
+              {...form.register("password")}
               placeholder="Enter Password"
               className="w-[90%] px-[10px] py-4 h-full text-base  outline-none"
               minLength={8}
             />
-            <div onClick={() => setShowPassword(!showPassword)}>
+            <div
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                setShowPassword(!showPassword);
+              }}
+            >
               <CrossedEye />
             </div>
           </div>
+          {errors?.password?.message && (
+            <p className="mt-2 font-medium text-red-500 text-mobile">
+              {errors?.password.message}
+            </p>
+          )}
         </div>
 
         <button

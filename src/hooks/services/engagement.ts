@@ -83,7 +83,7 @@ export function useVerifyAttendee() {
 
 export function useGetUserOrganizations() {
   // const userData = getCookie("user");
-  const { user: userData, setUser } = useUserStore();
+  const { user: userData, } = useUserStore();
   const [orgLoading, setOrgLoading] = useState(false);
   const [userOrganizations, setUserOrganizatiions] = useState<TOrganization[]>(
     [] as TOrganization[]
@@ -105,9 +105,9 @@ export function useGetUserOrganizations() {
           const { organization, created_at, ...restData } = datum;
           return {
             ...organization,
-            teamMembers: {
+            teamMembers: [{
               ...restData,
-            },
+            }],
           };
         });
 

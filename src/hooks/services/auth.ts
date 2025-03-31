@@ -1,6 +1,6 @@
 "use client";
 
-import { loginSchema, onboardingSchema } from "@/schemas/auth";
+import { loginSchema, registerSchema, onboardingSchema } from "@/schemas/auth";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import * as z from "zod";
@@ -18,10 +18,12 @@ export function useRegistration() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  async function register(values: z.infer<typeof loginSchema>) {
+  async function register(values: z.infer<typeof registerSchema>) {
     setLoading(true);
 
     try {
+      const isExist = await userExist(values?.email);
+      if (isExist) return toast.error("Email already exist");
       const { data, error } = await supabase.auth.signUp({
         email: values.email,
         password: values.password,
@@ -51,6 +53,8 @@ export function useRegistration() {
         );
       }
     } catch (error) {
+      setLoading(false);
+    } finally {
       setLoading(false);
     }
   }
@@ -387,23 +391,27 @@ export const useGetUserId = () => {
   return { getUserId };
 };
 
-
-
 type TUserReferrals = Pick<TUser, "created_at" | "firstName" | "lastName">;
 
-export const useGetUserReferrals = (): UseGetResult<TUserReferrals[], "userReferrals", "getUserReferrals"> => {
+export const useGetUserReferrals = (): UseGetResult<
+  TUserReferrals[],
+  "userReferrals",
+  "getUserReferrals"
+> => {
   const [userReferrals, setUserReferrals] = useState<TUserReferrals[]>([]);
   const [isLoading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
-  const {user} = useUserStore()
+  const { user } = useUserStore();
 
   const getUserReferrals = async () => {
     setLoading(true);
 
     try {
-      if(!user) return;
+      if (!user) return;
       const { data, status } = await getRequest<TUserReferrals[]>({
-        endpoint: `/users/${user?.id?.toString()}/referrals?referredBy=${user?.referralCode}`,
+        endpoint: `/users/${user?.id?.toString()}/referrals?referredBy=${
+          user?.referralCode
+        }`,
       });
 
       if (status !== 200) {
@@ -428,3 +436,20 @@ export const useGetUserReferrals = (): UseGetResult<TUserReferrals[], "userRefer
     getUserReferrals,
   };
 };
+
+export async function userExist(email: string): Promise<boolean> {
+  try {
+    const { data, status } = await postRequest<{ exists: boolean }>({
+      endpoint: `/exists`,
+      payload: { email },
+    });
+
+    if (status !== 200) {
+      return false;
+    }
+
+    return data.data.exists;
+  } catch (error) {
+    return false;
+  }
+}
