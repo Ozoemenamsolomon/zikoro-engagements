@@ -19,6 +19,7 @@ import {
   ContactTypeAnswer,
   YesNoTypeAnswer,
   DropDownTypeAnswer,
+  CountryTypeAnswer,
 } from "./answerTypes";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
 import { Suspense, useEffect, useMemo, useState } from "react";
@@ -32,56 +33,113 @@ import { nanoid } from "nanoid";
 import { InlineIcon } from "@iconify/react";
 import { useVerifyAttendee } from "@/hooks/services/engagement";
 import Link from "next/link";
+import { toast } from "react-toastify";
+import { getQuestionType } from "../formResponse/FormResponse";
 
-function SubmittedModal({ formLink }: { formLink: string }) {
-  const socials = [
-    {
-      name: "mingcute:linkedin-fill",
-      link: `https://x.com/intent/tweet?url=${formLink}`,
-    },
-    {
-      name: "ri:twitter-x-fill",
-      link: `https://www.linkedin.com/shareArticle?url=${formLink}`,
-    },
-    {
-      name: "mingcute:facebook-fill",
-      link: `https://www.facebook.com/sharer/sharer.php?u=${formLink}`,
-    },
-  ];
+function SubmittedModal({
+  data,
+  formLink,
+  bgColor,
+  textColor,
+  btnColor,
+}: {
+  data: TEngagementFormQuestion;
+  formLink: string;
+  bgColor: string;
+  textColor: string;
+  btnColor: string;
+}) {
+  const socials = useMemo(() => {
+    const formSetting = data?.formSettings;
+    return [
+      {
+        image: "/end-u-x.svg",
+        url: formSetting?.endScreenSettings?.x || "",
+      },
+      {
+        image: "/end-u-fb.svg",
+        url: formSetting?.endScreenSettings?.facebook || "",
+      },
+      {
+        image: "/end-u-in.svg",
+        url: formSetting?.endScreenSettings?.linkedIn || "",
+      },
+      {
+        image: "/end-u-web.svg",
+        url: formSetting?.endScreenSettings?.website || "",
+      },
+    ];
+  }, [data]);
+
+  const showLinks = useMemo(() => {
+    return data?.formSettings?.endScreenSettings
+      ? data?.formSettings?.endScreenSettings?.socialLink
+      : true;
+  }, [data]);
+
+  const showButton = useMemo(() => {
+    return data?.formSettings?.endScreenSettings
+      ? data?.formSettings?.endScreenSettings?.showButton
+      : true;
+  }, [data]);
   return (
-    <div className="w-full h-full inset-0 fixed bg-white">
-      <div className="w-[95%] max-w-xl rounded-lg  gap-y-3  h-[400px] flex flex-col items-center justify-center absolute inset-0 m-auto">
-        <h2>
-          <span className="gradient-text bg-basePrimary text-lg sm:text-xl font-semibold">
-            Hurray
-          </span>{" "}
-          🥳
-        </h2>
-        <p className="font-medium text-zinc-700 text-sm sm:text-base ">
-          Your response has been Submitted
-        </p>
-        <Button
-          onClick={() => window.open(`https://engagements.zikoro.com`)}
-          className="text-white font-semibold bg-basePrimary rounded-lg"
-        >
-          Create your Form
-        </Button>
+    <div
+      style={{
+        backgroundColor: !data?.formSettings?.isPreMade ? '' : bgColor,
+        backgroundImage: data?.formSettings?.isPreMade
+          ? `url('${data?.formSettings?.preMadeType}')`
+          : data?.formSettings?.isBackgroundImage
+          ? `url('${data?.formSettings?.backgroundImage}')`
+          : "",
+        filter: data?.formSettings?.isBackgroundImage
+          ? `brightness(${data?.formSettings?.backgroundBrightness})`
+          : "",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        color: textColor,
+      }}
+      className="w-full h-full inset-0 flex flex-col items-center justify-center gap-6 fixed bg-white"
+    >
+      <h2 className="text-xl text-center font-semibold">
+        {data?.formSettings?.endScreenSettings?.title ??
+          "Thanks for completing the form"}
+      </h2>
 
-        <div className="max-w-md bg-white rounded-lg gap-4 mt-10 p-3 mx-auto flex flex-col items-center justify-center">
-          <p className="font-medium">Create your Form</p>
-          <div className="w-fit flex flex-wrap items-center justify-center gap-4">
-            {socials.map((social) => (
-              <Link
-                href={social.link}
-                className="bg-basePrimary-100 rounded-lg border h-10 w-10 flex items-center justify-center"
-                target="_blank"
-              >
-                <InlineIcon fontSize={22} icon={social.name} />
-              </Link>
-            ))}
-          </div>
+      {showLinks && (
+        <div className="flex items-center  gap-x-3 justify-center mx-auto">
+          {socials?.map((item) => (
+            <button
+              className={cn("block", !item?.url && "hidden")}
+              onClick={() => window.open(item?.url)}
+            >
+              <Image
+                src={item?.image}
+                alt=""
+                className="w-[40px] h-[40px]"
+                width={100}
+                height={100}
+              />
+            </button>
+          ))}
         </div>
-      </div>
+      )}
+
+      <p className="text-center">
+        {data?.formSettings?.endScreenSettings?.subText ??
+          "This is all for now"}
+      </p>
+      {showButton && (
+        <Button
+          style={{
+            backgroundColor: btnColor,
+          }}
+          className="font-medium text-white rounded-xl"
+        >
+          {data?.formSettings?.endScreenSettings?.buttonText ??
+            "Create your form"}
+        </Button>
+      )}
     </div>
   );
 }
@@ -101,6 +159,7 @@ function FillFormComp({
   const attendeeId = params.get("id");
   const link = params.get("link");
   const query = params.get("redirect");
+  const attendeeAlias = params.get("attendeeAlias");
   const [isView, setIsView] = useState(true);
   const [currentIndexes, setCurrentIndexes] = useState(0);
   // const { isIdPresent } = useCheckTeamMember({ eventId });
@@ -108,8 +167,12 @@ function FillFormComp({
   const { data, isLoading } = useGetData<TEngagementFormQuestion>(
     `/engagements/form/${formId}`
   );
+
   const { data: formAnswers } = useGetData<TEngagementFormAnswer[]>(
     `/engagements/form/answer/${formId}`
+  );
+  const { postData: postRecipientCertData } = usePostRequest(
+    "/certificate/recipient"
   );
   const attendeeEmail = params.get("attendeeEmail");
   const {
@@ -130,7 +193,6 @@ function FillFormComp({
       questions: data?.questions,
       startedAt: new Date().toISOString(),
       viewed: 1,
-
     },
   });
 
@@ -144,6 +206,26 @@ function FillFormComp({
     //  console.log(values); formEngagementPoints
 
     const { questions, startedAt, ...restData } = values;
+
+    // checking if all the required fields are filled ==> STARTS
+    const reformedData = questions?.map((val) => {
+      return {
+        type: val?.selectedType,
+        questionId: val?.questionId,
+        response: restData?.responses?.find(
+          (res) => res?.questionId === val?.questionId
+        )?.response,
+      };
+    });
+
+    for (let data of reformedData) {
+      if (!data?.response || data?.response === "") {
+        return toast.error(`${getQuestionType(data?.type!)} is required`);
+        break;
+      }
+    }
+
+    // ====> ENDS
 
     const responses = await Promise.all(
       restData?.responses?.map(async (item) => {
@@ -175,13 +257,21 @@ function FillFormComp({
       attendeeEmail: attendee?.email || "",
       responses,
       submittedAt: new Date().toISOString(),
-      submitted: 1
+      submitted: 1,
     };
 
-    // console.log(payload)
-    // return
-
     await postData({ payload });
+
+    //   post certificate data
+    if (data?.integrationAlias) {
+      const payload = {
+        integrationAlias: data?.integrationAlias,
+        answers: values?.responses,
+        createdBy: data?.createdBy,
+      };
+
+      await postRecipientCertData({ payload });
+    }
 
     if (query) {
       router.push(
@@ -201,11 +291,11 @@ function FillFormComp({
 
   useEffect(() => {
     (async () => {
-      if (attendeeEmail) {
-        await getAttendee(workspaceAlias, attendeeEmail);
+      if (attendeeAlias) {
+        await getAttendee(workspaceAlias, attendeeAlias);
       }
     })();
-  }, [attendeeEmail]);
+  }, [attendeeAlias]);
 
   useEffect(() => {
     if (data?.formSettings?.displayType === "slide") {
@@ -241,22 +331,54 @@ function FillFormComp({
     }
   }, [formAnswers, attendee, attendeeId]);
 
-  console.log(isLoading, attendeeLoading);
-
+  // console.log(isLoading, attendeeLoading);
+  const btnColor = useMemo(() => {
+    if (data?.formSettings?.isPreMade) {
+      return data?.formSettings?.preMadeType === "/brown-bg.jpg"
+        ? "#6C4A4A"
+        : "#8841FD";
+    } else return data?.formSettings?.buttonColor || "#001fcc";
+  }, [data]);
   const rgba = useMemo(
     (alpha = 0.1) => {
       if (data) {
-        const color = data?.formSettings?.buttonColor || "#001fcc";
-        const r = parseInt(color.slice(1, 3), 16);
-        const g = parseInt(color.slice(3, 5), 16);
-        const b = parseInt(color.slice(5, 7), 16);
+        const color = btnColor;
+        let r = parseInt(color.slice(1, 3), 16);
+        let g = parseInt(color.slice(3, 5), 16);
+        let b = parseInt(color.slice(5, 7), 16);
+
+        // Increase brightness (lighter color)
+        const lightenFactor = 1.3; // Increase for more brightness
+        r = Math.min(255, Math.floor(r * lightenFactor));
+        g = Math.min(255, Math.floor(g * lightenFactor));
+        b = Math.min(255, Math.floor(b * lightenFactor));
+
         return `rgba(${r}, ${g}, ${b}, ${alpha})`;
       }
     },
-    [data, data?.formSettings?.buttonColor]
+    [data, btnColor]
   );
+  const textColor = useMemo(() => {
+    if (data?.formSettings?.isPreMade) {
+      return data?.formSettings?.preMadeType === "/brown-bg.jpg"
+        ? "#6C4A4A"
+        : "#190044";
+    } else return data?.formSettings?.textColor || "#000000";
+  }, [data]);
 
-  console.log(currentQuestions);
+  const bgColor = useMemo(() => {
+    if (data?.formSettings?.isPreMade) {
+      return data?.formSettings?.preMadeType;
+    } else if (data?.formSettings?.isBackgroundImage) {
+      return data?.formSettings?.backgroundImage;
+    } else return data?.formSettings?.backgroundColor || "#ffffff";
+  }, [data]);
+
+  const optionLetter = useMemo(() => {
+    if (data?.formSettings?.labellingType === "Number") {
+      return ["1", "2", "3", "4"];
+    } else return ["A", "B", "C", "D"];
+  }, [data]);
 
   if (isLoading || attendeeLoading) {
     return (
@@ -265,14 +387,31 @@ function FillFormComp({
       </div>
     );
   }
-
+  //
   return (
     <>
       {!isLoading &&
         !attendeeLoading &&
         data?.formSettings?.isCollectEmail &&
         (typeof attendee !== "object" || attendeeId !== null) && (
-          <div className="w-full h-full inset-0 fixed z-[100] bg-white">
+          <div
+            style={{
+              backgroundColor: !data?.formSettings?.isPreMade ? "" : bgColor,
+              backgroundImage: data?.formSettings?.isPreMade
+                ? `url('${data?.formSettings?.preMadeType}')`
+                : data?.formSettings?.isBackgroundImage
+                ? `url('${data?.formSettings?.backgroundImage}')`
+                : "",
+              filter: data?.formSettings?.isBackgroundImage
+                ? `brightness(${data?.formSettings?.backgroundBrightness})`
+                : "",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat",
+              color: textColor,
+            }}
+            className="w-full h-full inset-0 fixed z-[100] bg-white"
+          >
             <div className="w-[95%] max-w-xl border rounded-lg bg-gradient-to-b gap-y-6 from-white  to-basePrimary/20  h-[400px] flex flex-col items-center justify-center shadow absolute inset-0 m-auto">
               <InlineIcon
                 icon="fluent:emoji-sad-20-regular"
@@ -283,12 +422,15 @@ function FillFormComp({
                 <p>You are not a registered attendee for this event</p>
 
                 <Button
+                  style={{
+                    backgroundColor: btnColor,
+                  }}
                   onClick={() => {
                     window.open(
                       `https://zikoro.com/live-events/${attendee?.eventAlias}`
                     );
                   }}
-                  className="bg-basePrimary h-12 text-white font-medium"
+                  className="bg-basePrimary rounded-xl h-12 text-white font-medium"
                 >
                   Register for the event
                 </Button>
@@ -297,7 +439,24 @@ function FillFormComp({
           </div>
         )}
       {isView && !isLoading && data?.formSettings?.isCoverImage && (
-        <div className="w-full min-h-screen bg-white justify-center inset-0 fixed z-[100] flex flex-col items-center gap-y-8">
+        <div
+          style={{
+            backgroundColor: !data?.formSettings?.isPreMade ? '' : bgColor,
+            backgroundImage: data?.formSettings?.isPreMade
+              ? `url('${data?.formSettings?.preMadeType}')`
+              : data?.formSettings?.isBackgroundImage
+              ? `url('${data?.formSettings?.backgroundImage}')`
+              : "",
+            filter: data?.formSettings?.isBackgroundImage
+              ? `brightness(${data?.formSettings?.backgroundBrightness})`
+              : "",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            color: textColor,
+          }}
+          className="w-full min-h-screen p-6 bg-white justify-center inset-0 fixed z-[100] flex flex-col items-center gap-y-8"
+        >
           {data?.coverImage &&
           (data?.coverImage as string).startsWith("https") ? (
             <Image
@@ -317,7 +476,7 @@ function FillFormComp({
                 1.3 * parseInt(data?.formSettings?.titleFontSize) + "px" ||
                 "40px",
             }}
-            className="text-lg mb-3 sm:text-xl lg:text-2xl"
+            className="text-lg capitalize mb-3 sm:text-xl lg:text-2xl"
           >
             {data?.title ?? ""}
           </h2>
@@ -330,10 +489,10 @@ function FillFormComp({
           <Button
             onClick={() => setIsView(false)}
             style={{
-              backgroundColor: data?.formSettings?.buttonColor || "",
+              backgroundColor: btnColor,
             }}
             className={cn(
-              "self-center w-fit gap-x-2  text-white font-medium h-11 ",
+              "self-center w-fit gap-x-2  rounded-xl text-white font-medium h-11 ",
               !data?.formSettings?.buttonColor && "bg-basePrimary"
             )}
           >
@@ -342,13 +501,22 @@ function FillFormComp({
         </div>
       )}
 
-      <div
-       
-        className={cn("w-screen min-h-screen", isLoading && "hidden")}
-      >
+      <div className={cn("w-screen min-h-screen", isLoading && "hidden")}>
         <div
           style={{
-            backgroundColor: data?.formSettings?.backgroundColor || "",
+            backgroundColor: !data?.formSettings?.isPreMade ? '' : bgColor,
+            backgroundImage: data?.formSettings?.isPreMade
+              ? `url('${data?.formSettings?.preMadeType}')`
+              : data?.formSettings?.isBackgroundImage
+              ? `url('${data?.formSettings?.backgroundImage}')`
+              : "",
+            filter: data?.formSettings?.isBackgroundImage
+              ? `brightness(${data?.formSettings?.backgroundBrightness})`
+              : "",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            color: textColor,
           }}
           className="w-full h-full overflow-y-auto vert-scroll absolute m-auto inset-0  rounded-lg p-4 sm:p-6"
         >
@@ -364,7 +532,7 @@ function FillFormComp({
                       className={cn(
                         "w-full",
                         data?.formSettings?.displayType !== "slide" &&
-                          "border p-4 sm:p-6 rounded-lg"
+                          "border bg-white/10 p-4 sm:p-6 rounded-lg"
                       )}
                       key={`${field.id}`}
                     >
@@ -377,7 +545,9 @@ function FillFormComp({
                           index={index + currentIndexes}
                           rgba={rgba || "#F7F8FF"}
                           selectedType={field.selectedType}
-                          bgColor={data?.formSettings?.buttonColor || "#001fcc"}
+                          btnColor={btnColor}
+                          hideNumber={data?.formSettings?.hideNumber}
+                          hideLabel={data?.formSettings?.hideLabel || false}
                         />
                       )}
                       {field.selectedType === "INPUT_ADDRESS" && (
@@ -385,8 +555,10 @@ function FillFormComp({
                           form={form}
                           index={index + currentIndexes}
                           rgba={rgba || "#F7F8FF"}
-                          bgColor={data?.formSettings?.buttonColor || "#001fcc"}
+                          btnColor={btnColor}
                           selectedType={field.selectedType}
+                          hideNumber={data?.formSettings?.hideNumber}
+                          hideLabel={data?.formSettings?.hideLabel || false}
                         />
                       )}
                       {field.selectedType === "DROPDOWN" && (
@@ -394,7 +566,19 @@ function FillFormComp({
                           form={form}
                           index={index + currentIndexes}
                           rgba={rgba || "#F7F8FF"}
-                          bgColor={data?.formSettings?.buttonColor || "#001fcc"}
+                          btnColor={btnColor}
+                          hideNumber={data?.formSettings?.hideNumber}
+                          hideLabel={data?.formSettings?.hideLabel || false}
+                        />
+                      )}
+                      {field.selectedType === "COUNTRY" && (
+                        <CountryTypeAnswer
+                          form={form}
+                          index={index + currentIndexes}
+                          rgba={rgba || "#F7F8FF"}
+                          btnColor={btnColor}
+                          hideNumber={data?.formSettings?.hideNumber}
+                          hideLabel={data?.formSettings?.hideLabel || false}
                         />
                       )}
                       {field.selectedType === "YES_OR_NO" && (
@@ -402,7 +586,10 @@ function FillFormComp({
                           form={form}
                           index={index + currentIndexes}
                           rgba={rgba || "#F7F8FF"}
-                          bgColor={data?.formSettings?.buttonColor || "#001fcc"}
+                          btnColor={btnColor}
+                          textColor={textColor}
+                          hideNumber={data?.formSettings?.hideNumber}
+                          hideLabel={data?.formSettings?.hideLabel || false}
                         />
                       )}
                       {field.selectedType === "CONTACT" && (
@@ -410,8 +597,10 @@ function FillFormComp({
                           form={form}
                           index={index + currentIndexes}
                           rgba={rgba || "#F7F8FF"}
-                          bgColor={data?.formSettings?.buttonColor || "#001fcc"}
+                          btnColor={btnColor}
                           selectedType={field.selectedType}
+                          hideNumber={data?.formSettings?.hideNumber}
+                          hideLabel={data?.formSettings?.hideLabel || false}
                         />
                       )}
                       {field.selectedType === "INPUT_DATE" && (
@@ -419,47 +608,64 @@ function FillFormComp({
                           form={form}
                           index={index + currentIndexes}
                           rgba={rgba || "#F7F8FF"}
-                          bgColor={data?.formSettings?.buttonColor || "#001fcc"}
+                          btnColor={btnColor}
+                          hideNumber={data?.formSettings?.hideNumber}
+                          hideLabel={data?.formSettings?.hideLabel || false}
                         />
                       )}
                       {field.selectedType === "INPUT_CHECKBOX" && (
                         <CheckboxTypeAnswer
                           form={form}
                           index={index + currentIndexes}
-                          bgColor={data?.formSettings?.buttonColor || "#001fcc"}
+                          btnColor={btnColor}
                           rgba={rgba || "#F7F8FF"}
+                          textColor={textColor}
+                          optionLetter={optionLetter}
+                          hideNumber={data?.formSettings?.hideNumber}
+                          hideLabel={data?.formSettings?.hideLabel || false}
                         />
                       )}
                       {field.selectedType === "INPUT_RATING" && (
                         <RatingTypeAnswer
                           form={form}
                           index={index + currentIndexes}
-                          bgColor={data?.formSettings?.buttonColor || "#001fcc"}
+                          btnColor={btnColor}
                           rgba={rgba || "#F7F8FF"}
+                          hideNumber={data?.formSettings?.hideNumber}
+                          hideLabel={data?.formSettings?.hideLabel || false}
                         />
                       )}
                       {field.selectedType === "ATTACHMENT" && (
                         <UploadTypeAnswer
                           form={form}
                           index={index + currentIndexes}
-                          bgColor={data?.formSettings?.buttonColor || "#001fcc"}
+                          btnColor={btnColor}
                           rgba={rgba || "#F7F8FF"}
+                          hideNumber={data?.formSettings?.hideNumber}
+                          hideLabel={data?.formSettings?.hideLabel || false}
                         />
                       )}
                       {field.selectedType === "INPUT_MULTIPLE_CHOICE" && (
                         <MultiChoiceTypeAnswer
                           form={form}
                           index={index + currentIndexes}
-                          bgColor={data?.formSettings?.buttonColor || "#001fcc"}
+                          btnColor={btnColor}
                           rgba={rgba || "#F7F8FF"}
+                          textColor={textColor}
+                          optionLetter={optionLetter}
+                          hideNumber={data?.formSettings?.hideNumber}
+                          hideLabel={data?.formSettings?.hideLabel || false}
                         />
                       )}
                       {field.selectedType === "PICTURE_CHOICE" && (
                         <ImageUploadTypeAnswer
                           form={form}
                           index={index + currentIndexes}
-                          bgColor={data?.formSettings?.buttonColor || "#001fcc"}
+                          btnColor={btnColor}
                           rgba={rgba || "#F7F8FF"}
+                          textColor={textColor}
+                          hideNumber={data?.formSettings?.hideNumber}
+                          hideLabel={data?.formSettings?.hideLabel || false}
                         />
                       )}
                     </div>
@@ -486,12 +692,10 @@ function FillFormComp({
                         }
                       }}
                       style={{
-                        color: data?.formSettings?.buttonColor || "",
-                        border: `1px solid ${
-                          data?.formSettings?.buttonColor || "#001fcc"
-                        }`,
+                        color: btnColor || "",
+                        border: `1px solid ${btnColor}`,
                       }}
-                      className="border h-12 font-medium"
+                      className="border h-11 px-6 rounded-xl font-medium"
                     >
                       Previous
                     </Button>
@@ -502,12 +706,10 @@ function FillFormComp({
                         type="submit"
                         disabled={loading}
                         style={{
-                          backgroundColor:
-                            data?.formSettings?.buttonColor || "",
+                          backgroundColor: btnColor,
                         }}
                         className={cn(
-                          "self-center w-fit gap-x-2  text-white font-medium h-12 ",
-                          !data?.formSettings?.buttonColor && "bg-basePrimary"
+                          "self-center w-fit gap-x-2 px-6 rounded-xl text-white font-medium h-12 "
                         )}
                       >
                         {loading && (
@@ -533,10 +735,9 @@ function FillFormComp({
                           }
                         }}
                         style={{
-                          backgroundColor:
-                            data?.formSettings?.buttonColor || "",
+                          backgroundColor: btnColor,
                         }}
-                        className="text-white h-12 font-medium"
+                        className="text-white rounded-xl h-11 font-medium"
                       >
                         Next
                       </Button>
@@ -548,10 +749,10 @@ function FillFormComp({
                     type="submit"
                     disabled={loading}
                     style={{
-                      backgroundColor: data?.formSettings?.buttonColor || "",
+                      backgroundColor: btnColor,
                     }}
                     className={cn(
-                      "self-center w-fit gap-x-2  text-white font-medium h-12 ",
+                      "self-center w-fit gap-x-2 rounded-xl  text-white font-medium h-12 px-6 ",
                       !data?.formSettings?.buttonColor && "bg-basePrimary"
                     )}
                   >
@@ -569,6 +770,10 @@ function FillFormComp({
 
         {(isSuccess || isResponseAlreadySubmitted) && (
           <SubmittedModal
+            data={data}
+            bgColor={bgColor || "#fff"}
+            btnColor={btnColor}
+            textColor={textColor}
             formLink={`https://engagements.zikoro.com/e/${data?.workspaceAlias}/form/a/${data?.formAlias}`}
           />
         )}

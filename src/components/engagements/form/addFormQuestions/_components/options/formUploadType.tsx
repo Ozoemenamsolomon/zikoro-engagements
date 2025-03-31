@@ -14,12 +14,14 @@ export function FormUploadType({
   question,
   engagementForm,
   refetch,
+  btnColor
 }: {
   form: UseFormReturn<z.infer<typeof formQuestion>>;
   question: TEngagementFormQuestion["questions"][number] | null;
   engagementForm: TEngagementFormQuestion;
   defaultQuestionValue: string;
   refetch: () => Promise<any>;
+  btnColor:string;
 }) {
   const addedImage = form.watch("questionImage");
   const addedDescription = form.watch("questionDescription");
@@ -47,7 +49,10 @@ export function FormUploadType({
     }
   }, [addedDescription]);
 
-  
+  const showDescription = useWatch({
+    control: form.control,
+    name: 'showDescription'
+  })
 
   return (
     <>
@@ -59,6 +64,7 @@ export function FormUploadType({
           engagementForm={engagementForm}
           question={question}
           refetch={refetch}
+          btnColor={btnColor}
           type="Upload"
           SettingWidget={
             <div className="w-full flex px-3 flex-col items-start justify-start">
@@ -93,10 +99,12 @@ export function FormUploadType({
           }
         />
 
-        <FormQuestionDescription
-          defaultDescriptionValue={defaultDescriptionValue}
-          form={form}
-        />
+{showDescription && (
+          <FormQuestionDescription
+            defaultDescriptionValue={defaultDescriptionValue}
+            form={form}
+          />
+        )}
       </div>
     </>
   );

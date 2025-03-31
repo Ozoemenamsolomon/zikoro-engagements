@@ -19,17 +19,26 @@ type OptionItemsType = {
 export function CheckboxTypeAnswer({
   form,
   index,
-  bgColor,
+  btnColor,
   rgba,
+  textColor,
+  optionLetter,
+  hideNumber,
+  hideLabel
 }: {
   form: UseFormReturn<z.infer<typeof formAnswerSchema>, any, any>;
   index: number;
-  bgColor: string;
+  btnColor: string;
   rgba: string;
+  textColor:string;
+  optionLetter:string[]
+  hideNumber:boolean;
+  hideLabel:boolean;
 }) {
   const question = form.watch(`questions.${index}.question`);
   const isRequired = form.watch(`questions.${index}.isRequired`);
   const questionImage = form.watch(`questions.${index}.questionImage`);
+  const showDescription = form.watch(`questions.${index}.showDescription`);
   const selectedType = form.watch(`questions.${index}.selectedType`);
   const [options, setOptions] = useState<OptionItemsType[]>([]);
   const questionId = form.watch(`questions.${index}.questionId`);
@@ -46,7 +55,7 @@ export function CheckboxTypeAnswer({
       name: `responses.${index}.response` as const,
     }) || "";
 
-  console.log(response?.selectedOption);
+ // console.log(response?.selectedOption);
   useEffect(() => {
     if (settings) {
       const inOrder = settings?.inOrder;
@@ -58,6 +67,8 @@ export function CheckboxTypeAnswer({
       }
     }
   }, [settings]);
+
+ 
   return (
     <>
       <FillFormQuestion
@@ -66,6 +77,10 @@ export function CheckboxTypeAnswer({
         currentQuestion={question}
         description={questionDescription}
         isRequired={isRequired}
+        showDescription={showDescription}
+        btnColor={btnColor}
+        rgba={rgba}
+        hideNumber={hideNumber}
       />
 
       <div className="w-full flex flex-col items-start justify-start gap-y-4">
@@ -80,10 +95,11 @@ export function CheckboxTypeAnswer({
                   key={id}
                   // htmlFor={`checkbox-${index}`}
                   style={{
-                    backgroundColor: isSelected ? bgColor : rgba,
+                    backgroundColor: isSelected ? btnColor : '',
+                  color: isSelected?  "#fff": textColor
                   }}
                   className={cn(
-                    "w-full h-fit rounded-lg  px-4 py-6 relative",
+                    "w-full h-fit rounded-lg border px-4 py-6 relative",
                     isSelected && " text-white"
                   )}
                 >
@@ -116,13 +132,13 @@ export function CheckboxTypeAnswer({
                     <div className="w-full flex items-center gap-x-3 col-span-full sm:col-span-3">
                       <span
                         style={{
-                          color: isSelected ? bgColor : "",
+                          color: isSelected ? btnColor : "",
                         }}
                         className={cn(
                           "rounded-lg h-8 flex items-center text-gray-600 justify-center font-medium w-8 bg-white border border-gray-700"
                         )}
                       >
-                        {index + 1}
+                        {optionLetter[id]}
                       </span>
                       <div
                         className="innerhtml  w-full text-sm"

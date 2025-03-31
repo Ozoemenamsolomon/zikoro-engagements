@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
 import "react-quill/dist/quill.snow.css";
+import { cn } from "@/lib/utils";
 const QuillEditor = dynamic(() => import("react-quill"), { ssr: false });
 
 export function TextEditor({
@@ -12,6 +13,7 @@ export function TextEditor({
   onFocus,
   onBlur,
   error,
+  isForm,
 }: {
   onChange: (value: string) => void;
   defaultValue?: string;
@@ -19,6 +21,7 @@ export function TextEditor({
   onFocus?: () => void;
   onBlur?: () => void;
   error?: string;
+  isForm?: boolean;
 }) {
   const CustomUndo = () => (
     <svg viewBox="0 0 18 18">
@@ -102,7 +105,12 @@ export function TextEditor({
   };
 
   return (
-    <div className="w-full interaction-input">
+    <div
+      className={cn(
+        "w-full ",
+        isForm ? "interaction-input-custom" : "interaction-input"
+      )}
+    >
       <QuillEditor
         onBlur={onBlur}
         onFocus={onFocus}

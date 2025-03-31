@@ -2,7 +2,7 @@
 
 import { formQuestion } from "@/schemas";
 import { useEffect, useMemo, useState } from "react";
-import { UseFormReturn } from "react-hook-form";
+import { UseFormReturn, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { FormQuestionDescription } from "../formQuestionDescription";
 import { TEngagementFormQuestion } from "@/types/form";
@@ -23,12 +23,14 @@ function UploadOptionItem({
   index,
   removeOption,
   option,
+  btnColor,
   setOption,
 }: {
   index: number;
   setOption: (id: string, value: string) => void;
   option: UploadOptionItemsType;
   removeOption: (id: string) => void;
+  btnColor:string;
 }) {
   return (
     <div className="w-[200px] ">
@@ -61,7 +63,7 @@ function UploadOptionItem({
       </div>
       <label
         htmlFor={`selectedOption${option?.id}`}
-        className="w-full flex items-center bg-basePrimary-100 rounded-lg justify-center flex-col gap-4 relative  h-[150px]"
+        className="w-full flex items-center bg-white/40 rounded-lg justify-center flex-col gap-4 relative  h-[150px]"
       >
         {option?.image ? (
           <Image
@@ -73,8 +75,8 @@ function UploadOptionItem({
           />
         ) : (
           <>
-            <InlineIcon icon="ic:twotone-image" fontSize={50} />
-            <p>Upload Image</p>
+            <InlineIcon icon="ic:twotone-image" color={btnColor} fontSize={50} />
+            <p style={{color: btnColor}} className="font-medium">Upload Image</p>
           </>
         )}
         <input
@@ -108,12 +110,14 @@ export function FormImageUploadType({
   question,
   engagementForm,
   refetch,
+  btnColor
 }: {
   form: UseFormReturn<z.infer<typeof formQuestion>>;
   question: TEngagementFormQuestion["questions"][number] | null;
   engagementForm: TEngagementFormQuestion;
   defaultQuestionValue: string;
   refetch: () => Promise<any>;
+  btnColor:string;
 }) {
   const addedImage = form.watch("questionImage");
   const prevSelectedOptions = form.watch(`optionFields`);
@@ -160,6 +164,13 @@ export function FormImageUploadType({
       }
     }, [options]);
 
+
+    const showDescription = useWatch({
+      control: form.control,
+      name: "showDescription",
+    });
+  
+
   return (
     <>
       <div className="w-full flex flex-col items-start justify-start gap-3">
@@ -171,15 +182,17 @@ export function FormImageUploadType({
           question={question}
           refetch={refetch}
           type="Image Upload"
+          btnColor={btnColor}
           
         />
 
-        <FormQuestionDescription
-          defaultDescriptionValue={defaultDescriptionValue}
-          form={form}
-         
-        />
-
+       
+{showDescription && (
+          <FormQuestionDescription
+            defaultDescriptionValue={defaultDescriptionValue}
+            form={form}
+          />
+        )}
         <div className="w-full flex flex-wrap justify-center items-center gap-3">
           {options?.map((option, index) => (
             <UploadOptionItem
@@ -187,6 +200,7 @@ export function FormImageUploadType({
               setOption={handleChangeOption}
               index={index}
               removeOption={removeOption}
+              btnColor={btnColor}
             />
           ))}
         </div>
@@ -200,7 +214,10 @@ export function FormImageUploadType({
               { id: nanoid(),  image: "" },
             ]);
           }}
-          className="w-fit h-fit px-0 mt-3 text-basePrimary text-sm underline"
+          style={{
+            color: btnColor
+          }}
+          className="w-fit h-fit px-0 mt-3 font-medium text-basePrimary text-sm underline"
         >
           Add New Option
         </Button>

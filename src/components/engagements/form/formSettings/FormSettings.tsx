@@ -16,6 +16,9 @@ import { FormAccessibility, FormIntegration } from "./_components";
 import FormAppearance from "./_components/FormAppearance";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
 import { usePostRequest } from "@/hooks/services/requests";
+import { useGetUserOrganizations } from "@/hooks/services/engagement";
+import { ThemeSettings } from "./ThemeSettings";
+import { nanoid } from "nanoid";
 
 export enum FormSettingType {
   details,
@@ -39,6 +42,12 @@ export function FormSettings({
   const [active, setActive] = useState<FormSettingType>(
     FormSettingType.details
   );
+  const [isThemeSetting, setThemeSetting] = useState(false);
+  const {
+    organizations: organizationList,
+    getOrganizations,
+    loading: isLoading,
+  } = useGetUserOrganizations();
   const { postData } =
     usePostRequest<Partial<TEngagementFormQuestion>>("engagements/form");
   const form = useForm<z.infer<typeof formSettingSchema>>({
@@ -48,6 +57,8 @@ export function FormSettings({
       coverImage: engagementForm?.coverImage,
       description: engagementForm?.description,
       formSettings: {
+        hideLabel: false,
+        labellingType: "Number",
         ...engagementForm?.formSettings,
       },
     },
@@ -55,14 +66,18 @@ export function FormSettings({
 
   async function onSubmit(values: z.infer<typeof formSettingSchema>) {
     setLoading(true);
+    const { wAlias, ...remData } = values;
     const payload: Partial<TEngagementFormQuestion> = {
       ...engagementForm,
-      ...values,
+      ...remData,
     };
     await postData({ payload });
     setLoading(false);
   }
+
+
   return (
+    <>
     <div
       onClick={close}
       className="w-screen h-screen fixed inset-0 bg-white/50 z-[100] "
@@ -103,7 +118,7 @@ export function FormSettings({
           </div>
           {FormSettingType.details === active && (
             <CreateForm
-               engagementForm={engagementForm}
+              engagementForm={engagementForm}
               refetch={refetch}
               organization={organization}
             />
@@ -119,10 +134,14 @@ export function FormSettings({
                   <FormAccessibility form={form} />
                 )}
                 {FormSettingType.appearance === active && (
-                  <FormAppearance form={form} />
+                  <FormAppearance setThemeSetting={setThemeSetting} form={form} engagementForm={engagementForm} />
                 )}
                 {FormSettingType.integration === active && (
-                  <FormIntegration form={form} />
+                  <FormIntegration
+                    form={form}
+                    organizationList={organizationList}
+                    getOrganizations={getOrganizations}
+                  />
                 )}
                 <Button
                   disabled={loading}
@@ -137,5 +156,13 @@ export function FormSettings({
         </div>
       </div>
     </div>
+    {isThemeSetting && (
+            <ThemeSettings
+            key={nanoid()}
+            close={() => setThemeSetting(false)}
+            engagementForm={engagementForm}
+          />
+      )}
+    </>
   );
 }

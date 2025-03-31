@@ -1,14 +1,16 @@
 "use client";
 
 import { loginSchema, onboardingSchema } from "@/schemas/auth";
-import { useState, } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import * as z from "zod";
-import { useRouter } from "next/navigation";
-import { postRequest } from "@/utils/api";
+import { useRouter, useSearchParams } from "next/navigation";
+import { getRequest, postRequest } from "@/utils/api";
 import useUserStore from "@/store/globalUserStore";
 import { createClient } from "@/utils/supabase/client";
 import { TUser } from "@/types/user";
+import { nanoid } from "nanoid";
+import { UseGetResult } from "@/utils/request";
 
 const supabase = createClient();
 
@@ -23,13 +25,15 @@ export function useRegistration() {
       const { data, error } = await supabase.auth.signUp({
         email: values.email,
         password: values.password,
-      
+
         options: {
-          emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback/${values?.email
-            }/${new Date().toISOString()}`,
-            data: {
-              platform:"Engagement"
-            }
+          emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback/${
+            values?.email
+          }/${new Date().toISOString()}`,
+          data: {
+            platform: "Engagement",
+            verification_token: nanoid(),
+          },
         },
       });
 
@@ -56,7 +60,6 @@ export function useRegistration() {
   };
 }
 
-
 export function useLogin() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -82,7 +85,7 @@ export function useLogin() {
         router.push(redirectTo ?? "/home");
         setLoading(false);
       } else {
-        toast.error('Incorrect Details');
+        toast.error("Incorrect Details");
         setLoading(false);
       }
     } catch (error) {
@@ -136,7 +139,6 @@ export const useSetLoggedInUser = () => {
 
   return { setLoggedInUser };
 };
-
 
 export function useForgotPassword() {
   const [loading, setLoading] = useState(false);
@@ -246,7 +248,8 @@ export function useVerifyCode() {
         router.push(`${window.location.origin}/update-password`);
       } else {
         router.push(
-          `${window.location.origin
+          `${
+            window.location.origin
           }/onboarding?email=${email}&createdAt=${new Date().toISOString()}`
         );
       }
@@ -262,7 +265,6 @@ export function useVerifyCode() {
     verifyCode,
   };
 }
-
 
 export const getUser = async (email: string | null) => {
   if (!email) return;
@@ -284,11 +286,10 @@ export const getUser = async (email: string | null) => {
   return user as TUser;
 };
 
-
 export function useOnboarding() {
   const [loading, setLoading] = useState(false);
   const { setUser } = useUserStore();
-
+  const params = useSearchParams();
 
   type CreateUser = {
     values: z.infer<typeof onboardingSchema>;
@@ -312,18 +313,29 @@ export function useOnboarding() {
   ) {
     try {
       setLoading(true);
-      const { data, error, status } = await supabase
-        .from("users")
-        .insert({
-          userEmail: email,
-          firstName: values.firstName,
-          lastName: values.lastName,
-          created_at: createdAt,
-          industry: values.industry,
-          referralCode: values.referralCode,
-          phoneNumber: values.phoneNumber,
-          referredBy: values.referredBy
+
+      // update user email verification status if the param has a token
+
+      if (params.get("token")) {
+        const token = params.get("token");
+        const userId = params.get("userId");
+
+        const { data, status } = await postRequest<any>({
+          endpoint: `/verifyuser/${userId}/${token}`,
+          payload: "",
         });
+      }
+
+      const { data, error, status } = await supabase.from("users").insert({
+        userEmail: email,
+        firstName: values.firstName,
+        lastName: values.lastName,
+        created_at: createdAt,
+        industry: values.industry,
+        referralCode: values.referralCode,
+        phoneNumber: values.phoneNumber,
+        referredBy: values.referredBy,
+      });
 
       if (error) {
         toast.error(error.message);
@@ -334,7 +346,7 @@ export function useOnboarding() {
         setLoading(false);
         toast.success("Profile Updated Successfully");
         const user = await getUser(email);
-        
+
         setUser(user!);
       }
       return data;
@@ -347,14 +359,15 @@ export function useOnboarding() {
   }
   return {
     registration,
-   
+
     loading,
   };
 }
 
-
 export const useGetUserId = () => {
-  const getUserId = async (email: string | null): Promise<string | undefined> => {
+  const getUserId = async (
+    email: string | null
+  ): Promise<string | undefined> => {
     if (!email) return;
 
     const { data: user, error } = await supabase
@@ -363,7 +376,6 @@ export const useGetUserId = () => {
       .eq("userEmail", email)
       .order("created_at", { ascending: false })
       .single();
-
 
     if (error) {
       console.error("Error fetching user ID:", error);
@@ -375,3 +387,44 @@ export const useGetUserId = () => {
   return { getUserId };
 };
 
+
+
+type TUserReferrals = Pick<TUser, "created_at" | "firstName" | "lastName">;
+
+export const useGetUserReferrals = (): UseGetResult<TUserReferrals[], "userReferrals", "getUserReferrals"> => {
+  const [userReferrals, setUserReferrals] = useState<TUserReferrals[]>([]);
+  const [isLoading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
+  const {user} = useUserStore()
+
+  const getUserReferrals = async () => {
+    setLoading(true);
+
+    try {
+      if(!user) return;
+      const { data, status } = await getRequest<TUserReferrals[]>({
+        endpoint: `/users/${user?.id?.toString()}/referrals?referredBy=${user?.referralCode}`,
+      });
+
+      if (status !== 200) {
+        throw data;
+      }
+      setUserReferrals(data.data);
+    } catch (error) {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getUserReferrals();
+  }, [user]);
+
+  return {
+    userReferrals,
+    isLoading,
+    error,
+    getUserReferrals,
+  };
+};

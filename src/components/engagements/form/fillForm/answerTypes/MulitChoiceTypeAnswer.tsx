@@ -19,17 +19,26 @@ export function MultiChoiceTypeAnswer({
   form,
   index,
   rgba,
-  bgColor,
+  btnColor,
+  textColor,
+  optionLetter,
+  hideNumber,
+  hideLabel
 }: {
   form: UseFormReturn<z.infer<typeof formAnswerSchema>, any, any>;
   index: number;
   rgba: string;
-  bgColor: string;
+  btnColor: string;
+  textColor:string;
+  optionLetter:string[];
+  hideNumber:boolean;
+  hideLabel: boolean;
 }) {
   const question = form.watch(`questions.${index}.question`);
   const isRequired = form.watch(`questions.${index}.isRequired`);
   const questionImage = form.watch(`questions.${index}.questionImage`);
   const selectedType = form.watch(`questions.${index}.selectedType`);
+  const showDescription = form.watch(`questions.${index}.showDescription`);
   const settings = form.watch(`questions.${index}.questionSettings`);
   const questionId = form.watch(`questions.${index}.questionId`);
   const [options, setOptions] = useState<OptionItemsType[]>([]);
@@ -48,6 +57,7 @@ export function MultiChoiceTypeAnswer({
   useEffect(() => {
     if (settings) {
       const inOrder = settings?.inOrder;
+    
       if (!inOrder) {
         const randomizedArray = shuffleArray(optionFields);
         setOptions(randomizedArray);
@@ -56,6 +66,7 @@ export function MultiChoiceTypeAnswer({
       }
     }
   }, [settings]);
+
   return (
     <>
       <FillFormQuestion
@@ -64,6 +75,10 @@ export function MultiChoiceTypeAnswer({
         currentQuestion={question}
         description={questionDescription}
         isRequired={isRequired}
+        showDescription={showDescription}
+        btnColor={btnColor}
+        rgba={rgba}
+        hideNumber={hideNumber}
       />
 
       <div className="w-full flex flex-col items-start justify-start gap-y-4">
@@ -78,10 +93,11 @@ export function MultiChoiceTypeAnswer({
                 <label
                   key={id}
                   style={{
-                    backgroundColor: isSelected ? bgColor : rgba,
+                    backgroundColor: isSelected ? btnColor : '',
+                    color: isSelected?  "#fff": textColor
                   }}
                   className={cn(
-                    "w-full h-fit rounded-lg  px-4 py-6 relative",
+                    "w-full h-fit rounded-lg  px-4 py-6 border relative",
                     isSelected && " text-white"
                   )}
                 >
@@ -127,13 +143,13 @@ export function MultiChoiceTypeAnswer({
                     <div className="w-full flex items-center gap-x-3 col-span-full sm:col-span-3">
                       <span
                         style={{
-                          color: isSelected ? bgColor : "",
+                          color: isSelected ? btnColor : "",
                         }}
                         className={cn(
                           "rounded-lg h-8 flex items-center text-gray-600 justify-center font-medium w-8 bg-white border border-gray-700"
                         )}
                       >
-                        {index + 1}
+                        {optionLetter[id]}
                       </span>
                       <div
                         className="innerhtml  w-full text-sm"

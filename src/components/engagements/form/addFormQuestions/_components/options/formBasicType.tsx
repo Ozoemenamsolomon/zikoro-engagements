@@ -2,7 +2,7 @@
 
 import { formQuestion } from "@/schemas";
 import {  useMemo } from "react";
-import { UseFormReturn } from "react-hook-form";
+import { UseFormReturn, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { FormQuestionDescription } from "../formQuestionDescription";
 import { TEngagementFormQuestion } from "@/types/form";
@@ -16,6 +16,7 @@ export function FormBasicType({
   engagementForm,
   refetch,
   type,
+  btnColor
 }: {
   form: UseFormReturn<z.infer<typeof formQuestion>>;
   question: TEngagementFormQuestion["questions"][number] | null;
@@ -23,6 +24,7 @@ export function FormBasicType({
   defaultQuestionValue: string;
   refetch: () => Promise<any>;
   type: string;
+  btnColor:string;
 }) {
   const addedImage = form.watch("questionImage");
   const addedDescription = form.watch("questionDescription");
@@ -56,6 +58,12 @@ export function FormBasicType({
 //     }
 //   }, [form, selectedType]);
 
+const showDescription = useWatch({
+  control: form.control,
+  name: "showDescription",
+});
+
+
   return (
     <>
       <div className="w-full flex flex-col items-start justify-start gap-3">
@@ -67,12 +75,15 @@ export function FormBasicType({
           question={question}
           refetch={refetch}
           type={type}
+          btnColor={btnColor}
         />
 
-        <FormQuestionDescription
-          defaultDescriptionValue={defaultDescriptionValue}
-          form={form}
-        />
+{showDescription && (
+          <FormQuestionDescription
+            defaultDescriptionValue={defaultDescriptionValue}
+            form={form}
+          />
+        )}
       </div>
     </>
   );

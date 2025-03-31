@@ -27,12 +27,14 @@ export function FormAddressType({
   question,
   engagementForm,
   refetch,
+  btnColor
 }: {
   form: UseFormReturn<z.infer<typeof formQuestion>>;
   question: TEngagementFormQuestion["questions"][number] | null;
   engagementForm: TEngagementFormQuestion;
   defaultQuestionValue: string;
   refetch: () => Promise<any>;
+  btnColor:string;
 }) {
   const addedImage = form.watch("questionImage");
   const addedDescription = form.watch("questionDescription");
@@ -116,6 +118,11 @@ export function FormAddressType({
     "country",
   ];
 
+  const showDescription = useWatch({
+    control: form.control,
+    name: "showDescription",
+  });
+
   return (
     <>
       <div className="w-full flex flex-col items-start justify-start gap-3">
@@ -129,6 +136,7 @@ export function FormAddressType({
           refetch={refetch}
           type="Address"
           isTemplateType
+          btnColor={btnColor}
           togggleRequired={toggleRequired}
 
           SettingWidget={
@@ -181,10 +189,12 @@ export function FormAddressType({
           }
         />
 
-        <FormQuestionDescription
-          defaultDescriptionValue={defaultDescriptionValue}
-          form={form}
-        />
+{showDescription && (
+          <FormQuestionDescription
+            defaultDescriptionValue={defaultDescriptionValue}
+            form={form}
+          />
+        )}
         <div className="w-full flex flex-col items-start justify-start">
           <p className="w-full border-b p-3">Address 1</p>
           <p className="w-full border-b p-3">Address 2</p>

@@ -1,6 +1,6 @@
 "use client";
 
-import { UseFormReturn } from "react-hook-form";
+import { UseFormReturn, useWatch } from "react-hook-form";
 import { FormQuestionDescription } from "../formQuestionDescription";
 import { z } from "zod";
 import { formQuestion } from "@/schemas";
@@ -12,7 +12,6 @@ import { InlineIcon } from "@iconify/react/dist/iconify.js";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { Button, TextEditor } from "@/components/custom";
-import { AddQuizImageIcon } from "@/constants";
 import { MdClose } from "react-icons/md";
 import { Switch } from "@/components/ui/switch";
 
@@ -28,12 +27,16 @@ function OptionItem({
   setOption,
   removeImage,
   removeOption,
+  btnColor,
+  rgba,
 }: {
   index: number;
   setOption: (id: string, value: string, type: string) => void;
   option: OptionItemsType;
   removeImage: (id: string) => void;
   removeOption: (id: string) => void;
+  btnColor: string;
+  rgba: string;
 }) {
   const [isFocused, setIsFocused] = useState(false);
 
@@ -61,6 +64,7 @@ function OptionItem({
           {isFocused ? (
             <div className="w-full">
               <TextEditor
+                isForm
                 placeholder="Enter Text"
                 defaultValue={option.option}
                 onChange={(value) => {
@@ -73,7 +77,7 @@ function OptionItem({
           ) : (
             <div
               onClick={() => setIsFocused(true)}
-              className="innerhtml w-full p-3 rounded-lg bg-basePrimary-100"
+              className="innerhtml w-full p-3 rounded-lg bg-white/10 border"
               dangerouslySetInnerHTML={{
                 __html: option?.option || "Enter Text",
               }}
@@ -95,6 +99,9 @@ function OptionItem({
                   e.stopPropagation();
                   e.preventDefault();
                   removeImage(option.id);
+                }}
+                style={{
+                  backgroundColor: rgba,
                 }}
                 className="absolute px-0 top-[-1rem] h-6 w-6 rounded-full bg-[#001FCC19] right-[-0.4rem]"
               >
@@ -122,7 +129,11 @@ function OptionItem({
                   }
                 }}
               />
-              <AddQuizImageIcon />
+              <InlineIcon
+                icon="ic:twotone-image"
+                color={btnColor}
+                fontSize={22}
+              />
             </label>
           )}
         </div>
@@ -177,6 +188,8 @@ export function FormCheckBoxType({
   refetch,
   setOption,
   optionType,
+  btnColor,
+  rgba,
 }: {
   form: UseFormReturn<z.infer<typeof formQuestion>>;
   question: TEngagementFormQuestion["questions"][number] | null;
@@ -185,6 +198,8 @@ export function FormCheckBoxType({
   refetch: () => Promise<any>;
   setOption: (value: string) => void;
   optionType: string;
+  btnColor: string;
+  rgba: string;
 }) {
   const addedImage = form.watch("questionImage");
   const addedDescription = form.watch("questionDescription");
@@ -247,6 +262,11 @@ export function FormCheckBoxType({
     }
   }, [addedDescription]);
 
+  const showDescription = useWatch({
+    control: form.control,
+    name: "showDescription",
+  });
+
   return (
     <div className="w-full flex flex-col items-start justify-start gap-6">
       <FormQuestionField
@@ -257,6 +277,7 @@ export function FormCheckBoxType({
         question={question}
         refetch={refetch}
         type="CheckBox"
+        btnColor={btnColor}
         SettingWidget={
           <>
             <div className="flex w-full px-3 mb-4 items-center justify-between">
@@ -281,15 +302,21 @@ export function FormCheckBoxType({
                 className=""
               />
             </div>
-            <CheckBoxSettings key={optionType} optionType={optionType} setOption={setOption} />
+            <CheckBoxSettings
+              key={optionType}
+              optionType={optionType}
+              setOption={setOption}
+            />
           </>
         }
       />
 
-      <FormQuestionDescription
-        defaultDescriptionValue={defaultDescriptionValue}
-        form={form}
-      />
+      {showDescription && (
+        <FormQuestionDescription
+          defaultDescriptionValue={defaultDescriptionValue}
+          form={form}
+        />
+      )}
 
       <div className="w-full flex flex-col items-start justify-start gap-3">
         {options.map((option, index) => (
@@ -300,6 +327,8 @@ export function FormCheckBoxType({
             removeOption={removeOption}
             removeImage={removeImage}
             setOption={handleChangeOption}
+            btnColor={btnColor}
+            rgba={rgba}
           />
         ))}
 
@@ -311,6 +340,9 @@ export function FormCheckBoxType({
               ...options,
               { id: nanoid(), option: "", optionImage: "" },
             ]);
+          }}
+          style={{
+            color: btnColor,
           }}
           className="w-fit h-fit px-0 mt-3 text-basePrimary text-sm underline"
         >

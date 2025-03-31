@@ -213,12 +213,13 @@ export default function QaOrganizerView({
       ...qa,
       accessibility: {
         ...qa?.accessibility,
-        cannotAskQuestion: true,
+        cannotAskQuestion: !qa?.accessibility?.cannotAskQuestion,
       },
     };
     await postData({ payload });
     setIsStopping(false);
     getData();
+    setIsStopQuestion(false)
   }
 
   if (!organization && isLoading) {

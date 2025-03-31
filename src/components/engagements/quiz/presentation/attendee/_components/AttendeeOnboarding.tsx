@@ -39,7 +39,7 @@ export function AttendeeOnboarding({
   refetchLobby,
   organization,
   isAttendee,
-  
+  btnColor,
 }: {
   close: () => void;
   organization: TOrganization;
@@ -56,6 +56,7 @@ export function AttendeeOnboarding({
   setChosenAvatar: React.Dispatch<
     React.SetStateAction<Required<AvatarFullConfig> | null>
   >;
+  btnColor: string;
   audio?: HTMLAudioElement | null;
   quiz: TQuiz<TQuestion[]>;
   liveQuizPlayers: TLiveQuizParticipant[];
@@ -106,7 +107,6 @@ export function AttendeeOnboarding({
   //     }
   //   }
   // }, [quiz]);
-
 
   function generateAvatars() {
     const avatars = Array.from({ length: 10 }).map((_, index) => {
@@ -192,9 +192,9 @@ export function AttendeeOnboarding({
               {
                 ...playerDetail,
                 nickName:
-                type === "preview"
-                  ? playerDetail?.nickName + "@P"
-                  : playerDetail?.nickName,
+                  type === "preview"
+                    ? playerDetail?.nickName + "@P"
+                    : playerDetail?.nickName,
                 id: id,
 
                 joinedAt: new Date().toISOString(),
@@ -204,7 +204,6 @@ export function AttendeeOnboarding({
             ],
       };
 
-    
       await updateQuiz({ payload });
     }
 
@@ -250,7 +249,7 @@ export function AttendeeOnboarding({
   }, [isAttendee]);
 
   useEffect(() => {
-    if (quiz  && !query) {
+    if (quiz && !query) {
       if (quiz?.formAlias) {
         router.push(
           `/e/${quiz?.workspaceAlias}/form/a/${quiz?.formAlias}?redirect=quiz&id=${id}&link=${window.location.href}`
@@ -258,7 +257,6 @@ export function AttendeeOnboarding({
       }
     }
   }, [quiz]);
-
 
   return (
     <>
@@ -298,7 +296,8 @@ export function AttendeeOnboarding({
               e.stopPropagation();
               toggleAvatarModal();
             }}
-            className="text-basePrimary rounded-lg h-16 w-16 flex items-center justify-center border flex-col"
+            
+            className=" rounded-lg h-16 w-16 flex items-center justify-center border flex-col"
           >
             {chosenAvatar ? (
               <Avatar
@@ -362,7 +361,11 @@ export function AttendeeOnboarding({
                           ? "Email"
                           : "Phone Number"
                       } is required for this game to store your points and
-                    possible follow-up should you appear on the leaderboard.`}
+                    possible follow-up ${
+                      quiz?.interactionType === "quiz"
+                        ? "should you appear on the leaderboard"
+                        : ""
+                    }.`}
                     </p>
                   </div>
                 )}
@@ -374,7 +377,10 @@ export function AttendeeOnboarding({
         <Button
           disabled={loading}
           // onClick={submit}
-          className="bg-basePrimary gap-x-2 px-10 h-12 rounded-lg text-gray-50 transform transition-all duration-400 "
+          style={{
+            background: btnColor
+          }}
+          className=" gap-x-2 px-10 h-12 rounded-lg text-gray-50 transform transition-all duration-400 "
         >
           {loading && <LoaderAlt size={22} className="animate-spin" />}
           <p> Let's Go</p>

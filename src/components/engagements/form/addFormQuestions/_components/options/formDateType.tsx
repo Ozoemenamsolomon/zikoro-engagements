@@ -17,12 +17,14 @@ export function FormDateType({
   question,
   engagementForm,
   refetch,
+  btnColor
 }: {
   form: UseFormReturn<z.infer<typeof formQuestion>>;
   question: TEngagementFormQuestion["questions"][number] | null;
   engagementForm: TEngagementFormQuestion;
   defaultQuestionValue: string;
   refetch: () => Promise<any>;
+  btnColor:string;
 }) {
   const addedImage = form.watch("questionImage");
   const addedDescription = form.watch("questionDescription");
@@ -67,6 +69,11 @@ export function FormDateType({
     }
   }, [startDate, endDate]);
 
+  const showDescription = useWatch({
+    control: form.control,
+    name: "showDescription",
+  });
+
   return (
     <>
       <div className="w-full flex flex-col items-start justify-start gap-3">
@@ -77,6 +84,7 @@ export function FormDateType({
           engagementForm={engagementForm}
           question={question}
           refetch={refetch}
+          btnColor={btnColor}
           type="Date"
           isNotOverflow
           SettingWidget={
@@ -90,16 +98,15 @@ export function FormDateType({
                 <div
                   onClick={(e) => {
                     e.stopPropagation();
-                    e.preventDefault()
-                    
+                    e.preventDefault();
                   }}
                   className="absolute top-8 right-[-95px] md:right-0"
                 >
                   <button
-                    onClick={(e) =>{
-                      e.preventDefault()
+                    onClick={(e) => {
+                      e.preventDefault();
                       e.stopPropagation();
-                      setDatePanel((prev) => !prev)
+                      setDatePanel((prev) => !prev);
                     }}
                     className="w-full h-full fixed inset-0 z-[150] "
                   ></button>
@@ -123,10 +130,12 @@ export function FormDateType({
           }
         />
 
-        <FormQuestionDescription
-          defaultDescriptionValue={defaultDescriptionValue}
-          form={form}
-        />
+        {showDescription && (
+          <FormQuestionDescription
+            defaultDescriptionValue={defaultDescriptionValue}
+            form={form}
+          />
+        )}
       </div>
     </>
   );

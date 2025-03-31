@@ -21,20 +21,25 @@ import useUserStore from "@/store/globalUserStore";
 import { generateInteractionAlias, uploadFile } from "@/utils";
 import { TQuestion, TQuiz } from "@/types/quiz";
 import { TOrganization } from "@/types/home";
+import { useSearchParams } from "next/navigation";
 
 export function CreateQuiz({
   quiz,
   refetch,
   organization,
-  
+  interactionType,
 }: {
   quiz?: TQuiz<TQuestion[]>;
   refetch?: () => Promise<any>;
   organization?: TOrganization;
+  interactionType: string;
 }) {
   const [isOpen, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const { user } = useUserStore();
+  const params = useSearchParams();
+  const eventId = params.get("eventId")
+  const platform  = params.get("platform")
 
   const {
     organizations: organizationList,
@@ -46,6 +51,7 @@ export function CreateQuiz({
   const form = useForm<z.infer<typeof quizCreationSchema>>({
     resolver: zodResolver(quizCreationSchema),
   });
+
 
   const coverImg = form.watch("coverImage");
   const addedImage = useMemo(() => {
@@ -100,10 +106,10 @@ export function CreateQuiz({
           createdBy: user?.id,
           coverImage: image as string,
           quizAlias: alias,
-          interactionType: "quiz",
+          interactionType: interactionType,
           lastUpdated_at: new Date().toISOString(),
           accessibility: {
-            visible: false,
+            visible: platform === 'Event' ? true : false,
             review: false,
             countdown: true,
             timer: true,
@@ -117,9 +123,17 @@ export function CreateQuiz({
             isCollectPhone: false,
             isCollectEmail: false,
             isForm: false,
-            showAnswer: true,
+            showAnswer: interactionType === 'quiz'? true: false,
             showResult: true,
-            eventAlias: ""
+            eventAlias:eventId ?? "",
+            backgroundBrightness: 1,
+            preMadeType: "",
+            textColor: "#000000",
+            backgroundColor: "#ffffff",
+            isPreMade: false,
+            buttonColor: "#001FFC",
+            isBackgroundImage: false,
+            isBackgroundColor: false,
           },
           branding: {
             eventName: true,
@@ -133,11 +147,14 @@ export function CreateQuiz({
     refetch?.();
     if (!quiz) {
       window.open(
-        `/e/${values?.workspaceAlias}/quiz/o/${alias}/add-question`,
+        interactionType === "quiz"
+          ? `/e/${values?.workspaceAlias}/quiz/o/${alias}/add-question`
+          : `/e/${values?.workspaceAlias}/poll/o/${alias}/add-question`,
         "_self"
       );
     }
   }
+
 
   useEffect(() => {
     if (quiz) {
@@ -170,7 +187,7 @@ export function CreateQuiz({
           {!quiz && (
             <div className="flex items-center flex-col justify-center mb-4 gap-y-2">
               <QuizIcon />
-              <p className="font-semibold">Create Quiz</p>
+              <p className="font-semibold">Create {interactionType === 'quiz' ? 'Quiz' : 'Poll'}</p>
             </div>
           )}
 
@@ -179,7 +196,7 @@ export function CreateQuiz({
             control={form.control}
             name="coverTitle"
             render={({ field }) => (
-              <InputOffsetLabel label="QA Title">
+              <InputOffsetLabel label="Title">
                 <Input
                   placeholder="Enter title"
                   type="text"
@@ -193,7 +210,7 @@ export function CreateQuiz({
             control={form.control}
             name="description"
             render={({ field }) => (
-              <InputOffsetLabel label="QA Description">
+              <InputOffsetLabel label="Description">
                 <Input
                   placeholder="Enter description"
                   type="text"

@@ -36,17 +36,22 @@ export function UploadTypeAnswer({
   form,
   index,
   rgba,
-  bgColor
+  btnColor,
+  hideNumber,
+  hideLabel
 }: {
   form: UseFormReturn<z.infer<typeof formAnswerSchema>, any, any>;
   index: number;
-  bgColor:string;
+  btnColor:string;
   rgba:string;
+  hideNumber:boolean
+  hideLabel:boolean
 }) {
  const question = form.watch(`questions.${index}.question`);
   const optionFields = form.watch(`questions.${index}.optionFields`)
   const isRequired = form.watch(`questions.${index}.isRequired`);
   const questionImage = form.watch(`questions.${index}.questionImage`);
+  const showDescription = form.watch(`questions.${index}.showDescription`);
   const selectedType = form.watch(`questions.${index}.selectedType`);
   const questionId = form.watch(`questions.${index}.questionId`);
   const questionDescription = form.watch(
@@ -70,13 +75,15 @@ export function UploadTypeAnswer({
         currentQuestion={question}
         description={questionDescription}
         isRequired={isRequired}
+        showDescription={showDescription}
+        btnColor={btnColor}
+        rgba={rgba}
+        hideNumber={hideNumber}
       />
 
       <div className="w-full">
         <Input
-         style={{
-            backgroundColor: rgba
-        }}
+      
            name={`responses.${index}.response`}
           
               onChange={(e) => {
@@ -90,7 +97,7 @@ export function UploadTypeAnswer({
           required={isRequired}
           type="file"
           accept={generateAcceptString}
-          className="w-full h-11 sm:h-12 rounded-md px-2 placeholder:text-gray-500 placeholder-gray-500"
+          className="w-full h-11 sm:h-12 rounded-md px-2 border-x-0 border-b border-t-0 bg-transparent placeholder:text-gray-500 placeholder-gray-500"
           placeholder="Enter Answer"
         />
       </div>

@@ -10,7 +10,15 @@ import InputOffsetLabel from "@/components/InputOffsetLabel";
 import { TwitterPicker } from "react-color";
 import { useState } from "react";
 import { InlineIcon } from "@iconify/react/dist/iconify.js";
-import { FormListingType, FormSlideType } from "@/constants";
+import {
+  FormListingType,
+  FormSlideType,
+  Pallete,
+  RadioButton,
+} from "@/constants";
+import { Button } from "@/components/custom";
+
+import { TEngagementFormQuestion } from "@/types/form";
 
 function ColorPicker({
   form,
@@ -140,7 +148,7 @@ export function ColorPickerWidget({
   );
 }
 
-const bgColors = [
+export const bgColors = [
   "#ffffff",
   "#B3B3B3",
   "#E6E6E6",
@@ -179,7 +187,7 @@ const bgColors = [
   "#E8A3E8",
 ];
 
-const colors = [
+export const colors = [
   "#4D4D4D",
   "#999999",
   "#F44E3B",
@@ -217,7 +225,7 @@ const colors = [
   "#AB149E",
 ];
 
-function ColorWidget({
+export function ColorWidget({
   form,
   title,
   name,
@@ -225,7 +233,7 @@ function ColorWidget({
   colorArray,
 }: {
   title: string;
-  form: UseFormReturn<z.infer<typeof formSettingSchema>, any, any>;
+  form: UseFormReturn<any>;
   name: string;
   currentColor: string;
   colorArray: string[];
@@ -264,9 +272,14 @@ function NumberWidget({
 
 export default function FormAppearance({
   form,
+  engagementForm,
+  setThemeSetting
 }: {
   form: UseFormReturn<z.infer<typeof formSettingSchema>, any, any>;
+  engagementForm: TEngagementFormQuestion;
+  setThemeSetting: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
+ 
   const isCoverImage = useWatch({
     control: form.control,
     name: "formSettings.isCoverImage",
@@ -275,30 +288,19 @@ export default function FormAppearance({
     control: form.control,
     name: "formSettings.displayType",
   });
-  const textColor = useWatch({
-    control: form.control,
-    name: "formSettings.textColor",
-  });
-  const backgroundColor = useWatch({
-    control: form.control,
-    name: "formSettings.backgroundColor",
-  });
-  const buttonColor = useWatch({
-    control: form.control,
-    name: "formSettings.buttonColor",
-  });
-  const titleFontSize = useWatch({
-    control: form.control,
-    name: "formSettings.titleFontSize",
-  });
-  const headingFontSize = useWatch({
-    control: form.control,
-    name: "formSettings.headingFontSize",
-  });
-  const textFontSize = useWatch({
-    control: form.control,
-    name: "formSettings.textFontSize",
-  });
+
+  // const titleFontSize = useWatch({
+  //   control: form.control,
+  //   name: "formSettings.titleFontSize",
+  // });
+  // const headingFontSize = useWatch({
+  //   control: form.control,
+  //   name: "formSettings.headingFontSize",
+  // });
+  // const textFontSize = useWatch({
+  //   control: form.control,
+  //   name: "formSettings.textFontSize",
+  // });
   const questionPerSlides = useWatch({
     control: form.control,
     name: "formSettings.questionPerSlides",
@@ -309,13 +311,29 @@ export default function FormAppearance({
     name: "formSettings.buttonText",
   });
 
-  const prevStartButtonText = useWatch({
+  const hideNumber = useWatch({
     control: form.control,
-    name: "formSettings.startButtonText",
+    name: "formSettings.hideNumber",
   });
+
+  const hideLabel = useWatch({
+    control: form.control,
+    name: "formSettings.hideLabel",
+  });
+
+  const labellingType = useWatch({
+    control: form.control,
+    name: "formSettings.labellingType",
+  });
+
+  // const prevStartButtonText = useWatch({
+  //   control: form.control,
+  //   name: "formSettings.startButtonText",
+  // });
   return (
-    <div className="w-full flex flex-col items-start justify-start gap-y-4 sm:gap-y-6">
-      <div className="w-full flex items-center justify-between gap-x-4">
+    <>
+      <div className="w-full flex flex-col items-start justify-start gap-y-4 sm:gap-y-6">
+        {/* <div className="w-full flex items-center justify-between gap-x-4">
         <div className="flex flex-col items-start justify-start">
           <p className="font-medium text-mobile sm:text-sm">Cover Image</p>
           <p className="text-xs sm:text-mobile text-gray-500">
@@ -329,75 +347,138 @@ export default function FormAppearance({
           onCheckedChange={(checked) => {
             form.setValue("formSettings.isCoverImage", checked);
           }}
-        
-          
         />
-      </div>
+      </div> */}
+        <Button
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            setThemeSetting(true);
+           
+          }}
+          type="button"
+          className="w-full mb-3 rounded-lg border border-gray-200 gap-x-2"
+        >
+          <Pallete />
+          <p>Select Theme</p>
+        </Button>
+        <div className="flex w-full text-mobile sm:text-sm items-center justify-between">
+          <div className="flex flex-col items-start justify-start">
+            <p className="font-medium text-mobile sm:text-sm">
+              Question Number
+            </p>
+            <p className="text-xs text-gray-500">
+              Display question number when enabled.
+            </p>
+          </div>
+          <Switch
+            checked={hideNumber}
+            onCheckedChange={(checked) =>
+              form.setValue("formSettings.hideNumber", checked)
+            }
+            className=""
+          />
+        </div>
+        {/** opton label */}
+        <div className="flex w-full text-mobile sm:text-sm items-center justify-between">
+          <div className="flex flex-col items-start justify-start">
+            <p className="font-medium text-mobile sm:text-sm">Option Labels</p>
+            <p className="text-xs text-gray-500">
+              Display labels for answer choices when enabled.
+            </p>
+          </div>
+          <Switch
+            checked={hideNumber}
+            onCheckedChange={(checked) =>
+              form.setValue("formSettings.hideLabel", checked)
+            }
+            className=""
+          />
+        </div>
+        {/** label type */}
+        <div className="w-full">
+          <div className="w-full flex gap-3 flex-col items-start justify-start">
+            <p className="font-medium text-mobile sm:text-sm">
+              Option Labels Type
+            </p>
+            <div className="w-full flex items-center gap-x-6">
+              {["Number", "Alphabet"].map((value, id) => (
+                <label
+                  key={id}
+                  className="w-fit relative flex items-center gap-x-2"
+                >
+                  <input
+                    type="radio"
+                    onChange={(e) => {
+                      form.setValue("formSettings.labellingType", value);
+                    }}
+                    checked={labellingType === value}
+                    hidden
+                    className="absolute inset-0 w-full h-full z-10"
+                  />
+                  {labellingType === value ? (
+                    <RadioButton color="#001ffc" />
+                  ) : (
+                    <RadioButton />
+                  )}
+                  <p
+                    className={cn(
+                      "",
+                      labellingType === value && "text-basePrimary"
+                    )}
+                  >
+                    {value}
+                  </p>
+                </label>
+              ))}
+            </div>
+          </div>
+        </div>
 
-      <div className="w-full flex flex-col items-start justify-start gap-y-3">
-        <div className="space-y-1">
-          <p className="font-medium text-mobile sm:text-sm">Display Type</p>
-          <p className="text-gray-500 text-xs">
-            Pick your question display type
-          </p>
+        <div className="w-full flex flex-col items-start justify-start gap-y-3">
+          <div className="space-y-1">
+            <p className="font-medium text-mobile sm:text-sm">Display Type</p>
+            <p className="text-gray-500 text-xs">
+              Pick your question display type
+            </p>
+          </div>
+          <div className="flex sm:flex-row flex-col items-center gap-4">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                form.setValue("formSettings.displayType", "listing");
+              }}
+              className={cn(
+                "w-fit h-fit p-1 rounded-md border hover:border-basePrimary",
+                displayType === "listing" && "border-basePrimary"
+              )}
+            >
+              <FormListingType />
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                form.setValue("formSettings.displayType", "slide");
+              }}
+              className={cn(
+                "w-fit h-fit p-1 rounded-md border hover:border-basePrimary",
+                displayType === "slide" && "border-basePrimary"
+              )}
+            >
+              <FormSlideType />
+            </button>
+          </div>
         </div>
-        <div className="flex sm:flex-row flex-col items-center gap-4">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              e.preventDefault();
-              form.setValue("formSettings.displayType", "listing");
-            }}
-            className={cn(
-              "w-fit h-fit p-1 rounded-md border hover:border-basePrimary",
-              displayType === "listing" && "border-basePrimary"
-            )}
-          >
-            <FormListingType />
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              e.preventDefault();
-              form.setValue("formSettings.displayType", "slide");
-            }}
-            className={cn(
-              "w-fit h-fit p-1 rounded-md border hover:border-basePrimary",
-              displayType === "slide" && "border-basePrimary"
-            )}
-          >
-            <FormSlideType />
-          </button>
-        </div>
-      </div>
-      <NumberWidget
-        form={form}
-        title="Question per slides"
-        value={questionPerSlides!}
-        name="formSettings.questionPerSlides"
-      />
-      <ColorWidget
-        currentColor={backgroundColor}
-        form={form}
-        name="formSettings.backgroundColor"
-        title="Background Color"
-        colorArray={bgColors}
-      />
-      <ColorWidget
-        currentColor={textColor}
-        form={form}
-        name="formSettings.textColor"
-        title="Text Color"
-        colorArray={colors}
-      />
-      <ColorWidget
-        currentColor={buttonColor}
-        form={form}
-        name="formSettings.buttonColor"
-        title="Button Color"
-        colorArray={colors}
-      />
-      {/* <NumberWidget
+        <NumberWidget
+          form={form}
+          title="Question per slides"
+          value={questionPerSlides!}
+          name="formSettings.questionPerSlides"
+        />
+
+        {/* <NumberWidget
         form={form}
         title="Form title font size"
         value={titleFontSize}
@@ -416,23 +497,37 @@ export default function FormAppearance({
         name="formSettings.textFontSize"
       /> */}
 
-      <FormField
-        control={form.control}
-        name="formSettings.buttonText"
-        render={({ field }) => (
-          <InputOffsetLabel className="w-[150px]" label="End Button Text">
-            <Input
-              placeholder=""
-              type="text"
-              defaultValue={prevButtonText}
-              {...form.register("formSettings.buttonText")}
-              className="placeholder:text-sm h-11 focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
-            />
-          </InputOffsetLabel>
-        )}
-      />
-
+        <FormField
+          control={form.control}
+          name="formSettings.buttonText"
+          render={({ field }) => (
+            <InputOffsetLabel className="w-[150px]" label="End Button Text">
+              <Input
+                placeholder=""
+                type="text"
+                defaultValue={prevButtonText}
+                {...form.register("formSettings.buttonText")}
+                className="placeholder:text-sm h-11 focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
+              />
+            </InputOffsetLabel>
+          )}
+        />
+      </div>
    
-    </div>
+    </>
+  );
+}
+
+function PopModal({
+  setThemeSetting,
+  engagementForm,
+}: {
+  setThemeSetting: React.Dispatch<React.SetStateAction<boolean>>;
+  engagementForm: TEngagementFormQuestion;
+}) {
+  return (
+    <>
+  
+    </>
   );
 }

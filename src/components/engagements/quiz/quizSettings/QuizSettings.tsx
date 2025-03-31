@@ -12,6 +12,8 @@ import {
   QuizIntegration,
 } from "./_components";
 import { useGetUserOrganizations } from "@/hooks/services/engagement";
+import { QuizThemeSettings } from "./QuizThemeSetting";
+import { nanoid } from "nanoid";
 
 export enum QuizSettingType {
   details,
@@ -31,6 +33,7 @@ export function QuizSettings({
   refetch: () => Promise<any>;
   organization: TOrganization;
 }) {
+  const [isThemeSetting, setThemeSetting] = useState(false);
   const [active, setActive] = useState<QuizSettingType>(
     QuizSettingType.details
   );
@@ -40,6 +43,7 @@ export function QuizSettings({
     loading: isLoading,
   } = useGetUserOrganizations();
   return (
+    <>
     <div
       onClick={close}
       className="w-screen h-screen fixed inset-0 bg-white/50 z-[100] "
@@ -83,7 +87,7 @@ export function QuizSettings({
               quiz={quiz}
               refetch={refetch}
               organization={organization}
-           
+              interactionType={quiz?.interactionType}  
              
             />
           )}
@@ -92,6 +96,7 @@ export function QuizSettings({
               organization={organization}
               refetch={refetch}
               quiz={quiz}
+              setThemeSetting={setThemeSetting}
             />
           )}
           {QuizSettingType.branding === active && (
@@ -111,5 +116,13 @@ export function QuizSettings({
         </div>
       </div>
     </div>
+    {isThemeSetting && (
+            <QuizThemeSettings
+            key={nanoid()}
+            close={() => setThemeSetting(false)}
+            quiz={quiz}
+          />
+      )}
+    </>
   );
 }

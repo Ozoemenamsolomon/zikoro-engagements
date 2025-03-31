@@ -23,12 +23,14 @@ export function FormTextType({
   question,
   engagementForm,
   refetch,
+  btnColor
 }: {
   form: UseFormReturn<z.infer<typeof formQuestion>>;
   question: TEngagementFormQuestion["questions"][number] | null;
   engagementForm: TEngagementFormQuestion;
   defaultQuestionValue: string;
   refetch: () => Promise<any>;
+  btnColor:string
 }) {
   const addedImage = form.watch("questionImage");
   const addedDescription = form.watch("questionDescription");
@@ -62,6 +64,11 @@ export function FormTextType({
     }
   }, [form, selectedType]);
 
+  const showDescription = useWatch({
+    control: form.control,
+    name: "showDescription",
+  });
+
   return (
     <>
       <div className="w-full flex flex-col items-start justify-start gap-3">
@@ -72,6 +79,7 @@ export function FormTextType({
           engagementForm={engagementForm}
           question={question}
           refetch={refetch}
+          btnColor={btnColor}
           type="Text"
           isText
           SettingWidget={
@@ -148,10 +156,12 @@ export function FormTextType({
           }
         />
 
-        <FormQuestionDescription
-          defaultDescriptionValue={defaultDescriptionValue}
-          form={form}
-        />
+        {showDescription && (
+          <FormQuestionDescription
+            defaultDescriptionValue={defaultDescriptionValue}
+            form={form}
+          />
+        )}
       </div>
     </>
   );

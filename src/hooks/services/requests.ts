@@ -188,7 +188,6 @@ export const useFetchData = <TFetchData>(
       }
       setData(responseData.data);
 
-      // console.log(responseData.data);
       return responseData.data;
     } catch (error) {
       setError(true);
@@ -204,3 +203,4 @@ export const useFetchData = <TFetchData>(
     getData,
   };
 };
+

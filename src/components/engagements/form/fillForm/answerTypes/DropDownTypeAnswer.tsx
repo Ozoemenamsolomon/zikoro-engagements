@@ -17,17 +17,22 @@ type OptionItemsType = {
 export function DropDownTypeAnswer({
   form,
   index,
-  bgColor,
+  btnColor,
   rgba,
+  hideNumber,
+  hideLabel
 }: {
   form: UseFormReturn<z.infer<typeof formAnswerSchema>, any, any>;
   index: number;
-  bgColor: string;
+  btnColor: string;
   rgba: string;
+  hideNumber:boolean;
+  hideLabel:boolean;
 }) {
   const question = form.watch(`questions.${index}.question`);
   const isRequired = form.watch(`questions.${index}.isRequired`);
   const questionImage = form.watch(`questions.${index}.questionImage`);
+  const showDescription = form.watch(`questions.${index}.showDescription`);
   const [isOpen, setOpen] = useState(false);
   const selectedType = form.watch(`questions.${index}.selectedType`);
   const settings = form.watch(`questions.${index}.questionSettings`);
@@ -65,6 +70,10 @@ export function DropDownTypeAnswer({
         currentQuestion={question}
         description={questionDescription}
         isRequired={isRequired}
+        showDescription={showDescription}
+        btnColor={btnColor}
+        rgba={rgba}
+        hideNumber={hideNumber}
       />
 
       <div
@@ -73,10 +82,10 @@ export function DropDownTypeAnswer({
           e.preventDefault();
           setOpen(true);
         }}
-        style={{
-          backgroundColor: rgba,
-        }}
-        className="w-full relative h-12 px-3 flex items-center justify-start rounded-lg"
+        // style={{
+        //   backgroundColor: rgba,
+        // }}
+        className="w-full relative border h-12 px-3 flex items-center justify-start rounded-lg"
       >
         <p
           className="innerhtml  w-full text-sm"
@@ -102,7 +111,7 @@ export function DropDownTypeAnswer({
               className="w-full h-full inset-0 fixed z-[100]"
             ></div>
 
-            <div className="w-full overflow-y-auto vert-scroll relative z-[300] bg-white rounded-lg shadow h-fit max-h-[300px]">
+            <div className="w-full overflow-y-auto vert-scroll relative z-[300] bg-white/80 rounded-lg shadow h-fit max-h-[300px]">
               <div className="w-full flex flex-col items-start justify-start">
                 {Array.isArray(options) &&
                   options.map((value, id) => {
@@ -134,10 +143,11 @@ export function DropDownTypeAnswer({
                           key={id}
                           // htmlFor={`checkbox-${index}`}
                           style={{
-                            backgroundColor: isSelected ? rgba : "",
+                            backgroundColor: isSelected ? btnColor : "",
+                              color: isSelected ? "#fff":"#000"
                           }}
                           className={cn(
-                            "w-full h-12 border-b bg-white rounded-none  px-4 py-6 relative"
+                            "w-full h-12 border-b border-gray-400 bg-white/80 rounded-none  px-4 py-6 relative"
                           )}
                         >
                           <div className="w-full h-full">

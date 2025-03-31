@@ -164,37 +164,36 @@ export default function QuizAttendeeView({
     if (!quiz?.accessibility?.live) return;
     const channel = supabase.channel("live-answer");
 
-      // channel.on(
-      //   "postgres_changes",
-      //   {
-      //     event: "UPDATE",
-      //     schema: "public",
-      //     table: "quizAnswer",
-      //     filter: `quizId=eq.${quiz?.id}`,
-      //   },
-      //   (payload) => {
-      //     setAnswers((prev) => [...prev, payload.new as TAnswer]);
-      //   }
-      // )
+    // channel.on(
+    //   "postgres_changes",
+    //   {
+    //     event: "UPDATE",
+    //     schema: "public",
+    //     table: "quizAnswer",
+    //     filter: `quizId=eq.${quiz?.id}`,
+    //   },
+    //   (payload) => {
+    //     setAnswers((prev) => [...prev, payload.new as TAnswer]);
+    //   }
+    // )
 
-      channel.on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "quizAnswer",
-          filter: `quizId=eq.${quiz?.id}`,
-        },
-        (payload) => {
+    channel.on(
+      "postgres_changes",
+      {
+        event: "INSERT",
+        schema: "public",
+        table: "quizAnswer",
+        filter: `quizId=eq.${quiz?.id}`,
+      },
+      (payload) => {
         //  console.log("new answer data", payload.new)
         setAnswers((prev) => _.uniqBy([...prev, payload.new as TAnswer], "id"));
-          
-        }
-      )
+      }
+    );
 
-      channel.subscribe((status) => {
-        console.log("Subscription status: ANSWER", status);
-      });
+    channel.subscribe((status) => {
+      console.log("Subscription status: ANSWER", status);
+    });
 
     return () => {
       supabase.removeChannel(channel);
@@ -331,6 +330,48 @@ export default function QuizAttendeeView({
   //   }
   // }, [quiz]);
 
+  const btnColor = useMemo(() => {
+    if (quiz?.accessibility?.isPreMade) {
+      return quiz?.accessibility?.preMadeType === "/brown-bg.jpg"
+        ? "#6C4A4A"
+        : "#8841FD";
+    } else return quiz?.accessibility?.buttonColor || "#001fcc";
+  }, [quiz]);
+  const rgba = useMemo(
+    (alpha = 0.1) => {
+      if (quiz) {
+        const color = btnColor;
+        let r = parseInt(color.slice(1, 3), 16);
+        let g = parseInt(color.slice(3, 5), 16);
+        let b = parseInt(color.slice(5, 7), 16);
+
+        // Increase brightness (lighter color)
+        const lightenFactor = 1.3; // Increase for more brightness
+        r = Math.min(255, Math.floor(r * lightenFactor));
+        g = Math.min(255, Math.floor(g * lightenFactor));
+        b = Math.min(255, Math.floor(b * lightenFactor));
+
+        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+      }
+    },
+    [quiz, btnColor]
+  );
+  const textColor = useMemo(() => {
+    if (quiz?.accessibility?.isPreMade) {
+      return quiz?.accessibility?.preMadeType === "/brown-bg.jpg"
+        ? "#6C4A4A"
+        : "#190044";
+    } else return quiz?.accessibility?.textColor || "#000000";
+  }, [quiz]);
+
+  const bgColor = useMemo(() => {
+    if (quiz?.accessibility?.isPreMade) {
+      return quiz?.accessibility?.preMadeType;
+    } else if (quiz?.accessibility?.isBackgroundImage) {
+      return quiz?.accessibility?.backgroundImage;
+    } else return quiz?.accessibility?.backgroundColor || "#ffffff";
+  }, [quiz]);
+
   // show score sheet after live quiz
   useEffect(() => {
     (async () => {
@@ -349,7 +390,23 @@ export default function QuizAttendeeView({
   }, [quiz]);
 
   return (
-    <div className="w-full ">
+    <div
+    style={{
+      backgroundColor: !quiz?.accessibility?.isPreMade ? '' : bgColor,
+      backgroundImage: quiz?.accessibility?.isPreMade
+        ? `url('${quiz?.accessibility?.preMadeType}')`
+        : quiz?.accessibility?.isBackgroundImage
+        ? `url('${quiz?.accessibility?.backgroundImage}')`
+        : "",
+      filter: quiz?.accessibility?.isBackgroundImage
+        ? `brightness(${quiz?.accessibility?.backgroundBrightness})`
+        : "",
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      backgroundRepeat: "no-repeat",
+      color: textColor,
+    }}
+    className="w-full h-full fixed inset-0">
       {type === "preview" && quiz && <PreviewDeletionGuard quiz={quiz} />}
       {type === "preview" && (
         <div className="w-[300px] bg-red-600 fixed z-[99999999] right-[-97px] top-[43px] rotate-45 transform  p-2 flex items-center justify-center">
@@ -411,7 +468,7 @@ export default function QuizAttendeeView({
               refetchLobby={getLiveParticipant}
               organization={organization}
               quiz={quiz}
-              
+              btnColor={btnColor}
             />
           )}
 
@@ -461,6 +518,8 @@ export default function QuizAttendeeView({
                 phone: playerDetail?.phone,
                 avatar: chosenAvatar!,
               }}
+              rgba={rgba}
+              btnColor={btnColor}
             />
           )}
         </>
@@ -469,7 +528,8 @@ export default function QuizAttendeeView({
         <div className="w-full h-[300px] flex flex-col bg-basePrimary-200 rounded-lg items-center justify-center">
           <InlineIcon icon="clarity:sad-face-line" fontSize={30} />
           <p className="font-medium text-base sm:text-lg">
-            You don't have access to this quiz
+            You don't have access to this{" "}
+            {quiz?.interactionType === "quiz" ? "quiz" : "poll"}
           </p>
         </div>
       )}

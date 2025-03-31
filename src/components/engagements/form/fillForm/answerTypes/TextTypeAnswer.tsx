@@ -17,25 +17,28 @@ export function TextTypeAnswer({
   form,
   index,
   rgba,
-  bgColor,
+  btnColor,
   selectedType,
+  hideNumber,
+  hideLabel
 }: {
   form: UseFormReturn<z.infer<typeof formAnswerSchema>, any, any>;
   index: number;
-  bgColor: string;
+  btnColor: string;
   rgba: string;
   selectedType: string;
+  hideNumber:boolean;
+  hideLabel:boolean
 }) {
   const question = form.watch(`questions.${index}.question`);
   const isRequired = form.watch(`questions.${index}.isRequired`);
+  const showDescription = form.watch(`questions.${index}.showDescription`);
   const questionImage = form.watch(`questions.${index}.questionImage`);
   const settings = form.watch(`questions.${index}.questionSettings`);
   const questionId = form.watch(`questions.${index}.questionId`);
   const questionDescription = form.watch(
     `questions.${index}.questionDescription`
   );
-
- 
 
   return (
     <>
@@ -45,6 +48,10 @@ export function TextTypeAnswer({
         currentQuestion={question}
         description={questionDescription}
         isRequired={isRequired}
+        showDescription={showDescription}
+        btnColor={btnColor}
+        rgba={rgba}
+        hideNumber={hideNumber}
       />
 
       <div className="flex flex-col items-start gap-y-2 justify-start w-full">
@@ -58,9 +65,6 @@ export function TextTypeAnswer({
             : TextType.website}
         </label>
         <Input
-          style={{
-            backgroundColor: rgba,
-          }}
           name={`responses.${index}.response`}
           value={form.getValues(`responses.${index}.response`)}
           onChange={(e) => {
@@ -77,7 +81,7 @@ export function TextTypeAnswer({
           }
           maxLength={selectedType === "INPUT_TEXT" ? settings : null}
           required={isRequired}
-          className="w-full h-11 sm:h-12 rounded-md  px-2 placeholder:text-gray-500 placeholder-gray-500"
+          className="w-full h-11 sm:h-12 rounded-none border-x-0 border-t-0 border-b bg-transparent px-2 placeholder:text-gray-500 placeholder-gray-500"
           placeholder="Enter Answer"
         />
       </div>

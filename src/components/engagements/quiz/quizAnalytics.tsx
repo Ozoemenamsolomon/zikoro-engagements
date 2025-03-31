@@ -9,7 +9,11 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { useGetData } from "@/hooks/services/requests";
+import {
+  useDeleteRequest,
+  useGetData,
+  usePostRequest,
+} from "@/hooks/services/requests";
 import { TQuiz, TQuestion, TAnswer, TRefinedQuestion } from "@/types/quiz";
 import { LoadingState } from "@/components/composables/LoadingState";
 import { InlineIcon } from "@iconify/react/dist/iconify.js";
@@ -18,6 +22,8 @@ import { cn } from "@/lib/utils";
 import { EmptyQuizQuestionIcon, PeopleIcon } from "@/constants";
 import { formatReviewNumber } from "@/utils";
 import { MetricCard } from "../_components";
+import { Button } from "@/components/custom";
+import { ActionModal } from "@/components/custom/ActionModal";
 
 type TQuizStatistics = {
   totalParticipants: number;
@@ -78,7 +84,14 @@ function calculateOptionSelectionPercentage(
 
   // Process each answer
   answers.forEach((answer) => {
-    const { questionId, answeredQuestion, selectedOptionId, answerDuration, attendeeName, maxDuration } = answer;
+    const {
+      questionId,
+      answeredQuestion,
+      selectedOptionId,
+      answerDuration,
+      attendeeName,
+      maxDuration,
+    } = answer;
     const questionText = answeredQuestion.question;
     const selectedOption = selectedOptionId.optionId;
 
@@ -96,8 +109,8 @@ function calculateOptionSelectionPercentage(
     const questionData = questionMap.get(questionId)!;
     questionData.totalResponses++;
     // there is inconsistency in the data - maxDuration is in Sec, while answerDuration is in MilliSec
-    questionData.totalDuration += ((maxDuration * 1000)-answerDuration);
-    console.log((maxDuration * 1000)- answerDuration)
+    questionData.totalDuration += maxDuration * 1000 - answerDuration;
+    console.log(maxDuration * 1000 - answerDuration);
 
     // Increment the count for the selected option
     questionData.optionsCount.set(
@@ -109,14 +122,23 @@ function calculateOptionSelectionPercentage(
     if (!questionData.attendeeDurations.has(attendeeName)) {
       questionData.attendeeDurations.set(attendeeName, []);
     }
-    questionData.attendeeDurations.get(attendeeName)!.push((maxDuration * 1000)-answerDuration);
+    questionData.attendeeDurations
+      .get(attendeeName)!
+      .push(maxDuration * 1000 - answerDuration);
   });
 
   // Transform into output format
   return Array.from(questionMap.entries()).map(
     ([
       questionId,
-      { questionText, optionsCount, totalResponses, totalDuration, options, attendeeDurations },
+      {
+        questionText,
+        optionsCount,
+        totalResponses,
+        totalDuration,
+        options,
+        attendeeDurations,
+      },
     ]) => ({
       questionId,
       questionText,
@@ -133,16 +155,14 @@ function calculateOptionSelectionPercentage(
           attendeeName,
           averageAnswerTime:
             durations.length > 0
-              ? durations.reduce((sum, time) => sum + time, 0) / durations.length
+              ? durations.reduce((sum, time) => sum + time, 0) /
+                durations.length
               : 0,
         })
       ),
     })
   );
 }
-
-
-
 
 function QuestOption({
   option,
@@ -282,9 +302,13 @@ function QuizEngagementInsight({
   }, [activeAnalytics]);
 
   const avg = useMemo(() => {
-    if (activeAnalytics) return (activeAnalytics?.totalDuration/(1000  * activeAnalytics?.averageAnswerTimePerAttendee?.length)).toFixed(0);
-    else return 0
-  },[activeAnalytics])
+    if (activeAnalytics)
+      return (
+        activeAnalytics?.totalDuration /
+        (1000 * activeAnalytics?.averageAnswerTimePerAttendee?.length)
+      ).toFixed(0);
+    else return 0;
+  }, [activeAnalytics]);
   return (
     <div className="w-full mt-10">
       <h2 className="font-semibold text-base sm:text-lg mb-3 text-start">
@@ -311,7 +335,6 @@ function QuizEngagementInsight({
             <div className="w-full flex flex-col items-start justify-start gap-3">
               {Array.isArray(analytics) &&
                 analytics?.map((analytic, index) => {
-                  
                   return (
                     <div
                       onClick={() => {
@@ -393,6 +416,11 @@ export default function QuizAnalytics({ quizId }: { quizId: string }) {
   const { data, isLoading } = useGetData<TQuizResponse>(
     `engagements/quiz/${quizId}/analytics`
   );
+  const { deleteData } = useDeleteRequest(`engagements/quiz/answer/${quizId}`);
+  const { postData: updateQuiz } =
+    usePostRequest<Partial<TQuiz<TQuestion[]>>>("engagements/quiz");
+  const [isToClear, setIsToClear] = useState(false);
+  const [isLoadingClear, setIsLoadingClear] = useState(false);
 
   const engagementInsight = useMemo(() => {
     if (
@@ -406,33 +434,74 @@ export default function QuizAnalytics({ quizId }: { quizId: string }) {
 
   console.log({ engagementInsight });
 
+  function onToggleClear() {
+    setIsToClear((prev) => !prev);
+  }
+
+  // clear record
+  async function clearRecord() {
+    setIsLoadingClear(true);
+
+    // delete all answers for a quiz
+    await deleteData();
+
+    // delete all the participant for a quiz
+    await updateQuiz({
+      payload: {
+        ...data?.quiz,
+        quizParticipants: [],
+      },
+    });
+
+    setIsLoadingClear(false);
+    onToggleClear();
+    router.back();
+  }
+
   if (isLoading) {
     return <LoadingState />;
   }
 
   return (
+    <>
     <div className="w-full text-sm max-w-7xl mx-auto p-4 sm:p-6">
       <div className="w-full mb-6 flex items-center justify-between">
         <button
           className="flex items-center gap-x-2"
           onClick={() => router.back()}
         >
-             <InlineIcon icon="material-symbols:arrow-back-rounded" fontSize={22}/>
+          <InlineIcon
+            icon="material-symbols:arrow-back-rounded"
+            fontSize={22}
+          />
           <p className="text-sm hidden sm:block">{data?.quiz?.coverTitle}</p>
         </button>
         <h2 className="font-semibold text-lg sm:text-base">Analytics</h2>
-        <p className="w-1 h-1"></p>
+        <Button
+          onClick={() => {
+            onToggleClear();
+          }}
+          className="flex w-fit bg-basePrimary items-center rounded-lg h-10  gap-x-2"
+        >
+          <InlineIcon
+            icon="mingcute:delete-line"
+            fontSize={18}
+            color="#ffffff"
+          />
+          <p className="text-white font-medium">Delete Record</p>
+        </Button>
       </div>
       <h2 className="font-semibold text-base sm:text-lg mb-3 text-start">
         Overview
       </h2>
       <div className="w-full grid grid-cols-1  md:grid-cols-3 gap-4">
         <div className="w-full flex  flex-col items-start gap-4">
-          <MetricCard
-            title="Total Participants"
-            subTitle="Number of people that participated"
-            metric={`${data?.quizStatistics?.totalParticipants ?? 0}`}
+        <MetricCard
+            title="Total Questions"
+            subTitle="Number of questions available to be answered"
+            metric={`${data?.quizStatistics?.totalQuestions ?? 0}`}
           />
+          
           <MetricCard
             title="Completion Rate"
             subTitle="Percentage of participants who completed the quiz"
@@ -447,15 +516,28 @@ export default function QuizAnalytics({ quizId }: { quizId: string }) {
               (data?.quizStatistics?.avgCompletionTime ?? 0) / 1000
             ).toFixed(0)} Sec`}
           />
-          <MetricCard
+         <MetricCard
+            title="Avg Points"
+            subTitle="Avg points gotten by participants"
+            metric={`${(
+              data?.quizStatistics?.avgPointGottenByParticipant ?? 0
+            ).toFixed(0)}`}
+          />
+        </div>
+        <div className="w-full flex flex-col items-start gap-4">
+        <MetricCard
             title="Total Points Allocated"
             subTitle="Total number of points allocated to the quiz"
             metric={`${formatReviewNumber(
               data?.quizStatistics?.totalAllocatedPoints ?? 0
             )}`}
           />
-        </div>
-        <div className="w-full flex flex-col items-start gap-4">
+        
+        <MetricCard
+            title="Total Participants"
+            subTitle="Number of people that participated"
+            metric={`${data?.quizStatistics?.totalParticipants ?? 0}`}
+          />
           <MetricCard
             title="Active Participants"
             subTitle="Participants that attempted 50% of the question"
@@ -463,11 +545,7 @@ export default function QuizAnalytics({ quizId }: { quizId: string }) {
               0
             )}`}
           />
-          <MetricCard
-            title="Total Questions"
-            subTitle="Number of questions available to be answered"
-            metric={`${data?.quizStatistics?.totalQuestions ?? 0}`}
-          />
+         
           <MetricCard
             title="Avg time to answer a question"
             subTitle="Avg time taken for participants to answer each question"
@@ -475,13 +553,7 @@ export default function QuizAnalytics({ quizId }: { quizId: string }) {
               (data?.quizStatistics?.avgTimeToAnswerQuestion ?? 0) / 1000
             ).toFixed(0)} Sec`}
           />
-          <MetricCard
-            title="Avg Points"
-            subTitle="Avg points gotten by participants"
-            metric={`${(
-              data?.quizStatistics?.avgPointGottenByParticipant ?? 0
-            ).toFixed(0)}`}
-          />
+          
         </div>
         <div className="w-full h-[430px] bg-white rounded-lg py-6 px-4  ">
           <h2 className="font-semibold text-base sm:text-lg mb-4">
@@ -518,5 +590,19 @@ export default function QuizAnalytics({ quizId }: { quizId: string }) {
         totalParticipants={data?.quizStatistics?.totalParticipants}
       />
     </div>
+    {isToClear && (
+        <ActionModal
+          loading={isLoadingClear}
+          close={onToggleClear}
+          asynAction={clearRecord}
+          buttonText="Delete"
+          buttonColor="text-white bg-red-500"
+          titleColor="text-red-500"
+          modalTitle="Delete Quiz Record"
+          title="Clear Record"
+          modalText="Participants records, scores and points will be deleted and can not be recovered."
+        />
+      )}
+    </>
   );
 }

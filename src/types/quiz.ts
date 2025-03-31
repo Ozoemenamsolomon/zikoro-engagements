@@ -39,6 +39,7 @@ export interface TQuiz<T> {
   liveMode: any;
   description: string;
   interactionType: string;
+  integrationAlias?:string;
   formAlias?: string;
   coverImage: string;
   branding: { poweredBy: boolean; eventName: boolean };
@@ -66,6 +67,17 @@ export interface TQuiz<T> {
     musicList: {label:string, value:string}[] | null,
     music: {label:string, value:string} | null,
     eventAlias: string;
+    //> new
+    preMadeType?: string;
+    isBackgroundImage?: boolean;
+    backgroundImage?: string;
+    backgroundBrightness?: number;
+    isPreMade?: boolean;
+    isBackgroundColor?:boolean;
+    textColor?:string;
+    backgroundColor?:string;
+    buttonColor?:string;
+    //> 
   };
 }
 
@@ -114,7 +126,8 @@ export interface TAnswer {
   phone: string;
   correctOptionId: { optionId: string };
   eventAlias: string;
-  answeredQuestion: TRefinedQuestion
+  answeredQuestion: TRefinedQuestion;
+
 }
 
 export interface TExportedAnswer {

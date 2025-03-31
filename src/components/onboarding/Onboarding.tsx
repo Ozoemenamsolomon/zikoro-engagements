@@ -8,7 +8,7 @@ import {
   SProgress5,
 } from "@/constants";
 import React, { useMemo, useState } from "react";
-import { useOnboarding, useGetUserId, getUser } from "@/hooks";
+import { useOnboarding, getUser } from "@/hooks";
 import {
   useCreateUserOrganization,
   useUpdateOrganization,
@@ -377,6 +377,8 @@ export default function OnboardingForm({
     setFormData({ ...formData, [name]: value });
   };
   const { postData } = usePostRequest<any>("organization");
+
+  //create team member function will add the team member to both engagement team member and the general team member
   const { postData: createTeamMember } =
     usePostRequest<any>("organization/team");
   const stages = ["stage1", "stage2", "stage3", "stage4", "stage5"];
@@ -734,6 +736,14 @@ export default function OnboardingForm({
                 {formData.organizationType === "Private" ? (
                   <button
                     onClick={(e) => {
+                      // const data = {
+                      //   "First Name": formData?.firstName,
+                      //   "Last Name": formData?.lastName
+                      // }
+                      // for (let i in data) {
+                      //   // @ts-ignore
+                      //   return toast.error(`${data[i]} is required`);
+                      // }
                       handleCreateUser(e, formData);
                     }}
                     disabled={currentIndex === stages.length - 1}

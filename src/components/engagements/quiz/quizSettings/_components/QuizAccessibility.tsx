@@ -3,7 +3,7 @@
 import { Switch } from "@/components/ui/switch";
 import { TQuestion, TQuiz } from "@/types/quiz";
 import Image from "next/image";
-import { useEffect, useMemo, useState, useRef } from "react";
+import React, { useEffect, useMemo, useState, useRef } from "react";
 import { Button } from "@/components/custom";
 import { TOrganization } from "@/types/home";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
@@ -11,6 +11,7 @@ import { usePostRequest } from "@/hooks/services/requests";
 import { InlineIcon } from "@iconify/react/dist/iconify.js";
 import { cn } from "@/lib/utils";
 import { uploadFile } from "@/utils";
+import { Pallete } from "@/constants";
 
 function AddMusic({
   music,
@@ -33,8 +34,6 @@ function AddMusic({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    
-
     const reader = new FileReader();
     reader.onload = (event) => {
       const base64String = event.target?.result as string;
@@ -42,7 +41,7 @@ function AddMusic({
         label: file.name,
         value: base64String,
       };
-    //  console.log(file.name);
+      //  console.log(file.name);
       addMusic(musicObject);
     };
     reader.readAsDataURL(file);
@@ -183,15 +182,18 @@ export function QuizAccessibility({
   quiz,
   refetch,
   organization,
+  setThemeSetting
 }: {
   quiz: TQuiz<TQuestion[]>;
   refetch: () => Promise<any>;
   organization: TOrganization;
+  setThemeSetting: React.Dispatch<React.SetStateAction<boolean>>
 }) {
   const [loading, setLoading] = useState(false);
   const { postData, isLoading } =
     usePostRequest<Partial<TQuiz<TQuestion[]>>>("engagements/quiz");
-  const [accessibility, setAccessibility] = useState(quiz?.accessibility)
+  const [accessibility, setAccessibility] = useState(quiz?.accessibility);
+
   const isQuiz = useMemo(() => {
     return quiz.interactionType === "quiz";
   }, [quiz]);
@@ -297,6 +299,19 @@ export function QuizAccessibility({
           className=""
         />
       </div> */}
+        <Button
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            setThemeSetting(true);
+           
+          }}
+          type="button"
+          className="w-full mb-3 rounded-lg border border-gray-200 gap-x-2"
+        >
+          <Pallete />
+          <p>Select Theme</p>
+        </Button>
 
       {accessibility?.visible && (
         <>
@@ -415,7 +430,9 @@ export function QuizAccessibility({
         <div className="flex flex-col items-start justify-start">
           <p>Show timer</p>
           <p className="text-xs text-gray-500">
-            The timer shown while attempting the quiz will be turned off.
+            The timer shown while attempting the
+            {quiz?.interactionType === "quiz" ? "quiz" : "poll"} will be turned
+            off.
           </p>
         </div>
         <Switch
@@ -573,7 +590,7 @@ export function QuizAccessibility({
         )}
       </div>
 
-      <div className="flex w-full text-mobile sm:text-sm items-center justify-between">
+      <div className="hidden w-full text-mobile sm:text-sm items-center justify-between">
         <div className="flex flex-col items-start  justify-start">
           <p>Form</p>
           <p className="text-xs text-gray-500">

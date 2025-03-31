@@ -15,7 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm, UseFormReturn } from "react-hook-form";
 import { quizQuestionSchema } from "@/schemas/quiz";
 import { nanoid } from "nanoid";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 import { uploadFile } from "@/utils";
 import { usePostRequest } from "@/hooks/services/requests";
 import { LoaderAlt } from "styled-icons/boxicons-regular";
@@ -32,7 +32,7 @@ function FeedbackWidget({
   const [isFocused, setIsFocused] = useState(false);
   return (
     <>
-      { (
+      {
         <div className="w-full" id="select-feedback">
           {isFocused ? (
             <div className="w-full">
@@ -42,9 +42,9 @@ function FeedbackWidget({
                 onChange={(value) => {
                   form.setValue("feedBack", value);
                 }}
-              //  key={defaultFeedBackValue}
+                //  key={defaultFeedBackValue}
                 onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
+                onBlur={() => setIsFocused(false)}
               />
             </div>
           ) : (
@@ -57,7 +57,7 @@ function FeedbackWidget({
             />
           )}
         </div>
-      )}
+      }
     </>
   );
 }
@@ -148,10 +148,11 @@ export function AddQuestion({
         return option;
       })
     );
-    const updatedQuestion = {
+    const updatedQuestion: TQuestion = {
       ...values,
       options: refinedOption,
       id: nanoid(),
+      points: interactionType === "poll" ? undefined : values?.points,
       questionImage: image as string,
     };
     // filter question
@@ -163,7 +164,7 @@ export function AddQuestion({
     );
     const payload: Partial<TQuiz<TQuestion[]>> = {
       ...quiz,
-      interactionType: "quiz",
+      interactionType: interactionType,
       questions:
         quiz?.questions?.length > 0
           ? editingQuestion?.id
@@ -188,6 +189,7 @@ export function AddQuestion({
           : Number(values?.points || 0),
       lastUpdated_at: new Date().toISOString(),
     };
+
     await postData({ payload });
 
     setLoading(false);
@@ -264,7 +266,7 @@ export function AddQuestion({
     else return 1;
   }, [question, quiz]);
 
- // console.log(form.formState.errors);
+  console.log(form.formState.errors);
 
   return (
     <>
@@ -273,6 +275,7 @@ export function AddQuestion({
           <TopSection
             points={currentPoint}
             duration={currentDuration}
+            interactionType={quiz?.interactionType}
             changeDuration={toggleDuration}
             changePoint={togglePoint}
           />

@@ -24,7 +24,8 @@ export function FormQuestionField({
   isNotOverflow,
   isText,
   isTemplateType,
-  togggleRequired
+  togggleRequired,
+  btnColor,
 }: {
   defaultQuestionValue: string;
   question: TEngagementFormQuestion["questions"][number] | null;
@@ -35,9 +36,10 @@ export function FormQuestionField({
   type: string;
   isNotOverflow?: boolean;
   SettingWidget?: ReactNode;
-  isText?:boolean;
-  isTemplateType?:boolean;
-  togggleRequired?:(t:boolean) => void;
+  isText?: boolean;
+  isTemplateType?: boolean;
+  togggleRequired?: (t: boolean) => void;
+  btnColor: string;
 }) {
   const { postData } =
     usePostRequest<Partial<TEngagementFormQuestion>>("engagements/form");
@@ -55,6 +57,11 @@ export function FormQuestionField({
   const isRequired = useWatch({
     control: form.control,
     name: `isRequired` as const,
+  });
+
+  const showDescription = useWatch({
+    control: form.control,
+    name: `showDescription` as const,
   });
 
   async function deleteQuestion() {
@@ -100,6 +107,7 @@ export function FormQuestionField({
         {
           <div className="w-full">
             <TextEditor
+            isForm
               defaultValue={defaultQuestionValue}
               placeholder="Enter your Question"
               onChange={onChange}
@@ -116,7 +124,12 @@ export function FormQuestionField({
               accept="image/*"
               {...form.register("questionImage")}
             />
-            <AddQuizImageIcon />
+
+            <InlineIcon
+              icon="ic:twotone-image"
+              color={btnColor}
+              fontSize={22}
+            />
           </label>
           <button
             onClick={(e) => {
@@ -127,7 +140,11 @@ export function FormQuestionField({
             className="relative"
             title="setting"
           >
-            <InlineIcon icon="duo-icons:settings" fontSize={22} />
+            <InlineIcon
+              icon="duo-icons:settings"
+              color={btnColor}
+              fontSize={22}
+            />
             {isSettings && (
               <div
                 onClick={(e) => {
@@ -135,7 +152,6 @@ export function FormQuestionField({
                   e.preventDefault();
                 }}
                 className="absolute right-[4px] top-5"
-
               >
                 <div
                   onClick={(e) => {
@@ -153,19 +169,29 @@ export function FormQuestionField({
                   )}
                 >
                   <div className="flex w-full px-3 mb-4 items-center justify-between">
-                  <p className="text-mobile">{isTemplateType ? "Required All" :"Required"}</p>
+                    <p className="text-mobile">
+                      {isTemplateType ? "Required All" : "Required"}
+                    </p>
                     <Switch
                       checked={isRequired}
                       onClick={(e) => {
-                 
                         e.preventDefault();
                         form.setValue("isRequired", !isRequired);
-                        togggleRequired?.(!isRequired)
+                        togggleRequired?.(!isRequired);
                       }}
-                  
                       className=""
                     />
-                  
+                  </div>
+                  <div className="flex w-full px-3 mb-4 items-center justify-between">
+                    <p className="text-mobile">Show Description</p>
+                    <Switch
+                      checked={showDescription}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        form.setValue("showDescription", !showDescription);
+                      }}
+                      className=""
+                    />
                   </div>
                   {SettingWidget}
                 </div>

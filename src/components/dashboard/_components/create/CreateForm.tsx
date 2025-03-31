@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { formCreationSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import _ from "lodash";
 import useUserStore from "@/store/globalUserStore";
 import { z } from "zod";
@@ -22,6 +22,7 @@ import { generateInteractionAlias } from "@/utils";
 import { uploadFile } from "@/utils";
 import { TEngagementFormQuestion } from "@/types/form";
 import { TOrganization } from "@/types/home";
+import { useSearchParams } from "next/navigation";
 
 export function CreateForm({
   engagementForm,
@@ -35,12 +36,64 @@ export function CreateForm({
   const [isOpen, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const { user } = useUserStore();
+  const params = useSearchParams();
+  const eventId = params.get("eventId");
+  const platform = params.get("platform");
   const { organizations: organizationList, getOrganizations } =
     useGetUserOrganizations();
   const { postData, isLoading } =
     usePostRequest<Partial<TEngagementFormQuestion>>("engagements/form");
   const form = useForm<z.infer<typeof formCreationSchema>>({
     resolver: zodResolver(formCreationSchema),
+    defaultValues: engagementForm
+      ? { formSettings: engagementForm?.formSettings }
+      : {
+          formSettings: {
+            isConnectedToEngagement: false,
+            showForm: "beforeEngagement",
+            redirectUrl: "",
+            isCoverScreen: true,
+            displayType: "listing",
+            questionPerSlides: "1",
+            titleFontSize: "36",
+            headingFontSize: "24",
+            backgroundColor: "#ffffff",
+            textColor: "#000000",
+            buttonColor: "#001FFC",
+            textFontSize: "14",
+            isCoverImage: true,
+            buttonText: "Submit",
+            startButtonText: "Start",
+            isCollectEmail: false,
+            isCollectPhone: false,
+            connectToEvent: platform === "Event" ? true : false,
+            showResult: false,
+            isRedirectUrl: false,
+            engagementId: "",
+            engagementType: "",
+            hideNumber: false,
+            hideLabel: false,
+            labellingType: "Number",
+            backgroundBrightness: 100,
+            preMadeType:"",
+            isBackgroundImage: false,
+            isBackgroundColor: false,
+            eventAlias: eventId ?? "",
+            endScreenSettings: {
+              title: "Thanks for completing the form",
+              subText: "This is all for now",
+              buttonText: "Create Form",
+              buttonUrl: "",
+              x: "",
+              linkedIn: "",
+              instagram: "",
+              facebook: "",
+              website: "",
+              showButton: true,
+              socialLink: true,
+            }
+          },
+        },
   });
 
   const coverImg = form.watch("coverImage");
@@ -95,30 +148,6 @@ export function CreateForm({
             createdBy: user?.id,
             coverImage: image as string,
             formAlias: alias,
-            formSettings: {
-              isConnectedToEngagement: false,
-              showForm: "beforeEngagement",
-              redirectUrl: "",
-              isCoverScreen: true,
-              displayType: "listing",
-              questionPerSlides: "1",
-              titleFontSize: "36",
-              headingFontSize: "24",
-              backgroundColor: "#ffffff",
-              textColor: "#000000",
-              buttonColor: "#001FFC",
-              textFontSize: "14",
-              isCoverImage: true,
-              buttonText: "Submit",
-              startButtonText: "Start",
-              isCollectEmail: false,
-              isCollectPhone: false,
-              connectToEvent:false,
-              showResult:false,
-              isRedirectUrl:false,
-              engagementId:'',
-              engagementType:''
-            },
           },
     });
     setLoading(false);
@@ -136,9 +165,10 @@ export function CreateForm({
         title: engagementForm?.title,
         description: engagementForm?.description,
         workspaceAlias: engagementForm?.workspaceAlias,
+        formSettings: engagementForm?.formSettings,
       });
     }
-  }, [form, engagementForm]);
+  }, [engagementForm]);
 
   const prevOrg = useMemo(() => {
     if (organization) {
@@ -149,6 +179,14 @@ export function CreateForm({
     } else return "";
   }, [organization]);
 
+  const prevStartButtonText = useWatch({
+    control: form.control,
+    name: "formSettings.startButtonText",
+  });
+
+  console.log("form creation update", form.formState.errors);
+  console.log("form values", form.getValues());
+  console.log("init", engagementForm?.formSettings);
   return (
     <>
       <Form {...form}>
@@ -192,23 +230,29 @@ export function CreateForm({
               </InputOffsetLabel>
             )}
           />
-          {/**
+          {engagementForm && (
+            <div className="w-full">
               <FormField
-        control={form.control}
-        name="formSettings.startButtonText"
-        render={({ field }) => (
-          <InputOffsetLabel className="w-[150px]" label="Start Button Text">
-            <Input
-              placeholder=""
-              type="text"
-              defaultValue={prevStartButtonText}
-              {...form.register("formSettings.startButtonText")}
-              className="placeholder:text-sm h-11 focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
-            />
-          </InputOffsetLabel>
-        )}
-      />
-           */}
+                control={form.control}
+                name="formSettings.startButtonText"
+                render={({ field }) => (
+                  <InputOffsetLabel
+                    className="w-full"
+                    label="Start Button Text"
+                  >
+                    <Input
+                      placeholder=""
+                      type="text"
+                      defaultValue={prevStartButtonText}
+                      {...form.register("formSettings.startButtonText")}
+                      className="placeholder:text-sm h-11 focus:border-gray-500 placeholder:text-gray-200 text-gray-700"
+                    />
+                  </InputOffsetLabel>
+                )}
+              />
+            </div>
+          )}
+
           <div className="w-full flex items-end gap-x-2">
             <FormField
               control={form.control}
@@ -242,7 +286,7 @@ export function CreateForm({
             className="text-white h-11 gap-x-2 font-medium bg-basePrimary w-full max-w-xs mt-4"
           >
             {loading && <LoaderAlt size={20} className="animate-spin" />}
-            <p> {engagementForm? "Update" : "Create"}</p>
+            <p> {engagementForm ? "Update" : "Create"}</p>
           </Button>
         </form>
       </Form>

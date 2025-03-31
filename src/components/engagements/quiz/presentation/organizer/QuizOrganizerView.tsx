@@ -43,7 +43,7 @@ import {
 } from "./_components";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/utils/supabase/client";
-import { ScoreBoard } from "../common/ScoreBoard";
+import { MainPollResult, ScoreBoard } from "../common/ScoreBoard";
 import { InlineIcon } from "@iconify/react/dist/iconify.js";
 import { ActionModal } from "@/components/custom/ActionModal";
 import PreviewDeletionGuard from "../common/PreviewDeleteGuard";
@@ -121,7 +121,6 @@ function VolumeModal({
                 "&:hover, &.Mui-focusVisible": {
                   boxShadow: `0px 0px 0px 6px #6b7280`,
                 },
-
               },
               "& .MuiSlider-track": {
                 backgroundColor: "#001fcc",
@@ -270,43 +269,39 @@ export default function QuizOrganizerView({
   // subscribe to answers
   useEffect(() => {
     if (!quiz?.accessibility?.live) return;
-    const channel = supabase
-      .channel("live-answer");
+    const channel = supabase.channel("live-answer");
 
+    // channel.on(
+    //   "postgres_changes",
+    //   {
+    //     event: "UPDATE",
+    //     schema: "public",
+    //     table: "quizAnswer",
+    //     filter: `quizId=eq.${quiz?.id}`,
+    //   },
+    //   (payload) => {
+    //     console.log("new answer data", payload.new)
+    //     setAnswers((prev) => [...prev, payload.new as TAnswer]);
+    //   }
+    // )
 
-      // channel.on(
-      //   "postgres_changes",
-      //   {
-      //     event: "UPDATE",
-      //     schema: "public",
-      //     table: "quizAnswer",
-      //     filter: `quizId=eq.${quiz?.id}`,
-      //   },
-      //   (payload) => {
-      //     console.log("new answer data", payload.new)
-      //     setAnswers((prev) => [...prev, payload.new as TAnswer]);
-      //   }
-      // )
-
-      channel.on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "quizAnswer",
-          filter: `quizId=eq.${quiz?.id}`,
-        },
-        (payload) => {
+    channel.on(
+      "postgres_changes",
+      {
+        event: "INSERT",
+        schema: "public",
+        table: "quizAnswer",
+        filter: `quizId=eq.${quiz?.id}`,
+      },
+      (payload) => {
         //  console.log("new answer data", payload.new)
-          setAnswers((prev) => _.uniqBy([...prev, payload.new as TAnswer], "id"));
-          
-        }
-      )
+        setAnswers((prev) => _.uniqBy([...prev, payload.new as TAnswer], "id"));
+      }
+    );
 
-
-      channel.subscribe((status) => {
-        console.log("Subscription status: ANSWR", status);
-      });
+    channel.subscribe((status) => {
+      console.log("Subscription status: ANSWR", status);
+    });
 
     return () => {
       supabase.removeChannel(channel);
@@ -540,6 +535,10 @@ export default function QuizOrganizerView({
     }
   }
 
+  const isQuiz = useMemo(() => {
+    return quiz?.interactionType === "quiz";
+  }, [quiz]);
+
   function formatPosition(position: number): string {
     const suffixes = ["th", "st", "nd", "rd"];
     const remainder = position % 100;
@@ -563,16 +562,24 @@ export default function QuizOrganizerView({
       )}
       {showScoreSheet ? (
         <div className="w-full ">
-          <ScoreBoard
-            answers={answers}
-            id={id}
-            quiz={quizResult}
-            actualQuiz={quiz}
-            close={() => {
-              setShowScoreSheet(false);
-              if (audio) audio.pause();
-            }}
-          />
+          {quiz?.interactionType === "poll" && quizResult ? (
+            <MainPollResult
+              actualQuiz={quiz}
+              quizResult={quizResult}
+              answers={answers}
+            />
+          ) : (
+            <ScoreBoard
+              answers={answers}
+              id={id}
+              quiz={quizResult}
+              actualQuiz={quiz}
+              close={() => {
+                setShowScoreSheet(false);
+                if (audio) audio.pause();
+              }}
+            />
+          )}
         </div>
       ) : (
         <div className="w-full min-h-screen px-4  mx-auto  flex flex-col justify-between">
@@ -639,7 +646,13 @@ export default function QuizOrganizerView({
               </div>
             )}
             {isQuizStarted && (
-              <div className="w-full h-full col-span-full mt-10 items-start rounded-lg grid grid-cols-12">
+              <div
+                className={cn(
+                  "w-full h-full col-span-full mt-10 items-start rounded-lg grid grid-cols-12",
+                  quiz?.interactionType !== "quiz" &&
+                    "grid-cols-9 mx-auto max-w-7xl"
+                )}
+              >
                 {quiz && (
                   <Advert
                     quiz={quiz}
@@ -693,12 +706,15 @@ export default function QuizOrganizerView({
                       !isRightBox && "col-span-9 rounded-l-lg",
                       !isLeftBox &&
                         !isRightBox &&
-                        "rounded-l-lg  max-w-4xl col-span-full mx-auto"
+                        "rounded-l-lg  max-w-4xl col-span-full mx-auto",
+                      !isRightBox &&
+                        quiz?.interactionType !== "quiz" &&
+                        "col-span-6 rounded-r-lg rounded-l-none"
                     )}
                   />
                 )}
 
-                {quiz && (
+                {quiz && quiz?.interactionType === "quiz" && (
                   <LeaderBoard
                     isRightBox={isRightBox}
                     isLeftBox={isLeftBox}
@@ -736,7 +752,9 @@ export default function QuizOrganizerView({
                     !isQuizStarted && "gradient-text bg-basePrimary"
                   )}
                 >
-                  {isQuizStarted ? "End Quiz" : "Start Quiz"}
+                  {isQuizStarted
+                    ? `End ${isQuiz ? "Quiz" : "Poll"}`
+                    : `Start ${isQuiz ? "Quiz" : "Poll"}`}
                 </p>
               </Button>
               {!isAdvert && (
@@ -776,12 +794,8 @@ export default function QuizOrganizerView({
                   />
                 )}
               </Button>
-              <Button
-                onClick={handleFullScreen}
-                className="px-0 w-fit h-fit"
-              >
+              <Button onClick={handleFullScreen} className="px-0 w-fit h-fit">
                 <FullScreenIcon />
-             
               </Button>
             </div>
           </div>
@@ -795,7 +809,7 @@ export default function QuizOrganizerView({
           close={() => setIsAttemptingToExit(false)}
           asynAction={exitQuiz}
           buttonText="Exit"
-          title="Exit Quiz"
+          title={`Exit  ${isQuiz ? "Quiz" : "Poll"}`}
           buttonColor="bg-basePrimary text-white"
         />
       )}

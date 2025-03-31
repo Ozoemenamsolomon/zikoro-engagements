@@ -1,6 +1,6 @@
 
 import { cn } from "@/lib/utils";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, CSSProperties } from "react";
 import { calculateAndSetWindowHeight } from "@/utils";
 export function EngagementLayout({
   children,
@@ -9,6 +9,7 @@ export function EngagementLayout({
   CenterWidget,
   className,
   parentClassName,
+  style
 
 }: {
   LeadingWidget?: React.ReactNode;
@@ -17,6 +18,7 @@ export function EngagementLayout({
   className?:string;
   children: React.ReactNode;
   parentClassName?:string;
+  style?:CSSProperties
 
 }) {
   const divRef = useRef<HTMLDivElement | null>(null)
@@ -34,7 +36,7 @@ export function EngagementLayout({
         {CenterWidget}
         {TrailingWidget}
       </div>
-      <div ref={divRef} className={cn("w-full bg-white rounded-lg border", className)}>{children}</div>
+      <div ref={divRef} style={style} className={cn("w-full bg-white rounded-lg border", className)}>{children}</div>
     </div>
   );
 }

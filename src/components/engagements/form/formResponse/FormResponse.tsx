@@ -1,5 +1,8 @@
 "use client";
-import { TFormattedEngagementFormAnswer } from "@/types/form";
+import {
+  TFormattedEngagementFormAnswer,
+  TEngagementFormQuestion,
+} from "@/types/form";
 import { InlineIcon } from "@iconify/react";
 import {
   CheckBoxTypeResponse,
@@ -21,6 +24,7 @@ import {
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/custom";
+import { LuArrowLeftToLine } from "react-icons/lu";
 import {
   forwardRef,
   useImperativeHandle,
@@ -58,6 +62,7 @@ const options = [
   { name: "Phone Number", image: "/fphone.svg", type: "PHONE_NUMBER" },
   { name: "Contact", image: "/fcontact.svg", type: "CONTACT" },
   { name: "Dropdown", image: "/fcontact.svg", type: "DROPDOWN" },
+  { name: "Country", image: "/fcountry.svg", type: "COUNTRY" },
   {
     name: "Mutiple Choice",
     image: "/fmultiplechoice.png",
@@ -88,6 +93,8 @@ interface FormResponseProps {
   formAlias: string;
   coverTitle: string;
   setActive: React.Dispatch<React.SetStateAction<number>>;
+  questionLength: number;
+  questions: TEngagementFormQuestion["questions"];
 }
 type Response = {
   attendeeEmail: string;
@@ -146,12 +153,16 @@ export function calculateEngagementStats(
   };
 }
 
+
+
 export default function FormResponses({
   data,
   flattenedResponse,
   formAlias,
   coverTitle,
   setActive,
+  questionLength,
+  questions,
 }: FormResponseProps) {
   const [isDeleting, setDeleting] = useState(false);
   const [isDownload, setIsDownload] = useState(false);
@@ -332,10 +343,16 @@ export default function FormResponses({
   }
 
   const numberOfViewed =
-    flattenedResponse?.reduce((acc, curr) => acc + curr?.viewed, 0) || 0;
+    (
+      flattenedResponse?.reduce((acc, curr) => acc + curr?.viewed, 0) /
+      questionLength
+    ).toFixed(0) || 0;
 
   const numberOfSubmitted =
-    flattenedResponse?.reduce((acc, curr) => acc + curr?.submitted, 0) || 0;
+    (
+      flattenedResponse?.reduce((acc, curr) => acc + curr?.submitted, 0) /
+      questionLength
+    ).toFixed(0) || 0;
 
   const engagementStats = useMemo(() => {
     return calculateEngagementStats(flattenedResponse);
@@ -415,7 +432,7 @@ export default function FormResponses({
           </button>
         </div>
         <div className={cn("w-full hidden", isSummary && "block")}>
-          <div className="w-full grid h-[150px] grid-cols-4 gap-6">
+          <div className="w-full grid h-[150px] grid-cols-3 gap-6">
             <div className="flex flex-col h-full w-full items-center justify-center gap-5">
               <p className="text-lg sm:text-xl">Total Views</p>
               <h1 className="text-[36px] font-bold">{numberOfViewed}</h1>
@@ -430,17 +447,11 @@ export default function FormResponses({
                 {engagementStats?.completionRate}
               </h1>
             </div>
-            <div className="flex flex-col h-full border-l w-full items-center justify-center gap-5">
-              <p className="text-lg sm:text-xl">Average Completion Time</p>
-              <h1 className="text-[36px] font-bold">
-                {engagementStats?.averageCompletionTime}
-              </h1>
-            </div>
           </div>
 
           {Object.entries(data).map(([key, value]) => {
             const response = value?.find((v) => v?.questionId === key);
-            const questionIndex = flattenedResponse?.findIndex(
+            const questionIndex = questions?.findIndex(
               (v) => v?.questionId === key
             );
 
@@ -448,7 +459,7 @@ export default function FormResponses({
               <div
                 key={Math.random()}
                 className={cn(
-                  "w-full rounded-lg bg-white border px-6 py-10 mb-6 sm:mb-8",
+                  "w-full rounded-lg bg-white overflow-y-auto max-h-[400px] vert-scroll border px-6 py-10 mb-6 sm:mb-8",
                   value[0]?.type === "INPUT_MULTIPLE_CHOICE" &&
                     value[0]?.questionId === key &&
                     "hidden",
@@ -515,43 +526,50 @@ export default function FormResponses({
                   <p>{value?.length} Responses</p>
                 </div>
                 {Array.isArray(value) &&
-                  value?.map((item) => (
-                    <div className="w-full">
-                      {item?.type === "INPUT_TEXT" && (
-                        <div className="w-full flex flex-col items-start justify-start gap-y-2">
-                          <TextTypeResponse response={item} />
-                        </div>
-                      )}
-                      {item?.type === "INPUT_DATE" && (
-                        <div className="w-full flex flex-col items-center justify-center ">
-                          <DateTypeResponse response={item} />
-                        </div>
-                      )}
-
-                      {item?.type === "ATTACHMENT" && (
-                        <div className="w-full flex flex-col items-start justify-start gap-y-2">
-                          <UploadTypeResponse response={item} />
-                        </div>
-                      )}
-                      {(item?.type === "INPUT_EMAIL" ||
-                        item?.type === "PHONE_NUMBER" ||
-                        item?.type === "WEBSITE") && (
-                        <div className="w-full flex flex-col items-center justify-center">
-                          <div className="w-fit bg-basePrimary-100 rounded-lg  mb-2">
-                            <p className="p-3 text-center">
-                              {response?.response ?? ""}
-                            </p>
+                  value?.map((item) => {
+                    console.log(value);
+                    return (
+                      <div className="w-full">
+                        {item?.type === "INPUT_TEXT" && (
+                          <div className="w-full flex flex-col items-start justify-start gap-y-2">
+                            <TextTypeResponse response={item} />
                           </div>
-                        </div>
-                      )}
-                      {(item.type === "INPUT_ADDRESS" ||
-                        item?.type === "CONTACT") && (
-                        <div className="w-full max-w-lg mx-auto flex flex-col items-center justify-center">
-                          <MultiInputResponseType response={item} />
-                        </div>
-                      )}
-                    </div>
-                  ))}
+                        )}
+                        {item?.type === "INPUT_DATE" && (
+                          <div className="w-full flex flex-col items-center justify-center ">
+                            <DateTypeResponse response={item} />
+                          </div>
+                        )}
+
+                        {item?.type === "ATTACHMENT" && (
+                          <div className="w-full flex flex-col items-start justify-start gap-y-2">
+                            <UploadTypeResponse response={item} />
+                          </div>
+                        )}
+                        {(item?.type === "INPUT_EMAIL" ||
+                          item?.type === "PHONE_NUMBER" ||
+                          item?.type === "COUNTRY" ||
+                          item?.type === "WEBSITE") && (
+                          <div className="w-full flex flex-col items-center justify-center">
+                            <div className="w-fit bg-basePrimary-100 rounded-lg  mb-2">
+                              <p className="p-3 text-center">
+                                {typeof item?.response === "object"
+                                  ? `${item?.response?.selectedOption} ${item?.response?.optionId}`
+                                  : item?.response?.response ?? ""}
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                    
+                        {(item.type === "INPUT_ADDRESS" ||
+                          item?.type === "CONTACT") && (
+                          <div className="w-full max-w-lg mx-auto flex flex-col items-center justify-center">
+                            <MultiInputResponseType response={item} />
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
               </div>
             );
           })}
@@ -562,7 +580,7 @@ export default function FormResponses({
                 (m) => m?.questionId === v?.key[0]?.questionId
               );
               return (
-                <div className="w-full bg-white rounded-lg border px-6 py-10 mb-6 sm:mb-8">
+                <div className="w-full bg-white  rounded-lg border px-6 py-10 mb-6 sm:mb-8">
                   <p className="w-14 h-14 flex text-2xl mx-auto mb-6 items-center bg-basePrimary-100 justify-center rounded-full border border-basePrimary">
                     {questionIndex + 1}
                   </p>
@@ -909,9 +927,7 @@ function FilterActions({
           </div>
 
           <button onClick={() => setIsFilter(false)}>
-            <span className="trnsform -rotate-90">
-              <InlineIcon icon="fluent:arrow-upload-32-regular" fontSize={24} />
-            </span>
+            <LuArrowLeftToLine size={22} />
           </button>
         </div>
         {/** date range */}
@@ -989,7 +1005,10 @@ function FilterActions({
             defaultValue={value}
           >
             <SelectTrigger className="h-11 w-full">
-              <SelectValue className="bg-basePrimary-100" placeholder="Select Question" />
+              <SelectValue
+                className="bg-basePrimary-100"
+                placeholder="Select Question"
+              />
             </SelectTrigger>
             <SelectContent className="bg-basePrimary-100">
               <SelectGroup>
@@ -1110,19 +1129,19 @@ const IndividualResponse = forwardRef<
   const completionRate = useMemo(() => {
     if (currentIndex != -1) {
       const currentParticipantId = responses[currentIndex].attendeeAlias;
-      const filtered = responses?.filter((v) => v?.attendeeAlias === currentParticipantId)
+      const filtered = responses?.filter(
+        (v) => v?.attendeeAlias === currentParticipantId
+      );
 
-      const attempted = filtered?.filter((v) =>v?.response);
+      const attempted = filtered?.filter((v) => v?.response);
 
-      return ((attempted?.length/questions?.length) * 100).toFixed(0)
-    }
-    else return "0"
-
-  },[responses, currentIndex])
+      return ((attempted?.length / questions?.length) * 100).toFixed(0);
+    } else return "0";
+  }, [responses, currentIndex]);
 
   return (
     <div className="w-full max-w-[1400px] mx-auto">
-      <div className="w-full grid h-[150px] grid-cols-3 gap-6">
+      <div className="w-full grid h-[150px] grid-cols-2 gap-6">
         <div className="flex flex-col h-full w-full items-center justify-center gap-5">
           <p className="text-lg sm:text-xl">Date Taken</p>
           <h1 className="text-[36px] font-bold">
@@ -1133,10 +1152,6 @@ const IndividualResponse = forwardRef<
         <div className="flex flex-col h-full w-full items-center justify-center gap-5">
           <p className="text-lg sm:text-xl">Completion Rate</p>
           <h1 className="text-[36px] font-bold">{completionRate}%</h1>
-        </div>
-        <div className="flex flex-col h-full border-l w-full items-center justify-center gap-5">
-          <p className="text-lg sm:text-xl">Average Completion Time</p>
-          <h1 className="text-[36px] font-bold">""</h1>
         </div>
       </div>
 
@@ -1156,13 +1171,15 @@ const IndividualResponse = forwardRef<
           />
         </div>
         <div className={cn("w-full", isFilter && "col-span-7")}>
-          <button
-            onClick={() => setIsFilter(true)}
-            className=" mb-2 flex items-center gap-x-1 text-mobile"
-          >
-            <InlineIcon icon="mage:filter" fontSize={15} />
-            <p>Filter</p>
-          </button>
+          {!isFilter && (
+            <button
+              onClick={() => setIsFilter(true)}
+              className=" mb-2 flex items-center gap-x-1 text-mobile"
+            >
+              <InlineIcon icon="mage:filter" fontSize={15} />
+              <p>Filter</p>
+            </button>
+          )}
           <div className="w-full bg-white rounded-lg  px-6 py-10">
             <div className="flex flex-col items-center justify-center mx-auto gap-3">
               <p className="font-semibold text-base sm:text-lg">

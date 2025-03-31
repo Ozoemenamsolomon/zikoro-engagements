@@ -10,25 +10,30 @@ import { cn } from "@/lib/utils";
 type UploadOptionItemsType = {
   id: string;
   image: string;
-  
 };
 
 export function ImageUploadTypeAnswer({
   form,
   index,
-  bgColor,
-  rgba
+  btnColor,
+  rgba,
+  textColor,
+  hideNumber,
+  hideLabel
 }: {
   form: UseFormReturn<z.infer<typeof formAnswerSchema>, any, any>;
   index: number;
-  bgColor:string;
-  rgba:string;
+  btnColor: string;
+  rgba: string;
+  textColor:string;
+  hideNumber:boolean;
+  hideLabel:boolean;
 }) {
   const question = form.watch(`questions.${index}.question`);
   const isRequired = form.watch(`questions.${index}.isRequired`);
   const questionImage = form.watch(`questions.${index}.questionImage`);
   const selectedType = form.watch(`questions.${index}.selectedType`);
-
+  const showDescription = form.watch(`questions.${index}.showDescription`);
   const questionId = form.watch(`questions.${index}.questionId`);
   const questionDescription = form.watch(
     `questions.${index}.questionDescription`
@@ -49,6 +54,10 @@ export function ImageUploadTypeAnswer({
         currentQuestion={question}
         description={questionDescription}
         isRequired={isRequired}
+        showDescription={showDescription}
+        btnColor={btnColor}
+        rgba={rgba}
+        hideNumber={hideNumber}
       />
 
       <div className="w-full flex flex-wrap items-center justify-center gap-4">
@@ -58,13 +67,14 @@ export function ImageUploadTypeAnswer({
             return (
               <>
                 <label
-                // htmlFor={`image-upload-${index}`}
-                   style={{
-                    backgroundColor: isSelected ? bgColor : rgba,
+                  // htmlFor={`image-upload-${index}`}
+                  style={{
+                    backgroundColor: isSelected ? btnColor : "",
+                    color: isSelected?  "#fff": textColor
                   }}
                   className={cn(
-                    "w-28 h-fit rounded-lg flex-col flex gap-3 items-center justify-center px-4 py-6 relative",
-                    isSelected && " text-white"
+                    "w-28 h-fit rounded-lg flex-col border-x-0 border-b border-t-0 bg-transparent flex gap-3 items-center justify-center px-4 py-6 relative",
+                   
                   )}
                 >
                   <input
@@ -83,8 +93,8 @@ export function ImageUploadTypeAnswer({
                         `responses.${index}.questionId`,
                         questionId
                       );
-                      console.log(form.watch(`responses.${index}.response`))
-                      console.log(form.watch('responses'))
+                      console.log(form.watch(`responses.${index}.response`));
+                      console.log(form.watch("responses"));
                     }}
                     checked={response?.selectedOption === value?.image}
                     value={value?.image}
@@ -92,12 +102,12 @@ export function ImageUploadTypeAnswer({
                     className="absolute invisible inset-0 w-full h-full z-10"
                   />
                   <span
-                     style={{
-                        color: isSelected ? bgColor : "",
-                      }}
-                      className={cn(
-                        "rounded-lg h-8 flex items-center text-gray-600 justify-center font-medium w-8 bg-white border border-gray-700"
-                      )}
+                    style={{
+                      color: isSelected ? btnColor : "",
+                    }}
+                    className={cn(
+                      "rounded-lg h-8 flex items-center text-gray-600 justify-center font-medium w-8 bg-white border border-gray-700"
+                    )}
                   >
                     {index + 1}
                   </span>

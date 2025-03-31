@@ -2,7 +2,7 @@
 
 import { formQuestion } from "@/schemas";
 import { useEffect, useMemo, useState } from "react";
-import { UseFormReturn } from "react-hook-form";
+import { UseFormReturn, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { FormQuestionDescription } from "../formQuestionDescription";
 import { TEngagementFormQuestion } from "@/types/form";
@@ -17,12 +17,14 @@ export function FormRatingType({
   question,
   engagementForm,
   refetch,
+  btnColor
 }: {
   form: UseFormReturn<z.infer<typeof formQuestion>>;
   question: TEngagementFormQuestion["questions"][number] | null;
   engagementForm: TEngagementFormQuestion;
   defaultQuestionValue: string;
   refetch: () => Promise<any>;
+  btnColor:string;
 }) {
   const addedImage = form.watch("questionImage");
   const addedDescription = form.watch("questionDescription");
@@ -58,6 +60,13 @@ export function FormRatingType({
     setOpen((p) => !p);
   }
 
+
+  const showDescription = useWatch({
+    control: form.control,
+    name: "showDescription",
+  });
+
+
   return (
     <>
       <div className="w-full flex flex-col items-start justify-start gap-3">
@@ -69,6 +78,7 @@ export function FormRatingType({
           question={question}
           refetch={refetch}
           type="Rating"
+          btnColor={btnColor}
           isNotOverflow
           SettingWidget={
             <div className="w-full flex items-center gap-x-3 px-3">
@@ -128,10 +138,12 @@ export function FormRatingType({
           }
         />
 
-        <FormQuestionDescription
-          defaultDescriptionValue={defaultDescriptionValue}
-          form={form}
-        />
+{showDescription && (
+          <FormQuestionDescription
+            defaultDescriptionValue={defaultDescriptionValue}
+            form={form}
+          />
+        )}
 
         <div className="w-full flex items-center gap-x-3 justify-center p-3">
           <div className="flex items-center gap-x-2">

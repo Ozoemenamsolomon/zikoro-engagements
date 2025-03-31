@@ -19,6 +19,7 @@ import { InlineIcon } from "@iconify/react/dist/iconify.js";
 import { formatPosition } from "@/utils";
 import { ActionModal } from "@/components/custom/ActionModal";
 import { useRouter } from "next/navigation";
+import { PollResult } from "@/components/engagements/poll/_components/PollResult";
 
 type TLeaderBoard = {
   quizParticipantId: string;
@@ -273,7 +274,7 @@ export function ScoreBoard({
 
     setIsLoadingClear(false);
     onToggleClear();
-    router.back()
+    router.back();
   }
 
   async function exportAsCSV() {
@@ -306,9 +307,8 @@ export function ScoreBoard({
         )
       )
     );
-    
 
-    console.log({filteredResult, exportedAnswer})
+    console.log({ filteredResult, exportedAnswer });
 
     const worksheet = XLSX.utils.json_to_sheet(filteredResult);
     const workbook = XLSX.utils.book_new();
@@ -561,7 +561,6 @@ export function ScoreBoard({
                   )}
 
                   <div className="w-full overflow-y-auto pb-20 no-scrollbar z-50 bg-white absolute inset-x-0 h-full top-80 rounded-t-lg py-6 ">
-                  
                     <div className="w-full flex flex-col items-start justify-start">
                       {Array.isArray(board) &&
                         board
@@ -1253,6 +1252,55 @@ function OrganizerPlayerDropDown({
           ))}
         </div>
       </div>
+    </div>
+  );
+}
+
+export function MainPollResult({
+  answers,
+  quizResult,
+  actualQuiz
+}: {
+  answers: TAnswer[];
+  quizResult: TQuiz<TRefinedQuestion[]>;
+  actualQuiz: TQuiz<TQuestion[]>
+}) {
+
+
+    // handle delete lobby
+    useEffect(() => {
+      const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+        if (actualQuiz) {
+          const payload = {
+            ...actualQuiz,
+            liveMode: {
+              isEnded: null,
+            },
+          };
+          const blob = new Blob([JSON.stringify(payload)], {
+            type: "application/json",
+          });
+          navigator.sendBeacon("/api/engagements/quiz", blob);
+          navigator.sendBeacon(
+            `/api/engagements/quiz/participant/${actualQuiz?.quizAlias}`
+          );
+        }
+      };
+  
+      window.addEventListener("beforeunload", handleBeforeUnload);
+  
+      return () => {
+        window.removeEventListener("beforeunload", handleBeforeUnload);
+      };
+    }, [quizResult]);
+
+  return (
+    <div className="w-full max-w-7xl absolute h-[90vh] overflow-y-auto vert-scroll rounded-lg top-0 m-auto inset-0 bg-white p-6">
+      <h2 className="text-center font-semibold text-lg sm:text-xl mb-8">
+        Poll Result
+      </h2>
+
+      <PollResult quizResult={quizResult} answer={answers} />
     </div>
   );
 }

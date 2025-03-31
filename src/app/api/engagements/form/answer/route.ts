@@ -1,15 +1,16 @@
+
 import { createClient } from "@/utils/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 
-
 export async function POST(req: NextRequest) {
-  const supabase = createClient()
+  const supabase = createClient();
   if (req.method === "POST") {
     try {
       const params = await req.json();
 
-      
-      const { error } = await supabase.from("formResponse").upsert(params);
+      const { integrationAlias, ...restData } = params;
+
+      const { error } = await supabase.from("formResponse").upsert(restData);
 
       if (error) {
         return NextResponse.json(
@@ -21,14 +22,17 @@ export async function POST(req: NextRequest) {
       }
       if (error) throw error;
 
+     
+
+
+
       return NextResponse.json(
-        { msg: "Form Created Successfully" },
+        { msg: "Form Updated Successfully" },
         {
           status: 200,
         }
       );
     } catch (error) {
-      
       return NextResponse.json(
         {
           error: "An error occurred while making the request.",
