@@ -131,6 +131,7 @@
   -webkit-background-clip: text;
   color: transparent;
 }
+
 .interaction-input .quill .ql-editor {
   height: 100%;
 }

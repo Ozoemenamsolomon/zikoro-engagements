@@ -36,11 +36,29 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const websiteStructuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Zikoro",
+    url: "https://www.zikoro.com/",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: "https://www.zikoro.com/search?q={search_term_string}",
+      "query-input": "required name=search_term_string",
+    },
+  };
   return (
     <html lang="en">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(websiteStructuredData),
+          }}
+        />
+      </head>
       <body
-      id="layout-container"
-     
+        id="layout-container"
         className={`${montserrat.className} text-mobile sm:text-desktop bg-basePrimary-100 antialiased`}
       >
         <ToastContainer />

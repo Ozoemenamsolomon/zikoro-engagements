@@ -1,10 +1,9 @@
-"use client"
+"use client";
 
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
-import "react-quill/dist/quill.snow.css"
+import "react-quill/dist/quill.snow.css";
 const QuillEditor = dynamic(() => import("react-quill"), { ssr: false });
-
 
 export function TextEditor({
   onChange,
@@ -12,15 +11,14 @@ export function TextEditor({
   placeholder,
   onFocus,
   onBlur,
-  error
-
+  error,
 }: {
   onChange: (value: string) => void;
   defaultValue?: string;
   placeholder?: string;
-  onFocus?:() => void;
-  onBlur?:() => void;
-  error?:string;
+  onFocus?: () => void;
+  onBlur?: () => void;
+  error?: string;
 }) {
   const CustomUndo = () => (
     <svg viewBox="0 0 18 18">
@@ -70,7 +68,6 @@ export function TextEditor({
     },
   };
 
-
   const quillFormats = [
     "header",
     "bold",
@@ -95,34 +92,31 @@ export function TextEditor({
     "background",
     "indent",
     "list",
-    "script"
+    "script",
   ];
 
   const [content, setContent] = useState(defaultValue);
   const handleEditorChange = (content: string) => {
     setContent(content);
     onChange(content);
-    
   };
 
   return (
     <div className="w-full interaction-input">
-        <QuillEditor
+      <QuillEditor
         onBlur={onBlur}
         onFocus={onFocus}
-      value={content}
-      onChange={(e) => {
-        handleEditorChange(e);
-      }}
-      modules={ quillModules }
-      formats={quillFormats}
-      theme="snow"
-
-      placeholder={placeholder || "Enter description"}
-      className="w-full  ql-container focus:ring-1"
-    />
-     {error && <p className="text-xs textred-500 mt-2">{error}</p>}
+        value={content}
+        onChange={(e) => {
+          handleEditorChange(e);
+        }}
+        modules={quillModules}
+        formats={quillFormats}
+        theme="snow"
+        placeholder={placeholder || "Enter description"}
+        className="w-full  ql-container focus:ring-1"
+      />
+      {error && <p className="text-xs textred-500 mt-2">{error}</p>}
     </div>
-
   );
 }
