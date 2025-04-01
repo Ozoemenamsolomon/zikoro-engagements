@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-// @ts-ignore
-import { createClient } from "@supabase/supabase-js";
 
 
 export async function POST(

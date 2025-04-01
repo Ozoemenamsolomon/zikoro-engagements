@@ -437,19 +437,30 @@ export const useGetUserReferrals = (): UseGetResult<
   };
 };
 
+//
+/** A utility function that check if user is already registered user
+ * the function accept the email of the user that attempts to login
+ * @param email 
+ * And returns a [Boolean]
+ * @returns boolean
+ */
 export async function userExist(email: string): Promise<boolean> {
   try {
+    //> send a post request
     const { data, status } = await postRequest<{ exists: boolean }>({
       endpoint: `/exists`,
       payload: { email },
     });
 
+    // if status is not 200 return false
     if (status !== 200) {
       return false;
     }
 
+    // return the data -- NB: always exists is a boolean
     return data.data.exists;
   } catch (error) {
+    //> Aiit
     return false;
   }
 }
